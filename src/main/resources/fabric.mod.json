@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "fzmm",
+  "version": "${version}",
+  "name": "FZMM",
+  "description": "Mod inspirado en FraZaMaMe Bot (no contiene nada ilegal)",
+  "authors": [
+    "Zailer43"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/fzmm/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+    ],
+    "main": [
+      "fzmm.zailer.me.main"
+    ],
+    "modmenu": [
+      "fzmm.zailer.me.config.modmenu.ModMenuEntry"
+    ],
+    "cotton-client-commands": [
+      "fzmm.zailer.me.client.commands.Commands"
+    ]
+  },
+  "mixins": [
+    "fzmm.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.11.1",
+    "fabric": "*",
+    "minecraft": "1.16.5",
+    "cotton-client-commands": "^1.0.0"
+  },
+  "custom": {
+    "modmenu:clientsideOnly": true
+  }
+}
