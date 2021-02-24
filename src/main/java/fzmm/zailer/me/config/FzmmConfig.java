@@ -7,8 +7,6 @@ import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
 
-import java.util.UUID;
-
 @Config(name = "fzmm")
 public class FzmmConfig implements ConfigData {
 
@@ -20,6 +18,7 @@ public class FzmmConfig implements ConfigData {
         @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
         public boolean enableReplaceText = true;
         public boolean toggleFont = false;
+        public boolean forceInvisibleItemFrame = false;
     }
 
 
