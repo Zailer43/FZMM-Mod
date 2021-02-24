@@ -12,7 +12,7 @@ import net.minecraft.text.LiteralText;
 public class NbtCommand {
     public static LiteralArgumentBuilder<CottonClientCommandSource> getArgumentBuilder() {
         return ArgumentBuilders.literal("nbt").executes(source -> {
-                MinecraftClient mc = MinecraftClient.getInstance();
+            MinecraftClient mc = MinecraftClient.getInstance();
 
             if (mc.player == null) return 1;
             ItemStack stack = mc.player.inventory.getMainHandStack();

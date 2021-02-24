@@ -12,8 +12,8 @@ public class Commands implements ClientCommandPlugin {
         dispatcher.register(ArgumentBuilders
                 .literal("fzmm")
                 .then(NbtCommand.getArgumentBuilder())
-                .then(CreativeGiveCommand.getArgumentBuilder())
-                //.then(InfoCommand.getArgumentBuilder()
+                .then(PingCommand.getArgumentBuilder())
+                .then(HatCommand.getArgumentBuilder())
         );
     }
 }
