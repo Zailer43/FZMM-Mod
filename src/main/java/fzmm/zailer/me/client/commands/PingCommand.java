@@ -18,16 +18,18 @@ public class PingCommand {
 
     public static LiteralArgumentBuilder<CottonClientCommandSource> getArgumentBuilder() {
         return ArgumentBuilders.literal("ping").executes(
-                source -> {
+                ctx -> {
                     MinecraftClient mc = MinecraftClient.getInstance();
                     if (mc.player == null) return 0;
 
-                    displayPing(getPing(mc.player.getName().toString()), mc.player.getName().toString());
+                    String username = mc.player.getName().getString();
+
+                    displayPing(getPing(username), username);
                     return 1;
                 }
-        ).then(ArgumentBuilders.argument("Username", StringArgumentType.word()).executes(ctx -> {
+        ).then(ArgumentBuilders.argument("username", StringArgumentType.greedyString()).executes(ctx -> {
 
-            String username = StringArgumentType.getString(ctx, "Username");
+            String username = ctx.getArgument("username", String.class);
             Utils.UsernameArgumentType(username);
 
             displayPing(getPing(username), username);

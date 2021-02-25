@@ -14,6 +14,8 @@ public class Commands implements ClientCommandPlugin {
                 .then(NbtCommand.getArgumentBuilder())
                 .then(PingCommand.getArgumentBuilder())
                 .then(HatCommand.getArgumentBuilder())
+                .then(CopyCoordsCommand.getArgumentBuilder())
+                .then(RemplaceTextCommand.getArgumentBuilder())
         );
     }
 }
