@@ -16,6 +16,7 @@ public class Commands implements ClientCommandPlugin {
                 .then(HatCommand.getArgumentBuilder())
                 .then(CopyCoordsCommand.getArgumentBuilder())
                 .then(RemplaceTextCommand.getArgumentBuilder())
+                .then(ItemCommand.getArgumentBuilder())
         );
     }
 }
