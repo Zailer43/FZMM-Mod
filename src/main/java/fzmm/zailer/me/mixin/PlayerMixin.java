@@ -25,7 +25,7 @@ public abstract class PlayerMixin {
 
         FzmmConfig config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig();
 
-        if (config.general.enableReplaceText) msg = ReplaceText.replace(msg);
+        if (config.replaceTexts.enableReplaceText) msg = ReplaceText.replace(msg);
 
         if (config.general.toggleFont && msg.charAt(0) != '/') msg = ToggleFont.convert(msg);
 

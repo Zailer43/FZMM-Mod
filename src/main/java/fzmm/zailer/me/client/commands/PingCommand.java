@@ -64,7 +64,7 @@ public class PingCommand {
         else if (ping <= 1000) color = Formatting.RED;
         else color = Formatting.DARK_RED;
 
-        LiteralText message = new LiteralText(Formatting.BLUE + "El ping de " + username + " es " + color + ping + Formatting.BLUE + "!");
+        LiteralText message = new LiteralText(Formatting.BLUE + "El ping de " + username + " es " + color + ping + "ms" + Formatting.BLUE + "!");
         mc.inGameHud.addChatMessage(MessageType.SYSTEM, message,mc.player.getUuid());
     }
 }
