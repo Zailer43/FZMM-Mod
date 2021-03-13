@@ -16,6 +16,7 @@ public class Commands implements ClientCommandPlugin {
         fzmm.then(CopyCoordsCommand.getArgumentBuilder());
         fzmm.then(RemplaceTextCommand.getArgumentBuilder());
         fzmm.then(ItemCommand.getArgumentBuilder());
+        fzmm.then(CompassCommand.getArgumentBuilder());
 
         dispatcher.register(fzmm);
     }
