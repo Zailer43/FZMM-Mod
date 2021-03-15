@@ -8,7 +8,9 @@
   "client": [
     "ItemFrameEntityRendererMixin",
     "PlayerMixin",
-    "StatusEffectInstanceMixin"
+    "StatusEffectInstanceMixin",
+    "StyleMixin"
+
   ],
   "server": [
   ],

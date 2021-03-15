@@ -26,6 +26,7 @@ public class FzmmConfig implements ConfigData {
         public boolean toggleFont = false;
         public boolean forceInvisibleItemFrame = false;
         public boolean disableNightVisionIfBlindness = false;
+        public boolean textObfuscated = false;
 
     }
 
