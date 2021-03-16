@@ -2,6 +2,7 @@ package fzmm.zailer.me.mixin;
 
 import fzmm.zailer.me.client.ReplaceText;
 import fzmm.zailer.me.client.ToggleFont;
+import fzmm.zailer.me.client.commands.StartWith;
 import fzmm.zailer.me.config.FzmmConfig;
 import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -29,7 +30,8 @@ public abstract class PlayerMixin {
 
         if (config.general.toggleFont && msg.charAt(0) != '/') msg = ToggleFont.convert(msg);
 
-        networkHandler.sendPacket(new ChatMessageC2SPacket(msg));
+        if (msg.startsWith("/")) networkHandler.sendPacket(new ChatMessageC2SPacket(msg));
+        else networkHandler.sendPacket(new ChatMessageC2SPacket(StartWith.startWithMsg + msg));
 
     }
 }
