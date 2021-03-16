@@ -8,5 +8,8 @@
   "text.autoconfig.fzmm.option.general.textObfuscated": "Deshabilita el texto obsfucado (&k)",
 
   "text.autoconfig.fzmm.option.replaceTexts.enableReplaceText": "Remplazar textos que envias por chat",
-  "text.autoconfig.fzmm.option.replaceTexts.texts": "Lista de textos a remplazar, original->remplazado (se separa con '==')"
+  "text.autoconfig.fzmm.option.replaceTexts.texts": "Lista de textos a remplazar, original->remplazado (se separa con '==')",
+
+  "key.categories.fzmm": "FZMM Mod",
+  "key.textObfuscated": "Toggle Text Obfuscated"
 }

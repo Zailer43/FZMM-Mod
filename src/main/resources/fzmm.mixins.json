@@ -9,7 +9,8 @@
     "ItemFrameEntityRendererMixin",
     "PlayerMixin",
     "StatusEffectInstanceMixin",
-    "StyleMixin"
+    "StyleMixin",
+    "MinecraftClientMixin"
 
   ],
   "server": [
