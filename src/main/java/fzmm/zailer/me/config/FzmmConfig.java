@@ -58,7 +58,12 @@ public class FzmmConfig implements ConfigData {
                 "::boom::==✸",
                 "::heart::==❤",
                 "::star::==★",
-                "::happy::==☻"
+                "::happy::==☻",
+                "::xz::==::fzmm_x_round:: ::fzmm_z_round::",
+                "::xyz::==::fzmm_x_round:: ::fzmm_y_round:: ::fzmm_z_round::",
+                "::xyzyp::==::fzmm_x_round:: ::fzmm_y_round:: ::fzmm_z_round:: ::fzmm_yaw_round:: ::fzmm_pitch_round::",
+                "::uuid::==::fzmm_uuid::",
+                "::item_name::==::fzmm_item_name::"
         );
     }
 

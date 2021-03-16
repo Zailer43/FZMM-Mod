@@ -29,10 +29,6 @@ public class RemplaceTextCommand {
                     for (String[] text : normalTexts)
                         messageString +=  Formatting.GREEN + text[0] + Formatting.YELLOW  + "  ->  " + Formatting.GREEN +  text[1] + "\n";
 
-                    Stack<String[]> variableTexts = ReplaceText.getVariableTexts();
-                    for (String[] text : variableTexts)
-                        messageString +=  Formatting.AQUA + text[0] + Formatting.YELLOW  + "  ->  " + Formatting.AQUA +  text[1] + "\n";
-
                     LiteralText message = new LiteralText(messageString);
                     mc.inGameHud.addChatMessage(MessageType.SYSTEM, message, mc.player.getUuid());
                     return 1;
