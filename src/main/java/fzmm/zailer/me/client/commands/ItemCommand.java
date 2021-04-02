@@ -185,7 +185,7 @@ public class ItemCommand {
         }
         String nbt = stack.getTag().toString().replaceAll("§", "&");
 
-        MutableText message = new LiteralText(nbt)
+        MutableText message = new LiteralText(stack.toString() + ": " + nbt)
                 .setStyle(Style.EMPTY
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, nbt))
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))

@@ -4,7 +4,7 @@ public class ToggleFont {
     //wertyuiopasdfghjklzxcvbnm0123456789QWERTYUIOPASDFGHJKLZXCVBNM!$%&/()=?*-,.-
     //ｗｅｒｔｙｕｉｏｐａｓｄｆｇｈｊｋｌｚｘｃｖｂｎｍ０１２３４５６７８９ＱＷＥＲＴＹＵＩＯＰＡＳＤＦＧＨＪＫＬＺＸＣＶＢＮＭ！＄％＆／（）＝？＊－，．－
 
-    public static String[][] font = {
+    private static final String[][] font = {
             {"q", "ｑ"},
             {"w", "ｗ"},
             {"e", "ｅ"},

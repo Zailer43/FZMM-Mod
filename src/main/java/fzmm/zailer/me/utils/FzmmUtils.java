@@ -8,7 +8,7 @@ import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Formatting;
 
-public class Utils {
+public class FzmmUtils {
     public static void UsernameArgumentType(String name) throws CommandSyntaxException {
         if (name.contains(" ")) {
             throw new SimpleCommandExceptionType(new LiteralText(Formatting.RED + "Please only supply 1 argument.")).create();

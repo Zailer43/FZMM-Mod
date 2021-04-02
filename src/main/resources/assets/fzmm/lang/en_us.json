@@ -4,7 +4,7 @@
 
   "text.autoconfig.fzmm.option.general.toggleFont": "Ｔｏｇｇｌｅ ａ ｅｓｔａ ｌｅｔｒａ",
   "text.autoconfig.fzmm.option.general.forceInvisibleItemFrame": "Forzar a los item frames a ser invisibles",
-  "text.autoconfig.fzmm.option.general.disableNightVisionIfBlindness": "Quita el efecto de visión nocturna si tienes ceguera",
+  "text.autoconfig.fzmm.option.general.disableNightVisionIfBlindness": "Quita el efecto de visión nocturna si tienes ceguera (MC-165208)",
   "text.autoconfig.fzmm.option.general.textObfuscated": "Deshabilita el texto obsfucado (&k)",
 
   "text.autoconfig.fzmm.option.replaceTexts.enableReplaceText": "Remplazar textos que envias por chat",

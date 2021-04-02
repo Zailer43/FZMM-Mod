@@ -7,11 +7,10 @@
   ],
   "client": [
     "ItemFrameEntityRendererMixin",
+    "MinecraftClientMixin",
     "PlayerMixin",
     "StatusEffectInstanceMixin",
-    "StyleMixin",
-    "MinecraftClientMixin"
-
+    "StyleMixin"
   ],
   "server": [
   ],
