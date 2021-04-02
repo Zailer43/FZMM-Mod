@@ -13,9 +13,7 @@
   "environment": "*",
   "entrypoints": {
     "client": [
-    ],
-    "main": [
-      "fzmm.zailer.me.main"
+      "fzmm.zailer.me.client.FzmmClient"
     ],
     "modmenu": [
       "fzmm.zailer.me.config.modmenu.ModMenuEntry"
