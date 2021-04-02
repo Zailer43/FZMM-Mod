@@ -5,8 +5,6 @@ import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 
-import java.util.Stack;
-
 public class ReplaceText {
 
 
@@ -14,10 +12,7 @@ public class ReplaceText {
 
         FzmmConfig config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig();
 
-        Stack<String[]> normalTexts = new Stack<String[]>() {};
-        for (String text : config.replaceTexts.texts) if (text.contains("==")) normalTexts.add(text.split("=="));
-
-        for (String[] text : normalTexts) msg = msg.replaceAll(text[0], text[1]);
+        for (FzmmConfig.Pair text : config.replaceTexts.texts) msg = msg.replaceAll(text.getOriginal(), text.getReplace());
         msg = setVariables(msg);
 
         return msg;
@@ -25,7 +20,6 @@ public class ReplaceText {
 
     public static String setVariables(String text) {
 
-        Stack<String[]> texts = new Stack<String[]>() {};
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
         ClientPlayerEntity mcp = mc.player;

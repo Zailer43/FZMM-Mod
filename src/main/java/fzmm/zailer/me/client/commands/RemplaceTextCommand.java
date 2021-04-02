@@ -22,11 +22,8 @@ public class RemplaceTextCommand {
 
                     String messageString = Formatting.DARK_AQUA + "Lista de texto que se remplaza cuando lo envias:\n";
 
-                    Stack<String[]> normalTexts = new Stack<String[]>() {};
-                    for (String text : config.replaceTexts.texts) if (text.contains("==")) normalTexts.add(text.split("=="));
-
-                    for (String[] text : normalTexts)
-                        messageString +=  Formatting.GREEN + text[0] + Formatting.YELLOW  + "  ->  " + Formatting.GREEN +  text[1] + "\n";
+                    for (FzmmConfig.Pair text : config.replaceTexts.texts)
+                        messageString +=  Formatting.GREEN + text.getOriginal() + Formatting.YELLOW  + "  ->  " + Formatting.GREEN +  text.getReplace() + "\n";
 
                     LiteralText message = new LiteralText(messageString);
                     mc.inGameHud.addChatMessage(MessageType.SYSTEM, message, mc.player.getUuid());
