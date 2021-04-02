@@ -4,11 +4,10 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.github.cottonmc.clientcommands.ArgumentBuilders;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.LiteralText;
-import fzmm.zailer.me.client.ReplaceText;
 import net.minecraft.util.Formatting;
 
 import java.util.Stack;

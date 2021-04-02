@@ -4,7 +4,7 @@ import fzmm.zailer.me.client.ReplaceText;
 import fzmm.zailer.me.client.ToggleFont;
 import fzmm.zailer.me.client.commands.StartWith;
 import fzmm.zailer.me.config.FzmmConfig;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.network.packet.c2s.play.ChatMessageC2SPacket;
@@ -21,8 +21,8 @@ public abstract class PlayerMixin {
     @Shadow @Final public ClientPlayNetworkHandler networkHandler;
 
     @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
-    private void sendChatMessage(String msg, CallbackInfo info) {
-        info.cancel();
+    private void sendChatMessage(String msg, CallbackInfo ci) {
+        ci.cancel();
 
         FzmmConfig config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig();
 

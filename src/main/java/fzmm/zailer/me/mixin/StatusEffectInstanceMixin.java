@@ -1,7 +1,7 @@
 package fzmm.zailer.me.mixin;
 
 import fzmm.zailer.me.config.FzmmConfig;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;

@@ -1,11 +1,10 @@
 package fzmm.zailer.me.config;
 
-
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
-import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
-import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
-import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
-import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.ConfigData;
+import me.shedaniel.autoconfig.annotation.Config;
+import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +26,6 @@ public class FzmmConfig implements ConfigData {
         public boolean forceInvisibleItemFrame = false;
         public boolean disableNightVisionIfBlindness = false;
         public boolean textObfuscated = false;
-
     }
 
     public static class ReplaceTexts {

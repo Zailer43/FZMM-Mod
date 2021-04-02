@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client;
 
 import fzmm.zailer.me.config.FzmmConfig;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.options.KeyBinding;
 import org.lwjgl.glfw.GLFW;
