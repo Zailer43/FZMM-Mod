@@ -13,6 +13,7 @@
     "StyleMixin"
   ],
   "server": [
+    "NameTagItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
