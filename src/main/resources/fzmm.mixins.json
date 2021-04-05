@@ -9,6 +9,7 @@
     "ChatHudListenerMixin",
     "ChatScreenMixin",
     "ItemFrameEntityRendererMixin",
+    "ItemStackMixin",
     "MinecraftClientMixin",
     "PlayerMixin",
     "StatusEffectInstanceMixin",
