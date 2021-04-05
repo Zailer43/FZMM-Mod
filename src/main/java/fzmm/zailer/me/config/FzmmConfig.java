@@ -26,6 +26,10 @@ public class FzmmConfig implements ConfigData {
         public boolean forceInvisibleItemFrame = false;
         public boolean disableNightVisionIfBlindness = false;
         public boolean textObfuscated = false;
+        public List<String> hideMessagesRegex = Arrays.asList(
+                "^Hey! Sorry, but you can't (use|open|change|ride|break|place|harm) that (|block )here.$",
+                "^\\[P2\\] You are lacking the permission node: .*$"
+        );
     }
 
     public static class ReplaceTexts {

@@ -6,6 +6,7 @@
   "text.autoconfig.fzmm.option.general.forceInvisibleItemFrame": "Forzar a los item frames a ser invisibles",
   "text.autoconfig.fzmm.option.general.disableNightVisionIfBlindness": "Quita el efecto de visión nocturna si tienes ceguera (MC-165208)",
   "text.autoconfig.fzmm.option.general.textObfuscated": "Deshabilita el texto obsfucado (&k)",
+  "text.autoconfig.fzmm.option.general.hideMessagesRegex": "Los mensajes que coinciden con el regex son mostrados en el actionbar",
 
   "text.autoconfig.fzmm.option.replaceTexts.enableReplaceText": "Remplazar textos que envias por chat",
   "text.autoconfig.fzmm.option.replaceTexts.texts": "Lista de textos a remplazar cuando envias un mensaje",
