@@ -17,7 +17,7 @@ public abstract class ItemFrameEntityRendererMixin {
     public void render(ItemFrameEntity itemFrameEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo info) {
         FzmmConfig config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig();
 
-        if (config.general.forceInvisibleItemFrame) {
+        if (config.general.forceInvisibleItemFrame && !itemFrameEntity.getHeldItemStack().isEmpty()) {
             itemFrameEntity.setInvisible(true);
         }
     }
