@@ -8,10 +8,10 @@
   "client": [
     "ChatHudListenerMixin",
     "ChatScreenMixin",
+    "ClientPlayerEntityMixin",
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
     "MinecraftClientMixin",
-    "PlayerMixin",
     "StatusEffectInstanceMixin",
     "StyleMixin"
   ],
