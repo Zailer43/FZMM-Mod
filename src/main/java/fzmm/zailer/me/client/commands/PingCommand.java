@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.suggestion.Suggestion;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.github.cottonmc.clientcommands.ArgumentBuilders;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
@@ -27,10 +28,9 @@ public class PingCommand {
                     displayPing(getPing(username), username);
                     return 1;
                 }
-        ).then(ArgumentBuilders.argument("username", StringArgumentType.greedyString()).executes(ctx -> {
+        ).then(ArgumentBuilders.argument("username", StringArgumentType.greedyString()).suggests(FzmmUtils.SUGGESTION_PLAYER).executes(ctx -> {
 
             String username = ctx.getArgument("username", String.class);
-            FzmmUtils.UsernameArgumentType(username);
 
             displayPing(getPing(username), username);
 

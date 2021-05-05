@@ -1,37 +1,40 @@
 package fzmm.zailer.me.utils;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.Formatting;
+import net.minecraft.text.Text;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class FzmmUtils {
-    public static void UsernameArgumentType(String name) throws CommandSyntaxException {
-        if (name.contains(" ")) {
-            throw new SimpleCommandExceptionType(new LiteralText(Formatting.RED + "Please only supply 1 argument.")).create();
+
+    public static final SuggestionProvider<CottonClientCommandSource> SUGGESTION_PLAYER = (context, builder) -> {
+
+        MinecraftClient mc = MinecraftClient.getInstance();
+        assert mc.world != null;
+
+        List<AbstractClientPlayerEntity> players = mc.world.getPlayers();
+
+        for (AbstractClientPlayerEntity player: players) {
+            builder.suggest(player.getName().getString());
         }
 
-        if (name.length() < 2) {
-            throw new SimpleCommandExceptionType(new LiteralText(Formatting.RED + "The provided username was too short.")).create();
+        return CompletableFuture.completedFuture(builder.build());
+    };
+
+    public static Text replaceColorCodes(Text message) {
+        String messageString = message.toString();
+        if (messageString.contains("&")) {
+            messageString = messageString.replaceAll("&", "§");
+            messageString = messageString.replaceAll("§§", "&");
+            message = new LiteralText(messageString);
         }
-
-        if (name.length() > 16) {
-            throw new SimpleCommandExceptionType(new LiteralText(Formatting.RED + "The provided username was too long.")).create();
-        }
-
-        ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-
-        if (networkHandler == null) {
-            throw new SimpleCommandExceptionType(new LiteralText(Formatting.RED + "An illegal exception occurred. (NetworkHandler null)")).create();
-        }
-
-        PlayerListEntry entry = networkHandler.getPlayerListEntry(MinecraftClient.getInstance().getSession().getProfile().getId());
-
-        if (entry == null) {
-            throw new SimpleCommandExceptionType(new LiteralText(Formatting.RED + "An illegal exception occurred. (PlayerList null)")).create();
-        }
+        return message;
     }
+
+
 }

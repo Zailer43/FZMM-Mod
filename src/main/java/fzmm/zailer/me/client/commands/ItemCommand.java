@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import fzmm.zailer.me.utils.FzmmUtils;
 import io.github.cottonmc.clientcommands.ArgumentBuilders;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import net.minecraft.client.MinecraftClient;
@@ -102,8 +103,9 @@ public class ItemCommand {
                         }))
         );
 
-        itemCommand.then(ArgumentBuilders.literal("head")
-                .then(ArgumentBuilders.argument("skull owner", StringArgumentType.greedyString()).executes(ctx -> {
+		itemCommand.then(ArgumentBuilders.literal("skull")
+			.then(ArgumentBuilders.argument("skull owner", StringArgumentType.greedyString()).suggests(FzmmUtils.SUGGESTION_PLAYER)
+				.executes(ctx -> {
 
                     String skullOwner = ctx.getArgument("skull owner", String.class);
                     getHead(skullOwner);
