@@ -20,6 +20,10 @@ public class FzmmConfig implements ConfigData {
     @ConfigEntry.Gui.TransitiveObject
     public ReplaceTexts replaceTexts = new ReplaceTexts();
 
+    @ConfigEntry.Category("encodebook")
+    @ConfigEntry.Gui.TransitiveObject
+    public Encodebook encodebook = new Encodebook();
+
     public static class General {
         @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
         public boolean toggleFont = false;
@@ -69,6 +73,16 @@ public class FzmmConfig implements ConfigData {
         );
     }
 
+    public static class Encodebook {
+        public int messageLength = 255;
+        public String myRandom = "1234567890abcdefqwrtyuiopsghjklzxvnmQWERTYUIOPASDFGHJKLZXCVBNM_,.";
+        public String translationKey = "secret_mc_";
+        public String defaultBookMessage = "Hello world";
+        public String bookTitle = "Encode book (%s)";
+        public String separatorMessage = "-----";
+        @ConfigEntry.Gui.Tooltip(count = 1)
+        public long endToEndEncodeKey = 0;
+    }
 
     public static void init() {
         AutoConfig.register(FzmmConfig.class, GsonConfigSerializer::new);

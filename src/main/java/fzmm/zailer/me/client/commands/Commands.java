@@ -18,6 +18,7 @@ public class Commands implements ClientCommandPlugin {
         fzmm.then(ItemCommand.getArgumentBuilder());
         fzmm.then(CompassCommand.getArgumentBuilder());
         fzmm.then(StartWith.getArgumentBuilder());
+        fzmm.then(EncodeBookCommand.getArgumentBuilder());
 
         dispatcher.register(fzmm);
     }
