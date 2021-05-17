@@ -6,6 +6,7 @@ import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class FzmmConfig implements ConfigData {
                 "^Hey! Sorry, but you can't (use|open|change|ride|break|place|harm) that (|block )here.$",
                 "^\\[P2\\] You are lacking the permission node: .*$"
         );
+        public ImagetextScale imagetextScale = ImagetextScale.DEFAULT;
     }
 
     public static class ReplaceTexts {
