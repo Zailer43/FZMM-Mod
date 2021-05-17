@@ -2,14 +2,15 @@ package fzmm.zailer.me.client.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.suggestion.Suggestion;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.github.cottonmc.clientcommands.ArgumentBuilders;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.MessageType;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
 
 import java.util.Objects;
@@ -56,15 +57,17 @@ public class PingCommand {
     public static void displayPing(int ping, String username) {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player == null) return;
-        Formatting color;
+        String pingMessage;
 
-        if (ping <= 150) color = Formatting.GREEN;
-        else if (ping <= 300) color = Formatting.DARK_GREEN;
-        else if (ping <= 600) color = Formatting.YELLOW;
-        else if (ping <= 1000) color = Formatting.RED;
-        else color = Formatting.DARK_RED;
+        if (ping <= 150) pingMessage = Formatting.GREEN + "";
+        else if (ping <= 300) pingMessage = Formatting.DARK_GREEN + "";
+        else if (ping <= 600) pingMessage = Formatting.YELLOW + "";
+        else if (ping <= 1000) pingMessage = Formatting.RED + "";
+        else pingMessage = Formatting.DARK_RED + "";
+        pingMessage += ping + " ms";
 
-        LiteralText message = new LiteralText(Formatting.BLUE + "El ping de " + username + " es " + color + ping + "ms" + Formatting.BLUE + "!");
+        MutableText message = new TranslatableText("commands.fzmm.ping.message", username, pingMessage)
+            .setStyle(Style.EMPTY.withColor(Formatting.BLUE));
         mc.inGameHud.addChatMessage(MessageType.SYSTEM, message,mc.player.getUuid());
     }
 }

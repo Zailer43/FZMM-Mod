@@ -20,7 +20,7 @@ public class RemplaceTextCommand {
                     FzmmConfig config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig();
                     if (mc.player == null) return 0;
 
-                    String messageString = Formatting.DARK_AQUA + "Lista de texto que se remplaza cuando lo envias:\n";
+                    String messageString = Formatting.DARK_AQUA + new LiteralText("commands.fzmm.replaceText.message").getString() + "\n";
 
                     for (FzmmConfig.Pair text : config.replaceTexts.texts)
                         messageString +=  Formatting.GREEN + text.getOriginal() + Formatting.YELLOW  + "  ->  " + Formatting.GREEN +  text.getReplace() + "\n";

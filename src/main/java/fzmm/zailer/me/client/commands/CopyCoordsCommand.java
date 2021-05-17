@@ -19,10 +19,9 @@ public class CopyCoordsCommand {
             long z = Math.round(mc.player.getZ());
             String coords =  x + " " + y + " " + z;
 
-            MutableText message = new LiteralText(Formatting.GREEN + "-> Click para copiar las coordenadas <- ")
+            MutableText message = new LiteralText(Formatting.GREEN + coords)
                     .setStyle(Style.EMPTY
                             .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, coords))
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText(coords)))
                     );
 
             mc.inGameHud.addChatMessage(MessageType.SYSTEM, message, mc.player.getUuid());
