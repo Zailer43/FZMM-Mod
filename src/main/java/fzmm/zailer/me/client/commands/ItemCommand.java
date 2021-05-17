@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.commands;
 
+import com.google.gson.Gson;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -8,6 +9,7 @@ import fzmm.zailer.me.utils.FzmmUtils;
 import io.github.cottonmc.clientcommands.ArgumentBuilders;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.argument.ItemEnchantmentArgumentType;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
@@ -17,291 +19,416 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Map;
+
 public class ItemCommand {
 
-    private static final MinecraftClient MC = MinecraftClient.getInstance();
+	static final CommandException ERROR_WITHOUT_NBT = new CommandException(new TranslatableText("commands.fzmm.item.withoutNbt"));
+	static final CommandException ERROR_CONFIG_NOT_FOUND = new CommandException(new TranslatableText("commands.fzmm.item.lore.fromConfig.notFound"));
 
-    public static LiteralArgumentBuilder<CottonClientCommandSource> getArgumentBuilder() {
-        LiteralArgumentBuilder<CottonClientCommandSource> itemCommand = ArgumentBuilders.literal("item");
+	private static final MinecraftClient MC = MinecraftClient.getInstance();
 
-        itemCommand.then(ArgumentBuilders.literal("name")
-                .then(ArgumentBuilders.argument("name", TextArgumentType.text()).executes(ctx -> {
+	public static LiteralArgumentBuilder<CottonClientCommandSource> getArgumentBuilder() {
+		LiteralArgumentBuilder<CottonClientCommandSource> itemCommand = ArgumentBuilders.literal("item");
 
-                    Text name = ctx.getArgument("name", Text.class);
+		itemCommand.then(ArgumentBuilders.literal("name")
+			.then(ArgumentBuilders.argument("name", TextArgumentType.text()).executes(ctx -> {
 
-                    name = replaceColorCodes(name);
-                    renameItem(name);
-                    return 1;
-                }))
-        );
+				Text name = ctx.getArgument("name", Text.class);
 
-        itemCommand.then(ArgumentBuilders.literal("give")
-                .then(ArgumentBuilders.argument("item", ItemStackArgumentType.itemStack()).executes((ctx) -> {
+				name = FzmmUtils.replaceColorCodes(name);
+				renameItem(name);
+				return 1;
+			}))
+		);
 
-                    giveItem(ItemStackArgumentType.getItemStackArgument(ctx, "item"), 1);
-                    return 1;
+		itemCommand.then(ArgumentBuilders.literal("lore")
+			.then(ArgumentBuilders.literal("add")
+				.then(ArgumentBuilders.argument("message", TextArgumentType.text()).executes(ctx -> {
 
-                }).then(ArgumentBuilders.argument("amount", IntegerArgumentType.integer(1, 127)).executes((ctx) -> {
+					Text message = ctx.getArgument("message", Text.class);
 
-                    int amount = IntegerArgumentType.getInteger(ctx, "amount");
-                    ItemStackArgument item = ItemStackArgumentType.getItemStackArgument(ctx, "item");
+					message = FzmmUtils.replaceColorCodes(message);
+					addLore(message);
+					return 1;
+				}))
+			).then(ArgumentBuilders.literal("addfromconfig")
+				.then(ArgumentBuilders.argument("config key", StringArgumentType.word()).executes(ctx -> {
 
-                    giveItem(item, amount);
-                    return 1;
-                })))
+					addLoreFromConfig(ctx.getArgument("config key", String.class));
+					return 1;
+				}))
+			).then(ArgumentBuilders.literal("remove")
+				.then(ArgumentBuilders.argument("line", IntegerArgumentType.integer(0, 32767)).executes(ctx -> {
 
-        );
+					removeLore(ctx.getArgument("line", int.class));
+					return 1;
+				}))
+			)
+		);
 
-        itemCommand.then(ArgumentBuilders.literal("enchant")
-                .then(ArgumentBuilders.argument("enchantment", ItemEnchantmentArgumentType.itemEnchantment()).executes(ctx -> {
 
-                    Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
+		itemCommand.then(ArgumentBuilders.literal("give")
+			.then(ArgumentBuilders.argument("item", ItemStackArgumentType.itemStack()).executes((ctx) -> {
 
-                    addEnchant(enchant, 127);
-                    return 1;
+				giveItem(ItemStackArgumentType.getItemStackArgument(ctx, "item"), 1);
+				return 1;
 
-                }).then(ArgumentBuilders.argument("level", IntegerArgumentType.integer(-127, 127)).executes(ctx -> {
+			}).then(ArgumentBuilders.argument("amount", IntegerArgumentType.integer(1, 127)).executes((ctx) -> {
 
-                    Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
-                    int level = ctx.getArgument("level", int.class);
+				int amount = IntegerArgumentType.getInteger(ctx, "amount");
+				ItemStackArgument item = ItemStackArgumentType.getItemStackArgument(ctx, "item");
 
-                    addEnchant(enchant, level);
-                    return 1;
-                })))
-        );
+				giveItem(item, amount);
+				return 1;
+			})))
 
-        itemCommand.then(ArgumentBuilders.literal("nbt")
-                .executes(ctx -> {
-                    displayNbt();
-                    return 1;
-                })
-        );
+		);
 
-        itemCommand.then(ArgumentBuilders.literal("hat")
-                .executes(ctx -> {
-                    assert MC.player != null;
+		itemCommand.then(ArgumentBuilders.literal("enchant")
+			.then(ArgumentBuilders.argument("enchantment", ItemEnchantmentArgumentType.itemEnchantment()).executes(ctx -> {
 
-                    ItemStack stack = MC.player.inventory.getMainHandStack();
-                    MC.player.equipStack(EquipmentSlot.HEAD, stack);
-                    return 1;
-                })
-        );
+				Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
 
-        itemCommand.then(ArgumentBuilders.literal("overstack")
-                        .then(ArgumentBuilders.argument("amount", IntegerArgumentType.integer(2, 127)).executes(ctx -> {
+				addEnchant(enchant, 127);
+				return 1;
 
-                            int amount = ctx.getArgument("amount", int.class);
-                            overStack(amount);
-                            return 1;
+			}).then(ArgumentBuilders.argument("level", IntegerArgumentType.integer(-127, 127)).executes(ctx -> {
 
-                        }))
-        );
+				Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
+				int level = ctx.getArgument("level", int.class);
+
+				addEnchant(enchant, level);
+				return 1;
+			})))
+		);
+
+		itemCommand.then(ArgumentBuilders.literal("nbt")
+			.executes(ctx -> {
+				displayNbt();
+				return 1;
+			})
+		);
+
+		itemCommand.then(ArgumentBuilders.literal("hat")
+			.executes(ctx -> {
+				assert MC.player != null;
+
+				ItemStack stack = MC.player.inventory.getMainHandStack();
+				MC.player.equipStack(EquipmentSlot.HEAD, stack);
+				return 1;
+			})
+		);
+
+		itemCommand.then(ArgumentBuilders.literal("overstack")
+			.then(ArgumentBuilders.argument("amount", IntegerArgumentType.integer(2, 127)).executes(ctx -> {
+
+				int amount = ctx.getArgument("amount", int.class);
+				overStack(amount);
+				return 1;
+
+			}))
+		);
 
 		itemCommand.then(ArgumentBuilders.literal("skull")
 			.then(ArgumentBuilders.argument("skull owner", StringArgumentType.greedyString()).suggests(FzmmUtils.SUGGESTION_PLAYER)
 				.executes(ctx -> {
 
-                    String skullOwner = ctx.getArgument("skull owner", String.class);
-                    getHead(skullOwner);
-                    return 1;
+					String skullOwner = ctx.getArgument("skull owner", String.class);
+					getHead(skullOwner);
+					return 1;
 
-                }))
-        );
+				}))
+		);
 
-        itemCommand.then(ArgumentBuilders.literal("fullcontainer")
-                .then(ArgumentBuilders.argument("slots to fill", IntegerArgumentType.integer(1, 27)).executes(ctx -> {
+		itemCommand.then(ArgumentBuilders.literal("fullcontainer")
+			.then(ArgumentBuilders.argument("slots to fill", IntegerArgumentType.integer(1, 27)).executes(ctx -> {
 
-                    fullContainer(ctx.getArgument("slots to fill", int.class), 0);
-                    return 1;
+				fullContainer(ctx.getArgument("slots to fill", int.class), 0);
+				return 1;
 
-                }).then(ArgumentBuilders.argument("first slot", IntegerArgumentType.integer(0, 27)).executes(ctx -> {
+			}).then(ArgumentBuilders.argument("first slot", IntegerArgumentType.integer(0, 27)).executes(ctx -> {
 
-                    int slotsToFill = ctx.getArgument("slots to fill", int.class);
-                    int firstSlot = ctx.getArgument("first slot", int.class);
+				int slotsToFill = ctx.getArgument("slots to fill", int.class);
+				int firstSlot = ctx.getArgument("first slot", int.class);
 
-                    fullContainer(slotsToFill, firstSlot);
-                    return 1;
+				fullContainer(slotsToFill, firstSlot);
+				return 1;
 
-                })))
-        );
+			})))
+		);
 
-        itemCommand.then(ArgumentBuilders.literal("lock")
-                .then(ArgumentBuilders.argument("key", StringArgumentType.greedyString()).executes(ctx -> {
+		itemCommand.then(ArgumentBuilders.literal("lock")
+			.then(ArgumentBuilders.argument("key", StringArgumentType.greedyString()).executes(ctx -> {
 
-                    String key = ctx.getArgument("key", String.class);
-                    key = replaceColorCodes(new LiteralText(key)).getString();
-                    lockContainer(key);
-                    return 1;
+				String key = ctx.getArgument("key", String.class);
+				key = FzmmUtils.replaceColorCodes(new LiteralText(key)).getString();
+				lockContainer(key);
+				return 1;
 
-                }))
-        );
+			}))
+		);
 
-        return itemCommand;
-    }
+		return itemCommand;
+	}
 
-    private static Text replaceColorCodes(Text message) {
-        String messageString = message.getString();
-        messageString = messageString.replaceAll("&", "§");
-        messageString = messageString.replaceAll("§§", "&");
-        message = new LiteralText(messageString);
-        return message;
-    }
+	private static void renameItem(Text name) {
+		assert MC.player != null;
 
-    private static void renameItem(Text name) {
-        assert MC.player != null;
+		ItemStack stack = MC.player.inventory.getMainHandStack();
+		stack.setCustomName(name);
+		MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
+	}
 
-        ItemStack stack = MC.player.inventory.getMainHandStack();
-        stack.setCustomName(name);
-        MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
-    }
+	private static void giveItem(ItemStackArgument item, int amount) throws CommandSyntaxException {
+		assert MC.player != null;
 
-    private static void giveItem(ItemStackArgument item, int amount) throws CommandSyntaxException {
-        assert MC.player != null;
+		ItemStack itemStack = item.createStack(amount, false);
+		MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+	}
 
-        ItemStack itemStack = item.createStack(amount, false);
-        MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
-    }
+	private static void addEnchant(Enchantment enchant, int level) {
+		assert MC.player != null;
 
-    private static void addEnchant(Enchantment enchant, int level) {
-        assert MC.player != null;
+		ItemStack stack = MC.player.inventory.getMainHandStack();
+		stack.addEnchantment(enchant, level);
+		MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
+	}
 
-        ItemStack stack = MC.player.inventory.getMainHandStack();
-        stack.addEnchantment(enchant, level);
-        MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
-    }
+	private static void displayNbt() {
+		assert MC.player != null;
+		ItemStack stack = MC.player.inventory.getMainHandStack();
 
-    private static void displayNbt() {
-        assert MC.player != null;
-        ItemStack stack = MC.player.inventory.getMainHandStack();
+		if (stack.getTag() == null) {
+			throw ERROR_WITHOUT_NBT;
+		}
+		String nbt = stack.getTag().toString().replaceAll("§", "&");
 
-        if (stack.getTag() == null) {
-            LiteralText message = new LiteralText(Formatting.RED + "Ese item no tiene NBT");
-            MC.inGameHud.addChatMessage(MessageType.SYSTEM, message, MC.player.getUuid());
-            return;
-        }
-        String nbt = stack.getTag().toString().replaceAll("§", "&");
+		MutableText message = new LiteralText(stack + ": " + nbt)
+			.setStyle(Style.EMPTY
+				.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, nbt))
+				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
+			);
 
-        MutableText message = new LiteralText(stack.toString() + ": " + nbt)
-                .setStyle(Style.EMPTY
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, nbt))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
-                );
+		MutableText length = new LiteralText(Formatting.BLUE + "Length: " + Formatting.DARK_AQUA + nbt.length())
+			.setStyle(Style.EMPTY
+				.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, String.valueOf(nbt.length())))
+				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
+			);
 
-        MutableText length = new LiteralText(Formatting.BLUE + "Length: " + Formatting.DARK_AQUA  + nbt.length())
-                .setStyle(Style.EMPTY
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, String.valueOf(nbt.length())))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
-                );
+		MC.inGameHud.addChatMessage(MessageType.SYSTEM, message, MC.player.getUuid());
 
-        MC.inGameHud.addChatMessage(MessageType.SYSTEM, message, MC.player.getUuid());
+		MC.inGameHud.addChatMessage(MessageType.SYSTEM, length, MC.player.getUuid());
+	}
 
-        MC.inGameHud.addChatMessage(MessageType.SYSTEM, length, MC.player.getUuid());
-    }
+	private static void overStack(int amount) {
+		assert MC.player != null;
 
-    private static void overStack(int amount) {
-        assert MC.player != null;
+		ItemStack stack = MC.player.inventory.getMainHandStack();
 
-        ItemStack stack = MC.player.inventory.getMainHandStack();
+		stack.setCount(amount);
 
-        stack.setCount(amount);
+		MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
+	}
 
-        MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
-    }
+	private static void getHead(String skullOwner) {
+		assert MC.player != null;
 
-    private static void getHead(String skullOwner) {
-        assert MC.player != null;
+		ItemStack itemStack = new ItemStack(Registry.ITEM.get(new Identifier("player_head")));
 
-        ItemStack itemStack = new ItemStack(Registry.ITEM.get(new Identifier("player_head")));
+		CompoundTag tag = new CompoundTag();
 
-        CompoundTag tag = new CompoundTag();
+		tag.putString("SkullOwner", skullOwner);
 
-        tag.putString("SkullOwner", skullOwner);
+		itemStack.setTag(tag);
+		MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+	}
 
-        itemStack.setTag(tag);
-        MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
-    }
+	private static void fullContainer(int slotsToFill, int firstSlots) {
+		assert MC.player != null;
 
-    private static void fullContainer(int slotsToFill, int firstSlots) {
-        assert MC.player != null;
+		//{BlockEntityTag:{Items:[{Slot:0b,id:"minecraft:stone",Count:1b}],id:"minecraft:dispenser"}}
 
-        //{BlockEntityTag:{Items:[{Slot:0b,id:"minecraft:stone",Count:1b}],id:"minecraft:dispenser"}}
+		ItemStack containerItemStack = MC.player.inventory.getMainHandStack();
+		ItemStack itemStack = MC.player.getOffHandStack();
 
-        ItemStack containerItemStack = MC.player.inventory.getMainHandStack();
-        ItemStack itemStack = MC.player.getOffHandStack();
+		CompoundTag tag = new CompoundTag();
+		CompoundTag blockEntityTag = new CompoundTag();
+		ListTag items = fillSlots(new ListTag(), itemStack, slotsToFill, firstSlots);
 
-        CompoundTag tag = new CompoundTag();
-        CompoundTag blockEntityTag = new CompoundTag();
-        ListTag items = new ListTag();
+		blockEntityTag.put("Items", items);
+		blockEntityTag.putString("id", containerItemStack.getItem().toString());
 
-        for (int i = 0; i != slotsToFill; i++) {
-            CompoundTag tagItems = new CompoundTag();
+		if (!(containerItemStack.getTag() == null)) {
+			tag = containerItemStack.getTag();
 
-            tagItems.putInt("Slot", i + firstSlots);
-            tagItems.putString("id", itemStack.getItem().toString());
-            tagItems.putInt("Count", itemStack.getCount());
-            if (!(itemStack.getTag() == null)) tagItems.put("tag", itemStack.getTag());
+			if (!(containerItemStack.getTag().getCompound("BlockEntityTag") == null)) {
+				items = fillSlots(tag.getCompound("BlockEntityTag").getList("Items", 10), itemStack, slotsToFill, firstSlots);
+				blockEntityTag.put("Items", items);
+			}
+		}
 
-            items.addTag(i, tagItems);
-        }
+		tag.put("BlockEntityTag", blockEntityTag);
+		containerItemStack.setTag(tag);
+		MC.player.equipStack(EquipmentSlot.MAINHAND, containerItemStack);
+	}
 
-        if (!(containerItemStack.getTag() == null)) {
-            tag = containerItemStack.getTag();
+	private static ListTag fillSlots(ListTag listTag, ItemStack itemStack, int slotsToFill, int firstSlot) {
+		for (int i = 0; i != slotsToFill; i++) {
+			CompoundTag tagItems = new CompoundTag();
 
-            if (!(containerItemStack.getTag().getCompound("BlockEntityTag") == null)) tag.getCompound("BlockEntityTag").put("Items", items);
-            else {
-                blockEntityTag.put("Items", items);
-                tag.put("BlockEntityTag", blockEntityTag);
-            }
+			tagItems.putInt("Slot", i + firstSlot);
+			tagItems.putString("id", itemStack.getItem().toString());
+			tagItems.putInt("Count", itemStack.getCount());
+			if (!(itemStack.getTag() == null)) tagItems.put("tag", itemStack.getTag());
 
-        } else {
-            blockEntityTag.put("Items", items);
-            blockEntityTag.putString("id", containerItemStack.getItem().toString());
-        }
+			listTag.add(tagItems);
+		}
+		return listTag;
+	}
 
-        if (!(containerItemStack.getTag().getCompound("BlockEntityTag") == null)) {
-            tag.getCompound("BlockEntityTag").put("Items", items);
-            tag.getCompound("BlockEntityTag").putString("id", containerItemStack.getItem().toString());
-        } else tag.put("BlockEntityTag", blockEntityTag);
+	private static void lockContainer(String key) {
+		assert MC.player != null;
 
-        containerItemStack.setTag(tag);
-        MC.player.equipStack(EquipmentSlot.MAINHAND, containerItemStack);
-    }
+		//{BlockEntityTag:{Lock:"abc"}}
 
-    private static void lockContainer(String key) {
-        assert MC.player != null;
+		ItemStack containerItemStack = MC.player.inventory.getMainHandStack();
+		ItemStack itemStack = MC.player.getOffHandStack();
 
-        //{BlockEntityTag:{Lock:"abc"}}
+		CompoundTag tag = new CompoundTag();
+		CompoundTag blockEntityTag = new CompoundTag();
 
-        ItemStack containerItemStack = MC.player.inventory.getMainHandStack();
-        ItemStack itemStack = MC.player.getOffHandStack();
+		if (!(containerItemStack.getTag() == null)) {
+			tag = containerItemStack.getTag();
 
-        CompoundTag tag = new CompoundTag();
-        CompoundTag blockEntityTag = new CompoundTag();
+			if (!(containerItemStack.getTag().getCompound("BlockEntityTag") == null))
+				tag.getCompound("BlockEntityTag").putString("Lock", key);
+			else {
+				blockEntityTag.putString("Lock", key);
+				tag.put("BlockEntityTag", blockEntityTag);
+			}
 
-        if (!(containerItemStack.getTag() == null)) {
-            tag = containerItemStack.getTag();
+		} else {
+			blockEntityTag.putString("Lock", key);
+			tag.put("BlockEntityTag", blockEntityTag);
+		}
 
-            if (!(containerItemStack.getTag().getCompound("BlockEntityTag") == null)) tag.getCompound("BlockEntityTag").putString("Lock", key);
-            else {
-                blockEntityTag.putString("Lock", key);
-                tag.put("BlockEntityTag", blockEntityTag);
-            }
+		containerItemStack.setTag(tag);
+		itemStack.setCustomName(new LiteralText(key));
 
-        } else {
-            blockEntityTag.putString("Lock", key);
-            tag.put("BlockEntityTag", blockEntityTag);
-        }
+		MC.player.equipStack(EquipmentSlot.MAINHAND, containerItemStack);
+		MC.player.equipStack(EquipmentSlot.OFFHAND, itemStack);
+	}
 
-        containerItemStack.setTag(tag);
-        itemStack.setCustomName(new LiteralText(key));
+	private static void addLore(Text message) {
+		assert MC.player != null;
 
-        MC.player.equipStack(EquipmentSlot.MAINHAND, containerItemStack);
-        MC.player.equipStack(EquipmentSlot.OFFHAND, itemStack);
-    }
+		//{display:{Lore:['{"text":"1"}','{"text":"2"}','[{"text":"3"},{"text":"4"}]']}}
+
+		ItemStack itemStack = MC.player.getMainHandStack();
+
+		CompoundTag tag = new CompoundTag();
+		CompoundTag display = new CompoundTag();
+		ListTag lore = new ListTag();
+		lore.add(StringTag.of(Text.Serializer.toJson(message)));
+
+		display.put("Lore", lore);
+
+		if (!(itemStack.getTag() == null)) {
+			tag = itemStack.getTag();
+
+			if (!(itemStack.getTag().getCompound("display") == null)) {
+				lore = tag.getCompound("display").getList("Lore", 8);
+				lore.add(StringTag.of(Text.Serializer.toJson(message)));
+				display.put("Lore", lore);
+				display.putString("Name", tag.getCompound("display").getString("Name"));
+			}
+		}
+
+		tag.put("display", display);
+		itemStack.setTag(tag);
+		MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+	}
+
+	private static void addLoreFromConfig(String configName) {
+		assert MC.player != null;
+
+		//	[
+		//		"&9-------",
+		//		"&a[TEST]",
+		//		"&9-------"
+		//	]
+
+		try {
+			Gson gson = new Gson();
+			Reader reader = Files.newBufferedReader(Paths.get(MC.runDirectory.toPath().toString(), "config", "fzmm", "lores.json"));
+			Map<?, ?> map = gson.fromJson(reader, Map.class);
+			boolean configFound = false;
+			ArrayList<String> loreArrayString = new ArrayList<>();
+			ArrayList<StringTag> loreArray = new ArrayList<>();
+			ItemStack itemStack = MC.player.getMainHandStack();
+
+			for (Map.Entry<?, ?> entry : map.entrySet()) {
+				if (entry.getKey().equals(configName)) {
+					loreArrayString = (ArrayList<String>) entry.getValue();
+					configFound = true;
+				}
+			}
+
+			reader.close();
+
+			for (String lore: loreArrayString) {
+				loreArray.add(StringTag.of(lore));
+			}
+
+			if (!configFound) {
+				throw ERROR_CONFIG_NOT_FOUND;
+			}
+
+			itemStack.setTag(FzmmUtils.addLores(itemStack, loreArray));
+
+			MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void removeLore(int lineToRemove) {
+		assert MC.player != null;
+
+		//{display:{Lore:['{"text":"1"}','{"text":"2"}','[{"text":"3"},{"text":"4"}]']}}
+
+		ItemStack itemStack = MC.player.getMainHandStack();
+
+		if (!(itemStack.getTag() == null)) {
+			CompoundTag tag = itemStack.getTag();
+
+			if (!(itemStack.getTag().getCompound("display") == null)) {
+				CompoundTag display = new CompoundTag();
+				ListTag lore;
+
+				lore = tag.getCompound("display").getList("Lore", 8);
+				lore.remove(lineToRemove);
+				display.put("Lore", lore);
+				display.putString("Name", tag.getCompound("display").getString("Name"));
+
+				tag.put("display", display);
+				itemStack.setTag(tag);
+				MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+			}
+		}
+
+
+	}
 }

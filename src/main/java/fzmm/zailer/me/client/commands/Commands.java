@@ -7,6 +7,8 @@ import io.github.cottonmc.clientcommands.ClientCommandPlugin;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 
 public class Commands implements ClientCommandPlugin {
+	//TODO: Cambiar todos los client side commands por una GUI
+
     @Override
     public void registerCommands(CommandDispatcher<CottonClientCommandSource> dispatcher) {
 
@@ -20,6 +22,7 @@ public class Commands implements ClientCommandPlugin {
         fzmm.then(StartWith.getArgumentBuilder());
         fzmm.then(EncodeBookCommand.getArgumentBuilder());
         fzmm.then(GradientCommand.getArgumentBuilder());
+        fzmm.then(ImageTextCommand.getArgumentBuilder());
 
         dispatcher.register(fzmm);
     }
