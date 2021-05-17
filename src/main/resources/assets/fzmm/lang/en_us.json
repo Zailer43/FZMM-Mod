@@ -1,34 +1,36 @@
 {
-  "text.autoconfig.fzmm.title": "FZMM Mod configuraciones",
-
+  "commands.fzmm.gradient.error.character": "Los colores solo pueden contener carácteres hexadecimales (0-9,a-f)",
+  "commands.fzmm.gradient.error.length": "Los colores deben tener una longitud de 6 caracteres hexadecimales",
+  "commands.fzmm.imagetext.bookLimit": "El libro supera el límite de 32500 caracteres",
+  "commands.fzmm.imagetext.imageNotFound": "No se encontró la imagen",
+  "commands.fzmm.imagetext.malformedUrl": "URL mal formada",
+  "commands.fzmm.item.lore.fromConfig.notFound": "No se encontró la configuración, debes crear un archivo en .minecraft/config/fzmm/lores.json",
+  "commands.fzmm.item.withoutNbt": "Ese item no tiene NBT",
+  "commands.fzmm.ping.message": "El ping de %1$s es %2$s!",
+  "commands.fzmm.replaceText.message": "Lista de texto que se remplaza cuando lo envias:",
+  "key.categories.fzmm": "FZMM Mod",
+  "key.textObfuscated": "Toggle Text Obfuscated",
+  "text.autoconfig.fzmm.category.encodebook": "Encodebook",
   "text.autoconfig.fzmm.category.general": "General",
   "text.autoconfig.fzmm.category.replaceTexts": "Textos remplazables",
-  "text.autoconfig.fzmm.category.encodebook": "Encodebook",
-
-  "text.autoconfig.fzmm.option.encodebook.messageLength": "Longitud del mensaje",
-  "text.autoconfig.fzmm.option.encodebook.myRandom": "Carácteres de relleno",
-  "text.autoconfig.fzmm.option.encodebook.translationKey": "Key de traducción",
-  "text.autoconfig.fzmm.option.encodebook.defaultBookMessage": "Mensaje por defecto del libro",
-  "text.autoconfig.fzmm.option.encodebook.bookTitle": "Título del libro",
-  "text.autoconfig.fzmm.option.encodebook.separatorMessage": "Mensaje para separar el texto desencriptado del relleno",
-  "text.autoconfig.fzmm.option.encodebook.endToEndEncodeKey": "Encriptado extremo a extremo",
-  "text.autoconfig.fzmm.option.encodebook.endToEndEncodeKey.@Tooltip": "Se necesita otro decoder pero se muestra como si se utilizara la misma seed",
-
-
-  "text.autoconfig.fzmm.option.general.toggleFont": "Ｔｏｇｇｌｅ ａ ｅｓｔａ ｌｅｔｒａ",
-  "text.autoconfig.fzmm.option.general.forceInvisibleItemFrame": "Forzar a los item frames a ser invisibles",
-  "text.autoconfig.fzmm.option.general.disableNightVisionIfBlindness": "Quita el efecto de visión nocturna si tienes ceguera (MC-165208)",
-  "text.autoconfig.fzmm.option.general.textObfuscated": "Deshabilita el texto obsfucado (&k)",
-  "text.autoconfig.fzmm.option.general.hideMessagesRegex": "Los mensajes que coinciden con el regex son mostrados en el actionbar",
-
-  "text.autoconfig.fzmm.option.replaceTexts.enableReplaceText": "Remplazar textos que envias por chat",
-  "text.autoconfig.fzmm.option.replaceTexts.texts": "Lista de textos a remplazar cuando envias un mensaje",
-
   "text.autoconfig.fzmm.option.Pair": "",
   "text.autoconfig.fzmm.option.Pair.original": "Msg original",
   "text.autoconfig.fzmm.option.Pair.replace": "Msg remplazado",
-
-
-  "key.categories.fzmm": "FZMM Mod",
-  "key.textObfuscated": "Toggle Text Obfuscated"
+  "text.autoconfig.fzmm.option.encodebook.bookTitle": "Título del libro",
+  "text.autoconfig.fzmm.option.encodebook.defaultBookMessage": "Mensaje por defecto del libro",
+  "text.autoconfig.fzmm.option.encodebook.endToEndEncodeKey": "Encriptado extremo a extremo",
+  "text.autoconfig.fzmm.option.encodebook.endToEndEncodeKey.@Tooltip": "Se necesita otro decoder pero se muestra como si se utilizara la misma seed",
+  "text.autoconfig.fzmm.option.encodebook.messageLength": "Longitud del mensaje",
+  "text.autoconfig.fzmm.option.encodebook.myRandom": "Carácteres de relleno",
+  "text.autoconfig.fzmm.option.encodebook.separatorMessage": "Mensaje para separar el texto desencriptado del relleno",
+  "text.autoconfig.fzmm.option.encodebook.translationKey": "Key de traducción",
+  "text.autoconfig.fzmm.option.general.disableNightVisionIfBlindness": "Quita el efecto de visión nocturna si tienes ceguera (MC-165208)",
+  "text.autoconfig.fzmm.option.general.forceInvisibleItemFrame": "Forzar a los item frames a ser invisibles",
+  "text.autoconfig.fzmm.option.general.hideMessagesRegex": "Los mensajes que coinciden con el regex son mostrados en el actionbar",
+  "text.autoconfig.fzmm.option.general.imagetextScale": "Tipo de reescalado",
+  "text.autoconfig.fzmm.option.general.textObfuscated": "Deshabilita el texto obsfucado (&k)",
+  "text.autoconfig.fzmm.option.general.toggleFont": "Ｔｏｇｇｌｅ ａ ｅｓｔａ ｌｅｔｒａ",
+  "text.autoconfig.fzmm.option.replaceTexts.enableReplaceText": "Remplazar textos que envias por chat",
+  "text.autoconfig.fzmm.option.replaceTexts.texts": "Lista de textos a remplazar cuando envias un mensaje",
+  "text.autoconfig.fzmm.title": "FZMM Mod configuraciones"
 }

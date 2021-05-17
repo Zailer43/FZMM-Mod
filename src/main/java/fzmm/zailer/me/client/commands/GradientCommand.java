@@ -6,19 +6,35 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import io.github.cottonmc.clientcommands.ArgumentBuilders;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.command.CommandException;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
-import java.util.regex.Pattern;
+import java.util.Random;
 
 public class GradientCommand {
+	static final CommandException ERROR_LENGTH = new CommandException(new TranslatableText("commands.fzmm.gradient.error.length"));
+	static final CommandException ERROR_CHARACTER = new CommandException(new TranslatableText("commands.fzmm.gradient.error.character"));
+
 	public static LiteralArgumentBuilder<CottonClientCommandSource> getArgumentBuilder() {
 		return ArgumentBuilders.literal("gradient")
 			.then(ArgumentBuilders.argument("message", StringArgumentType.string())
+				.executes(ctx -> {
+					String message = ctx.getArgument("message", String.class);
+					Random random = new Random();
+					byte red = (byte) (random.nextInt(255) + Byte.MIN_VALUE),
+						green = (byte) (random.nextInt(255) + Byte.MIN_VALUE),
+						blue = (byte) (random.nextInt(255) + Byte.MIN_VALUE),
+						red2 = (byte) (random.nextInt(255) + Byte.MIN_VALUE),
+						green2 = (byte) (random.nextInt(255) + Byte.MIN_VALUE),
+						blue2 = (byte) (random.nextInt(255) + Byte.MIN_VALUE);
 
+					displayGradient(getGradient(message, red, green, blue, red2, green2, blue2));
+					return 1;
+				})
 				.then(ArgumentBuilders.argument("red", IntegerArgumentType.integer(0, 255))
 					.then(ArgumentBuilders.argument("green", IntegerArgumentType.integer(0, 255))
 						.then(ArgumentBuilders.argument("blue", IntegerArgumentType.integer(0, 255))
@@ -28,12 +44,12 @@ public class GradientCommand {
 										.executes(ctx -> {
 
 											String message = ctx.getArgument("message", String.class);
-											int red = ctx.getArgument("red", int.class);
-											int green = ctx.getArgument("green", int.class);
-											int blue = ctx.getArgument("blue", int.class);
-											int red2 = ctx.getArgument("red2", int.class);
-											int green2 = ctx.getArgument("green2", int.class);
-											int blue2 = ctx.getArgument("blue2", int.class);
+											byte red = (byte) (ctx.getArgument("red", int.class) + Byte.MIN_VALUE),
+												green = (byte) (ctx.getArgument("green", int.class) + Byte.MIN_VALUE),
+												blue = (byte) (ctx.getArgument("blue", int.class) + Byte.MIN_VALUE),
+												red2 = (byte) (ctx.getArgument("red2", int.class) + Byte.MIN_VALUE),
+												green2 = (byte) (ctx.getArgument("green2", int.class) + Byte.MIN_VALUE),
+												blue2 = (byte) (ctx.getArgument("blue2", int.class) + Byte.MIN_VALUE);
 
 											displayGradient(getGradient(message, red, green, blue, red2, green2, blue2));
 
@@ -52,34 +68,35 @@ public class GradientCommand {
 						}))));
 	}
 
-	public static int[] getArrayIntGradient(int initialColor, int finalColor, int gradientLength) {
+	public static byte[] getArrayIntGradient(byte initialColor, byte finalColor, int gradientLength) {
 		int gradientArrayLength = gradientLength - 1;
-		int[] gradient = new int[gradientLength];
+		byte[] gradient = new byte[gradientLength];
 		for (int i = 0; i != gradientLength; i++) {
-			gradient[i] = 0;
-			gradient[i] = 0;
+			gradient[i] = Byte.MIN_VALUE;
 		}
 
 		for (int i = 0; i != gradientLength; i++) {
 			float percentage = (float) (gradientArrayLength - i) / gradientArrayLength, //[86, 77, 68...
 				reversePercentage = (float) i / gradientArrayLength; //[0, 23, 46...
 
-			gradient[i] += (int) (initialColor * percentage);
-			gradient[i] += (int) (finalColor * reversePercentage);
+			gradient[i] += (byte) (initialColor * percentage);
+			gradient[i] += (byte) (finalColor * reversePercentage);
 		}
 
 		return gradient;
 	}
 
-	public static MutableText[] getGradient(String message, int red, int green, int blue, int red2, int green2, int blue2) {
+	public static MutableText[] getGradient(String message, byte red, byte green, byte blue, byte red2, byte green2, byte blue2) {
 		int gradientLength = message.length();
-		int[] gradientRed = getArrayIntGradient(red, red2, gradientLength),
+		byte[] gradientRed = getArrayIntGradient(red, red2, gradientLength),
 			gradientBlue = getArrayIntGradient(blue, blue2, gradientLength),
 			gradientGreen = getArrayIntGradient(green, green2, gradientLength);
 		MutableText[] gradientMessage = new MutableText[gradientLength];
 
 		for (int i = 0; i != gradientLength; i++) {
-			int rgb = (gradientRed[i] * 65536) + (gradientGreen[i] * 256) + gradientBlue[i];
+			int rgb = (Byte.toUnsignedInt(gradientRed[i]) * 65536) +
+				(Byte.toUnsignedInt(gradientGreen[i]) * 256) +
+				Byte.toUnsignedInt(gradientBlue[i]);
 			gradientMessage[i] = new LiteralText(message.charAt(i) + "")
 				.setStyle(Style.EMPTY
 					.withColor(TextColor.fromRgb(rgb))
@@ -89,28 +106,22 @@ public class GradientCommand {
 	}
 
 	public static void hexRGBSubCommand(String message, String RRGGBB, String RRGGBB2) {
-		String regex = "^[0-9,a-f]{6}$";
+		String regex = "^[0-9a-fA-F]{6}$";
 		MinecraftClient mc = MinecraftClient.getInstance();
 		assert mc.player != null;
 
 		if (RRGGBB.length() != 6 || RRGGBB2.length() != 6) {
-			Text error = new LiteralText(Formatting.RED + "Los colores deben tener una longitud de 6 caracteres hexadecimales");
-
-			mc.inGameHud.addChatMessage(MessageType.SYSTEM, error, mc.player.getUuid());
-			return;
+			throw ERROR_LENGTH;
 		} else if (!RRGGBB.matches(regex) || !RRGGBB2.matches(regex)) {
-			Text error = new LiteralText(Formatting.RED + "Los colores deben ser hexadecimales");
-
-			mc.inGameHud.addChatMessage(MessageType.SYSTEM, error, mc.player.getUuid());
-			return;
+			throw ERROR_CHARACTER;
 		}
 
-		int red = Integer.valueOf(RRGGBB.substring(0, 2), 16);
-		int green = Integer.valueOf(RRGGBB.substring(2, 4), 16);
-		int blue = Integer.valueOf(RRGGBB.substring(4, 6), 16);
-		int red2 = Integer.valueOf(RRGGBB2.substring(0, 2), 16);
-		int green2 = Integer.valueOf(RRGGBB2.substring(2, 4), 16);
-		int blue2 = Integer.valueOf(RRGGBB2.substring(4, 6), 16);
+		byte red = (byte) (Integer.valueOf(RRGGBB.substring(0, 2), 16) + Byte.MIN_VALUE),
+			green = (byte) (Integer.valueOf(RRGGBB.substring(2, 4), 16) + Byte.MIN_VALUE),
+			blue = (byte) (Integer.valueOf(RRGGBB.substring(4, 6), 16) + Byte.MIN_VALUE),
+			red2 = (byte) (Integer.valueOf(RRGGBB2.substring(0, 2), 16) + Byte.MIN_VALUE),
+			green2 = (byte) (Integer.valueOf(RRGGBB2.substring(2, 4), 16) + Byte.MIN_VALUE),
+			blue2 = (byte) (Integer.valueOf(RRGGBB2.substring(4, 6), 16) + Byte.MIN_VALUE);
 
 		displayGradient(getGradient(message, red, green, blue, red2, green2, blue2));
 

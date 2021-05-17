@@ -70,6 +70,34 @@ public class EncodeBookCommand {
 	}
 
 	public static void EncodeBook(int seed, String message, String author) {
+		/*
+		{
+			title:"&3Encode book (secret_mc_1)",
+			author:"Zailer43",
+			pages:[
+				'{
+					"translate":"secret_mc_1",
+					"with":[
+						"y","F","r","d","6","5","8","y","s","A",...,"e","s"
+					]
+				}',
+				'{
+					"hoverEvent":{
+						"action":"show_text",
+						"contents":{
+							"text":"yFrd658ysA...es"
+						}
+					},
+					"text":"&9Idea by: &0turkeybot69\\n
+					&9Encode key: &0secret_mc_1\\n
+					&9End-to-end encode: &0true\\n
+					&9Encode message: &0Hover over here"
+				}'
+			]
+		}
+
+		 */
+
 		MinecraftClient mc = MinecraftClient.getInstance();
 		FzmmConfig.Encodebook config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().encodebook;
 		Character[] encodeMessage = new Character[config.messageLength];
