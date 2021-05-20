@@ -15,6 +15,7 @@ import net.minecraft.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 public class FzmmUtils {
 
@@ -72,4 +73,11 @@ public class FzmmUtils {
 		return tag;
 	}
 
+	public static String escapeSpecialRegexChars(String regexInit, String specialRegexChar, String regexEnd) {
+		Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^\\\\|]");
+		return Pattern.compile(regexInit + SPECIAL_REGEX_CHARS.matcher(specialRegexChar).replaceAll("\\\\$0") + regexEnd).toString();
+	}
+
+	//TODO: Metodo para givear items de manera segura al jugador
+	// verificando si supera o no el límite de 1.9mb de nbt en su inv actual + el item que se va a givear
 }

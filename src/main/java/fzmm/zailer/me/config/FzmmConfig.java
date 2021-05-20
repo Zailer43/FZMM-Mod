@@ -25,17 +25,20 @@ public class FzmmConfig implements ConfigData {
     @ConfigEntry.Gui.TransitiveObject
     public Encodebook encodebook = new Encodebook();
 
+    @ConfigEntry.Category("imagetext")
+    @ConfigEntry.Gui.TransitiveObject
+    public Imagetext imagetext = new Imagetext();
+
     public static class General {
-        @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
         public boolean toggleFont = false;
         public boolean forceInvisibleItemFrame = false;
         public boolean disableNightVisionIfBlindness = false;
         public boolean textObfuscated = false;
+        @ConfigEntry.Gui.CollapsibleObject(startExpanded = true)
         public List<String> hideMessagesRegex = Arrays.asList(
                 "^Hey! Sorry, but you can't (use|open|change|ride|break|place|harm) that (|block )here.$",
                 "^\\[P2\\] You are lacking the permission node: .*$"
         );
-        public ImagetextScale imagetextScale = ImagetextScale.DEFAULT;
     }
 
     public static class ReplaceTexts {
@@ -84,6 +87,11 @@ public class FzmmConfig implements ConfigData {
         public String separatorMessage = "-----";
         @ConfigEntry.Gui.Tooltip(count = 1)
         public long endToEndEncodeKey = 0;
+    }
+
+    public static class Imagetext {
+        public ImagetextScale imagetextScale = ImagetextScale.DEFAULT;
+        public String defaultBookMessage = "Pon el cursor encima de este mensaje para ver una imagen";
     }
 
     public static void init() {
