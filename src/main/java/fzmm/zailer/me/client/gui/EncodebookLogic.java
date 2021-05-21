@@ -1,11 +1,6 @@
-package fzmm.zailer.me.client.commands;
+package fzmm.zailer.me.client.gui;
 
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fzmm.zailer.me.config.FzmmConfig;
-import io.github.cottonmc.clientcommands.ArgumentBuilders;
-import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EquipmentSlot;
@@ -21,46 +16,15 @@ import net.minecraft.util.Formatting;
 import java.util.Date;
 import java.util.Random;
 
-public class EncodeBookCommand {
-
-	public static LiteralArgumentBuilder<CottonClientCommandSource> getArgumentBuilder() {
-		return ArgumentBuilders.literal("encodebook")
-			.then(ArgumentBuilders.argument("seed", IntegerArgumentType.integer()).executes(ctx -> {
-				int seed = ctx.getArgument("seed", int.class);
-				FzmmConfig config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig();
-				MinecraftClient mc = MinecraftClient.getInstance();
-				assert mc.player != null;
-
-				EncodeBook(seed, config.encodebook.defaultBookMessage, mc.player.getName().getString());
-				return 1;
-
-			}).then(ArgumentBuilders.argument("message", StringArgumentType.string()).executes(ctx -> {
-				int seed = ctx.getArgument("seed", int.class);
-				String message = ctx.getArgument("message", String.class);
-				MinecraftClient mc = MinecraftClient.getInstance();
-				assert mc.player != null;
-
-				EncodeBook(seed, message, mc.player.getName().getString());
-				return 1;
-
-			}).then(ArgumentBuilders.argument("author", StringArgumentType.greedyString()).executes(ctx -> {
-				int seed = ctx.getArgument("seed", int.class);
-				String message = ctx.getArgument("message", String.class);
-				String author = ctx.getArgument("author", String.class);
-
-				EncodeBook(seed, message, author);
-				return 1;
-			}))));
-	}
-
-	public static int[] EncodeKey(long seed, int messageLength) {
-		int i = 0;
-		int[] encodeKey = new int[messageLength];
+public class EncodebookLogic {
+	protected static short[] EncodeKey(long seed, int messageLength) {
+		short i = 0;
+		short[] encodeKey = new short[messageLength];
 		Random number = new Random(seed);
 
-		encodeKey[i] = number.nextInt(messageLength);
+		encodeKey[i] = (short) number.nextInt(messageLength);
 		for (; i < messageLength; i++) {
-			encodeKey[i] = number.nextInt(messageLength);
+			encodeKey[i] = (short) number.nextInt(messageLength);
 			for (int j = 0; j < i; j++) {
 				if (encodeKey[i] == encodeKey[j]) i--;
 			}
@@ -69,7 +33,7 @@ public class EncodeBookCommand {
 		return encodeKey;
 	}
 
-	public static void EncodeBook(int seed, String message, String author) {
+	protected static void EncodeBook(final int SEED, String message, final String AUTHOR, final String PADDING_CHARS, final short MAX_MESSAGE_LENGTH, final String BOOK_TITLE) {
 		/*
 		{
 			title:"&3Encode book (secret_mc_1)",
@@ -100,48 +64,46 @@ public class EncodeBookCommand {
 
 		MinecraftClient mc = MinecraftClient.getInstance();
 		FzmmConfig.Encodebook config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().encodebook;
-		Character[] encodeMessage = new Character[config.messageLength];
-		int[] encodeKey;
-		int messageLength;
+		Character[] encodeMessage = new Character[MAX_MESSAGE_LENGTH];
+		short[] encodeKey;
 		Random random = new Random(new Date().getTime());
 		StringBuilder messageBuilder,
-			encodeMessageString = new StringBuilder(),
-			decoderString;
-		String[] myRandom = config.myRandom.split("");
+			encodeMessageString = new StringBuilder();
+		String[] myRandom = PADDING_CHARS.split("");
 		ItemStack book = Items.WRITTEN_BOOK.getDefaultStack();
 		CompoundTag tag = new CompoundTag();
 		ListTag listTag = new ListTag();
-		MutableText page1, page2, decoderMessage;
+		MutableText page1, page2;
 		assert mc.player != null;
 
 		message += config.separatorMessage;
 		message = message.replaceAll(" ", "_");
 		messageBuilder = new StringBuilder(message);
-		messageLength = message.length();
-		encodeKey = EncodeKey(seed + config.endToEndEncodeKey, config.messageLength);
+		int messageLength = message.length();
+		encodeKey = EncodeKey(SEED + config.endToEndEncodeKey, MAX_MESSAGE_LENGTH);
 
-		while (messageLength < config.messageLength) {
+		while (messageLength < MAX_MESSAGE_LENGTH) {
 			messageBuilder.append(myRandom[random.nextInt(myRandom.length)]);
 			messageLength++;
 		}
 
 		message = messageBuilder.toString();
-		for (int i = 0; i < config.messageLength; i++)
+		for (int i = 0; i < MAX_MESSAGE_LENGTH; i++)
 			encodeMessage[encodeKey[i]] = message.charAt(i);
-		for (int i = 0; i < config.messageLength; i++) {
+		for (int i = 0; i < MAX_MESSAGE_LENGTH; i++) {
 			encodeMessageString.append(encodeMessage[i]);
 		}
 
-		tag.putString("title", String.format(config.bookTitle, config.translationKey + seed));
-		tag.putString("author", author);
+		tag.putString("title", String.format(BOOK_TITLE, config.translationKey + SEED));
+		tag.putString("author", AUTHOR);
 
-		page1 = new TranslatableText(config.translationKey + seed, encodeMessage)
+		page1 = new TranslatableText(config.translationKey + SEED, encodeMessage)
 			.setStyle(Style.EMPTY
 				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("You probably need the decoder to see this message")))
 			);
 
 		page2 = new LiteralText(Formatting.BLUE + "Idea by: " + Formatting.BLACK + "turkeybot69\n" +
-			Formatting.BLUE + "Encode key: " + Formatting.BLACK + config.translationKey + seed + "\n" +
+			Formatting.BLUE + "Encode key: " + Formatting.BLACK + config.translationKey + SEED + "\n" +
 			Formatting.BLUE + "End-to-end encode: " + Formatting.BLACK + (config.endToEndEncodeKey != 0) + "\n" +
 			Formatting.BLUE + "Encode message: " + Formatting.BLACK + "Hover over here")
 			.setStyle(Style.EMPTY
@@ -154,15 +116,23 @@ public class EncodeBookCommand {
 		book.setTag(tag);
 
 		mc.player.equipStack(EquipmentSlot.MAINHAND, book);
-		decoderString = new StringBuilder();
+	}
 
-		for (int i = 0; i < config.messageLength; i++) {
+	protected static void showDecoderInChat(final int SEED, final short MAX_MESSAGE_LENGTH) {
+		MinecraftClient mc = MinecraftClient.getInstance();
+		FzmmConfig.Encodebook config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().encodebook;
+		StringBuilder decoderString = new StringBuilder();
+		short[] encodeKey = EncodeKey(SEED + config.endToEndEncodeKey, MAX_MESSAGE_LENGTH);
+
+		assert mc.player != null;
+
+		for (int i = 0; i < MAX_MESSAGE_LENGTH; i++) {
 			decoderString.append("%").append(encodeKey[i] + 1).append("$s");
 		}
 
-		decoderMessage = new LiteralText(Formatting.GREEN + config.translationKey + seed)
+		MutableText decoderMessage = new LiteralText(Formatting.GREEN + config.translationKey + SEED)
 			.setStyle(Style.EMPTY
-				.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "\"" + config.translationKey + seed + "\": \"" + decoderString + "\""))
+				.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "\"" + config.translationKey + SEED + "\": \"" + decoderString + "\""))
 				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText(decoderString.toString())))
 			);
 

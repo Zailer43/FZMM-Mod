@@ -11,7 +11,8 @@ import static fzmm.zailer.me.client.gui.ScreenConstants.NORMAL_BUTTON_HEIGHT;
 
 public class FzmmMainScreen extends Screen {
 	protected ButtonWidget closeButton;
-	protected ButtonWidget imagetextButton;
+	protected ButtonWidget imagetextButton,
+		encodebookButton;
 	protected FzmmMainScreen() {
 		super(NarratorManager.EMPTY);
 	}
@@ -19,10 +20,13 @@ public class FzmmMainScreen extends Screen {
 	protected void init() {
 		assert this.client != null;
 		this.closeButton = this.addButton(new ButtonWidget(this.width - 120, this.height - 40, 100, NORMAL_BUTTON_HEIGHT, new LiteralText("Salir"),
-			(buttonWidget) -> this.client.openScreen((Screen)null)
+			(buttonWidget) -> this.client.openScreen(null)
 		));
-		this.imagetextButton = this.addButton(new ButtonWidget( 120,40, 120, NORMAL_BUTTON_HEIGHT, new LiteralText("Imagetext"),
+		this.imagetextButton = this.addButton(new ButtonWidget( this.width / 2 - 154,40, 100, NORMAL_BUTTON_HEIGHT, new LiteralText("Imagetext"),
 			(buttonWidget) -> this.client.openScreen(new ImagetextScreen())
+		));
+		this.encodebookButton = this.addButton(new ButtonWidget( this.width / 2 - 50,40, 100, NORMAL_BUTTON_HEIGHT, new LiteralText("Encodebook"),
+			(buttonWidget) -> this.client.openScreen(new EncodebookScreen())
 		));
 	}
 
