@@ -92,8 +92,7 @@ public class ImagetextScreen extends FzmmBaseScreen {
 			this.updateMode();
 		}));
 
-		showResolutionCheckbox = new CheckboxWidget(this.width / 2 - 150, LINE4 + 10, 20, 20, new TranslatableText("imagetext.showResolution"), true);
-		this.addButton(showResolutionCheckbox);
+		showResolutionCheckbox = this.addButton(new CheckboxWidget(this.width / 2 - 150, LINE4 + 15, 20, 20, new TranslatableText("imagetext.showResolution"), true));
 
 		this.children.add(this.widthTextField);
 		this.children.add(pixelTextField);
@@ -117,7 +116,8 @@ public class ImagetextScreen extends FzmmBaseScreen {
 		HowGetImageFile howGetImage2 = this.howGetImage;
 		boolean loadedImage2 = this.loadedImage,
 			errorImage2 = errorImage,
-			bookNbtTooLong2 = bookNbtTooLong;
+			bookNbtTooLong2 = bookNbtTooLong,
+			showResolution2 = showResolutionCheckbox.isChecked();
 		BufferedImage image2 = this.image;
 
 		this.init(client, width, height);
@@ -135,6 +135,8 @@ public class ImagetextScreen extends FzmmBaseScreen {
 		errorImage = errorImage2;
 		bookNbtTooLong = bookNbtTooLong2;
 		this.image = image2;
+		if (showResolutionCheckbox.isChecked() != showResolution2)
+			showResolutionCheckbox.onPress();
 	}
 
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
@@ -154,7 +156,7 @@ public class ImagetextScreen extends FzmmBaseScreen {
 
 		if (this.loadedImage && this.image != null) {
 			if (!bookNbtTooLong)
-				drawCenteredText(matrices, this.textRenderer, new TranslatableText("imagetext.loadedImage"), this.width / 2, LINE4 + 30, TEXT_COLOR);
+				drawCenteredText(matrices, this.textRenderer, new TranslatableText("imagetext.loadedImage"), this.width / 2, LINE5 - 10, TEXT_COLOR);
 			drawCenteredText(matrices, this.textRenderer, new TranslatableText("imagetext.imageWidth"), this.width / 2 - 4, LINE2 - 10, TEXT_COLOR);
 			widthTextField.render(matrices, mouseX, mouseY, delta);
 			int imageHeight = Math.round(((float) getWidthTextField() / this.image.getWidth()) * this.image.getHeight());
@@ -163,10 +165,10 @@ public class ImagetextScreen extends FzmmBaseScreen {
 		}
 
 		if (bookNbtTooLong) {
-			drawCenteredText(matrices, this.textRenderer, new TranslatableText("imagetext.error.bookNbtTooLong"), this.width / 2, LINE4 + 30, TEXT_ERROR_COLOR);
+			drawCenteredText(matrices, this.textRenderer, new TranslatableText("imagetext.error.bookNbtTooLong"), this.width / 2, LINE5 - 10, TEXT_ERROR_COLOR);
 			this.executeButton.active = false;
 		} else if (errorImage) {
-			drawCenteredText(matrices, this.textRenderer, errorImageMessage, this.width / 2, LINE4 + 30, TEXT_ERROR_COLOR);
+			drawCenteredText(matrices, this.textRenderer, errorImageMessage, this.width / 2, LINE5 - 10, TEXT_ERROR_COLOR);
 			this.loadImageButton.active = false;
 			this.executeButton.active = false;
 		} else {

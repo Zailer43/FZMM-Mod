@@ -35,7 +35,7 @@ public class EncodebookScreen extends FzmmBaseScreen {
 		this.executeButton = this.addButton(new ButtonWidget(20, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gui.execute"),
 			(buttonWidget) -> this.execute()
 		));
-		this.getDecoderButton = this.addButton(new ButtonWidget(this.width / 2 - 50, LINE5, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new LiteralText("encodebook.getDecoder"),
+		this.getDecoderButton = this.addButton(new ButtonWidget(this.width / 2 - 50, LINE5, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("encodebook.getDecoder"),
 			(buttonWidget) -> this.getDecoder()
 		));
 
