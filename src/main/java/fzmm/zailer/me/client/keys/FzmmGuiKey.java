@@ -1,5 +1,6 @@
-package fzmm.zailer.me.client.gui;
+package fzmm.zailer.me.client.keys;
 
+import fzmm.zailer.me.client.gui.FzmmMainScreen;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.KeyBinding;

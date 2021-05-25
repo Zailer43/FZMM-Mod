@@ -17,7 +17,7 @@ public class FzmmMainScreen extends Screen {
 		convertersButton,
 		itemsButton;
 
-	protected FzmmMainScreen() {
+	public FzmmMainScreen() {
 		super(NarratorManager.EMPTY);
 	}
 

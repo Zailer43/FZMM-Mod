@@ -12,6 +12,7 @@
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
     "MinecraftClientMixin",
+    "ScreenMixin",
     "StatusEffectInstanceMixin",
     "StyleMixin"
   ],

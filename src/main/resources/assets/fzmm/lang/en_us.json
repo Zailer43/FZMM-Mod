@@ -12,7 +12,7 @@
   "commands.fzmm.ping.message": "El ping de %1$s es %2$s!",
   "commands.fzmm.replaceText.message": "Lista de texto que se remplaza cuando lo envias:",
   "encodebook.getDecoder": "Obtener decoder",
-  "encodebook.messageLength": "Longitud del mensaje",
+  "encodebook.messageLength": "Longitud",
   "encodebook.paddingCharacters": "Caracteres de relleno",
   "encodebook.seed": "Seed",
   "gradient.error.hexColorsLength": "Los colores deben tener 6 digitos hexadecimales",
