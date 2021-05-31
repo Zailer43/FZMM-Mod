@@ -78,10 +78,6 @@ public class FzmmUtils {
 		return Pattern.compile(regexInit + SPECIAL_REGEX_CHARS.matcher(specialRegexChar).replaceAll("\\\\$0") + regexEnd).toString();
 	}
 
-	public static String StringNumber(String text) {
-		return text.replaceAll("[^\\d]", "");
-	}
-
 	//TODO: Metodo para givear items de manera segura al jugador
 	// verificando si supera o no el límite de 1.9mb de nbt en su inv actual + el item que se va a givear
 }

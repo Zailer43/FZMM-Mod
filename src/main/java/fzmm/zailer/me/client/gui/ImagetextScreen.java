@@ -1,7 +1,6 @@
 package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.config.FzmmConfig;
-import fzmm.zailer.me.utils.FzmmUtils;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -23,8 +22,8 @@ public class ImagetextScreen extends FzmmBaseScreen {
 		modeButton,
 		howGetImageButton,
 		loadImageButton;
-	private TextFieldWidget imageTextField,
-		widthTextField;
+	private TextFieldWidget imageTextField;
+	private NumberFieldWidget widthNumberField;
 	protected static TextFieldWidget pixelTextField,
 		bookAuthorTextField,
 		bookMessageTextField;
@@ -39,7 +38,7 @@ public class ImagetextScreen extends FzmmBaseScreen {
 	private BufferedImage image;
 
 	protected ImagetextScreen() {
-		super(new TranslatableText("text.autoconfig.fzmm.category.imagetext"));
+		super(new TranslatableText("imagetext.title"));
 	}
 
 	protected void init() {
@@ -71,12 +70,12 @@ public class ImagetextScreen extends FzmmBaseScreen {
 		bookAuthorTextField.setMaxLength(100);
 		bookAuthorTextField.setText(this.client.player.getName().getString());
 
-		this.widthTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 22, LINE2, 36, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("imagetext.imageWidth"));
-		this.widthTextField.setMaxLength(3);
-		this.widthTextField.setText("45");
-		this.widthTextField.setChangedListener(this::widthTextListener);
+		this.widthNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 - 22, LINE2, 36, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("imagetext.imageWidth"), 2, 127);
+		this.widthNumberField.setMaxLength(3);
+		this.widthNumberField.setText("45");
+		this.widthNumberField.setChangedListener(this::widthNumberListener);
 
-		bookMessageTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE3, 300, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("imagetext.bookMessage"));
+		bookMessageTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE3, 300, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("book.message"));
 		bookMessageTextField.setMaxLength(256);
 		bookMessageTextField.setText(AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().imagetext.defaultBookMessage);
 
@@ -94,7 +93,7 @@ public class ImagetextScreen extends FzmmBaseScreen {
 
 		showResolutionCheckbox = this.addButton(new CheckboxWidget(this.width / 2 - 150, LINE4 + 15, 20, 20, new TranslatableText("imagetext.showResolution"), true));
 
-		this.children.add(this.widthTextField);
+		this.children.add(this.widthNumberField);
 		this.children.add(pixelTextField);
 		this.children.add(pixelTextField);
 		this.children.add(this.imageTextField);
@@ -108,7 +107,7 @@ public class ImagetextScreen extends FzmmBaseScreen {
 
 	public void resize(MinecraftClient client, int width, int height) {
 		String imageTextField2 = this.imageTextField.getText(),
-			widthTextField2 = this.widthTextField.getText(),
+			widthTextField2 = this.widthNumberField.getText(),
 			pixelTextField2 = pixelTextField.getText(),
 			bookAuthorTextField2 = bookAuthorTextField.getText(),
 			bookMessageTextField2 = bookMessageTextField.getText();
@@ -123,7 +122,7 @@ public class ImagetextScreen extends FzmmBaseScreen {
 		this.init(client, width, height);
 
 		this.imageTextField.setText(imageTextField2);
-		this.widthTextField.setText(widthTextField2);
+		this.widthNumberField.setText(widthTextField2);
 		pixelTextField.setText(pixelTextField2);
 		bookAuthorTextField.setText(bookAuthorTextField2);
 		bookMessageTextField.setText(bookMessageTextField2);
@@ -150,7 +149,7 @@ public class ImagetextScreen extends FzmmBaseScreen {
 		if (this.mode == ImagetextMode.GIVE_BOOK) {
 			drawCenteredText(matrices, this.textRenderer, new TranslatableText("book.author"), this.width / 2 - 76, LINE2 - 10, TEXT_COLOR);
 			bookAuthorTextField.render(matrices, mouseX, mouseY, delta);
-			drawCenteredText(matrices, this.textRenderer, new TranslatableText("imagetext.bookMessage"), this.width / 2, LINE3 - 10, TEXT_COLOR);
+			drawCenteredText(matrices, this.textRenderer, new TranslatableText("book.message"), this.width / 2, LINE3 - 10, TEXT_COLOR);
 			bookMessageTextField.render(matrices, mouseX, mouseY, delta);
 		}
 
@@ -158,8 +157,8 @@ public class ImagetextScreen extends FzmmBaseScreen {
 			if (!bookNbtTooLong)
 				drawCenteredText(matrices, this.textRenderer, new TranslatableText("imagetext.loadedImage"), this.width / 2, LINE5 - 10, TEXT_COLOR);
 			drawCenteredText(matrices, this.textRenderer, new TranslatableText("imagetext.imageWidth"), this.width / 2 - 4, LINE2 - 10, TEXT_COLOR);
-			widthTextField.render(matrices, mouseX, mouseY, delta);
-			int imageHeight = Math.round(((float) getWidthTextField() / this.image.getWidth()) * this.image.getHeight());
+			widthNumberField.render(matrices, mouseX, mouseY, delta);
+			int imageHeight = Math.round(((float) this.widthNumberField.getNumber() / this.image.getWidth()) * this.image.getHeight());
 			drawCenteredText(matrices, this.textRenderer, new TranslatableText("imagetext.imageHeight", imageHeight), this.width / 2 + 60, LINE2, TEXT_COLOR);
 			this.executeButton.active = true;
 		}
@@ -177,7 +176,7 @@ public class ImagetextScreen extends FzmmBaseScreen {
 	}
 
 	public void execute() {
-		int width = Integer.parseInt(this.widthTextField.getText());
+		int width = this.widthNumberField.getNumber();
 
 		pixelTextField.setText(pixelTextField.getText().isEmpty() ? "█" : pixelTextField.getText());
 		switch (this.mode) {
@@ -251,23 +250,10 @@ public class ImagetextScreen extends FzmmBaseScreen {
 		}
 	}
 
-	private void widthTextListener(String text) {
-		int width = getWidthTextField();
-		if (width < 1)
-			this.widthTextField.setText("2");
-		else if (width > 127)
-			this.widthTextField.setText("127");
-		else {
-			if (bookNbtTooLong) {
-				bookNbtTooLong = false;
-				this.widthTextField.setText(String.valueOf(width));
-			}
+	private void widthNumberListener(String text) {
+		if (bookNbtTooLong) {
+			bookNbtTooLong = false;
 		}
-	}
-
-	private int getWidthTextField() {
-		String widthStringNumber = FzmmUtils.StringNumber(this.widthTextField.getText());
-		return Integer.parseInt(widthStringNumber.isEmpty() ? "2" : widthStringNumber);
 	}
 
 	private void imagetextListener(String text) {

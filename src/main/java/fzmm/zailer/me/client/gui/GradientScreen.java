@@ -16,7 +16,7 @@ import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
 public class GradientScreen extends FzmmBaseScreen {
 	protected GradientScreen() {
-		super(new TranslatableText("gradient.gradient"));
+		super(new TranslatableText("gradient.title"));
 	}
 
 	protected ButtonWidget copyButton,
@@ -32,8 +32,8 @@ public class GradientScreen extends FzmmBaseScreen {
 	private MutableText preview;
 
 	protected void init() {
-		final short CHECKBOX_ROW = (short) (this.width / 2 + 80);
 		super.init();
+		final short CHECKBOX_ROW = (short) (this.width / 2 + 80);
 		assert this.client != null;
 		assert this.client.player != null;
 
