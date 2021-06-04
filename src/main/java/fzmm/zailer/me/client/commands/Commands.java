@@ -14,15 +14,9 @@ public class Commands implements ClientCommandPlugin {
 
         LiteralArgumentBuilder<CottonClientCommandSource> fzmm = ArgumentBuilders.literal("fzmm");
 
-        fzmm.then(PingCommand.getArgumentBuilder());
-        fzmm.then(CopyCoordsCommand.getArgumentBuilder());
         fzmm.then(RemplaceTextCommand.getArgumentBuilder());
         fzmm.then(ItemCommand.getArgumentBuilder());
         fzmm.then(CompassCommand.getArgumentBuilder());
-        fzmm.then(StartWith.getArgumentBuilder());
-        fzmm.then(EncodeBookCommand.getArgumentBuilder());
-        fzmm.then(GradientCommand.getArgumentBuilder());
-        fzmm.then(ImageTextCommand.getArgumentBuilder());
 
         dispatcher.register(fzmm);
     }
