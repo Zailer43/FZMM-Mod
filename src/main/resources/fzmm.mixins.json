@@ -12,11 +12,11 @@
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
     "MinecraftClientMixin",
+    "ScreenMixin",
     "StatusEffectInstanceMixin",
     "StyleMixin"
   ],
   "server": [
-    "NameTagItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

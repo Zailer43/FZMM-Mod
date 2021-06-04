@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client;
 
+import fzmm.zailer.me.client.keys.*;
 import fzmm.zailer.me.config.FzmmConfig;
 import net.fabricmc.api.ClientModInitializer;
 
@@ -8,6 +9,7 @@ public class FzmmClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         FzmmConfig.init();
-        TextObfuscated.init();
+        FzmmGuiKey.init();
+        TextObfuscatedKey.init();
     }
 }

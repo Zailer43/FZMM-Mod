@@ -1,17 +1,11 @@
-package fzmm.zailer.me.client.commands;
+package fzmm.zailer.me.client.gui;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
-import io.github.cottonmc.clientcommands.ArgumentBuilders;
-import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.CommandException;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -20,57 +14,18 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.util.ArrayList;
 
-public class ImageTextCommand {
-	static final CommandException IMAGE_NOT_FOUND = new CommandException(new TranslatableText("commands.fzmm.imagetext.imageNotFound"));
-	static final CommandException MALFORMED_URL = new CommandException(new TranslatableText("commands.fzmm.imagetext.malformedUrl"));
-	static final CommandException BOOK_LIMIT = new CommandException(new TranslatableText("commands.fzmm.imagetext.bookLimit"));
-	static final int MAX_IMAGE_SIZE = 127;
-	static final char PIXEL_CHARACTER = '█';
-	static final String DEFAULT_BOOK_TEXT = "Pon el cursor encima de este mensaje para ver una imagen";
-
-	//TODO: Arreglar mensaje de error diciendo que está incompleto el comando cuando
-	// aparentemente no hubieron errores al ejecutar el comando
-	public static LiteralArgumentBuilder<CottonClientCommandSource> getArgumentBuilder() {
-		return ArgumentBuilders.literal("imagetext")
-			.then(ArgumentBuilders.argument("Image URL", StringArgumentType.string())
-				.then(ArgumentBuilders.argument("Width", IntegerArgumentType.integer(2, MAX_IMAGE_SIZE))
-					.then(ArgumentBuilders.literal("addlore").executes(ctx -> {
-
-						String url = ctx.getArgument("Image URL", String.class);
-						int width = ctx.getArgument("Width", int.class);
-
-						addLoreImageText(url, width);
-						return 0;
-					}))
-					.then(ArgumentBuilders.literal("givebook").executes(ctx -> {
-						String url = ctx.getArgument("Image URL", String.class);
-						int width = ctx.getArgument("Width", int.class);
-
-						giveBookImageText(url, width, DEFAULT_BOOK_TEXT);
-
-						return 0;
-					}).then(ArgumentBuilders.argument("Book text", StringArgumentType.string()).executes(ctx -> {
-						String url = ctx.getArgument("Image URL", String.class),
-							bookText = ctx.getArgument("Book text", String.class);
-						int width = ctx.getArgument("Width", int.class);
-
-						giveBookImageText(url, width, bookText);
-
-						return 0;
-					})))));
-	}
-
-	public static void addLoreImageText(String url, int width) {
+public class ImagetextLogic {
+	public static void addLoreImagetext(BufferedImage image, int width) {
 		/*
 		{
 			display:{
@@ -83,14 +38,16 @@ public class ImageTextCommand {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		assert mc.player != null;
 		ItemStack itemStack = mc.player.getMainHandStack();
+		if (itemStack.isEmpty())
+			itemStack = Items.PAPER.getDefaultStack();
 
-		ArrayList<StringTag> loreArray = generateImagetext(resizeImage(getImageFromUrl(url), width));
+		ArrayList<StringTag> loreArray = generateImagetext(resizeImage(image, width));
 
 		itemStack.setTag(FzmmUtils.addLores(itemStack, loreArray));
 		mc.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
 	}
 
-	public static void giveBookImageText(String url, int width, String bookText) {
+	public static void giveBookImagetext(BufferedImage image, int width, String bookAuthor, String bookText) {
 		/*
 		{
 			title:"Imagebook",
@@ -113,10 +70,10 @@ public class ImageTextCommand {
 		CompoundTag tag = new CompoundTag();
 		ListTag pages = new ListTag();
 
-		ArrayList<StringTag> loreArray = generateImagetext(resizeImage(getImageFromUrl(url), width));
-		StringBuilder hoverEventStringBuilder = new StringBuilder("");
+		ArrayList<StringTag> loreArray = generateImagetext(resizeImage(image, width));
+		StringBuilder hoverEventStringBuilder = new StringBuilder();
 
-		for (StringTag loreLine: loreArray) {
+		for (StringTag loreLine : loreArray) {
 			hoverEventStringBuilder.append(
 				loreLine.asString().
 					replaceAll("\"}]$", "\\\\n\"},")
@@ -124,29 +81,32 @@ public class ImageTextCommand {
 		}
 		String hoverEventStringContents = "[" + hoverEventStringBuilder.toString().replaceAll(",$", "") + "]";
 
-		JsonParser parser=new JsonParser();
+		JsonParser parser = new JsonParser();
 		JsonObject jsonHoverEvent = new JsonObject();
 		jsonHoverEvent.add("action", parser.parse("show_text"));
 		jsonHoverEvent.add("contents", parser.parse(hoverEventStringContents));
 
 		pages.add(StringTag.of(Text.Serializer.toJson(
 			new LiteralText(Formatting.BLUE + bookText)
-			.setStyle(Style.EMPTY
-				.withHoverEvent(HoverEvent.fromJson(jsonHoverEvent)))
-			)));
+				.setStyle(Style.EMPTY
+					.withHoverEvent(HoverEvent.fromJson(jsonHoverEvent)))
+		)));
 
 		tag.putString("title", "Imagebook");
-		tag.putString("author", mc.player.getName().getString());
+		tag.putString("author", bookAuthor);
 		tag.put("pages", pages);
 
 		itemStack.setTag(tag);
-		if (itemStack.getTag().toString().length() > 32500)
-			throw BOOK_LIMIT;
-		mc.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+		assert itemStack.getTag() != null;
+		if (itemStack.getTag().toString().length() > 32500) {
+			ImagetextScreen.bookNbtTooLong = true;
+		} else
+			mc.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
 	}
 
+	@Nullable
 	public static BufferedImage getImageFromUrl(String urlLocation) {
-		BufferedImage image;
+		BufferedImage image = null;
 		try {
 			URL url = new URL(urlLocation);
 			URLConnection conn = url.openConnection();
@@ -158,22 +118,27 @@ public class ImageTextCommand {
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw MALFORMED_URL;
+			ImagetextScreen.errorImage = true;
+			ImagetextScreen.errorImageMessage = new TranslatableText("imagetext.error.malformedUrl");
 		}
 
-		if (image == null)
-			throw IMAGE_NOT_FOUND;
-		else
-			return image;
+		return image;
 	}
 
-	public static BufferedImage resizeImage(BufferedImage img, int newW) {
+	public static BufferedImage getImageFromPc(String filePath) throws IOException {
+		BufferedImage image = ImageIO.read(new URL("file:///" + filePath));
+		if (image == null)
+			throw new IOException();
+		return image;
+	}
+
+	private static BufferedImage resizeImage(BufferedImage img, int newW) {
 		if (img.getWidth() < newW)
 			return img;
 
-		FzmmConfig config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig();
+		FzmmConfig.Imagetext config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().imagetext;
 		int newH = Math.round(((float) (newW) / img.getWidth()) * img.getHeight());
-		Image tmp = img.getScaledInstance(newW, newH, config.general.imagetextScale.value);
+		Image tmp = img.getScaledInstance(newW, newH, config.imagetextScale.value);
 		BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_RGB);
 
 		Graphics2D g2d = dimg.createGraphics();
@@ -183,10 +148,11 @@ public class ImageTextCommand {
 		return dimg;
 	}
 
-	public static ArrayList<StringTag> generateImagetext(BufferedImage image) {
+	private static ArrayList<StringTag> generateImagetext(BufferedImage image) {
 		ArrayList<StringTag> loreArray = new ArrayList<>();
 		int height = image.getHeight(),
 			width = image.getWidth();
+		final String PIXEL_CHARACTER = ImagetextScreen.pixelTextField.getText().matches("[\"'\\\\]") ? "█" : ImagetextScreen.pixelTextField.getText();
 
 		for (int y = 0; y != height; y++) {
 			ArrayList<String> loreLine = new ArrayList<>();
@@ -199,16 +165,23 @@ public class ImageTextCommand {
 				if (x > 0 && image.getRGB(x - 1, y) == image.getRGB(x, y)) {
 					int lastLore = loreLine.size() - 1;
 					String modifiedLore = loreLine.get(lastLore)
-						.replaceFirst(String.valueOf(PIXEL_CHARACTER), String.valueOf(PIXEL_CHARACTER) + PIXEL_CHARACTER);
+						.replaceAll(FzmmUtils.escapeSpecialRegexChars("", PIXEL_CHARACTER, "\"}$"), PIXEL_CHARACTER + PIXEL_CHARACTER + "\"}");
 					loreLine.set(lastLore, modifiedLore);
 				} else {
 					loreLine.add(Text.Serializer.toJson(
-						new LiteralText(String.valueOf(PIXEL_CHARACTER)).setStyle(
+						new LiteralText(PIXEL_CHARACTER).setStyle(
 							Style.EMPTY.withColor(TextColor.fromRgb(pixelRGB)).withItalic(false)
 						)));
 				}
 			}
 			loreArray.add(StringTag.of(String.valueOf(loreLine)));
+		}
+		if (ImagetextScreen.showResolutionCheckbox.isChecked()) {
+			loreArray.add(StringTag.of(String.valueOf(
+				Text.Serializer.toJson(
+					new LiteralText("Resolution: " + width + "x" + height).setStyle(
+						Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GREEN)).withItalic(false)
+				)))));
 		}
 		return loreArray;
 	}
