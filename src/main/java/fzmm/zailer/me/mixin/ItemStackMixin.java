@@ -3,7 +3,7 @@ package fzmm.zailer.me.mixin;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
-    @Shadow @Nullable public abstract CompoundTag getTag();
+    @Shadow @Nullable public abstract NbtCompound getTag();
 
     @Inject(method = "getTooltip", at = @At("RETURN"), cancellable = true)
     public void getTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {

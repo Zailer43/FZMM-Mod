@@ -24,22 +24,22 @@ public class ReplaceText {
         assert mc.player != null;
         ClientPlayerEntity mcp = mc.player;
 
-        text = text.replaceAll("::fzmm_x::", mcp.getX() + "");
-        text = text.replaceAll("::fzmm_y::", mcp.getY() + "");
-        text = text.replaceAll("::fzmm_z::", mcp.getZ() + "");
+        text = text.replaceAll("::fzmm_x::", String.valueOf(mcp.getX()));
+        text = text.replaceAll("::fzmm_y::", String.valueOf(mcp.getY()));
+        text = text.replaceAll("::fzmm_z::", String.valueOf(mcp.getZ()));
 
-        text = text.replaceAll("::fzmm_x_round::", Math.round(mcp.getX()) + "");
-        text = text.replaceAll("::fzmm_y_round::", Math.round(mcp.getY()) + "");
-        text = text.replaceAll("::fzmm_z_round::", Math.round(mcp.getZ()) + "");
+        text = text.replaceAll("::fzmm_x_round::", String.valueOf(Math.round(mcp.getX())));
+        text = text.replaceAll("::fzmm_y_round::", String.valueOf(Math.round(mcp.getY())));
+        text = text.replaceAll("::fzmm_z_round::", String.valueOf(Math.round(mcp.getZ())));
 
-        text = text.replaceAll("::fzmm_yaw::", mcp.yaw % 360 + "");
-        text = text.replaceAll("::fzmm_pitch::", mcp.pitch + "");
+        text = text.replaceAll("::fzmm_yaw::", String.valueOf(mcp.getYaw()));
+        text = text.replaceAll("::fzmm_pitch::", String.valueOf(mcp.getPitch()));
 
-        text = text.replaceAll("::fzmm_yaw_round::", Math.round(mcp.yaw % 360) + "");
-        text = text.replaceAll("::fzmm_pitch_round::", Math.round(mcp.pitch) + "");
+        text = text.replaceAll("::fzmm_yaw_round::", String.valueOf(Math.round(mcp.getYaw())));
+        text = text.replaceAll("::fzmm_pitch_round::", String.valueOf(Math.round(mcp.getPitch())));
 
-        text = text.replaceAll("::fzmm_uuid::", mcp.getUuid() + "");
-        text = text.replaceAll("::fzmm_item_name::", mcp.inventory.getMainHandStack().getName().getString().replaceAll("§", "&"));
+        text = text.replaceAll("::fzmm_uuid::", String.valueOf(mcp.getUuid()));
+        text = text.replaceAll("::fzmm_item_name::", mcp.getInventory().getMainHandStack().getName().getString().replaceAll("§", "&"));
 
         return text;
     }

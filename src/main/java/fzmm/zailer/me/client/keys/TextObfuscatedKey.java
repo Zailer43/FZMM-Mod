@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client;
+package fzmm.zailer.me.client.keys;
 
 import fzmm.zailer.me.config.FzmmConfig;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import org.lwjgl.glfw.GLFW;
 
-public class TextObfuscated {
+public class TextObfuscatedKey {
 
     public static KeyBinding textObfuscated;
 

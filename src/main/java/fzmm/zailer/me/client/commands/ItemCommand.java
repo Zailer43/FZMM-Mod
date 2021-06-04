@@ -10,16 +10,16 @@ import io.github.cottonmc.clientcommands.ArgumentBuilders;
 import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.argument.ItemEnchantmentArgumentType;
+import net.minecraft.command.argument.EnchantmentArgumentType;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
@@ -97,7 +97,7 @@ public class ItemCommand {
 		);
 
 		itemCommand.then(ArgumentBuilders.literal("enchant")
-			.then(ArgumentBuilders.argument("enchantment", ItemEnchantmentArgumentType.itemEnchantment()).executes(ctx -> {
+			.then(ArgumentBuilders.argument("enchantment", EnchantmentArgumentType.enchantment()).executes(ctx -> {
 
 				Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
 
@@ -125,7 +125,7 @@ public class ItemCommand {
 			.executes(ctx -> {
 				assert MC.player != null;
 
-				ItemStack stack = MC.player.inventory.getMainHandStack();
+				ItemStack stack = MC.player.getInventory().getMainHandStack();
 				MC.player.equipStack(EquipmentSlot.HEAD, stack);
 				return 1;
 			})
@@ -186,7 +186,7 @@ public class ItemCommand {
 	private static void renameItem(Text name) {
 		assert MC.player != null;
 
-		ItemStack stack = MC.player.inventory.getMainHandStack();
+		ItemStack stack = MC.player.getInventory().getMainHandStack();
 		stack.setCustomName(name);
 		MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
 	}
@@ -201,14 +201,14 @@ public class ItemCommand {
 	private static void addEnchant(Enchantment enchant, int level) {
 		assert MC.player != null;
 
-		ItemStack stack = MC.player.inventory.getMainHandStack();
+		ItemStack stack = MC.player.getInventory().getMainHandStack();
 		stack.addEnchantment(enchant, level);
 		MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
 	}
 
 	private static void displayNbt() {
 		assert MC.player != null;
-		ItemStack stack = MC.player.inventory.getMainHandStack();
+		ItemStack stack = MC.player.getInventory().getMainHandStack();
 
 		if (stack.getTag() == null) {
 			throw ERROR_WITHOUT_NBT;
@@ -235,7 +235,7 @@ public class ItemCommand {
 	private static void overStack(int amount) {
 		assert MC.player != null;
 
-		ItemStack stack = MC.player.inventory.getMainHandStack();
+		ItemStack stack = MC.player.getInventory().getMainHandStack();
 
 		stack.setCount(amount);
 
@@ -247,7 +247,7 @@ public class ItemCommand {
 
 		ItemStack itemStack = new ItemStack(Registry.ITEM.get(new Identifier("player_head")));
 
-		CompoundTag tag = new CompoundTag();
+		NbtCompound tag = new NbtCompound();
 
 		tag.putString("SkullOwner", skullOwner);
 
@@ -260,12 +260,12 @@ public class ItemCommand {
 
 		//{BlockEntityTag:{Items:[{Slot:0b,id:"minecraft:stone",Count:1b}],id:"minecraft:dispenser"}}
 
-		ItemStack containerItemStack = MC.player.inventory.getMainHandStack();
+		ItemStack containerItemStack = MC.player.getInventory().getMainHandStack();
 		ItemStack itemStack = MC.player.getOffHandStack();
 
-		CompoundTag tag = new CompoundTag();
-		CompoundTag blockEntityTag = new CompoundTag();
-		ListTag items = fillSlots(new ListTag(), itemStack, slotsToFill, firstSlots);
+		NbtCompound tag = new NbtCompound();
+		NbtCompound blockEntityTag = new NbtCompound();
+		NbtList items = fillSlots(new NbtList(), itemStack, slotsToFill, firstSlots);
 
 		blockEntityTag.put("Items", items);
 		blockEntityTag.putString("id", containerItemStack.getItem().toString());
@@ -284,18 +284,18 @@ public class ItemCommand {
 		MC.player.equipStack(EquipmentSlot.MAINHAND, containerItemStack);
 	}
 
-	private static ListTag fillSlots(ListTag listTag, ItemStack itemStack, int slotsToFill, int firstSlot) {
+	private static NbtList fillSlots(NbtList NbtList, ItemStack itemStack, int slotsToFill, int firstSlot) {
 		for (int i = 0; i != slotsToFill; i++) {
-			CompoundTag tagItems = new CompoundTag();
+			NbtCompound tagItems = new NbtCompound();
 
 			tagItems.putInt("Slot", i + firstSlot);
 			tagItems.putString("id", itemStack.getItem().toString());
 			tagItems.putInt("Count", itemStack.getCount());
 			if (!(itemStack.getTag() == null)) tagItems.put("tag", itemStack.getTag());
 
-			listTag.add(tagItems);
+			NbtList.add(tagItems);
 		}
-		return listTag;
+		return NbtList;
 	}
 
 	private static void lockContainer(String key) {
@@ -303,11 +303,11 @@ public class ItemCommand {
 
 		//{BlockEntityTag:{Lock:"abc"}}
 
-		ItemStack containerItemStack = MC.player.inventory.getMainHandStack();
+		ItemStack containerItemStack = MC.player.getInventory().getMainHandStack();
 		ItemStack itemStack = MC.player.getOffHandStack();
 
-		CompoundTag tag = new CompoundTag();
-		CompoundTag blockEntityTag = new CompoundTag();
+		NbtCompound tag = new NbtCompound();
+		NbtCompound blockEntityTag = new NbtCompound();
 
 		if (!(containerItemStack.getTag() == null)) {
 			tag = containerItemStack.getTag();
@@ -338,10 +338,10 @@ public class ItemCommand {
 
 		ItemStack itemStack = MC.player.getMainHandStack();
 
-		CompoundTag tag = new CompoundTag();
-		CompoundTag display = new CompoundTag();
-		ListTag lore = new ListTag();
-		lore.add(StringTag.of(Text.Serializer.toJson(message)));
+		NbtCompound tag = new NbtCompound();
+		NbtCompound display = new NbtCompound();
+		NbtList lore = new NbtList();
+		lore.add(NbtString.of(Text.Serializer.toJson(message)));
 
 		display.put("Lore", lore);
 
@@ -350,7 +350,7 @@ public class ItemCommand {
 
 			if (!(itemStack.getTag().getCompound("display") == null)) {
 				lore = tag.getCompound("display").getList("Lore", 8);
-				lore.add(StringTag.of(Text.Serializer.toJson(message)));
+				lore.add(NbtString.of(Text.Serializer.toJson(message)));
 				display.put("Lore", lore);
 				display.putString("Name", tag.getCompound("display").getString("Name"));
 			}
@@ -376,7 +376,7 @@ public class ItemCommand {
 			Map<?, ?> map = gson.fromJson(reader, Map.class);
 			boolean configFound = false;
 			ArrayList<String> loreArrayString = new ArrayList<>();
-			ArrayList<StringTag> loreArray = new ArrayList<>();
+			ArrayList<NbtString> loreArray = new ArrayList<>();
 			ItemStack itemStack = MC.player.getMainHandStack();
 
 			for (Map.Entry<?, ?> entry : map.entrySet()) {
@@ -389,7 +389,7 @@ public class ItemCommand {
 			reader.close();
 
 			for (String lore: loreArrayString) {
-				loreArray.add(StringTag.of(lore));
+				loreArray.add(NbtString.of(lore));
 			}
 
 			if (!configFound) {
@@ -412,11 +412,11 @@ public class ItemCommand {
 		ItemStack itemStack = MC.player.getMainHandStack();
 
 		if (!(itemStack.getTag() == null)) {
-			CompoundTag tag = itemStack.getTag();
+			NbtCompound tag = itemStack.getTag();
 
 			if (!(itemStack.getTag().getCompound("display") == null)) {
-				CompoundTag display = new CompoundTag();
-				ListTag lore;
+				NbtCompound display = new NbtCompound();
+				NbtList lore;
 
 				lore = tag.getCompound("display").getList("Lore", 8);
 				lore.remove(lineToRemove);

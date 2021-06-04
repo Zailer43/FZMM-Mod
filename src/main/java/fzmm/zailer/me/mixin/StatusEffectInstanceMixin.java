@@ -22,7 +22,7 @@ public abstract class StatusEffectInstanceMixin {
             assert mc.player != null;
 
             if (mc.player.getStatusEffects().toString().contains("night_vision")
-                    && mc.player.getStatusEffects().toString().contains("blindness")) {
+                && mc.player.getStatusEffects().toString().contains("blindness")) {
 
                 mc.player.removeStatusEffect(StatusEffects.NIGHT_VISION);
             }
