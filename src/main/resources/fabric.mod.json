@@ -3,7 +3,7 @@
   "id": "fzmm",
   "version": "${version}",
   "name": "FZMM",
-  "description": "Mod con utilidades para Zailer43",
+  "description": "A fabric mod so it is mainly for editing or creating NBT of items in creative but it also has a few QoL (Quality of Life) and some small utilities",
   "authors": [
     "Zailer43"
   ],
@@ -15,9 +15,6 @@
     "client": [
       "fzmm.zailer.me.client.FzmmClient"
     ],
-    "modmenu": [
-      "fzmm.zailer.me.config.modmenu.ModMenuEntry"
-    ],
     "cotton-client-commands": [
       "fzmm.zailer.me.client.commands.Commands"
     ]
@@ -26,13 +23,11 @@
     "fzmm.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.1",
+    "fabricloader": ">=0.11.3",
     "fabric": "*",
-    "minecraft": ">=1.16.2",
+    "minecraft": "1.17.x",
     "cotton-client-commands": "^1.0.0",
-    "cloth-config2":"^4.11.18"
-  },
-  "custom": {
-    "modmenu:clientsideOnly": true
+    "cloth-config2":"^5.0.34",
+    "java": ">=16"
   }
 }

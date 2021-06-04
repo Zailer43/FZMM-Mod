@@ -5,9 +5,9 @@ import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -15,6 +15,7 @@ import net.minecraft.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 
 public class FzmmUtils {
 
@@ -51,10 +52,10 @@ public class FzmmUtils {
 		return message;
 	}
 
-	public static CompoundTag addLores(ItemStack itemStack, ArrayList<StringTag> loreArray) {
-		CompoundTag tag = new CompoundTag();
-		CompoundTag display = new CompoundTag();
-		ListTag lore;
+	public static NbtCompound addLores(ItemStack itemStack, ArrayList<NbtString> loreArray) {
+		NbtCompound tag = new NbtCompound();
+		NbtCompound display = new NbtCompound();
+		NbtList lore;
 
 		if (itemStack.getTag() == null) {
 			display.put("Lore", null);
@@ -72,4 +73,11 @@ public class FzmmUtils {
 		return tag;
 	}
 
+	public static String escapeSpecialRegexChars(String regexInit, String specialRegexChar, String regexEnd) {
+		Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^\\\\|]");
+		return Pattern.compile(regexInit + SPECIAL_REGEX_CHARS.matcher(specialRegexChar).replaceAll("\\\\$0") + regexEnd).toString();
+	}
+
+	//TODO: Metodo para givear items de manera segura al jugador
+	// verificando si supera o no el límite de 1.9mb de nbt en su inv actual + el item que se va a givear
 }

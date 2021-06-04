@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.7-SNAPSHOT'
+    id 'fabric-loom' version '0.8-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -9,12 +9,14 @@ archivesBaseName = project.archives_base_name
 
 repositories {
 
-    maven { url "https://maven.shedaniel.me/" }
+    maven { url "https://maven.terraformersmc.com/releases/" }
 
     maven {
         name = 'CottonMC'
         url = 'https://server.bbkr.space/artifactory/libs-release'
     }
+
+    maven { url "https://maven.shedaniel.me/" }
 }
 
 dependencies {
@@ -26,38 +28,36 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // Cloth API
-    modApi("me.shedaniel.cloth:cloth-config-fabric:4.11.18") {
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
 
     // Mod Menu
-    modImplementation "io.github.prospector:modmenu:1.14.13+build.19"
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     // Client Commands
-    modImplementation "io.github.cottonmc:cotton-client-commands:1.0.1+1.16-rc1"
+    modImplementation "io.github.cottonmc:cotton-client-commands:${project.cotton_client_commands}"
 
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
+
+    // Minecraft 1.17 (21w19a) upwards uses Java 16.
+    it.options.release = 16
 }
 
 processResources {
     inputs.property "version", project.version
 
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
+    filesMatching("fabric.mod.json") {
         expand "version": project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
     }
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
 
     withSourcesJar()
 }

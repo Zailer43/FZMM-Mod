@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "fzmm.zailer.me.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "mixins": [
   ],
   "client": [
@@ -12,11 +12,11 @@
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
     "MinecraftClientMixin",
+    "ScreenMixin",
     "StatusEffectInstanceMixin",
     "StyleMixin"
   ],
   "server": [
-    "NameTagItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1
