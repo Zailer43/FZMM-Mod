@@ -284,7 +284,7 @@ public class ItemCommand {
 		MC.player.equipStack(EquipmentSlot.MAINHAND, containerItemStack);
 	}
 
-	private static NbtList fillSlots(NbtList NbtList, ItemStack itemStack, int slotsToFill, int firstSlot) {
+	private static NbtList fillSlots(NbtList nbtList, ItemStack itemStack, int slotsToFill, int firstSlot) {
 		for (int i = 0; i != slotsToFill; i++) {
 			NbtCompound tagItems = new NbtCompound();
 
@@ -293,9 +293,9 @@ public class ItemCommand {
 			tagItems.putInt("Count", itemStack.getCount());
 			if (!(itemStack.getTag() == null)) tagItems.put("tag", itemStack.getTag());
 
-			NbtList.add(tagItems);
+			nbtList.add(tagItems);
 		}
-		return NbtList;
+		return nbtList;
 	}
 
 	private static void lockContainer(String key) {

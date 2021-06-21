@@ -15,6 +15,9 @@
     "client": [
       "fzmm.zailer.me.client.FzmmClient"
     ],
+    "modmenu": [
+      "fzmm.zailer.me.config.ModMenuEntry"
+    ],
     "cotton-client-commands": [
       "fzmm.zailer.me.client.commands.Commands"
     ]

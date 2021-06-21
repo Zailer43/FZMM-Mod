@@ -13,7 +13,6 @@ public class MinecraftClientMixin {
     @Inject(method = "handleInputEvents", at = @At("HEAD"))
     public void handleInputEvents(CallbackInfo ci) {
 
-        TextObfuscatedKey.handleInputEvents();
         FzmmGuiKey.handleInputEvents();
     }
 }

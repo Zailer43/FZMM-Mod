@@ -10,6 +10,5 @@ public class FzmmClient implements ClientModInitializer {
     public void onInitializeClient() {
         FzmmConfig.init();
         FzmmGuiKey.init();
-        TextObfuscatedKey.init();
     }
 }
