@@ -121,16 +121,6 @@ public class ItemCommand {
 			})
 		);
 
-		itemCommand.then(ArgumentBuilders.literal("hat")
-			.executes(ctx -> {
-				assert MC.player != null;
-
-				ItemStack stack = MC.player.getInventory().getMainHandStack();
-				MC.player.equipStack(EquipmentSlot.HEAD, stack);
-				return 1;
-			})
-		);
-
 		itemCommand.then(ArgumentBuilders.literal("overstack")
 			.then(ArgumentBuilders.argument("amount", IntegerArgumentType.integer(2, 127)).executes(ctx -> {
 

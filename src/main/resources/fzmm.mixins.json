@@ -10,6 +10,7 @@
     "ChatScreenMixin",
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
+    "LivingEntityMixin",
     "MinecraftClientMixin",
     "ScreenMixin"
   ],
