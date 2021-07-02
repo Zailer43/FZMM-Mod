@@ -62,6 +62,7 @@
   "text.autoconfig.fzmm.option.encodebook.translationKey": "Key de traducción",
   "text.autoconfig.fzmm.option.general.forceInvisibleItemFrame": "Forzar a los item frames a ser invisibles",
   "text.autoconfig.fzmm.option.general.hideMessagesRegex": "Los mensajes que coinciden con el regex son mostrados en el actionbar",
+  "text.autoconfig.fzmm.option.general.loreColorPickBlock": "Color del lore al copiar un bloque",
   "text.autoconfig.fzmm.option.imagetext.defaultBookMessage": "Mensaje por defecto de libro",
   "text.autoconfig.fzmm.option.imagetext.imagetextScale": "Tipo de reescalado",
   "text.autoconfig.fzmm.title": "FZMM Mod configuraciones",

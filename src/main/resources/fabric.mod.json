@@ -3,7 +3,7 @@
   "id": "fzmm",
   "version": "${version}",
   "name": "FZMM",
-  "description": "A fabric mod so it is mainly for editing or creating NBT of items in creative but it also has a few QoL (Quality of Life) and some small utilities",
+  "description": "A fabric mod so it is mainly for editing or creating NBT of items in creative but it also has a few utilities, WIP",
   "authors": [
     "Zailer43"
   ],

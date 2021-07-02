@@ -27,9 +27,10 @@ public class FzmmConfig implements ConfigData {
 
     public static class General {
         public boolean forceInvisibleItemFrame = false;
+        public int loreColorPickBlock = 1684223;
         public List<String> hideMessagesRegex = Arrays.asList(
-                "^Hey! Sorry, but you can't (use|open|change|ride|break|place|harm) that (|block )here.$",
-                "^\\[P2\\] You are lacking the permission node: .*$"
+            "^Hey! Sorry, but you can't (use|open|change|ride|break|place|harm) that (|block )here.$",
+            "^\\[P2\\] You are lacking the permission node: .*$"
         );
     }
 
