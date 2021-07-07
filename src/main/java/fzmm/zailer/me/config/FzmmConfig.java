@@ -27,6 +27,7 @@ public class FzmmConfig implements ConfigData {
 
     public static class General {
         public boolean forceInvisibleItemFrame = false;
+        public boolean giveClientSideItem = false;
         public int loreColorPickBlock = 1684223;
         public List<String> hideMessagesRegex = Arrays.asList(
             "^Hey! Sorry, but you can't (use|open|change|ride|break|place|harm) that (|block )here.$",

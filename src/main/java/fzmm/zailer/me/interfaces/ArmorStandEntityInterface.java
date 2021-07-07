@@ -4,5 +4,5 @@ public interface ArmorStandEntityInterface {
 
 	boolean hasNoGravity();
 
-	boolean isInvisible();
+	abstract boolean isInvisible();
 }

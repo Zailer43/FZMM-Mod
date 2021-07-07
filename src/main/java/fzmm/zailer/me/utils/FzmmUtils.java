@@ -6,15 +6,16 @@ import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.network.MessageType;
 import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
+import net.minecraft.text.*;
+import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +102,31 @@ public class FzmmUtils {
 		});
 	}
 
-	//TODO: Metodo para givear items de manera segura al jugador
-	// verificando si supera o no el límite de 1.9mb de nbt en su inv actual + el item que se va a givear
+	public static void giveItem(ItemStack stack) {
+		boolean exceedLimit = false;
+		MinecraftClient mc = MinecraftClient.getInstance();
+		assert mc.player != null;
+
+		if (stack.getTag() != null) {
+			NbtCompound tag = stack.getTag();
+
+			// TODO: MC-86153
+			//  No funciona cuando se tiene que recibir el paquete del NBT de los blockEntity
+			if (tag.asString().length() > 1950000) {
+				exceedLimit = true;
+			}
+		}
+
+		if (exceedLimit) {
+			mc.inGameHud.addChatMessage(MessageType.SYSTEM, new TranslatableText("giveitem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)), mc.player.getUuid());
+		} else if (AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().general.giveClientSideItem) {
+			mc.player.equipStack(EquipmentSlot.MAINHAND, stack);
+		} else if (mc.player.isCreative()) {
+			assert mc.interactionManager != null;
+			PlayerInventory playerInventory = mc.player.getInventory();
+
+			playerInventory.addPickBlock(stack);
+			mc.interactionManager.clickCreativeStack(stack, 36 + playerInventory.selectedSlot);
+		}
+	}
 }

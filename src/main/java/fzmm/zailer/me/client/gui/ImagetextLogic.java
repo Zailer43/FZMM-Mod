@@ -6,7 +6,6 @@ import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -44,7 +43,7 @@ public class ImagetextLogic {
 		ArrayList<NbtString> loreArray = generateImagetext(resizeImage(image, width));
 
 		itemStack.setTag(FzmmUtils.addLores(itemStack, loreArray));
-		mc.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+		FzmmUtils.giveItem(itemStack);
 	}
 
 	public static void giveBookImagetext(BufferedImage image, int width, String bookAuthor, String bookText) {
@@ -100,8 +99,9 @@ public class ImagetextLogic {
 		assert itemStack.getTag() != null;
 		if (itemStack.getTag().toString().length() > 32500) {
 			ImagetextScreen.bookNbtTooLong = true;
-		} else
-			mc.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+		} else {
+			FzmmUtils.giveItem(itemStack);
+		}
 	}
 
 	@Nullable

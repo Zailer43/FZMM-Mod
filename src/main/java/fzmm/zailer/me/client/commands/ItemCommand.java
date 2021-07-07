@@ -178,14 +178,14 @@ public class ItemCommand {
 
 		ItemStack stack = MC.player.getInventory().getMainHandStack();
 		stack.setCustomName(name);
-		MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
+		FzmmUtils.giveItem(stack);
 	}
 
 	private static void giveItem(ItemStackArgument item, int amount) throws CommandSyntaxException {
 		assert MC.player != null;
 
 		ItemStack itemStack = item.createStack(amount, false);
-		MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+		FzmmUtils.giveItem(itemStack);
 	}
 
 	private static void addEnchant(Enchantment enchant, int level) {
@@ -193,7 +193,7 @@ public class ItemCommand {
 
 		ItemStack stack = MC.player.getInventory().getMainHandStack();
 		stack.addEnchantment(enchant, level);
-		MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
+		FzmmUtils.giveItem(stack);
 	}
 
 	private static void displayNbt() {
@@ -203,7 +203,7 @@ public class ItemCommand {
 		if (stack.getTag() == null) {
 			throw ERROR_WITHOUT_NBT;
 		}
-		String nbt = stack.getTag().toString().replaceAll("§", "&");
+		String nbt = stack.getTag().toString().replaceAll("§", "\u00a7");
 
 		MutableText message = new LiteralText(stack + ": " + nbt)
 			.setStyle(Style.EMPTY
@@ -229,7 +229,7 @@ public class ItemCommand {
 
 		stack.setCount(amount);
 
-		MC.player.equipStack(EquipmentSlot.MAINHAND, stack);
+		FzmmUtils.giveItem(stack);
 	}
 
 	private static void getHead(String skullOwner) {
@@ -242,7 +242,7 @@ public class ItemCommand {
 		tag.putString("SkullOwner", skullOwner);
 
 		itemStack.setTag(tag);
-		MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+		FzmmUtils.giveItem(itemStack);
 	}
 
 	private static void fullContainer(int slotsToFill, int firstSlots) {
@@ -271,7 +271,7 @@ public class ItemCommand {
 
 		tag.put("BlockEntityTag", blockEntityTag);
 		containerItemStack.setTag(tag);
-		MC.player.equipStack(EquipmentSlot.MAINHAND, containerItemStack);
+		FzmmUtils.giveItem(containerItemStack);
 	}
 
 	private static NbtList fillSlots(NbtList nbtList, ItemStack itemStack, int slotsToFill, int firstSlot) {
@@ -317,7 +317,7 @@ public class ItemCommand {
 		containerItemStack.setTag(tag);
 		itemStack.setCustomName(new LiteralText(key));
 
-		MC.player.equipStack(EquipmentSlot.MAINHAND, containerItemStack);
+		FzmmUtils.giveItem(containerItemStack);
 		MC.player.equipStack(EquipmentSlot.OFFHAND, itemStack);
 	}
 
@@ -348,7 +348,7 @@ public class ItemCommand {
 
 		tag.put("display", display);
 		itemStack.setTag(tag);
-		MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+		FzmmUtils.giveItem(itemStack);
 	}
 
 	private static void addLoreFromConfig(String configName) {
@@ -388,7 +388,7 @@ public class ItemCommand {
 
 			itemStack.setTag(FzmmUtils.addLores(itemStack, loreArray));
 
-			MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+			FzmmUtils.giveItem(itemStack);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -415,10 +415,9 @@ public class ItemCommand {
 
 				tag.put("display", display);
 				itemStack.setTag(tag);
-				MC.player.equipStack(EquipmentSlot.MAINHAND, itemStack);
+				FzmmUtils.giveItem(itemStack);
 			}
 		}
-
 
 	}
 }

@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.utils.FzmmUtils;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -115,7 +115,7 @@ public class EncodebookLogic {
 		tag.put("pages", NbtList);
 		book.setTag(tag);
 
-		mc.player.equipStack(EquipmentSlot.MAINHAND, book);
+		FzmmUtils.giveItem(book);
 	}
 
 	protected static void showDecoderInChat(final int SEED, final short MAX_MESSAGE_LENGTH) {

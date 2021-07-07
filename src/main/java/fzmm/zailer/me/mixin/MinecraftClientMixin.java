@@ -19,7 +19,6 @@ import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.state.property.Property;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -30,7 +29,6 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -40,8 +38,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MinecraftClient.class)
 public class MinecraftClientMixin {
 
-	@Shadow
 	@Final
+	@Shadow
 	private static final Logger LOGGER = LogManager.getLogger();
 	@Shadow
 	@Nullable
@@ -91,9 +89,7 @@ public class MinecraftClientMixin {
 				}
 				if (Screen.hasControlDown()) {
 					if (blockState.hasBlockEntity() && !(stack.getItem() instanceof BannerItem)) {
-						BlockEntity blockEntity = this.world.getBlockEntity(blockPos);
-						assert blockEntity != null;
-						this.addBlockEntityNbt(stack, blockEntity);
+						this.addBlockEntityNbt(stack, blockPos);
 					} else {
 						this.normalBlockSetState(stack, blockState);
 					}
@@ -122,19 +118,14 @@ public class MinecraftClientMixin {
 
 			LOGGER.warn("Picking on: [{}] {} gave null item", type, string);
 		} else {
-			PlayerInventory playerInventory = this.player.getInventory();
-
-			playerInventory.addPickBlock(stack);
-			this.interactionManager.clickCreativeStack(this.player.getStackInHand(Hand.MAIN_HAND), 36 + playerInventory.selectedSlot);
+			FzmmUtils.giveItem(stack);
 		}
 	}
 
-	/**
-	 * @reason Get the BlockEntity with BlockEntityTag and BlockStateTag if Alt is pressed
-	 * @author Zailer43
-	 */
-	@Overwrite
-	private ItemStack addBlockEntityNbt(ItemStack stack, BlockEntity blockEntity) {
+	private void addBlockEntityNbt(ItemStack stack, BlockPos blockPos) {
+		assert this.world != null;
+		BlockEntity blockEntity = this.world.getBlockEntity(blockPos);
+		assert blockEntity != null;
 		NbtCompound blockEntityTags = blockEntity.writeNbt(new NbtCompound());
 		NbtCompound display = new NbtCompound();
 		NbtList lore = new NbtList();
@@ -159,7 +150,6 @@ public class MinecraftClientMixin {
 			stack.putSubTag("display", display);
 			stack.putSubTag("BlockStateTag", this.getBlockStateTag(blockEntity.getCachedState()));
 		}
-		return stack;
 	}
 
 	public void normalBlockSetState(ItemStack stack, BlockState blockState) {
@@ -184,5 +174,4 @@ public class MinecraftClientMixin {
 
 		return blockStateTag;
 	}
-
 }

@@ -72,7 +72,7 @@ public class ImagetextScreen extends FzmmBaseScreen {
 
 		this.widthNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 - 22, LINE2, 36, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("imagetext.imageWidth"), 2, 127);
 		this.widthNumberField.setMaxLength(3);
-		this.widthNumberField.setText("45");
+		this.widthNumberField.setText("42");
 		this.widthNumberField.setChangedListener(this::widthNumberListener);
 
 		bookMessageTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE3, 300, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("book.message"));
