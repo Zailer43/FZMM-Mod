@@ -47,16 +47,6 @@ public class FzmmUtils {
 
 	};
 
-	public static Text replaceColorCodes(Text message) {
-		String messageString = message.toString();
-		if (messageString.contains("&")) {
-			messageString = messageString.replaceAll("&", "§");
-			messageString = messageString.replaceAll("§§", "&");
-			message = new LiteralText(messageString);
-		}
-		return message;
-	}
-
 	public static NbtCompound addLores(ItemStack itemStack, ArrayList<NbtString> loreArray) {
 		NbtCompound tag = new NbtCompound();
 		NbtCompound display = new NbtCompound();

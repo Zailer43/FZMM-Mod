@@ -9,7 +9,10 @@ archivesBaseName = project.archives_base_name
 
 repositories {
 
-    maven { url "https://maven.terraformersmc.com/releases/" }
+    maven {
+        name = 'TerraformersMC Archive'
+        url = 'https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases/'
+    }
 
     maven {
         name = 'CottonMC'

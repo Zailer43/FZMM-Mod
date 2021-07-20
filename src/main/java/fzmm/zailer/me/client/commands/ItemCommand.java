@@ -47,7 +47,6 @@ public class ItemCommand {
 
 				Text name = ctx.getArgument("name", Text.class);
 
-				name = FzmmUtils.replaceColorCodes(name);
 				renameItem(name);
 				return 1;
 			}))
@@ -59,7 +58,6 @@ public class ItemCommand {
 
 					Text message = ctx.getArgument("message", Text.class);
 
-					message = FzmmUtils.replaceColorCodes(message);
 					addLore(message);
 					return 1;
 				}))
@@ -101,10 +99,10 @@ public class ItemCommand {
 
 				Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
 
-				addEnchant(enchant, 127);
+				addEnchant(enchant, 1);
 				return 1;
 
-			}).then(ArgumentBuilders.argument("level", IntegerArgumentType.integer(-127, 127)).executes(ctx -> {
+			}).then(ArgumentBuilders.argument("level", IntegerArgumentType.integer(0, 255)).executes(ctx -> {
 
 				Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
 				int level = ctx.getArgument("level", int.class);
@@ -121,8 +119,8 @@ public class ItemCommand {
 			})
 		);
 
-		itemCommand.then(ArgumentBuilders.literal("overstack")
-			.then(ArgumentBuilders.argument("amount", IntegerArgumentType.integer(2, 127)).executes(ctx -> {
+		itemCommand.then(ArgumentBuilders.literal("amount")
+			.then(ArgumentBuilders.argument("amount", IntegerArgumentType.integer(1, 64)).executes(ctx -> {
 
 				int amount = ctx.getArgument("amount", int.class);
 				overStack(amount);
@@ -163,7 +161,6 @@ public class ItemCommand {
 			.then(ArgumentBuilders.argument("key", StringArgumentType.greedyString()).executes(ctx -> {
 
 				String key = ctx.getArgument("key", String.class);
-				key = FzmmUtils.replaceColorCodes(new LiteralText(key)).getString();
 				lockContainer(key);
 				return 1;
 

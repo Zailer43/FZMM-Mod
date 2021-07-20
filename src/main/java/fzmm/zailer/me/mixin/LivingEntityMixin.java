@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
 
+	//TODO: Cambiar esto por redirect en PlayerScreenHandler
 	@Inject(method = "getPreferredEquipmentSlot", cancellable = true, at = @At(value = "RETURN"))
 	private static void getPreferredEquipmentSlot(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> cir) {
 		assert MinecraftClient.getInstance().player != null;

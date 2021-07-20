@@ -16,7 +16,8 @@ public class FzmmMainScreen extends Screen {
 		encodebookButton,
 		gradientButton,
 		convertersButton,
-		itemsButton;
+		itemsButton,
+		statueButton;
 
 	public FzmmMainScreen() {
 		super(NarratorManager.EMPTY);
@@ -27,6 +28,7 @@ public class FzmmMainScreen extends Screen {
 		this.closeButton = this.addDrawableChild(new ButtonWidget(this.width - 120, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gui.leave"),
 			(buttonWidget) -> this.client.openScreen(null)
 		));
+
 		this.imagetextButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 154, LINE1, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.title"),
 			(buttonWidget) -> this.client.openScreen(new ImagetextScreen())
 		));
@@ -36,6 +38,7 @@ public class FzmmMainScreen extends Screen {
 		this.gradientButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 54, LINE1, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gradient.title"),
 			(buttonWidget) -> this.client.openScreen(new GradientScreen())
 		));
+
 		this.convertersButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 154, LINE2, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("converters.title"),
 			(buttonWidget) -> this.client.openScreen(new ConvertersScreen())
 		));
@@ -43,6 +46,9 @@ public class FzmmMainScreen extends Screen {
 			(buttonWidget) -> this.client.openScreen(new ItemsScreen(this.client.player.getMainHandStack()))*/
 		));
 		this.itemsButton.active = false;
+		this.statueButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 54, LINE2, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new LiteralText("Player Statue"),
+			(buttonWidget) -> this.client.openScreen(new StatueScreen())
+		));
 	}
 
 	public void resize(MinecraftClient client, int width, int height) {

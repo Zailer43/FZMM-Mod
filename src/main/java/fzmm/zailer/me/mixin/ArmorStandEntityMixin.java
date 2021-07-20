@@ -65,9 +65,9 @@ public abstract class ArmorStandEntityMixin implements ArmorStandEntityInterface
 			entityTag.put("HandItems", handNbt);
 			entityTag.putBoolean("Small", this.isSmall());
 			entityTag.putBoolean("ShowArms", this.shouldShowArms());
-			entityTag.putBoolean("Invisible", this.isInvisible());
+			//entityTag.putBoolean("Invisible", this.isInvisible()); //TODO: Problemas de compatibilidad con otros mods
+			//entityTag.putBoolean("NoGravity", this.hasNoGravity());
 			entityTag.putBoolean("NoBasePlate", this.shouldHideBasePlate());
-			entityTag.putBoolean("NoGravity", this.hasNoGravity());
 
 			stack.putSubTag("EntityTag", entityTag);
 			stack.putSubTag("display", display);
