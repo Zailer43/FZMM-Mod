@@ -15,6 +15,7 @@ import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -123,7 +124,7 @@ public class ItemCommand {
 			.then(ArgumentBuilders.argument("amount", IntegerArgumentType.integer(1, 64)).executes(ctx -> {
 
 				int amount = ctx.getArgument("amount", int.class);
-				overStack(amount);
+				amount(amount);
 				return 1;
 
 			}))
@@ -188,8 +189,19 @@ public class ItemCommand {
 	private static void addEnchant(Enchantment enchant, int level) {
 		assert MC.player != null;
 
+		//{Enchantments:[{id:"minecraft:aqua_affinity",lvl:1s}]}
+
 		ItemStack stack = MC.player.getInventory().getMainHandStack();
-		stack.addEnchantment(enchant, level);
+		NbtCompound tag = stack.getOrCreateTag();
+		NbtList enchantments = new NbtList();
+
+		if (tag.getList("Enchantments", 10) != null) {
+			enchantments = tag.getList("Enchantments", 10);
+		}
+		enchantments.add(EnchantmentHelper.createNbt(EnchantmentHelper.getEnchantmentId(enchant), (short) level));
+
+		tag.put("Enchantments", enchantments);
+		stack.setTag(tag);
 		FzmmUtils.giveItem(stack);
 	}
 
@@ -219,7 +231,7 @@ public class ItemCommand {
 		MC.inGameHud.addChatMessage(MessageType.SYSTEM, length, MC.player.getUuid());
 	}
 
-	private static void overStack(int amount) {
+	private static void amount(int amount) {
 		assert MC.player != null;
 
 		ItemStack stack = MC.player.getInventory().getMainHandStack();
