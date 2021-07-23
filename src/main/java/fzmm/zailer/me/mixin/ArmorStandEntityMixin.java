@@ -1,6 +1,5 @@
 package fzmm.zailer.me.mixin;
 
-import fzmm.zailer.me.interfaces.ArmorStandEntityInterface;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -15,7 +14,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ArmorStandEntity.class)
-public abstract class ArmorStandEntityMixin implements ArmorStandEntityInterface {
+public abstract class ArmorStandEntityMixin {
 
 	@Shadow
 	public abstract boolean isSmall();
