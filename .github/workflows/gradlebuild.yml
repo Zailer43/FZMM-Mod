@@ -26,4 +26,4 @@ jobs:
       uses: actions/download-artifact@v2.0.10
       with:
           name: build-artifacts
-          path: build/libs
+          path: ./build/libs
