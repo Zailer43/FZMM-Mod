@@ -27,8 +27,8 @@ jobs:
     - name: Validate Gradle wrapper
       uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@v2.0.10
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2
       with:
-          name: build-artifacts
-          path: build/libs/
+        name: Package
+        path: build/libs
