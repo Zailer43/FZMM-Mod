@@ -19,7 +19,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.*;
 import java.util.ArrayList;
 
@@ -108,14 +107,7 @@ public class ImagetextLogic {
 	public static BufferedImage getImageFromUrl(String urlLocation) {
 		BufferedImage image = null;
 		try {
-			URL url = new URL(urlLocation);
-			URLConnection conn = url.openConnection();
-			conn.setRequestProperty("User-Agent", "Mozilla/5.0");
-
-			conn.connect();
-			InputStream urlStream = conn.getInputStream();
-			image = ImageIO.read(urlStream);
-
+			image = FzmmUtils.getImageFromUrl(urlLocation);
 		} catch (IOException e) {
 			e.printStackTrace();
 			ImagetextScreen.errorImage = true;
