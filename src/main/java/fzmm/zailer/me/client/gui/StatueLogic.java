@@ -193,6 +193,7 @@ public class StatueLogic {
     }
 
     public static void uploadSkins() {
+        uploadIndex = 0;
         skinSize = 1;
         if (skinBuffered.getWidth() == 128) {
             skinSize = 2;

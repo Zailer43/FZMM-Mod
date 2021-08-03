@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui;
 
+import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
 import fzmm.zailer.me.config.FzmmConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
@@ -273,7 +274,6 @@ public class ImagetextScreen extends FzmmBaseScreen {
 				if (this.image == null) {
 					errorImage = true;
 					errorImageMessage = new TranslatableText("imagetext.error.imageNotFound");
-					this.loadedImage = false;
 				}
 				break;
 			case FROM_THIS_PC:
@@ -283,7 +283,6 @@ public class ImagetextScreen extends FzmmBaseScreen {
 					e.printStackTrace();
 					errorImage = true;
 					errorImageMessage = new TranslatableText("imagetext.error.unexpectedGettingImage");
-					this.loadedImage = false;
 				}
 				break;
 		}

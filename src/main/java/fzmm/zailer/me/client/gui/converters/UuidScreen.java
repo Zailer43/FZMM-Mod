@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client.gui.converters;
 
-import fzmm.zailer.me.client.gui.NumberFieldWidget;
+import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;

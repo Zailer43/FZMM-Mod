@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui;
+package fzmm.zailer.me.client.gui.widget;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.TextFieldWidget;

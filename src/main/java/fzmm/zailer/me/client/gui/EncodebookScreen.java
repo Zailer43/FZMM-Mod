@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui;
 
+import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
 import fzmm.zailer.me.config.FzmmConfig;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;

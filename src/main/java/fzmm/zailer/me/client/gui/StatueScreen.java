@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui;
 
+import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
 import fzmm.zailer.me.utils.FzmmUtils;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.MinecraftClient;
