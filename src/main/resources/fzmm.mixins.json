@@ -11,6 +11,7 @@
     "ChatScreenMixin",
     "EntityMixin",
     "HandledScreenMixin",
+    "ItemFrameEntityMixin",
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
