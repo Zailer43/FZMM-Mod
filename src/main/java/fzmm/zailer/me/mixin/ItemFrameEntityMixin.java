@@ -33,7 +33,7 @@ public abstract class ItemFrameEntityMixin {
             entityTag.remove("TileZ");
 
             stack.putSubTag("EntityTag", entityTag);
-            stack.putSubTag("display", FzmmUtils.generateLoreMessage("(EntityTag)"));
+            stack.putSubTag(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(EntityTag)"));
             cir.setReturnValue(stack);
         }
     }

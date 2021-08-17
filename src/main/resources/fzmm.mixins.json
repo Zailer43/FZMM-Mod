@@ -3,8 +3,6 @@
   "minVersion": "0.8",
   "package": "fzmm.zailer.me.mixin",
   "compatibilityLevel": "JAVA_16",
-  "mixins": [
-  ],
   "client": [
     "ArmorStandEntityMixin",
     "ChatHudListenerMixin",
@@ -17,8 +15,6 @@
     "LivingEntityMixin",
     "MinecraftClientMixin",
     "ScreenMixin"
-  ],
-  "server": [
   ],
   "injectors": {
     "defaultRequire": 1

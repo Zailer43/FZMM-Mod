@@ -8,7 +8,7 @@
     "Zailer43"
   ],
   "contact": {},
-  "license": "MIT",
+  "license": "Unlicense",
   "icon": "assets/fzmm/icon.png",
   "environment": "*",
   "entrypoints": {
@@ -17,9 +17,6 @@
     ],
     "modmenu": [
       "fzmm.zailer.me.config.ModMenuEntry"
-    ],
-    "cotton-client-commands": [
-      "fzmm.zailer.me.client.commands.Commands"
     ]
   },
   "mixins": [
@@ -29,7 +26,6 @@
     "fabricloader": ">=0.11.3",
     "fabric": "*",
     "minecraft": "1.17.x",
-    "cotton-client-commands": "^1.0.0",
     "cloth-config2":"^5.0.34",
     "java": ">=16"
   }

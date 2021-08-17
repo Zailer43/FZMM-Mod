@@ -6,6 +6,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.WrittenBookItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
@@ -94,8 +95,8 @@ public class EncodebookLogic {
 			encodeMessageString.append(encodeMessage[i]);
 		}
 
-		tag.putString("title", String.format(BOOK_TITLE, config.translationKey + SEED));
-		tag.putString("author", AUTHOR);
+		tag.putString(WrittenBookItem.TITLE_KEY, String.format(BOOK_TITLE, config.translationKey + SEED));
+		tag.putString(WrittenBookItem.AUTHOR_KEY, AUTHOR);
 
 		page1 = new TranslatableText(config.translationKey + SEED, encodeMessage)
 			.setStyle(Style.EMPTY
@@ -112,7 +113,7 @@ public class EncodebookLogic {
 
 		NbtList.add(NbtString.of(Text.Serializer.toJson(page1)));
 		NbtList.add(NbtString.of(Text.Serializer.toJson(page2)));
-		tag.put("pages", NbtList);
+		tag.put(WrittenBookItem.PAGES_KEY, NbtList);
 		book.setTag(tag);
 
 		FzmmUtils.giveItem(book);

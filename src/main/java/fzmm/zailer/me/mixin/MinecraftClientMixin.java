@@ -12,12 +12,8 @@ import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.BannerItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.SkullItem;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -127,27 +123,21 @@ public class MinecraftClientMixin {
 		BlockEntity blockEntity = this.world.getBlockEntity(blockPos);
 		assert blockEntity != null;
 		NbtCompound blockEntityTags = blockEntity.writeNbt(new NbtCompound());
-		NbtCompound display = new NbtCompound();
-		NbtList lore = new NbtList();
+		NbtCompound display = null;
 
-		if (stack.getItem() instanceof SkullItem && blockEntityTags.contains("SkullOwner")) {
-			stack.getOrCreateTag().put("SkullOwner", blockEntityTags.getCompound("SkullOwner"));
+		if (stack.getItem() instanceof SkullItem && blockEntityTags.contains(SkullItem.SKULL_OWNER_KEY)) {
+			stack.getOrCreateTag().put(SkullItem.SKULL_OWNER_KEY, blockEntityTags.getCompound(SkullItem.SKULL_OWNER_KEY));
 		} else {
-			stack.putSubTag("BlockEntityTag", blockEntityTags);
-			lore.add(FzmmUtils.generateLoreMessage("(BlockEntityTag)"));
-			display.put("Lore", lore);
+			stack.putSubTag(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTags);
+			display = FzmmUtils.generateLoreMessage("(BlockEntityTag)");
 			if (!blockEntityTags.getString("CustomName").matches("")) {
-				display.putString("Name", blockEntityTags.getString("CustomName"));
+				display.putString(ItemStack.NAME_KEY, blockEntityTags.getString("CustomName"));
 			}
-			stack.putSubTag("display", display);
+			stack.putSubTag(ItemStack.DISPLAY_KEY, display);
 		}
 
 		if (Screen.hasAltDown()) {
-			short loreSize = (short) display.getList("Lore", 8).size();
-			lore = new NbtList();
-			lore.add(FzmmUtils.generateLoreMessage("(" + (loreSize == 0 ? "" : "BlockEntityTag + ") + "BlockStateTag)"));
-			display.put("Lore", lore);
-			stack.putSubTag("display", display);
+			stack.putSubTag(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(" + (display == null ? "" : "BlockEntityTag + ") + "BlockStateTag)"));
 			stack.putSubTag("BlockStateTag", this.getBlockStateTag(blockEntity.getCachedState()));
 		}
 	}
@@ -155,12 +145,7 @@ public class MinecraftClientMixin {
 	public void normalBlockSetState(ItemStack stack, BlockState blockState) {
 		if (blockState.getProperties().size() > 0) {
 
-			NbtCompound display = new NbtCompound();
-			NbtList lore = new NbtList();
-
-			lore.add(FzmmUtils.generateLoreMessage("(BlockStateTag)"));
-			display.put("Lore", lore);
-			stack.putSubTag("display", display);
+			stack.putSubTag(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(BlockStateTag)"));
 			stack.putSubTag("BlockStateTag", this.getBlockStateTag(blockState));
 		}
 	}

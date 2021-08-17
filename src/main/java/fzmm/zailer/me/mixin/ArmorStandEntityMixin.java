@@ -26,17 +26,12 @@ public abstract class ArmorStandEntityMixin {
 		ItemStack stack = Items.ARMOR_STAND.getDefaultStack();
 		if (Screen.hasControlDown()) {
 			NbtCompound entityTag = new NbtCompound();
-			NbtCompound display = stack.getOrCreateSubTag("display");
-			NbtList lore = display.getList("Lore", NbtElement.STRING_TYPE);
-
-			lore.add(FzmmUtils.generateLoreMessage("(EntityTag)"));
-			display.put("Lore", lore);
 
 			this.writeCustomDataToNbt(entityTag);
 			// FIXME: DisabledSlots and NoGravity do not work
 
 			stack.putSubTag("EntityTag", entityTag);
-			stack.putSubTag("display", display);
+			stack.putSubTag(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(EntityTag)"));
 		}
 		return stack;
 	}

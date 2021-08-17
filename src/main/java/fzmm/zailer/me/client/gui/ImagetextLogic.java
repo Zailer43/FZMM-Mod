@@ -8,6 +8,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.WrittenBookItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
@@ -90,9 +91,9 @@ public class ImagetextLogic {
 					.withHoverEvent(HoverEvent.fromJson(jsonHoverEvent)))
 		)));
 
-		tag.putString("title", "Imagebook");
-		tag.putString("author", bookAuthor);
-		tag.put("pages", pages);
+		tag.putString(WrittenBookItem.TITLE_KEY, "Imagebook");
+		tag.putString(WrittenBookItem.AUTHOR_KEY, bookAuthor);
+		tag.put(WrittenBookItem.PAGES_KEY, pages);
 
 		itemStack.setTag(tag);
 		assert itemStack.getTag() != null;

@@ -32,16 +32,16 @@ public abstract class ItemStackMixin {
             final String[] string = {Formatting.DARK_GRAY + "Tag's: "};
             Set<String> tags = this.getTag().getKeys();
             AtomicInteger i = new AtomicInteger(0);
-            int tagssize = tags.size();
+            int tagsSize = tags.size();
 
             tags.forEach(element -> {
                 string[0] += element;
                 i.getAndIncrement();
-                if (i.get() != tagssize) string[0] += ", ";
-                if (i.get() % 3 == 0 && i.get() != tagssize) {
+                if (i.get() != tagsSize) string[0] += ", ";
+                if (i.get() % 3 == 0 && i.get() != tagsSize) {
                     stringList.add(string[0]);
                     string[0] = Formatting.DARK_GRAY + "";
-                } else if (i.get() == tagssize) {
+                } else if (i.get() == tagsSize) {
                     stringList.add(string[0]);
                 }
 

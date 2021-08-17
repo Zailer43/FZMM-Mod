@@ -7,6 +7,7 @@ import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.*;
@@ -125,7 +126,7 @@ public class StatueLogic {
             }
 
             blockEntityTag.put("Items", containerItems);
-            container.putSubTag("BlockEntityTag", blockEntityTag);
+            container.putSubTag(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
 
             FzmmUtils.giveItem(updateStatue(container, x, y, z, direction, name));
             StatueScreen.progress = new LiteralText("Finished statue");
@@ -176,7 +177,7 @@ public class StatueLogic {
 
             tags.add(NbtString.of("PlayerStatue"));
 
-            display.putString("Name", name);
+            display.putString(ItemStack.NAME_KEY, name);
 
             entityTag.put("Tags", tags);
             entityTag.put("HandItems", handItems);
@@ -187,7 +188,7 @@ public class StatueLogic {
             entityTag.putBoolean("Invisible", true);
 
             tag.put("EntityTag", entityTag);
-            tag.put("display", display);
+            tag.put(ItemStack.DISPLAY_KEY, display);
             return tag;
         }
     }
@@ -548,7 +549,7 @@ public class StatueLogic {
                 .setStyle(Style.EMPTY.withColor(1666703)))));
         lore.add(NbtString.of(Text.Serializer.toJson(new LiteralText(loreCoords)
                 .setStyle(Style.EMPTY.withColor(4288392)))));
-        display.put("Lore", lore);
+        display.put(ItemStack.LORE_KEY, lore);
 
         y--;
 
@@ -571,7 +572,7 @@ public class StatueLogic {
 
         coordinates = fixZFight(statueDirection, statueCoords);
 
-        items = statue.getOrCreateSubTag("BlockEntityTag").getList("Items", 10);
+        items = statue.getOrCreateSubTag(BlockItem.BLOCK_ENTITY_TAG_KEY).getList("Items", 10);
         assert statue.getTag() != null;
 
         if (items.size() < 26) {
@@ -604,13 +605,13 @@ public class StatueLogic {
                 items.set(26, generateStatueName(coordinates[26], name));
             }
 
-            display.put("Name", NbtString.of(name));
+            display.put(ItemStack.NAME_KEY, NbtString.of(name));
         } else if (items.size() == 27) {
             items.remove(26);
         }
         finalTag = statue.getTag();
-        finalTag.getCompound("BlockEntityTag").put("Items", items);
-        finalTag.put("display", display);
+        finalTag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).put("Items", items);
+        finalTag.put(ItemStack.DISPLAY_KEY, display);
         statue.setTag(finalTag);
         return statue;
     }
@@ -636,7 +637,7 @@ public class StatueLogic {
         tags.add(NbtString.of("PlayerStatue"));
         tags.add(NbtString.of("StatueName"));
 
-        display.putString("Name", String.valueOf(26));
+        display.putString(ItemStack.NAME_KEY, String.valueOf(26));
 
         entityTag.put("Tags", tags);
         entityTag.put("Pos", coordinates);
@@ -647,7 +648,7 @@ public class StatueLogic {
         entityTag.putBoolean("CustomNameVisible", true);
 
         tag.put("EntityTag", entityTag);
-        tag.put("display", display);
+        tag.put(ItemStack.DISPLAY_KEY, display);
 
         tagItems.putInt("Slot", 26);
         tagItems.putString("id", "armor_stand");
@@ -660,7 +661,7 @@ public class StatueLogic {
     public static String getStatueName() {
         assert mc.player != null;
         ItemStack stack = mc.player.getMainHandStack();
-        NbtCompound tag = stack.getOrCreateSubTag("BlockEntityTag");
+        NbtCompound tag = stack.getOrCreateSubTag(BlockItem.BLOCK_ENTITY_TAG_KEY);
 
         if (tag.contains("Items", NbtElement.LIST_TYPE)) {
             NbtList itemsTag = tag.getList("Items", NbtElement.COMPOUND_TYPE);

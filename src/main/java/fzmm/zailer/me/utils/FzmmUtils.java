@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fzmm.zailer.me.config.FzmmConfig;
-import io.github.cottonmc.clientcommands.CottonClientCommandSource;
 import me.shedaniel.autoconfig.AutoConfig;
+import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 
 public class FzmmUtils {
 
-    public static final SuggestionProvider<CottonClientCommandSource> SUGGESTION_PLAYER = (context, builder) -> {
+    public static final SuggestionProvider<FabricClientCommandSource> SUGGESTION_PLAYER = (context, builder) -> {
 
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.world != null;
@@ -64,17 +64,17 @@ public class FzmmUtils {
         NbtList lore;
 
         if (itemStack.getTag() == null) {
-            display.put("Lore", null);
-            tag.put("display", display);
+            display.put(ItemStack.LORE_KEY, null);
+            tag.put(ItemStack.DISPLAY_KEY, display);
             itemStack.setTag(tag);
         }
 
         tag = itemStack.getTag();
-        lore = tag.getCompound("display").getList("Lore", 8);
+        lore = tag.getCompound(ItemStack.DISPLAY_KEY).getList(ItemStack.LORE_KEY, 8);
         lore.addAll(loreArray);
-        display.put("Lore", lore);
-        display.putString("Name", tag.getCompound("display").getString("Name"));
-        tag.put("display", display);
+        display.put(ItemStack.LORE_KEY, lore);
+        display.putString(ItemStack.NAME_KEY, tag.getCompound(ItemStack.DISPLAY_KEY).getString(ItemStack.NAME_KEY));
+        tag.put(ItemStack.DISPLAY_KEY, display);
 
         return tag;
     }
@@ -84,16 +84,22 @@ public class FzmmUtils {
         return Pattern.compile(regexInit + SPECIAL_REGEX_CHARS.matcher(specialRegexChar).replaceAll("\\\\$0") + regexEnd).toString();
     }
 
-    public static NbtString generateLoreMessage(String message) {
+    public static NbtCompound generateLoreMessage(String message) {
+        NbtCompound display = new NbtCompound();
+        NbtList lore = new NbtList();
         String color = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().general.loreColorPickBlock;
+
         color = color.replaceAll("[^0-9A-Fa-f]]", "");
         if (color.length() != 6) {
             color = "19b2ff";
         }
-        return NbtString.of(Text.Serializer.toJson(new LiteralText(message).setStyle(
+        lore.add(NbtString.of(Text.Serializer.toJson(new LiteralText(message).setStyle(
                 Style.EMPTY.withColor(Integer.valueOf(color, 16))
                         .withItalic(false)
-        )));
+        ))));
+
+        display.put(ItemStack.LORE_KEY, lore);
+        return display;
     }
 
 
