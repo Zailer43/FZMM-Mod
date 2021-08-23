@@ -44,7 +44,8 @@ public class FzmmCommand {
     public static void registerCommands() {
         LiteralArgumentBuilder<FabricClientCommandSource> fzmmCommand = ClientCommandManager.literal("fzmm");
 
-        fzmmCommand.then(ClientCommandManager.argument("name", TextArgumentType.text()).executes(ctx -> {
+        fzmmCommand.then(ClientCommandManager.literal("name"))
+                .then(ClientCommandManager.argument("name", TextArgumentType.text()).executes(ctx -> {
 
             Text name = ctx.getArgument("name", Text.class);
 
@@ -193,7 +194,7 @@ public class FzmmCommand {
         //{Enchantments:[{id:"minecraft:aqua_affinity",lvl:1s}]}
 
         ItemStack stack = MC.player.getInventory().getMainHandStack();
-        NbtCompound tag = stack.getOrCreateTag();
+        NbtCompound tag = stack.getOrCreateNbt();
         NbtList enchantments = new NbtList();
 
         if (tag.getList("Enchantments", 10) != null) {
@@ -202,7 +203,7 @@ public class FzmmCommand {
         enchantments.add(EnchantmentHelper.createNbt(EnchantmentHelper.getEnchantmentId(enchant), (short) level));
 
         tag.put("Enchantments", enchantments);
-        stack.setTag(tag);
+        stack.setNbt(tag);
         FzmmUtils.giveItem(stack);
     }
 
@@ -210,10 +211,10 @@ public class FzmmCommand {
         assert MC.player != null;
         ItemStack stack = MC.player.getInventory().getMainHandStack();
 
-        if (stack.getTag() == null) {
+        if (stack.getNbt() == null) {
             throw ERROR_WITHOUT_NBT;
         }
-        String nbt = stack.getTag().toString().replaceAll("§", "\u00a7");
+        String nbt = stack.getNbt().toString().replaceAll("§", "\u00a7");
 
         MutableText message = new LiteralText(stack + ": " + nbt)
                 .setStyle(Style.EMPTY
@@ -251,7 +252,7 @@ public class FzmmCommand {
 
         tag.putString("SkullOwner", skullOwner);
 
-        itemStack.setTag(tag);
+        itemStack.setNbt(tag);
         FzmmUtils.giveItem(itemStack);
     }
 
@@ -270,17 +271,17 @@ public class FzmmCommand {
         blockEntityTag.put("Items", items);
         blockEntityTag.putString("id", containerItemStack.getItem().toString());
 
-        if (!(containerItemStack.getTag() == null)) {
-            tag = containerItemStack.getTag();
+        if (!(containerItemStack.getNbt() == null)) {
+            tag = containerItemStack.getNbt();
 
-            if (!(containerItemStack.getTag().getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY) == null)) {
+            if (!(containerItemStack.getNbt().getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY) == null)) {
                 items = fillSlots(tag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).getList("Items", 10), itemStack, slotsToFill, firstSlots);
                 blockEntityTag.put("Items", items);
             }
         }
 
         tag.put(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
-        containerItemStack.setTag(tag);
+        containerItemStack.setNbt(tag);
         FzmmUtils.giveItem(containerItemStack);
     }
 
@@ -291,7 +292,7 @@ public class FzmmCommand {
             tagItems.putInt("Slot", i + firstSlot);
             tagItems.putString("id", itemStack.getItem().toString());
             tagItems.putInt("Count", itemStack.getCount());
-            if (!(itemStack.getTag() == null)) tagItems.put("tag", itemStack.getTag());
+            if (!(itemStack.getNbt() == null)) tagItems.put("tag", itemStack.getNbt());
 
             nbtList.add(tagItems);
         }
@@ -309,10 +310,10 @@ public class FzmmCommand {
         NbtCompound tag = new NbtCompound();
         NbtCompound blockEntityTag = new NbtCompound();
 
-        if (!(containerItemStack.getTag() == null)) {
-            tag = containerItemStack.getTag();
+        if (!(containerItemStack.getNbt() == null)) {
+            tag = containerItemStack.getNbt();
 
-            if (!(containerItemStack.getTag().getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY) == null))
+            if (!(containerItemStack.getNbt().getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY) == null))
                 tag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).putString("Lock", key);
             else {
                 blockEntityTag.putString("Lock", key);
@@ -324,7 +325,7 @@ public class FzmmCommand {
             tag.put(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
         }
 
-        containerItemStack.setTag(tag);
+        containerItemStack.setNbt(tag);
         itemStack.setCustomName(new LiteralText(key));
 
         FzmmUtils.giveItem(containerItemStack);
@@ -345,10 +346,10 @@ public class FzmmCommand {
 
         display.put(ItemStack.LORE_KEY, lore);
 
-        if (!(itemStack.getTag() == null)) {
-            tag = itemStack.getTag();
+        if (!(itemStack.getNbt() == null)) {
+            tag = itemStack.getNbt();
 
-            if (!(itemStack.getTag().getCompound(ItemStack.DISPLAY_KEY) == null)) {
+            if (!(itemStack.getNbt().getCompound(ItemStack.DISPLAY_KEY) == null)) {
                 lore = tag.getCompound(ItemStack.DISPLAY_KEY).getList(ItemStack.LORE_KEY, 8);
                 lore.add(NbtString.of(Text.Serializer.toJson(message)));
                 display.put(ItemStack.LORE_KEY, lore);
@@ -357,7 +358,7 @@ public class FzmmCommand {
         }
 
         tag.put(ItemStack.DISPLAY_KEY, display);
-        itemStack.setTag(tag);
+        itemStack.setNbt(tag);
         FzmmUtils.giveItem(itemStack);
     }
 
@@ -396,7 +397,7 @@ public class FzmmCommand {
                 throw ERROR_CONFIG_NOT_FOUND;
             }
 
-            itemStack.setTag(FzmmUtils.addLores(itemStack, loreArray));
+            itemStack.setNbt(FzmmUtils.addLores(itemStack, loreArray));
 
             FzmmUtils.giveItem(itemStack);
         } catch (Exception e) {
@@ -411,10 +412,10 @@ public class FzmmCommand {
 
         ItemStack itemStack = MC.player.getMainHandStack();
 
-        if (!(itemStack.getTag() == null)) {
-            NbtCompound tag = itemStack.getTag();
+        if (!(itemStack.getNbt() == null)) {
+            NbtCompound tag = itemStack.getNbt();
 
-            if (!(itemStack.getTag().getCompound(ItemStack.DISPLAY_KEY) == null)) {
+            if (!(itemStack.getNbt().getCompound(ItemStack.DISPLAY_KEY) == null)) {
                 NbtCompound display = new NbtCompound();
                 NbtList lore;
 
@@ -424,7 +425,7 @@ public class FzmmCommand {
                 display.putString(ItemStack.NAME_KEY, tag.getCompound(ItemStack.DISPLAY_KEY).getString(ItemStack.NAME_KEY));
 
                 tag.put(ItemStack.DISPLAY_KEY, display);
-                itemStack.setTag(tag);
+                itemStack.setNbt(tag);
                 FzmmUtils.giveItem(itemStack);
             }
         }

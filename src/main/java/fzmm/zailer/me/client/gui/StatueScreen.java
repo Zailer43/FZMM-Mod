@@ -282,7 +282,7 @@ public class StatueScreen extends FzmmBaseScreen {
 	private record UrlOpener(MinecraftClient client, String url) implements Runnable, BooleanConsumer {
 		@Override
 		public void run() {
-			this.client.openScreen(new ConfirmChatLinkScreen(this, url, true));
+			this.client.setScreen(new ConfirmChatLinkScreen(this, url, true));
 		}
 
 		@Override
@@ -291,7 +291,7 @@ public class StatueScreen extends FzmmBaseScreen {
 				Util.getOperatingSystem().open(url);
 			}
 
-			this.client.openScreen(null);
+			this.client.setScreen(null);
 		}
 	}
 }

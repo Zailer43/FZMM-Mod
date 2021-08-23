@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.8-SNAPSHOT'
+    id 'fabric-loom' version '0.9-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -14,11 +14,6 @@ repositories {
         url = 'https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases/'
     }
 
-    maven {
-        name = 'CottonMC'
-        url = 'https://server.bbkr.space/artifactory/libs-release'
-    }
-
     maven { url "https://maven.shedaniel.me/" }
 }
 
@@ -28,6 +23,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation(fabricApi.module('fabric-command-api-v1', project.fabric_version))
     modImplementation(fabricApi.module('fabric-key-binding-api-v1', project.fabric_version))
 

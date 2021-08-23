@@ -24,13 +24,13 @@ public class ConvertersScreen extends FzmmBaseScreen {
 		assert this.client != null;
 
 		this.coordinatesButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 199, LINE1, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("converters.coordinates"),
-			(buttonWidget) -> this.client.openScreen(new CoordinatesScreen())
+			(buttonWidget) -> this.client.setScreen(new CoordinatesScreen())
 		));
 		this.uuidButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 65, LINE1, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("converters.uuid"),
-			(buttonWidget) -> this.client.openScreen(new UuidScreen())
+			(buttonWidget) -> this.client.setScreen(new UuidScreen())
 		));
 		this.base64Button = this.addDrawableChild(new ButtonWidget(this.width / 2 + 69, LINE1, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("converters.base64"),
-			(buttonWidget) -> this.client.openScreen(new Base64Screen())
+			(buttonWidget) -> this.client.setScreen(new Base64Screen())
 		));
 	}
 

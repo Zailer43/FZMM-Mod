@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -75,7 +76,7 @@ public class MinecraftClientMixin {
 				PlayerInventory playerInventory = this.player.getInventory();
 
 				int i = playerInventory.getSlotWithStack(stack);
-				if ((!isCreative || !Screen.hasControlDown()) && i != -1) {
+				if (!isCreative && i != -1) {
 					if (PlayerInventory.isValidHotbarIndex(i)) {
 						playerInventory.selectedSlot = i;
 					} else {
@@ -83,12 +84,14 @@ public class MinecraftClientMixin {
 					}
 					return;
 				}
-				if (Screen.hasControlDown()) {
-					if (blockState.hasBlockEntity() && !(stack.getItem() instanceof BannerItem)) {
-						this.addBlockEntityNbt(stack, blockPos);
-					} else {
-						this.normalBlockSetState(stack, blockState);
-					}
+
+				if (Screen.hasAltDown() && blockState.getProperties().size() > 0) {
+					stack.setSubNbt(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(" + BlockItem.BLOCK_STATE_TAG_KEY + ")"));
+					stack.setSubNbt(BlockItem.BLOCK_STATE_TAG_KEY, this.getBlockStateTag(blockState));
+				}
+
+				if (Screen.hasControlDown() && blockState.hasBlockEntity() && !(stack.getItem() instanceof BannerItem)) {
+					this.addBlockEntityNbt(stack, blockPos);
 				}
 			}
 			case ENTITY -> {
@@ -123,31 +126,23 @@ public class MinecraftClientMixin {
 		BlockEntity blockEntity = this.world.getBlockEntity(blockPos);
 		assert blockEntity != null;
 		NbtCompound blockEntityTags = blockEntity.writeNbt(new NbtCompound());
-		NbtCompound display = null;
+		NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
+		String loreMessage;
 
 		if (stack.getItem() instanceof SkullItem && blockEntityTags.contains(SkullItem.SKULL_OWNER_KEY)) {
-			stack.getOrCreateTag().put(SkullItem.SKULL_OWNER_KEY, blockEntityTags.getCompound(SkullItem.SKULL_OWNER_KEY));
+			stack.setSubNbt(SkullItem.SKULL_OWNER_KEY, blockEntityTags.getCompound(SkullItem.SKULL_OWNER_KEY));
 		} else {
-			stack.putSubTag(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTags);
-			display = FzmmUtils.generateLoreMessage("(BlockEntityTag)");
-			if (!blockEntityTags.getString("CustomName").matches("")) {
-				display.putString(ItemStack.NAME_KEY, blockEntityTags.getString("CustomName"));
-			}
-			stack.putSubTag(ItemStack.DISPLAY_KEY, display);
+			stack.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTags);
 		}
 
-		if (Screen.hasAltDown()) {
-			stack.putSubTag(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(" + (display == null ? "" : "BlockEntityTag + ") + "BlockStateTag)"));
-			stack.putSubTag("BlockStateTag", this.getBlockStateTag(blockEntity.getCachedState()));
-		}
-	}
+		loreMessage = "(" + (display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE) ?
+				BlockItem.BLOCK_STATE_TAG_KEY + " + " : "") + BlockItem.BLOCK_ENTITY_TAG_KEY + ")";
+		display = FzmmUtils.generateLoreMessage(loreMessage);
 
-	public void normalBlockSetState(ItemStack stack, BlockState blockState) {
-		if (blockState.getProperties().size() > 0) {
-
-			stack.putSubTag(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(BlockStateTag)"));
-			stack.putSubTag("BlockStateTag", this.getBlockStateTag(blockState));
+		if (blockEntityTags.contains("CustomName", NbtElement.STRING_TYPE)) {
+			display.putString(ItemStack.NAME_KEY, blockEntityTags.getString("CustomName"));
 		}
+		stack.setSubNbt(ItemStack.DISPLAY_KEY, display);
 	}
 
 	public NbtCompound getBlockStateTag(BlockState state) {

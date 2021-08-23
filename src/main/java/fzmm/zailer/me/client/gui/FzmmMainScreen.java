@@ -26,28 +26,28 @@ public class FzmmMainScreen extends Screen {
 	protected void init() {
 		assert this.client != null;
 		this.closeButton = this.addDrawableChild(new ButtonWidget(this.width - 120, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gui.leave"),
-			(buttonWidget) -> this.client.openScreen(null)
+			(buttonWidget) -> this.client.setScreen(null)
 		));
 
 		this.imagetextButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 154, LINE1, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.title"),
-			(buttonWidget) -> this.client.openScreen(new ImagetextScreen())
+			(buttonWidget) -> this.client.setScreen(new ImagetextScreen())
 		));
 		this.encodebookButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 50, LINE1, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("encodebook.title"),
-			(buttonWidget) -> this.client.openScreen(new EncodebookScreen())
+			(buttonWidget) -> this.client.setScreen(new EncodebookScreen())
 		));
 		this.gradientButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 54, LINE1, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gradient.title"),
-			(buttonWidget) -> this.client.openScreen(new GradientScreen())
+			(buttonWidget) -> this.client.setScreen(new GradientScreen())
 		));
 
 		this.convertersButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 154, LINE2, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("converters.title"),
-			(buttonWidget) -> this.client.openScreen(new ConvertersScreen())
+			(buttonWidget) -> this.client.setScreen(new ConvertersScreen())
 		));
 		this.itemsButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 50, LINE2, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new LiteralText("Items (Pronto)"), null/*
-			(buttonWidget) -> this.client.openScreen(new ItemsScreen(this.client.player.getMainHandStack()))*/
+			(buttonWidget) -> this.client.setScreen(new ItemsScreen(this.client.player.getMainHandStack()))*/
 		));
 		this.itemsButton.active = false;
 		this.statueButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 54, LINE2, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new LiteralText("Player Statue"),
-			(buttonWidget) -> this.client.openScreen(new StatueScreen())
+			(buttonWidget) -> this.client.setScreen(new StatueScreen())
 		));
 	}
 

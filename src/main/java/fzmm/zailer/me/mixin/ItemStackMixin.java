@@ -22,15 +22,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
-    @Shadow @Nullable public abstract NbtCompound getTag();
+    @Shadow @Nullable public abstract NbtCompound getNbt();
 
     @Inject(method = "getTooltip", at = @At("RETURN"), cancellable = true)
     public void getTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
-        if (this.getTag() != null && context.isAdvanced()) {
+        if (this.getNbt() != null && context.isAdvanced()) {
 
             List<String> stringList = new ArrayList<>();
             final String[] string = {Formatting.DARK_GRAY + "Tag's: "};
-            Set<String> tags = this.getTag().getKeys();
+            Set<String> tags = this.getNbt().getKeys();
             AtomicInteger i = new AtomicInteger(0);
             int tagsSize = tags.size();
 

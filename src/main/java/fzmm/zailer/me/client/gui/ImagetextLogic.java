@@ -42,7 +42,7 @@ public class ImagetextLogic {
 
 		ArrayList<NbtString> loreArray = generateImagetext(resizeImage(image, width));
 
-		itemStack.setTag(FzmmUtils.addLores(itemStack, loreArray));
+		itemStack.setNbt(FzmmUtils.addLores(itemStack, loreArray));
 		FzmmUtils.giveItem(itemStack);
 	}
 
@@ -95,9 +95,9 @@ public class ImagetextLogic {
 		tag.putString(WrittenBookItem.AUTHOR_KEY, bookAuthor);
 		tag.put(WrittenBookItem.PAGES_KEY, pages);
 
-		itemStack.setTag(tag);
-		assert itemStack.getTag() != null;
-		if (itemStack.getTag().toString().length() > 32500) {
+		itemStack.setNbt(tag);
+		assert itemStack.getNbt() != null;
+		if (itemStack.getNbt().toString().length() > 32500) {
 			ImagetextScreen.bookNbtTooLong = true;
 		} else {
 			FzmmUtils.giveItem(itemStack);

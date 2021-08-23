@@ -6,10 +6,13 @@ import com.google.gson.JsonParser;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import me.shedaniel.autoconfig.AutoConfig;
+import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.*;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
@@ -49,9 +52,9 @@ public class StatueLogic {
     public static String apiKey;
     private static statuePart[] statue;
     private static byte uploadIndex;
-    private static BufferedImage headSkin = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+    private static BufferedImage headSkin;
     private static BufferedImage skinBuffered;
-    private static Graphics2D g = headSkin.createGraphics();
+    private static Graphics2D g;
     private static final int[] baseSkinId = new int[3];
     private static Direction direction;
     private static byte skinSize, requestTry;
@@ -117,7 +120,7 @@ public class StatueLogic {
                 }
 
                 tagItems.putInt("Slot", i);
-                tagItems.putString("id", "armor_stand");
+                tagItems.putString("id", Items.ARMOR_STAND.toString());
                 tagItems.putInt("Count", 1);
 
                 tagItems.put("tag", statue[i].getArmorStand(String.valueOf(i)));
@@ -125,8 +128,8 @@ public class StatueLogic {
                 containerItems.add(tagItems);
             }
 
-            blockEntityTag.put("Items", containerItems);
-            container.putSubTag(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
+            blockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, containerItems);
+            container.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
 
             FzmmUtils.giveItem(updateStatue(container, x, y, z, direction, name));
             StatueScreen.progress = new LiteralText("Finished statue");
@@ -157,7 +160,7 @@ public class StatueLogic {
             skullOwner.put("Properties", properties);
             skullOwner.put("Id", id);
 
-            tag.put("SkullOwner", skullOwner);
+            tag.put(SkullItem.SKULL_OWNER_KEY, skullOwner);
 
             this.head = tag;
         }
@@ -170,7 +173,7 @@ public class StatueLogic {
             NbtList tags = new NbtList(),
                     handItems = new NbtList();
 
-            headTag.putString("id", "player_head");
+            headTag.putString("id", Items.PLAYER_HEAD.toString());
             headTag.putByte("Count", (byte) 1);
             headTag.put("tag", this.head);
             handItems.add(headTag);
@@ -187,7 +190,7 @@ public class StatueLogic {
             entityTag.putBoolean("ShowArms", true);
             entityTag.putBoolean("Invisible", true);
 
-            tag.put("EntityTag", entityTag);
+            tag.put(EntityType.ENTITY_TAG_KEY, entityTag);
             tag.put(ItemStack.DISPLAY_KEY, display);
             return tag;
         }
@@ -572,8 +575,8 @@ public class StatueLogic {
 
         coordinates = fixZFight(statueDirection, statueCoords);
 
-        items = statue.getOrCreateSubTag(BlockItem.BLOCK_ENTITY_TAG_KEY).getList("Items", 10);
-        assert statue.getTag() != null;
+        items = statue.getOrCreateSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY).getList(ShulkerBoxBlockEntity.ITEMS_KEY, 10);
+        assert statue.getNbt() != null;
 
         if (items.size() < 26) {
             return Items.BARRIER.getDefaultStack();
@@ -587,8 +590,8 @@ public class StatueLogic {
                 tag = new statuePart(ERROR_SKIN)
                         .getArmorStand(i + " - Error skin");
             }
-            tag.getCompound("EntityTag").put("Pos", coordinates[i]);
-            tag.getCompound("EntityTag").put("Pose", pose);
+            tag.getCompound(EntityType.ENTITY_TAG_KEY).put("Pos", coordinates[i]);
+            tag.getCompound(EntityType.ENTITY_TAG_KEY).put("Pose", pose);
             item.put("tag", tag);
             items.set(i, item);
         }
@@ -609,10 +612,10 @@ public class StatueLogic {
         } else if (items.size() == 27) {
             items.remove(26);
         }
-        finalTag = statue.getTag();
-        finalTag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).put("Items", items);
+        finalTag = statue.getNbt();
+        finalTag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).put(ShulkerBoxBlockEntity.ITEMS_KEY, items);
         finalTag.put(ItemStack.DISPLAY_KEY, display);
-        statue.setTag(finalTag);
+        statue.setNbt(finalTag);
         return statue;
     }
 
@@ -647,7 +650,7 @@ public class StatueLogic {
         entityTag.putBoolean("Invisible", true);
         entityTag.putBoolean("CustomNameVisible", true);
 
-        tag.put("EntityTag", entityTag);
+        tag.put(EntityType.ENTITY_TAG_KEY, entityTag);
         tag.put(ItemStack.DISPLAY_KEY, display);
 
         tagItems.putInt("Slot", 26);
@@ -661,16 +664,16 @@ public class StatueLogic {
     public static String getStatueName() {
         assert mc.player != null;
         ItemStack stack = mc.player.getMainHandStack();
-        NbtCompound tag = stack.getOrCreateSubTag(BlockItem.BLOCK_ENTITY_TAG_KEY);
+        NbtCompound tag = stack.getOrCreateSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
 
-        if (tag.contains("Items", NbtElement.LIST_TYPE)) {
-            NbtList itemsTag = tag.getList("Items", NbtElement.COMPOUND_TYPE);
+        if (tag.contains(ShulkerBoxBlockEntity.ITEMS_KEY, NbtElement.LIST_TYPE)) {
+            NbtList itemsTag = tag.getList(ShulkerBoxBlockEntity.ITEMS_KEY, NbtElement.COMPOUND_TYPE);
             if (itemsTag.size() >= 27) {
                 NbtCompound statue = (NbtCompound) itemsTag.get(26);
                 if (statue.contains("tag", NbtElement.COMPOUND_TYPE)) {
                     NbtCompound statueTag = statue.getCompound("tag");
-                    if (statueTag.contains("EntityTag", NbtElement.COMPOUND_TYPE)) {
-                        NbtCompound entityTag = statueTag.getCompound("EntityTag");
+                    if (statueTag.contains(EntityType.ENTITY_TAG_KEY, NbtElement.COMPOUND_TYPE)) {
+                        NbtCompound entityTag = statueTag.getCompound(EntityType.ENTITY_TAG_KEY);
                         if (entityTag.contains("CustomName", NbtElement.STRING_TYPE)) {
                             return entityTag.getString("CustomName");
                         }

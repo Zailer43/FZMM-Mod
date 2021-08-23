@@ -24,7 +24,7 @@ public class FzmmBaseScreen extends Screen {
 		assert this.client != null;
 
 		this.backButton = this.addDrawableChild(new ButtonWidget(this.width - 120, this.height - 40, 100, 20, ScreenTexts.BACK,
-			(buttonWidget) -> this.client.openScreen(new FzmmMainScreen())
+			(buttonWidget) -> this.client.setScreen(new FzmmMainScreen())
 		));
 	}
 

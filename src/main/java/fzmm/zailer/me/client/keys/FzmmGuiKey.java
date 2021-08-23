@@ -19,6 +19,6 @@ public class FzmmGuiKey {
 
 	public static void handleInputEvents() {
 		if (FzmmGuiKey.wasPressed())
-			MinecraftClient.getInstance().openScreen(new FzmmMainScreen());
+			MinecraftClient.getInstance().setScreen(new FzmmMainScreen());
 	}
 }

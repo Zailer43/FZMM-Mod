@@ -114,7 +114,7 @@ public class EncodebookLogic {
 		NbtList.add(NbtString.of(Text.Serializer.toJson(page1)));
 		NbtList.add(NbtString.of(Text.Serializer.toJson(page2)));
 		tag.put(WrittenBookItem.PAGES_KEY, NbtList);
-		book.setTag(tag);
+		book.setNbt(tag);
 
 		FzmmUtils.giveItem(book);
 	}

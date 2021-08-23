@@ -63,13 +63,13 @@ public class FzmmUtils {
         NbtCompound display = new NbtCompound();
         NbtList lore;
 
-        if (itemStack.getTag() == null) {
+        if (itemStack.getNbt() == null) {
             display.put(ItemStack.LORE_KEY, null);
             tag.put(ItemStack.DISPLAY_KEY, display);
-            itemStack.setTag(tag);
+            itemStack.setNbt(tag);
         }
 
-        tag = itemStack.getTag();
+        tag = itemStack.getNbt();
         lore = tag.getCompound(ItemStack.DISPLAY_KEY).getList(ItemStack.LORE_KEY, 8);
         lore.addAll(loreArray);
         display.put(ItemStack.LORE_KEY, lore);
@@ -108,8 +108,8 @@ public class FzmmUtils {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
 
-        if (stack.getTag() != null) {
-            NbtCompound tag = stack.getTag();
+        if (stack.getNbt() != null) {
+            NbtCompound tag = stack.getNbt();
 
             // FIXME: MC-86153
             //  No funciona cuando se tiene que recibir el paquete del NBT de los blockEntity

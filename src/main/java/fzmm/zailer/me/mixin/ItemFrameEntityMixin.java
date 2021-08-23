@@ -2,6 +2,7 @@ package fzmm.zailer.me.mixin;
 
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.ItemFrameEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -32,8 +33,8 @@ public abstract class ItemFrameEntityMixin {
             entityTag.remove("TileY");
             entityTag.remove("TileZ");
 
-            stack.putSubTag("EntityTag", entityTag);
-            stack.putSubTag(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(EntityTag)"));
+            stack.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
+            stack.setSubNbt(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(" + EntityType.ENTITY_TAG_KEY + ")"));
             cir.setReturnValue(stack);
         }
     }

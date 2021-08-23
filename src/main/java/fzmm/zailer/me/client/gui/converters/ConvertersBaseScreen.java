@@ -15,7 +15,7 @@ public class ConvertersBaseScreen extends FzmmBaseScreen {
 		assert this.client != null;
 
 		this.backButton = this.addDrawableChild(new ButtonWidget(this.width - 120, this.height - 40, 100, 20, ScreenTexts.BACK,
-			(buttonWidget) -> this.client.openScreen(new ConvertersScreen())
+			(buttonWidget) -> this.client.setScreen(new ConvertersScreen())
 		));
 	}
 }
