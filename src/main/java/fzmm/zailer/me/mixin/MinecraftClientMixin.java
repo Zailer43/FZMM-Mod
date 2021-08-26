@@ -1,6 +1,7 @@
 package fzmm.zailer.me.mixin;
 
 import fzmm.zailer.me.client.keys.FzmmGuiKey;
+import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -54,7 +55,7 @@ public class MinecraftClientMixin {
 	}
 
 	@Redirect(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;doItemPick()V"))
-	private void doItemPick(MinecraftClient minecraftClient) {
+	private void doItemPick(MinecraftClient client) {
 		if (crosshairTarget == null) {
 			return;
 		}
@@ -99,7 +100,13 @@ public class MinecraftClientMixin {
 				stack = entity.getPickBlockStack();
 			}
 			case MISS -> {
-				return;
+				assert client.player != null;
+				BlockState blockState = this.world.getBlockState(new BlockPos(this.crosshairTarget.getPos()));
+				if (blockState.isAir() && !client.options.getPerspective().isFirstPerson()) {
+					stack = client.player.getPickBlockStack();
+				} else {
+					return;
+				}
 			}
 		}
 		if (!isCreative) {
@@ -112,7 +119,7 @@ public class MinecraftClientMixin {
 			string = switch (type) {
 				case BLOCK -> Registry.BLOCK.getId(this.world.getBlockState(((BlockHitResult) this.crosshairTarget).getBlockPos()).getBlock()).toString();
 				case ENTITY -> Registry.ENTITY_TYPE.getId(((EntityHitResult) this.crosshairTarget).getEntity().getType()).toString();
-				default -> throw new IllegalStateException("Unexpected value: " + type);
+				case MISS -> "Pick block is null, crosshairTarget: MISS";
 			};
 
 			LOGGER.warn("Picking on: [{}] {} gave null item", type, string);
@@ -148,8 +155,12 @@ public class MinecraftClientMixin {
 	public NbtCompound getBlockStateTag(BlockState state) {
 		NbtCompound blockStateTag = new NbtCompound();
 
-		for (Property property : state.getProperties()) {
-			blockStateTag.putString(property.getName(), property.name(state.get(property)));
+		for (Property<?> property : state.getProperties()) {
+			blockStateTag.putString(property.getName(), state.get(property).toString());
+		}
+
+		if (FzmmConfig.get().general.removeFacingState && blockStateTag.contains("facing")) {
+			blockStateTag.remove("facing");
 		}
 
 		return blockStateTag;

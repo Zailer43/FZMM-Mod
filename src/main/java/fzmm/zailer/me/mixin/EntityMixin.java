@@ -2,14 +2,13 @@ package fzmm.zailer.me.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.OtherClientPlayerEntity;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,9 +25,6 @@ import java.io.IOException;
 public abstract class EntityMixin {
 
     @Shadow
-    public abstract Text getName();
-
-    @Shadow
     @Final
     private EntityType<?> type;
 
@@ -36,6 +32,7 @@ public abstract class EntityMixin {
     private static Graphics2D g;
 
     /**
+     * @reason Get player head or armor with average color of skin
      * @author Zailer43
      */
     @Overwrite
@@ -43,8 +40,7 @@ public abstract class EntityMixin {
         if (!type.equals(EntityType.PLAYER)) {
             return null;
         }
-        OtherClientPlayerEntity player = (OtherClientPlayerEntity) ((Object) this);
-
+        AbstractClientPlayerEntity player = (AbstractClientPlayerEntity) ((Object) this);
         ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
         NbtCompound tag = new NbtCompound();
 
@@ -58,6 +54,9 @@ public abstract class EntityMixin {
                 skinPartBuffered = new BufferedImage(40, 48, BufferedImage.TYPE_INT_ARGB);
                 g = skinPartBuffered.createGraphics();
 
+                if (!player.hasSkinTexture()) {
+                    return;
+                }
                 try {
                     String skinPath = player.getSkinTexture().getPath();
                     String absolutePath = MinecraftClient.getInstance().runDirectory.toPath() + "\\assets\\skins\\" + skinPath.substring(6, 8) + "\\" + skinPath.substring(6);
@@ -82,7 +81,7 @@ public abstract class EntityMixin {
             }).start();
             return null;
         } else {
-            tag.putString(SkullItem.SKULL_OWNER_KEY, this.getName().getString());
+            tag.putString(SkullItem.SKULL_OWNER_KEY, player.getName().getString());
         }
 
         head.setNbt(tag);

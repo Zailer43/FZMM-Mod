@@ -2,7 +2,6 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -64,7 +63,7 @@ public class EncodebookLogic {
 		 */
 
 		MinecraftClient mc = MinecraftClient.getInstance();
-		FzmmConfig.Encodebook config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().encodebook;
+		FzmmConfig.Encodebook config = FzmmConfig.get().encodebook;
 		Character[] encodeMessage = new Character[MAX_MESSAGE_LENGTH];
 		short[] encodeKey;
 		Random random = new Random(new Date().getTime());
@@ -121,7 +120,7 @@ public class EncodebookLogic {
 
 	protected static void showDecoderInChat(final int SEED, final short MAX_MESSAGE_LENGTH) {
 		MinecraftClient mc = MinecraftClient.getInstance();
-		FzmmConfig.Encodebook config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().encodebook;
+		FzmmConfig.Encodebook config = FzmmConfig.get().encodebook;
 		StringBuilder decoderString = new StringBuilder();
 		short[] encodeKey = EncodeKey(SEED + config.endToEndEncodeKey, MAX_MESSAGE_LENGTH);
 

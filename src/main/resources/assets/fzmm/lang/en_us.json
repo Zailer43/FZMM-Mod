@@ -79,6 +79,7 @@
   "text.autoconfig.fzmm.option.general.giveClientSideItem": "Givear los items client-side",
   "text.autoconfig.fzmm.option.general.loreColorPickBlock": "Color del lore al copiar un bloque",
   "text.autoconfig.fzmm.option.general.mineSkinApiKey": "Mineskin Api Key",
+  "text.autoconfig.fzmm.option.general.removeFacingState": "Remove 'facing' state when using alt+pick block",
   "text.autoconfig.fzmm.option.imagetext.defaultBookMessage": "Mensaje por defecto de libro",
   "text.autoconfig.fzmm.option.imagetext.imagetextScale": "Tipo de reescalado",
   "text.autoconfig.fzmm.title": "FZMM Mod configuraciones",

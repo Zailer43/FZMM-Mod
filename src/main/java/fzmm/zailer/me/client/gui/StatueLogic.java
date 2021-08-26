@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
@@ -72,7 +71,7 @@ public class StatueLogic {
         statue = new statuePart[26];
         direction = direction2;
         requestTry = 0;
-        apiKey = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().general.mineSkinApiKey;
+        apiKey = FzmmConfig.get().general.mineSkinApiKey;
         if (apiKey.length() != 0) {
             apiKey = "key=" + apiKey;
         }

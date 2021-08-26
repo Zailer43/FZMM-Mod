@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fzmm.zailer.me.config.FzmmConfig;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -87,7 +86,7 @@ public class FzmmUtils {
     public static NbtCompound generateLoreMessage(String message) {
         NbtCompound display = new NbtCompound();
         NbtList lore = new NbtList();
-        String color = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().general.loreColorPickBlock;
+        String color = FzmmConfig.get().general.loreColorPickBlock;
 
         color = color.replaceAll("[^0-9A-Fa-f]]", "");
         if (color.length() != 6) {
@@ -108,8 +107,9 @@ public class FzmmUtils {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
 
-        if (stack.getNbt() != null) {
+        if (stack.hasNbt()) {
             NbtCompound tag = stack.getNbt();
+            assert tag != null;
 
             // FIXME: MC-86153
             //  No funciona cuando se tiene que recibir el paquete del NBT de los blockEntity
@@ -120,7 +120,7 @@ public class FzmmUtils {
 
         if (exceedLimit) {
             mc.inGameHud.addChatMessage(MessageType.SYSTEM, new TranslatableText("giveitem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)), mc.player.getUuid());
-        } else if (AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().general.giveClientSideItem) {
+        } else if (FzmmConfig.get().general.giveClientSideItem) {
             mc.player.equipStack(EquipmentSlot.MAINHAND, stack);
         } else if (mc.player.isCreative()) {
             assert mc.interactionManager != null;

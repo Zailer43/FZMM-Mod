@@ -2,7 +2,6 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
 import fzmm.zailer.me.config.FzmmConfig;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
@@ -78,7 +77,7 @@ public class ImagetextScreen extends FzmmBaseScreen {
 
 		bookMessageTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE3, 300, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("book.message"));
 		bookMessageTextField.setMaxLength(256);
-		bookMessageTextField.setText(AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().imagetext.defaultBookMessage);
+		bookMessageTextField.setText(FzmmConfig.get().imagetext.defaultBookMessage);
 
 		this.howGetImageButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 150, LINE4 - 10, NORMAL_BUTTON_WIDTH - 3, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.url"), (buttonWidget) -> {
 			this.cycleHowGetImage();

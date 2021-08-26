@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -129,7 +128,7 @@ public class ImagetextLogic {
 		if (img.getWidth() < newW)
 			return img;
 
-		FzmmConfig.Imagetext config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().imagetext;
+		FzmmConfig.Imagetext config = FzmmConfig.get().imagetext;
 		int newH = Math.round(((float) (newW) / img.getWidth()) * img.getHeight());
 		Image tmp = img.getScaledInstance(newW, newH, config.imagetextScale.value);
 		BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_RGB);

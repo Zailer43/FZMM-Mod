@@ -44,14 +44,15 @@ public class FzmmCommand {
     public static void registerCommands() {
         LiteralArgumentBuilder<FabricClientCommandSource> fzmmCommand = ClientCommandManager.literal("fzmm");
 
-        fzmmCommand.then(ClientCommandManager.literal("name"))
+        fzmmCommand.then(ClientCommandManager.literal("name")
                 .then(ClientCommandManager.argument("name", TextArgumentType.text()).executes(ctx -> {
 
-            Text name = ctx.getArgument("name", Text.class);
+                    Text name = ctx.getArgument("name", Text.class);
 
-            renameItem(name);
-            return 1;
-        }));
+                    renameItem(name);
+                    return 1;
+                }))
+        );
 
         fzmmCommand.then(ClientCommandManager.literal("lore")
                 .then(ClientCommandManager.literal("add")

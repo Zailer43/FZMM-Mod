@@ -2,7 +2,6 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
 import fzmm.zailer.me.config.FzmmConfig;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -64,7 +63,7 @@ public class EncodebookScreen extends FzmmBaseScreen {
 		this.addSelectableChild(this.maxMsgLengthNumberField);
 		this.addSelectableChild(this.bookTitleTextField);
 
-		FzmmConfig.Encodebook config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig().encodebook;
+		FzmmConfig.Encodebook config = FzmmConfig.get().encodebook;
 
 		messageTextField.setText(config.defaultBookMessage);
 		seedNumberField.setText("1");

@@ -7,8 +7,6 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.List;
 
 @Config(name = "fzmm")
 public class FzmmConfig implements ConfigData {
@@ -30,6 +28,7 @@ public class FzmmConfig implements ConfigData {
         public boolean giveClientSideItem = false;
         public String loreColorPickBlock = "19b2ff";
         public String mineSkinApiKey = "";
+        public boolean removeFacingState = false;
     }
 
     public static class Encodebook {

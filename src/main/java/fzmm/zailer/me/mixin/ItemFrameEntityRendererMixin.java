@@ -1,7 +1,6 @@
 package fzmm.zailer.me.mixin;
 
 import fzmm.zailer.me.config.FzmmConfig;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.ItemFrameEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -24,8 +23,6 @@ public class ItemFrameEntityRendererMixin<T extends ItemFrameEntity> {
 
     @ModifyVariable(method = "render", at = @At("STORE"))
     private boolean disableItemFrameFrameRendering(boolean bl) {
-        FzmmConfig config = AutoConfig.getConfigHolder(FzmmConfig.class).getConfig();
-
-        return (config.general.forceInvisibleItemFrame && !hasStack) || bl;
+        return (FzmmConfig.get().general.forceInvisibleItemFrame && !hasStack) || bl;
     }
 }
