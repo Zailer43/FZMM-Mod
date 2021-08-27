@@ -68,7 +68,7 @@ public class EncodebookScreen extends FzmmBaseScreen {
 		messageTextField.setText(config.defaultBookMessage);
 		seedNumberField.setText("1");
 		authorTextField.setText(this.client.player.getName().getString());
-		paddingCharsTextField.setText(config.myRandom);
+		paddingCharsTextField.setText(config.padding);
 		maxMsgLengthNumberField.setText(String.valueOf(config.messageLength));
 		bookTitleTextField.setText(config.bookTitle);
 	}

@@ -32,19 +32,19 @@ public class FzmmConfig implements ConfigData {
     }
 
     public static class Encodebook {
-        public int messageLength = 255;
-        public String myRandom = "1234567890abcdefqwrtyuiopsghjklzxvnmQWERTYUIOPASDFGHJKLZXCVBNM_,.";
+        public short messageLength = 255;
+        public String padding = "1234567890qwertyuiopsdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_,.";
         public String translationKey = "secret_mc_";
         public String defaultBookMessage = "Hello world";
         public String bookTitle = "Encode book (%s)";
         public String separatorMessage = "-----";
         @ConfigEntry.Gui.Tooltip()
-        public long endToEndEncodeKey = 0;
+        public int asymmetricEncodeKey = 0;
     }
 
     public static class Imagetext {
         public ImagetextScale imagetextScale = ImagetextScale.DEFAULT;
-        public String defaultBookMessage = "Pon el cursor encima de este mensaje para ver una imagen";
+        public String defaultBookMessage = "Hover over this message to see an image";
     }
 
     public static void init() {

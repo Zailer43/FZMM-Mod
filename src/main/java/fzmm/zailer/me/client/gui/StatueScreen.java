@@ -245,7 +245,10 @@ public class StatueScreen extends FzmmBaseScreen {
 	public void cycleSkin() {
 		switch (this.skinMode) {
 			case NICK -> this.skinMode = SkinMode.FROM_PC;
-			case FROM_PC -> this.skinMode = SkinMode.NICK;
+			case FROM_PC -> {
+				this.skinMode = SkinMode.NICK;
+				errorImage = false;
+			}
 
 		}
 	}

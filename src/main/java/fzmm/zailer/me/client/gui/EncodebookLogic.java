@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.Random;
 
 public class EncodebookLogic {
-	protected static short[] EncodeKey(long seed, int messageLength) {
+	protected static short[] encodeKey(long seed, int messageLength) {
 		short i = 0;
 		short[] encodeKey = new short[messageLength];
 		Random number = new Random(seed);
@@ -65,11 +65,11 @@ public class EncodebookLogic {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		FzmmConfig.Encodebook config = FzmmConfig.get().encodebook;
 		Character[] encodeMessage = new Character[MAX_MESSAGE_LENGTH];
-		short[] encodeKey;
+		short[] encodedKey;
 		Random random = new Random(new Date().getTime());
 		StringBuilder messageBuilder,
 			encodeMessageString = new StringBuilder();
-		String[] myRandom = PADDING_CHARS.split("");
+		String[] paddingCharacters = PADDING_CHARS.split("");
 		ItemStack book = Items.WRITTEN_BOOK.getDefaultStack();
 		NbtCompound tag = new NbtCompound();
 		NbtList NbtList = new NbtList();
@@ -80,16 +80,16 @@ public class EncodebookLogic {
 		message = message.replaceAll(" ", "_");
 		messageBuilder = new StringBuilder(message);
 		int messageLength = message.length();
-		encodeKey = EncodeKey(SEED + config.endToEndEncodeKey, MAX_MESSAGE_LENGTH);
+		encodedKey = encodeKey(SEED * (long) config.asymmetricEncodeKey + 	0x19429630, MAX_MESSAGE_LENGTH);
 
 		while (messageLength < MAX_MESSAGE_LENGTH) {
-			messageBuilder.append(myRandom[random.nextInt(myRandom.length)]);
+			messageBuilder.append(paddingCharacters[random.nextInt(paddingCharacters.length)]);
 			messageLength++;
 		}
 
 		message = messageBuilder.toString();
 		for (int i = 0; i < MAX_MESSAGE_LENGTH; i++)
-			encodeMessage[encodeKey[i]] = message.charAt(i);
+			encodeMessage[encodedKey[i]] = message.charAt(i);
 		for (int i = 0; i < MAX_MESSAGE_LENGTH; i++) {
 			encodeMessageString.append(encodeMessage[i]);
 		}
@@ -104,7 +104,7 @@ public class EncodebookLogic {
 
 		page2 = new LiteralText(Formatting.BLUE + "Idea by: " + Formatting.BLACK + "turkeybot69\n" +
 			Formatting.BLUE + "Encode key: " + Formatting.BLACK + config.translationKey + SEED + "\n" +
-			Formatting.BLUE + "End-to-end encode: " + Formatting.BLACK + (config.endToEndEncodeKey != 0) + "\n" +
+			Formatting.BLUE + "Asymmetric encode: " + Formatting.BLACK + (config.asymmetricEncodeKey != 0) + "\n" +
 			Formatting.BLUE + "Encode message: " + Formatting.BLACK + "Hover over here")
 			.setStyle(Style.EMPTY
 				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText(encodeMessageString.toString())))
@@ -122,7 +122,7 @@ public class EncodebookLogic {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		FzmmConfig.Encodebook config = FzmmConfig.get().encodebook;
 		StringBuilder decoderString = new StringBuilder();
-		short[] encodeKey = EncodeKey(SEED + config.endToEndEncodeKey, MAX_MESSAGE_LENGTH);
+		short[] encodeKey = encodeKey(SEED + config.asymmetricEncodeKey, MAX_MESSAGE_LENGTH);
 
 		assert mc.player != null;
 

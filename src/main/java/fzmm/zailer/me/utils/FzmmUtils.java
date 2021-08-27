@@ -103,7 +103,6 @@ public class FzmmUtils {
 
 
     public static void giveItem(ItemStack stack) {
-        boolean exceedLimit = false;
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
 
@@ -114,15 +113,14 @@ public class FzmmUtils {
             // FIXME: MC-86153
             //  No funciona cuando se tiene que recibir el paquete del NBT de los blockEntity
             if (tag.asString().length() > 1950000) {
-                exceedLimit = true;
+                mc.inGameHud.addChatMessage(MessageType.SYSTEM, new TranslatableText("giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)), mc.player.getUuid());
+                return;
             }
         }
 
-        if (exceedLimit) {
-            mc.inGameHud.addChatMessage(MessageType.SYSTEM, new TranslatableText("giveitem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)), mc.player.getUuid());
-        } else if (FzmmConfig.get().general.giveClientSideItem) {
+        if (FzmmConfig.get().general.giveClientSideItem) {
             mc.player.equipStack(EquipmentSlot.MAINHAND, stack);
-        } else if (mc.player.isCreative()) {
+        } else {
             assert mc.interactionManager != null;
             PlayerInventory playerInventory = mc.player.getInventory();
 
