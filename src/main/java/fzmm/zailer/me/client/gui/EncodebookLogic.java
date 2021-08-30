@@ -72,7 +72,7 @@ public class EncodebookLogic {
 		String[] paddingCharacters = PADDING_CHARS.split("");
 		ItemStack book = Items.WRITTEN_BOOK.getDefaultStack();
 		NbtCompound tag = new NbtCompound();
-		NbtList NbtList = new NbtList();
+		NbtList pages = new NbtList();
 		MutableText page1, page2;
 		assert mc.player != null;
 
@@ -80,7 +80,7 @@ public class EncodebookLogic {
 		message = message.replaceAll(" ", "_");
 		messageBuilder = new StringBuilder(message);
 		int messageLength = message.length();
-		encodedKey = encodeKey(SEED * (long) config.asymmetricEncodeKey + 	0x19429630, MAX_MESSAGE_LENGTH);
+		encodedKey = encodeKey(getKey(SEED), MAX_MESSAGE_LENGTH);
 
 		while (messageLength < MAX_MESSAGE_LENGTH) {
 			messageBuilder.append(paddingCharacters[random.nextInt(paddingCharacters.length)]);
@@ -97,7 +97,7 @@ public class EncodebookLogic {
 		tag.putString(WrittenBookItem.TITLE_KEY, String.format(BOOK_TITLE, config.translationKey + SEED));
 		tag.putString(WrittenBookItem.AUTHOR_KEY, AUTHOR);
 
-		page1 = new TranslatableText(config.translationKey + SEED, encodeMessage)
+		page1 = new TranslatableText(config.translationKey + SEED, (Object[]) encodeMessage)
 			.setStyle(Style.EMPTY
 				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("You probably need the decoder to see this message")))
 			);
@@ -110,9 +110,9 @@ public class EncodebookLogic {
 				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText(encodeMessageString.toString())))
 			);
 
-		NbtList.add(NbtString.of(Text.Serializer.toJson(page1)));
-		NbtList.add(NbtString.of(Text.Serializer.toJson(page2)));
-		tag.put(WrittenBookItem.PAGES_KEY, NbtList);
+		pages.add(NbtString.of(Text.Serializer.toJson(page1)));
+		pages.add(NbtString.of(Text.Serializer.toJson(page2)));
+		tag.put(WrittenBookItem.PAGES_KEY, pages);
 		book.setNbt(tag);
 
 		FzmmUtils.giveItem(book);
@@ -122,7 +122,7 @@ public class EncodebookLogic {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		FzmmConfig.Encodebook config = FzmmConfig.get().encodebook;
 		StringBuilder decoderString = new StringBuilder();
-		short[] encodeKey = encodeKey(SEED + config.asymmetricEncodeKey, MAX_MESSAGE_LENGTH);
+		short[] encodeKey = encodeKey(getKey(SEED), MAX_MESSAGE_LENGTH);
 
 		assert mc.player != null;
 
@@ -137,5 +137,10 @@ public class EncodebookLogic {
 			);
 
 		mc.inGameHud.addChatMessage(MessageType.SYSTEM, decoderMessage, mc.player.getUuid());
+	}
+
+	private static long getKey(long seed) {
+		FzmmConfig.Encodebook config = FzmmConfig.get().encodebook;
+		return seed * (config.asymmetricEncodeKey != 0 ? (long) config.asymmetricEncodeKey + 0x19429630 : 1);
 	}
 }

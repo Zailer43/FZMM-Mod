@@ -185,7 +185,7 @@ public class FzmmCommand {
         //{Enchantments:[{id:"minecraft:aqua_affinity",lvl:1s}]}
 
         ItemStack stack = MC.player.getInventory().getMainHandStack();
-        NbtCompound tag = stack.getOrCreateSubNbt(ItemStack.ENCHANTMENTS_KEY);
+        NbtCompound tag = stack.getOrCreateNbt();
         NbtList enchantments = new NbtList();
 
         if (tag.contains(ItemStack.ENCHANTMENTS_KEY, NbtElement.LIST_TYPE)) {
