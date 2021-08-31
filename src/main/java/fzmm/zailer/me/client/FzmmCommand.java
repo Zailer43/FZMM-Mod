@@ -333,7 +333,7 @@ public class FzmmCommand {
         NbtCompound display = new NbtCompound();
         NbtList lore = new NbtList();
 
-        if (!itemStack.hasNbt()) {
+        if (itemStack.hasNbt()) {
             tag = itemStack.getNbt();
             assert tag != null;
 
