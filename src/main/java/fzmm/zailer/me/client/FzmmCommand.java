@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.LoreUtils;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
@@ -104,6 +105,24 @@ public class FzmmCommand {
                 })))
         );
 
+        fzmmCommand.then(ClientCommandManager.literal("fakeenchant")
+                .then(ClientCommandManager.argument("enchantment", EnchantmentArgumentType.enchantment()).executes(ctx -> {
+
+                    Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
+
+                    addFakeEnchant(enchant, 1);
+                    return 1;
+
+                }).then(ClientCommandManager.argument("level", IntegerArgumentType.integer()).executes(ctx -> {
+
+                    Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
+                    int level = ctx.getArgument("level", int.class);
+
+                    addFakeEnchant(enchant, level);
+                    return 1;
+                })))
+        );
+
         fzmmCommand.then(ClientCommandManager.literal("nbt")
                 .executes(ctx -> {
                     showNbt();
@@ -168,7 +187,7 @@ public class FzmmCommand {
         assert MC.player != null;
 
         ItemStack stack = MC.player.getInventory().getMainHandStack();
-        stack.setCustomName(name);
+        stack.setCustomName(FzmmUtils.disableItalicConfig(name));
         FzmmUtils.giveItem(stack);
     }
 
@@ -195,6 +214,27 @@ public class FzmmCommand {
 
         tag.put(ItemStack.ENCHANTMENTS_KEY, enchantments);
         stack.setNbt(tag);
+        FzmmUtils.giveItem(stack);
+    }
+
+    private static void addFakeEnchant(Enchantment enchant, int level) {
+        assert MC.player != null;
+        ItemStack stack = MC.player.getInventory().getMainHandStack();
+        Text enchantMessage = enchant.getName(level);
+
+        System.out.println(enchantMessage);
+        Style style = enchantMessage.getStyle();
+        ((MutableText) enchantMessage).setStyle(style.withItalic(false));
+        System.out.println(enchantMessage);
+        LoreUtils.addLore(stack, enchantMessage);
+
+        NbtCompound tag = stack.getOrCreateNbt();
+        if (!tag.contains(ItemStack.ENCHANTMENTS_KEY, NbtElement.LIST_TYPE)) {
+            NbtList enchantments = new NbtList();
+            enchantments.add(new NbtCompound());
+            tag.put(ItemStack.ENCHANTMENTS_KEY, enchantments);
+        }
+
         FzmmUtils.giveItem(stack);
     }
 
@@ -322,32 +362,12 @@ public class FzmmCommand {
         MC.player.equipStack(EquipmentSlot.OFFHAND, itemStack);
     }
 
-    private static void addLore(Text message) {
+    private static void addLore(Text text) {
         assert MC.player != null;
 
-        //{display:{Lore:['{"text":"1"}','{"text":"2"}','[{"text":"3"},{"text":"4"}]']}}
-
-        ItemStack itemStack = MC.player.getMainHandStack();
-
-        NbtCompound tag = new NbtCompound();
-        NbtCompound display = new NbtCompound();
-        NbtList lore = new NbtList();
-
-        if (itemStack.hasNbt()) {
-            tag = itemStack.getNbt();
-            assert tag != null;
-
-            if (tag.contains(ItemStack.DISPLAY_KEY, NbtElement.COMPOUND_TYPE)) {
-                lore = tag.getCompound(ItemStack.DISPLAY_KEY).getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE);
-                display.putString(ItemStack.NAME_KEY, tag.getCompound(ItemStack.DISPLAY_KEY).getString(ItemStack.NAME_KEY));
-            }
-        }
-
-        lore.add(NbtString.of(Text.Serializer.toJson(message)));
-        display.put(ItemStack.LORE_KEY, lore);
-        tag.put(ItemStack.DISPLAY_KEY, display);
-        itemStack.setNbt(tag);
-        FzmmUtils.giveItem(itemStack);
+        ItemStack stack = MC.player.getMainHandStack();
+        LoreUtils.addLore(stack, text);
+        FzmmUtils.giveItem(stack);
     }
 
     private static void removeLore() {

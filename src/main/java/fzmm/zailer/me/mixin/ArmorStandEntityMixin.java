@@ -1,14 +1,12 @@
 package fzmm.zailer.me.mixin;
 
-import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.LoreUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,7 +30,7 @@ public abstract class ArmorStandEntityMixin {
 			// FIXME: DisabledSlots and NoGravity do not work
 
 			stack.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
-			stack.setSubNbt(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(" + EntityType.ENTITY_TAG_KEY + ")"));
+			stack.setSubNbt(ItemStack.DISPLAY_KEY, LoreUtils.generateLoreMessage("(" + EntityType.ENTITY_TAG_KEY + ")"));
 		}
 		return stack;
 	}

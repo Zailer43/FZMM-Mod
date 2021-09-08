@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui;
 
+import fzmm.zailer.me.config.FzmmConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
@@ -42,7 +43,7 @@ public class GradientLogic {
 		return gradientMessage;
 	}
 
-	public static MutableText[] hexRgbToMutableText(String message, String initialColor, String finalColor, boolean obfuscated, boolean bold, boolean strikethrough, boolean underline, boolean italic) {
+	public static Text[] hexRgbToMutableText(String message, String initialColor, String finalColor, boolean obfuscated, boolean bold, boolean strikethrough, boolean underline, boolean italic) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		assert mc.player != null;
 
@@ -58,7 +59,10 @@ public class GradientLogic {
 		if (bold) style = style.withBold(true);
 		if (strikethrough) style = style.withFormatting(Formatting.STRIKETHROUGH);
 		if (underline) style = style.withUnderline(true);
-		if (italic) style = style.withItalic(true);
+		if (italic)
+			style = style.withItalic(true);
+		else if (FzmmConfig.get().general.disableItalic)
+			style = style.withItalic(false);
 
 		return getGradient(message, red, green, blue, red2, green2, blue2, style);
 

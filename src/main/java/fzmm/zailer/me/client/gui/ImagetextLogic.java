@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.LoreUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -41,7 +42,7 @@ public class ImagetextLogic {
 
 		ArrayList<NbtString> loreArray = generateImagetext(resizeImage(image, width));
 
-		itemStack.setNbt(FzmmUtils.addLores(itemStack, loreArray));
+		itemStack.setNbt(LoreUtils.createMultipleLore(itemStack, loreArray));
 		FzmmUtils.giveItem(itemStack);
 	}
 
@@ -170,10 +171,10 @@ public class ImagetextLogic {
 		}
 		if (ImagetextScreen.showResolutionCheckbox.isChecked()) {
 			loreArray.add(NbtString.of(String.valueOf(
-				Text.Serializer.toJson(
+				Text.Serializer.toJson(FzmmUtils.disableItalicConfig(
 					new LiteralText("Resolution: " + width + "x" + height).setStyle(
-						Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GREEN)).withItalic(false)
-					)))));
+						Style.EMPTY.withColor(TextColor.fromFormatting(Formatting.GREEN))
+					))))));
 		}
 		return loreArray;
 	}

@@ -5,8 +5,6 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.text.*;
 
 import java.util.Date;
@@ -29,7 +27,7 @@ public class GradientScreen extends FzmmBaseScreen {
 		strikethroughCheckbox,
 		underlineCheckbox,
 		italicCheckbox;
-	private MutableText preview;
+	private Text preview;
 
 	protected void init() {
 		super.init();
@@ -83,7 +81,7 @@ public class GradientScreen extends FzmmBaseScreen {
 			strikethrough = strikethroughCheckbox.isChecked(),
 			underline = underlineCheckbox.isChecked(),
 			italic = italicCheckbox.isChecked();
-		MutableText preview2 = this.preview;
+		Text preview2 = this.preview;
 
 		this.init(client, width, height);
 
@@ -118,18 +116,20 @@ public class GradientScreen extends FzmmBaseScreen {
 
 	public void copyExecute() {
 		assert this.client != null;
-		NbtList listTag = new NbtList();
-		MutableText[] gradient = (MutableText[]) this.verifyAndGetGradient();
-		MutableText message = new LiteralText("");
-		String gradientTag;
+		Text[] gradient = (Text[]) this.verifyAndGetGradient();
+		StringBuilder messageToCopy = new StringBuilder("[");
 
 		for (int i = 0; i != gradient.length; i++) {
-			listTag.add(NbtString.of(Text.Serializer.toJson(gradient[i])));
-			message.append(gradient[i]);
-		}
-		gradientTag = listTag.asString().replaceAll("'", "");
+			String letter = Text.Serializer.toJson(gradient[i]);
+			messageToCopy.append(letter);
 
-		this.client.keyboard.setClipboard(gradientTag);
+			if (i != (gradient.length - 1)) {
+				messageToCopy.append(",");
+			}
+		}
+		messageToCopy.append("]");
+
+		this.client.keyboard.setClipboard(messageToCopy.toString());
 	}
 
 	public void initialColorListener(String text) {

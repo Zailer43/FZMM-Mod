@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.LoreUtils;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
@@ -14,7 +15,6 @@ import net.minecraft.item.Items;
 import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.*;
 import net.minecraft.text.LiteralText;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import org.apache.logging.log4j.Level;
@@ -547,10 +547,9 @@ public class StatueLogic {
             }
         }
 
-        lore.add(NbtString.of(Text.Serializer.toJson(new LiteralText("Player Statue")
-                .setStyle(Style.EMPTY.withColor(1666703)))));
-        lore.add(NbtString.of(Text.Serializer.toJson(new LiteralText(loreCoords)
-                .setStyle(Style.EMPTY.withColor(4288392)))));
+        LoreUtils.addLoreToList(lore, "Player Statue", 1666703);
+        LoreUtils.addLoreToList(lore, loreCoords, 4288392);
+
         display.put(ItemStack.LORE_KEY, lore);
 
         y--;

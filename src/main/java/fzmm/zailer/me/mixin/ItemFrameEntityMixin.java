@@ -1,6 +1,6 @@
 package fzmm.zailer.me.mixin;
 
-import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.LoreUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.ItemFrameEntity;
@@ -34,7 +34,7 @@ public abstract class ItemFrameEntityMixin {
             entityTag.remove("TileZ");
 
             stack.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
-            stack.setSubNbt(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(" + EntityType.ENTITY_TAG_KEY + ")"));
+            stack.setSubNbt(ItemStack.DISPLAY_KEY, LoreUtils.generateLoreMessage("(" + EntityType.ENTITY_TAG_KEY + ")"));
             cir.setReturnValue(stack);
         }
     }

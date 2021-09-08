@@ -74,6 +74,7 @@
   "text.autoconfig.fzmm.option.encodebook.padding": "Padding characters",
   "text.autoconfig.fzmm.option.encodebook.separatorMessage": "Message to separate decoded text from padding",
   "text.autoconfig.fzmm.option.encodebook.translationKey": "Translation key",
+  "text.autoconfig.fzmm.option.general.disableItalic": "Set italic to false when giving yourself an item",
   "text.autoconfig.fzmm.option.general.forceInvisibleItemFrame": "Force item frames to be invisible",
   "text.autoconfig.fzmm.option.general.giveClientSideItem": "Get the client-side items",
   "text.autoconfig.fzmm.option.general.loreColorPickBlock": "Lore color when copying a block",

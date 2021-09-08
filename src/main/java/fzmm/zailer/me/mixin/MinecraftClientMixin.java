@@ -3,6 +3,7 @@ package fzmm.zailer.me.mixin;
 import fzmm.zailer.me.client.keys.FzmmGuiKey;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.LoreUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -87,7 +88,7 @@ public class MinecraftClientMixin {
 				}
 
 				if (Screen.hasAltDown() && blockState.getProperties().size() > 0) {
-					stack.setSubNbt(ItemStack.DISPLAY_KEY, FzmmUtils.generateLoreMessage("(" + BlockItem.BLOCK_STATE_TAG_KEY + ")"));
+					stack.setSubNbt(ItemStack.DISPLAY_KEY, LoreUtils.generateLoreMessage("(" + BlockItem.BLOCK_STATE_TAG_KEY + ")"));
 					stack.setSubNbt(BlockItem.BLOCK_STATE_TAG_KEY, this.getBlockStateTag(blockState));
 				}
 
@@ -144,7 +145,7 @@ public class MinecraftClientMixin {
 
 		loreMessage = "(" + (display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE) ?
 				BlockItem.BLOCK_STATE_TAG_KEY + " + " : "") + BlockItem.BLOCK_ENTITY_TAG_KEY + ")";
-		display = FzmmUtils.generateLoreMessage(loreMessage);
+		display = LoreUtils.generateLoreMessage(loreMessage);
 
 		if (blockEntityTags.contains("CustomName", NbtElement.STRING_TYPE)) {
 			display.putString(ItemStack.NAME_KEY, blockEntityTags.getString("CustomName"));

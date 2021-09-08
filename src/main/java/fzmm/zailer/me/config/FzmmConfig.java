@@ -29,6 +29,7 @@ public class FzmmConfig implements ConfigData {
         public String loreColorPickBlock = "19b2ff";
         public String mineSkinApiKey = "";
         public boolean removeFacingState = false;
+        public boolean disableItalic = true;
     }
 
     public static class Encodebook {
