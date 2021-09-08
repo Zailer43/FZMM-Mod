@@ -33,7 +33,7 @@ public class EncodebookLogic {
 		return encodeKey;
 	}
 
-	protected static void EncodeBook(final int SEED, String message, final String AUTHOR, final String PADDING_CHARS, final short MAX_MESSAGE_LENGTH, final String BOOK_TITLE) {
+	protected static void EncodeBook(final int SEED, String message, final String AUTHOR, final String PADDING_CHARS, final short MAX_MESSAGE_LENGTH, String bookTitle) {
 		/*
 		{
 			title:"&3Encode book (secret_mc_1)",
@@ -82,6 +82,10 @@ public class EncodebookLogic {
 		int messageLength = message.length();
 		encodedKey = encodeKey(getKey(SEED), MAX_MESSAGE_LENGTH);
 
+		if (bookTitle.contains("%s")) {
+			bookTitle = String.format(bookTitle, config.translationKey + SEED);
+		}
+
 		while (messageLength < MAX_MESSAGE_LENGTH) {
 			messageBuilder.append(paddingCharacters[random.nextInt(paddingCharacters.length)]);
 			messageLength++;
@@ -94,7 +98,7 @@ public class EncodebookLogic {
 			encodeMessageString.append(encodeMessage[i]);
 		}
 
-		tag.putString(WrittenBookItem.TITLE_KEY, String.format(BOOK_TITLE, config.translationKey + SEED));
+		tag.putString(WrittenBookItem.TITLE_KEY, bookTitle);
 		tag.putString(WrittenBookItem.AUTHOR_KEY, AUTHOR);
 
 		page1 = new TranslatableText(config.translationKey + SEED, (Object[]) encodeMessage)
