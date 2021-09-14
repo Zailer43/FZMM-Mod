@@ -5,17 +5,19 @@ import net.minecraft.client.gui.screen.ScreenTexts;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+
+import java.util.ArrayList;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.TEXT_COLOR;
 
-public class FzmmBaseScreen extends Screen {
+public abstract class AbstractFzmmScreen extends Screen {
 
 	protected ButtonWidget backButton;
 	protected Text title;
+	public static ArrayList<Screen> previousScreen = new ArrayList<>();
 
-	protected FzmmBaseScreen(Text title)  {
+	protected AbstractFzmmScreen(Text title)  {
 		super(NarratorManager.EMPTY);
 		this.title = title;
 	}
@@ -24,7 +26,11 @@ public class FzmmBaseScreen extends Screen {
 		assert this.client != null;
 
 		this.backButton = this.addDrawableChild(new ButtonWidget(this.width - 120, this.height - 40, 100, 20, ScreenTexts.BACK,
-			(buttonWidget) -> this.client.setScreen(new FzmmMainScreen())
+			(buttonWidget) -> {
+				int size = previousScreen.size();
+				previousScreen.remove(--size);
+				this.client.setScreen(size <= 0 ? null : previousScreen.get(size - 1));
+			}
 		));
 	}
 

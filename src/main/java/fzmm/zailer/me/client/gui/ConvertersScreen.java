@@ -1,15 +1,13 @@
 package fzmm.zailer.me.client.gui;
 
-import fzmm.zailer.me.client.gui.converters.Base64Screen;
-import fzmm.zailer.me.client.gui.converters.CoordinatesScreen;
-import fzmm.zailer.me.client.gui.converters.UuidScreen;
+import fzmm.zailer.me.client.gui.converters.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.TranslatableText;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
-public class ConvertersScreen extends FzmmBaseScreen {
+public class ConvertersScreen extends AbstractFzmmScreen {
 
 	protected ButtonWidget coordinatesButton,
 		uuidButton,

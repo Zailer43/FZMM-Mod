@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.utils.ArmorStandUtils;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.LoreUtils;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
@@ -12,7 +13,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.*;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
@@ -45,16 +45,16 @@ public class StatueLogic {
             TOP_FACE = new HeadFace((byte) 8, (byte) 0, (byte) 16, (byte) 8);
     private static final MinecraftClient mc = MinecraftClient.getInstance();
     private static final String FZMM_PATH = mc.runDirectory.toPath() + "\\config\\fzmmConfig";
-    private static final String ERROR_SKIN = "ewogICJ0aW1lc3RhbXAiIDogMTYyNzg1NzA3NTc0OCwKICAicHJvZmlsZUlkIiA6ICJmZTdlM2MzNGRkMTA0ODc1ODFjNTUwZjQzZjEwNWI4MyIsCiAgInByb2ZpbGVOYW1lIiA6ICJOb3RRdWlja1NpbHZlciIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS84MjA0YzFkZGE5NmFlMjNiNTQwZjhiYWIzNDdhNmE0MzBhNzRhNWY4MGM2Y2Y2ZmI1MjJjOGEwYTg0MjY5ODMwIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0";
+    private static final ArmorStandUtils ERROR_ARMOR_STAND = new ArmorStandUtils().setImmutableAndInvisible()
+            .setRightHandItem(FzmmUtils.playerHeadFromSkin("ewogICJ0aW1lc3RhbXAiIDogMTYyNzg1NzA3NTc0OCwKICAicHJvZmlsZUlkIiA6ICJmZTdlM2MzNGRkMTA0ODc1ODFjNTUwZjQzZjEwNWI4MyIsCiAgInByb2ZpbGVOYW1lIiA6ICJOb3RRdWlja1NpbHZlciIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS84MjA0YzFkZGE5NmFlMjNiNTQwZjhiYWIzNDdhNmE0MzBhNzRhNWY4MGM2Y2Y2ZmI1MjJjOGEwYTg0MjY5ODMwIiwKICAgICAgIm1ldGFkYXRhIiA6IHsKICAgICAgICAibW9kZWwiIDogInNsaW0iCiAgICAgIH0KICAgIH0KICB9Cn0"));
     private static final Logger LOGGER = LogManager.getLogger("Player Statue");
     private static int requestDelay;
     public static String apiKey;
-    private static statuePart[] statue;
+    private static ArmorStandUtils[] statue;
     private static byte uploadIndex;
     private static BufferedImage headSkin;
     private static BufferedImage skinBuffered;
     private static Graphics2D g;
-    private static final int[] baseSkinId = new int[3];
     private static Direction direction;
     private static byte skinSize, requestTry;
 
@@ -62,13 +62,9 @@ public class StatueLogic {
         ItemStack container = isShulker ? Items.WHITE_SHULKER_BOX.getDefaultStack() : Items.BARREL.getDefaultStack();
         NbtCompound blockEntityTag = new NbtCompound();
         NbtList containerItems = new NbtList();
-        Random random = new Random(new Date().getTime());
         assert mc.player != null;
 
-        for (int i = 0; i != 3; i++) {
-            baseSkinId[i] = random.nextInt(Integer.MAX_VALUE);
-        }
-        statue = new statuePart[26];
+        statue = new ArmorStandUtils[26];
         direction = direction2;
         requestTry = 0;
         apiKey = FzmmConfig.get().general.mineSkinApiKey;
@@ -115,14 +111,14 @@ public class StatueLogic {
                 NbtCompound tagItems = new NbtCompound();
 
                 if (statue[i] == null) {
-                    statue[i] = new statuePart(ERROR_SKIN);
+                    statue[i] = ERROR_ARMOR_STAND;
                 }
 
                 tagItems.putInt("Slot", i);
                 tagItems.putString("id", Items.ARMOR_STAND.toString());
                 tagItems.putInt("Count", 1);
 
-                tagItems.put("tag", statue[i].getArmorStand(String.valueOf(i)));
+                tagItems.put("tag", statue[i].getItemNbt(String.valueOf(i)));
 
                 containerItems.add(tagItems);
             }
@@ -139,60 +135,6 @@ public class StatueLogic {
             StatueScreen.active = false;
             StatueScreen.progress = new LiteralText("");
         }).start();
-    }
-
-    public static class statuePart {
-        NbtCompound head;
-
-        public statuePart(String skinValue) {
-            NbtList textures = new NbtList();
-            NbtCompound value = new NbtCompound(),
-                    properties = new NbtCompound(),
-                    skullOwner = new NbtCompound(),
-                    tag = new NbtCompound();
-            Random random = new Random(new Date().getTime());
-            NbtIntArray id = new NbtIntArray(new int[]{baseSkinId[0], baseSkinId[1], baseSkinId[2], random.nextInt(Integer.MAX_VALUE)});
-
-            value.putString("Value", skinValue);
-            textures.add(value);
-            properties.put("textures", textures);
-            skullOwner.put("Properties", properties);
-            skullOwner.put("Id", id);
-
-            tag.put(SkullItem.SKULL_OWNER_KEY, skullOwner);
-
-            this.head = tag;
-        }
-
-        public NbtCompound getArmorStand(String name) {
-            NbtCompound tag = new NbtCompound(),
-                    entityTag = new NbtCompound(),
-                    headTag = new NbtCompound(),
-                    display = new NbtCompound();
-            NbtList tags = new NbtList(),
-                    handItems = new NbtList();
-
-            headTag.putString("id", Items.PLAYER_HEAD.toString());
-            headTag.putByte("Count", (byte) 1);
-            headTag.put("tag", this.head);
-            handItems.add(headTag);
-
-            tags.add(NbtString.of("PlayerStatue"));
-
-            display.putString(ItemStack.NAME_KEY, name);
-
-            entityTag.put("Tags", tags);
-            entityTag.put("HandItems", handItems);
-            entityTag.put("Pos", null);
-            entityTag.putInt("DisabledSlots", 4144959); // 4144959
-            entityTag.putBoolean("NoGravity", true);
-            entityTag.putBoolean("ShowArms", true);
-            entityTag.putBoolean("Invisible", true);
-
-            tag.put(EntityType.ENTITY_TAG_KEY, entityTag);
-            tag.put(ItemStack.DISPLAY_KEY, display);
-            return tag;
-        }
     }
 
     public static void uploadSkins() {
@@ -364,7 +306,8 @@ public class StatueLogic {
             LiteralText progressText = new LiteralText((statueIndex + 1) + "/26 skins generated");
             assert mc.player != null;
 
-            statue[statueIndex] = new statuePart(reply.split("\"value\":\"")[1].split("\"")[0]);
+            statue[statueIndex] = new ArmorStandUtils().setImmutableAndInvisible()
+                    .setRightHandItem(FzmmUtils.playerHeadFromSkin(reply.split("\"value\":\"")[1].split("\"")[0]));
             if (mc.currentScreen instanceof StatueScreen) {
                 StatueScreen.progress = progressText;
             } else {
@@ -376,7 +319,7 @@ public class StatueLogic {
                 requestTry++;
                 apiRequest(skinFile, statueIndex);
             } else {
-                statue[statueIndex] = new statuePart(ERROR_SKIN);
+                statue[statueIndex] = ERROR_ARMOR_STAND;
                 LOGGER.log(Level.WARN, "statue part " + statueIndex + " could not be generated after several attempts");
             }
         }
@@ -420,33 +363,19 @@ public class StatueLogic {
         draw(face.x + 32, face.y, face.endX + 32, face.endY, x + 32, y, x + 36, y + 4);
     }
 
-    public static ItemStack updateStatue(ItemStack statue, float x, int y, float z, Direction statueDirection, @Nullable String name) {
+    public static ItemStack updateStatue(ItemStack statueStack, float x, int y, float z, Direction statueDirection, @Nullable String name) {
         NbtCompound tag,
-                finalTag,
                 pose = new NbtCompound(),
                 display = new NbtCompound();
         NbtList items,
                 armPose = new NbtList(),
                 lore = new NbtList();
         String loreCoords;
-        int directionSelect;
-        NbtList[] coordinates;
-        float xRight,
-                xLeft,
-                zRight,
-                zLeft,
-                xRightArm,
-                zRightArm,
-                xLeftArm,
-                zLeftArm,
-                xRightFrontHead,
-                zRightFrontHead,
-                xLeftFrontHead,
-                zLeftFrontHead,
-                xRightBackHead,
-                zRightBackHead,
-                xLeftBackHead,
-                zLeftBackHead,
+        short directionSelect;
+        float xRight, xLeft, zRight, zLeft,
+                xRightArm, zRightArm, xLeftArm, zLeftArm,
+                xRightFrontHead, zRightFrontHead, xLeftFrontHead, zLeftFrontHead,
+                xRightBackHead, zRightBackHead, xLeftBackHead, zLeftBackHead,
                 xName = x + 0.5f,
                 zName = z + 0.5f;
         final ArrayList<float[]> statueCoords = new ArrayList<>();
@@ -571,10 +500,10 @@ public class StatueLogic {
 
         generateCoordinates(statueCoords, xName, y + 0.9f, zName, (byte) 1); // name
 
-        coordinates = fixZFight(statueDirection, statueCoords);
+        NbtList[] newCoords = fixZFight(statueDirection, statueCoords);
 
-        items = statue.getOrCreateSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY).getList(ShulkerBoxBlockEntity.ITEMS_KEY, 10);
-        assert statue.getNbt() != null;
+        items = statueStack.getOrCreateSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY).getList(ShulkerBoxBlockEntity.ITEMS_KEY, 10);
+        assert statueStack.getNbt() != null;
 
         if (items.size() < 26) {
             return Items.BARRIER.getDefaultStack();
@@ -585,10 +514,9 @@ public class StatueLogic {
             tag = (NbtCompound) item.get("tag");
             if (tag == null) {
                 LOGGER.log(Level.ERROR, "statue[" + i + "] is null");
-                tag = new statuePart(ERROR_SKIN)
-                        .getArmorStand(i + " - Error skin");
+                tag = ERROR_ARMOR_STAND.getItemNbt(i + " - Error skin");
             }
-            tag.getCompound(EntityType.ENTITY_TAG_KEY).put("Pos", coordinates[i]);
+            tag.getCompound(EntityType.ENTITY_TAG_KEY).put("Pos", newCoords[i]);
             tag.getCompound(EntityType.ENTITY_TAG_KEY).put("Pose", pose);
             item.put("tag", tag);
             items.set(i, item);
@@ -600,21 +528,24 @@ public class StatueLogic {
                 name = Text.Serializer.toJson(new LiteralText(name));
             }
 
+            NbtCompound statueName = new ArmorStandUtils().setAsHologram(name)
+                    .setPos(newCoords[26]).setTags("PlayerStatue", "StatueName").getItemNbt(String.valueOf(26));
+
             if (items.size() < 27) {
-                items.add(26, generateStatueName(coordinates[26], name));
+                FzmmUtils.addSlot(items, 1, Items.ARMOR_STAND.toString(), 26, statueName);
             } else {
-                items.set(26, generateStatueName(coordinates[26], name));
+                items.set(26, FzmmUtils.getSlotTag(1, Items.ARMOR_STAND.toString(), 26, statueName));
             }
 
             display.put(ItemStack.NAME_KEY, NbtString.of(name));
         } else if (items.size() == 27) {
             items.remove(26);
         }
-        finalTag = statue.getNbt();
+        NbtCompound finalTag = statueStack.getNbt();
         finalTag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).put(ShulkerBoxBlockEntity.ITEMS_KEY, items);
         finalTag.put(ItemStack.DISPLAY_KEY, display);
-        statue.setNbt(finalTag);
-        return statue;
+        statueStack.setNbt(finalTag);
+        return statueStack;
     }
 
     public static void generateCoordinates(ArrayList<float[]> statueCoordinates, final float x, final float y, final float z, final byte amount) {
@@ -625,38 +556,6 @@ public class StatueLogic {
             coordinate[2] = z;
             statueCoordinates.add(coordinate);
         }
-    }
-
-    public static NbtCompound generateStatueName(NbtList coordinates, String name) {
-        NbtCompound tagItems = new NbtCompound();
-
-        NbtCompound tag = new NbtCompound(),
-                entityTag = new NbtCompound(),
-                display = new NbtCompound();
-        NbtList tags = new NbtList();
-
-        tags.add(NbtString.of("PlayerStatue"));
-        tags.add(NbtString.of("StatueName"));
-
-        display.putString(ItemStack.NAME_KEY, String.valueOf(26));
-
-        entityTag.put("Tags", tags);
-        entityTag.put("Pos", coordinates);
-        entityTag.putInt("DisabledSlots", 4144959); // 4144959
-        entityTag.putString("CustomName", name);
-        entityTag.putBoolean("NoGravity", true);
-        entityTag.putBoolean("Invisible", true);
-        entityTag.putBoolean("CustomNameVisible", true);
-
-        tag.put(EntityType.ENTITY_TAG_KEY, entityTag);
-        tag.put(ItemStack.DISPLAY_KEY, display);
-
-        tagItems.putInt("Slot", 26);
-        tagItems.putString("id", "armor_stand");
-        tagItems.putInt("Count", 1);
-        tagItems.put("tag", tag);
-
-        return tagItems;
     }
 
     public static String getStatueName() {
@@ -721,8 +620,8 @@ public class StatueLogic {
         float distance = 0.00001f;
         NbtList[] coordinates = new NbtList[27];
         byte x = 0,
-            y = 1,
-            z = 2;
+                y = 1,
+                z = 2;
 
         coords.get(18)[y] += distance; // head front bottom left
         coords.get(19)[y] += distance; // head front top left

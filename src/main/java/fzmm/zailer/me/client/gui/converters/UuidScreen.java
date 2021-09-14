@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.converters;
 
+import fzmm.zailer.me.client.gui.AbstractFzmmScreen;
 import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
-public class UuidScreen extends ConvertersBaseScreen {
+public class UuidScreen extends AbstractFzmmScreen {
 
 	private TextFieldWidget uuidTextField;
 	private final NumberFieldWidget[] intArrayFields = new NumberFieldWidget[4];

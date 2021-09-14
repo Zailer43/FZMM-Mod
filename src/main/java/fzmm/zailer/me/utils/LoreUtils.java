@@ -10,28 +10,21 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
-import java.util.ArrayList;
-
 public class LoreUtils {
-    public static NbtCompound createMultipleLore(ItemStack itemStack, ArrayList<NbtString> loreArray) {
-        NbtCompound tag = new NbtCompound();
+
+    public static void setLore(ItemStack stack, NbtList lore) {
         NbtCompound display = new NbtCompound();
-        NbtList lore;
 
-        if (itemStack.getNbt() == null) {
-            display.put(ItemStack.LORE_KEY, null);
-            tag.put(ItemStack.DISPLAY_KEY, display);
-            itemStack.setNbt(tag);
+        if (stack.hasNbt()) {
+            NbtCompound tag = stack.getNbt();
+            assert tag != null;
+            if (tag.contains(ItemStack.DISPLAY_KEY, NbtElement.COMPOUND_TYPE))
+                display = tag.getCompound(ItemStack.DISPLAY_KEY);
         }
+        assert display != null;
 
-        tag = itemStack.getNbt();
-        lore = tag.getCompound(ItemStack.DISPLAY_KEY).getList(ItemStack.LORE_KEY, 8);
-        lore.addAll(loreArray);
         display.put(ItemStack.LORE_KEY, lore);
-        display.putString(ItemStack.NAME_KEY, tag.getCompound(ItemStack.DISPLAY_KEY).getString(ItemStack.NAME_KEY));
-        tag.put(ItemStack.DISPLAY_KEY, display);
-
-        return tag;
+        stack.setSubNbt(ItemStack.DISPLAY_KEY, display);
     }
 
     public static void addLoreToList(NbtList loreList, String message, int messageColor) {
@@ -65,10 +58,28 @@ public class LoreUtils {
         return display;
     }
 
+    public static void addLoreList(ItemStack stack, NbtList loreList) {
+        NbtCompound tag = new NbtCompound();
+        NbtCompound display = new NbtCompound();
+        NbtList lore = new NbtList();
+
+        if (stack.hasNbt()) {
+            tag = stack.getNbt();
+            assert tag != null;
+
+            if (tag.contains(ItemStack.DISPLAY_KEY, NbtElement.COMPOUND_TYPE)) {
+                lore = tag.getCompound(ItemStack.DISPLAY_KEY).getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE);
+                display.putString(ItemStack.NAME_KEY, tag.getCompound(ItemStack.DISPLAY_KEY).getString(ItemStack.NAME_KEY));
+            }
+        }
+
+        lore.addAll(loreList);
+        display.put(ItemStack.LORE_KEY, lore);
+        tag.put(ItemStack.DISPLAY_KEY, display);
+        stack.setNbt(tag);
+    }
+
     public static void addLore(ItemStack stack, Text text) {
-
-        //{display:{Lore:['{"text":"1"}','{"text":"2"}','[{"text":"3"},{"text":"4"}]']}}
-
         NbtCompound tag = new NbtCompound();
         NbtCompound display = new NbtCompound();
         NbtList lore = new NbtList();

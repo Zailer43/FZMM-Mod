@@ -1,12 +1,11 @@
 package fzmm.zailer.me.config;
 
+import fzmm.zailer.me.client.gui.imagetext.ImagetextLogic;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-
-import java.awt.*;
 
 @Config(name = "fzmm")
 public class FzmmConfig implements ConfigData {
@@ -19,10 +18,6 @@ public class FzmmConfig implements ConfigData {
     @ConfigEntry.Gui.TransitiveObject
     public Encodebook encodebook = new Encodebook();
 
-    @ConfigEntry.Category("imagetext")
-    @ConfigEntry.Gui.TransitiveObject
-    public Imagetext imagetext = new Imagetext();
-
     public static class General {
         public boolean forceInvisibleItemFrame = false;
         public boolean giveClientSideItem = false;
@@ -30,6 +25,7 @@ public class FzmmConfig implements ConfigData {
         public String mineSkinApiKey = "";
         public boolean removeFacingState = false;
         public boolean disableItalic = true;
+        public String defaultImagetextBookMessage = "Hover over this message to see an image";
     }
 
     public static class Encodebook {
@@ -43,29 +39,11 @@ public class FzmmConfig implements ConfigData {
         public int asymmetricEncodeKey = 0;
     }
 
-    public static class Imagetext {
-        public ImagetextScale imagetextScale = ImagetextScale.DEFAULT;
-        public String defaultBookMessage = "Hover over this message to see an image";
-    }
-
     public static void init() {
         AutoConfig.register(FzmmConfig.class, GsonConfigSerializer::new);
     }
 
     public static FzmmConfig get() {
         return AutoConfig.getConfigHolder(FzmmConfig.class).getConfig();
-    }
-
-    public enum ImagetextScale {
-        DEFAULT(Image.SCALE_DEFAULT),
-        FAST(Image.SCALE_FAST),
-        SMOOTH(Image.SCALE_SMOOTH),
-        REPLICATE(Image.SCALE_REPLICATE),
-        AREA_AVERAGING(Image.SCALE_AREA_AVERAGING);
-
-        public int value;
-        ImagetextScale(int value){
-            this.value=value;
-        }
     }
 }

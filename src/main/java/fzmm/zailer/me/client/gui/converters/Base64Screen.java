@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.gui.converters;
 
+import fzmm.zailer.me.client.gui.AbstractFzmmScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
 import java.io.UnsupportedEncodingException;
@@ -12,7 +12,7 @@ import java.util.Base64;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
-public class Base64Screen extends ConvertersBaseScreen {
+public class Base64Screen extends AbstractFzmmScreen {
 	private TextFieldWidget stringTextField,
 		base64TextField;
 	private boolean base64Error;
