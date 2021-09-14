@@ -12,7 +12,7 @@ import java.util.Random;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
-public class GradientScreen extends FzmmBaseScreen {
+public class GradientScreen extends AbstractFzmmScreen {
 	protected GradientScreen() {
 		super(new TranslatableText("gradient.title"));
 	}

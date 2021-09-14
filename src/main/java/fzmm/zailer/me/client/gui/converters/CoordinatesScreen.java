@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.converters;
 
+import fzmm.zailer.me.client.gui.AbstractFzmmScreen;
 import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
@@ -8,7 +9,7 @@ import net.minecraft.text.TranslatableText;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
-public class CoordinatesScreen extends ConvertersBaseScreen {
+public class CoordinatesScreen extends AbstractFzmmScreen {
 
 	private NumberFieldWidget netherXNumberField,
 		netherZNumberField,

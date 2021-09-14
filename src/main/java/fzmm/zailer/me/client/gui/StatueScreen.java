@@ -21,9 +21,8 @@ import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
-import static fzmm.zailer.me.client.gui.ScreenConstants.NORMAL_TEXT_FIELD_HEIGHT;
 
-public class StatueScreen extends FzmmBaseScreen {
+public class StatueScreen extends AbstractFzmmScreen {
 	protected ButtonWidget executeButton, updateButton, directionButton,
 		skinButton, containerButton, faqButton;
 	protected static Text progress;
@@ -65,13 +64,13 @@ public class StatueScreen extends FzmmBaseScreen {
 				}
 		));
 
-		this.xNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 - 154, LINE2, 100, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("playerStatue.axis.x"), -30000000, 30000000);
+		this.xNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 - 154, LINE2, 100, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("axis.x"), -30000000, 30000000);
 		this.xNumberField.setMaxLength(9);
 
-		this.yNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 - 50, LINE2, 100, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("playerStatue.axis.y"), Short.MIN_VALUE, Short.MAX_VALUE);
+		this.yNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 - 50, LINE2, 100, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("axis.y"), Short.MIN_VALUE, Short.MAX_VALUE);
 		this.yNumberField.setMaxLength(6);
 
-		this.zNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 + 54, LINE2, 100, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("playerStatue.axis.z"), -30000000, 30000000);
+		this.zNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 + 54, LINE2, 100, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("axis.z"), -30000000, 30000000);
 		this.zNumberField.setMaxLength(9);
 
 		this.xNumberField.setText(String.valueOf(this.client.player.getBlockX()));
@@ -173,7 +172,7 @@ public class StatueScreen extends FzmmBaseScreen {
 	public void execute() {
 		active = true;
 		String name = null;
-		if (this.nameTextField.getText().length() != 0) {
+		if (!this.nameTextField.getText().isEmpty()) {
 			name = this.nameTextField.getText();
 		}
 		StatueLogic.generateStatue(this.skinTextField.getText(),

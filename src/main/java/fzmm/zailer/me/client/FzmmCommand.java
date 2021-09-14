@@ -8,6 +8,7 @@ import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.LoreUtils;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.argument.EnchantmentArgumentType;
@@ -300,15 +301,15 @@ public class FzmmCommand {
         NbtCompound blockEntityTag = new NbtCompound();
         NbtList items = fillSlots(new NbtList(), itemStack, slotsToFill, firstSlots);
 
-        blockEntityTag.put("Items", items);
+        blockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, items);
         blockEntityTag.putString("id", containerItemStack.getItem().toString());
 
         if (!(containerItemStack.getNbt() == null)) {
             tag = containerItemStack.getNbt();
 
             if (!(containerItemStack.getNbt().getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY) == null)) {
-                items = fillSlots(tag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).getList("Items", 10), itemStack, slotsToFill, firstSlots);
-                blockEntityTag.put("Items", items);
+                items = fillSlots(tag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).getList(ShulkerBoxBlockEntity.ITEMS_KEY, 10), itemStack, slotsToFill, firstSlots);
+                blockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, items);
             }
         }
 
@@ -317,18 +318,11 @@ public class FzmmCommand {
         FzmmUtils.giveItem(containerItemStack);
     }
 
-    private static NbtList fillSlots(NbtList nbtList, ItemStack itemStack, int slotsToFill, int firstSlot) {
+    private static NbtList fillSlots(NbtList slotsList, ItemStack stack, int slotsToFill, int firstSlot) {
         for (int i = 0; i != slotsToFill; i++) {
-            NbtCompound tagItems = new NbtCompound();
-
-            tagItems.putInt("Slot", i + firstSlot);
-            tagItems.putString("id", itemStack.getItem().toString());
-            tagItems.putInt("Count", itemStack.getCount());
-            if (!(itemStack.getNbt() == null)) tagItems.put("tag", itemStack.getNbt());
-
-            nbtList.add(tagItems);
+            FzmmUtils.addSlot(slotsList, stack.getCount(), stack.getItem().toString(), i + firstSlot, stack.getNbt());
         }
-        return nbtList;
+        return slotsList;
     }
 
     private static void lockContainer(String key) {

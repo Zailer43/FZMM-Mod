@@ -10,7 +10,7 @@ import net.minecraft.text.TranslatableText;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
-public class EncodebookScreen extends FzmmBaseScreen {
+public class EncodebookScreen extends AbstractFzmmScreen {
 
 	protected ButtonWidget executeButton,
 		getDecoderButton;

@@ -5,13 +5,18 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fzmm.zailer.me.config.FzmmConfig;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtIntArray;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.network.MessageType;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.*;
@@ -25,9 +30,10 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Pattern;
 
 public class FzmmUtils {
 
@@ -53,12 +59,6 @@ public class FzmmUtils {
         return CompletableFuture.completedFuture(builder.build());
 
     };
-
-
-    public static String escapeSpecialRegexChars(String regexInit, String specialRegexChar, String regexEnd) {
-        Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^\\\\|]");
-        return Pattern.compile(regexInit + SPECIAL_REGEX_CHARS.matcher(specialRegexChar).replaceAll("\\\\$0") + regexEnd).toString();
-    }
 
 
     public static void giveItem(ItemStack stack) {
@@ -101,6 +101,10 @@ public class FzmmUtils {
         return uuid.getAsString();
     }
 
+    public static BufferedImage getImageFromPath(String path) throws IOException {
+        return getImageFromUrl("file:///" + path);
+    }
+
     public static BufferedImage getImageFromUrl(String urlLocation) throws IOException {
         URL url = new URL(urlLocation);
         URLConnection conn = url.openConnection();
@@ -119,5 +123,42 @@ public class FzmmUtils {
         }
 
         return message;
+    }
+
+    public static ItemStack playerHeadFromSkin(String skinValue) {
+        NbtList textures = new NbtList();
+        NbtCompound value = new NbtCompound(),
+                properties = new NbtCompound(),
+                skullOwner = new NbtCompound(),
+                tag = new NbtCompound();
+        Random random = new Random(new Date().getTime());
+        NbtIntArray id = new NbtIntArray(new int[]{random.nextInt(Integer.MAX_VALUE), random.nextInt(Integer.MAX_VALUE),
+                random.nextInt(Integer.MAX_VALUE), random.nextInt(Integer.MAX_VALUE)});
+
+        value.putString("Value", skinValue);
+        textures.add(value);
+        properties.put("textures", textures);
+        skullOwner.put("Properties", properties);
+        skullOwner.put("Id", id);
+
+        tag.put(SkullItem.SKULL_OWNER_KEY, skullOwner);
+
+        ItemStack stack = Items.PLAYER_HEAD.getDefaultStack();
+        stack.setNbt(tag);
+        return stack;
+    }
+
+    public static void addSlot(NbtList slotList, int count, String id, int slot, @Nullable NbtCompound tag) {
+        slotList.add(getSlotTag(count, id, slot, tag));
+    }
+
+    public static NbtCompound getSlotTag(int count, String id, int slot, @Nullable NbtCompound tag) {
+        NbtCompound slotTag = new NbtCompound();
+        slotTag.putByte("Count", (byte) count);
+        slotTag.putString("id", id);
+        slotTag.putByte("Slot", (byte) slot);
+        if (tag != null)
+            slotTag.put("tag", tag);
+        return slotTag;
     }
 }

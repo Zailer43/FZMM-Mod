@@ -1,5 +1,6 @@
 package fzmm.zailer.me.mixin;
 
+import fzmm.zailer.me.client.gui.AbstractFzmmScreen;
 import fzmm.zailer.me.client.keys.FzmmGuiKey;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -165,5 +166,12 @@ public class MinecraftClientMixin {
 		}
 
 		return blockStateTag;
+	}
+
+	@Inject(method = "setScreen", at = @At("HEAD"))
+	public void setScreen(Screen screen, CallbackInfo ci) {
+		if (screen instanceof AbstractFzmmScreen && !AbstractFzmmScreen.previousScreen.contains(screen)) {
+			AbstractFzmmScreen.previousScreen.add(screen);
+		}
 	}
 }
