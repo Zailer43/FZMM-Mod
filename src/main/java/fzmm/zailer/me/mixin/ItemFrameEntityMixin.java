@@ -32,6 +32,7 @@ public abstract class ItemFrameEntityMixin {
             entityTag.remove("TileX");
             entityTag.remove("TileY");
             entityTag.remove("TileZ");
+            entityTag.remove("Facing");
 
             stack.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
             stack.setSubNbt(ItemStack.DISPLAY_KEY, LoreUtils.generateLoreMessage("(" + EntityType.ENTITY_TAG_KEY + ")"));

@@ -42,7 +42,7 @@ public abstract class AbstractImagetextScreen extends AbstractFzmmScreen {
         this.imageError = false;
         this.getImageFrom = GetImageFrom.URL;
         this.executed = false;
-        this.executeMessage = new TranslatableText("imagetext.execute.copied");
+        this.executeMessage = new TranslatableText("imagetext.execute.successful");
     }
 
     protected void init() {

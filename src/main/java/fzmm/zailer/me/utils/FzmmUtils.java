@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -71,7 +72,7 @@ public class FzmmUtils {
 
             // FIXME: MC-86153
             //  No funciona cuando se tiene que recibir el paquete del NBT de los blockEntity
-            if (tag.asString().length() > 1950000) {
+            if (getNbtLength(tag) > 1950000) {
                 mc.inGameHud.addChatMessage(MessageType.SYSTEM, new TranslatableText("giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)), mc.player.getUuid());
                 return;
             }
@@ -160,5 +161,13 @@ public class FzmmUtils {
         if (tag != null)
             slotTag.put("tag", tag);
         return slotTag;
+    }
+
+    public static String getNbtLengthInKB(NbtCompound nbt) {
+        return new DecimalFormat("#,##0.0").format(getNbtLength(nbt) / 1024f) + "KB";
+    }
+
+    public static int getNbtLength(NbtCompound nbt) {
+        return nbt.asString().length();
     }
 }

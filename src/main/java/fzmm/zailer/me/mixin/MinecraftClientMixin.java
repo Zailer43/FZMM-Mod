@@ -136,16 +136,17 @@ public class MinecraftClientMixin {
 		assert blockEntity != null;
 		NbtCompound blockEntityTags = blockEntity.writeNbt(new NbtCompound());
 		NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
-		String loreMessage;
+		String loreMessage = "(";
 
 		if (stack.getItem() instanceof SkullItem && blockEntityTags.contains(SkullItem.SKULL_OWNER_KEY)) {
+			loreMessage += SkullItem.SKULL_OWNER_KEY;
 			stack.setSubNbt(SkullItem.SKULL_OWNER_KEY, blockEntityTags.getCompound(SkullItem.SKULL_OWNER_KEY));
 		} else {
+			loreMessage += BlockItem.BLOCK_ENTITY_TAG_KEY;
 			stack.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTags);
 		}
 
-		loreMessage = "(" + (display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE) ?
-				BlockItem.BLOCK_STATE_TAG_KEY + " + " : "") + BlockItem.BLOCK_ENTITY_TAG_KEY + ")";
+		loreMessage += (display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE) ? " + " + BlockItem.BLOCK_STATE_TAG_KEY : "") + ")";
 		display = LoreUtils.generateLoreMessage(loreMessage);
 
 		if (blockEntityTags.contains("CustomName", NbtElement.STRING_TYPE)) {

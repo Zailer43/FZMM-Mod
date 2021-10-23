@@ -25,7 +25,7 @@ public class ImagetextTellrawScreen extends AbstractImagetextScreen {
         ).getImagetextJSON();
         this.client.keyboard.setClipboard(message);
         if (message.length() > 32500) {
-            this.executeMessage = new TranslatableText("imagetext.execute.copied.warning ");
+            this.executeMessage = new TranslatableText("imagetext.execute.copied.warning");
         } else {
             this.executeMessage = new TranslatableText("imagetext.execute.copied");
         }
