@@ -3,9 +3,9 @@ package fzmm.zailer.me.utils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fzmm.zailer.me.config.FzmmConfig;
-import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -14,9 +14,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SkullItem;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtIntArray;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.*;
 import net.minecraft.network.MessageType;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.*;
@@ -149,25 +147,39 @@ public class FzmmUtils {
         return stack;
     }
 
-    public static void addSlot(NbtList slotList, int count, String id, int slot, @Nullable NbtCompound tag) {
-        slotList.add(getSlotTag(count, id, slot, tag));
-    }
-
-    public static NbtCompound getSlotTag(int count, String id, int slot, @Nullable NbtCompound tag) {
-        NbtCompound slotTag = new NbtCompound();
-        slotTag.putByte("Count", (byte) count);
-        slotTag.putString("id", id);
-        slotTag.putByte("Slot", (byte) slot);
-        if (tag != null)
-            slotTag.put("tag", tag);
-        return slotTag;
-    }
-
     public static String getNbtLengthInKB(NbtCompound nbt) {
         return new DecimalFormat("#,##0.0").format(getNbtLength(nbt) / 1024f) + "KB";
     }
 
     public static int getNbtLength(NbtCompound nbt) {
         return nbt.asString().length();
+    }
+
+    public static NbtString stringToNbtString(String string, boolean useDisableItalicConfig) {
+        Text text = new LiteralText(string);
+        return textToNbtString(text, useDisableItalicConfig);
+    }
+
+    public static NbtString textToNbtString(Text text, boolean useDisableItalicConfig) {
+        if (useDisableItalicConfig)
+            disableItalicConfig(text);
+        return NbtString.of(Text.Serializer.toJson(text));
+    }
+
+    public static ItemStack getPlayerHead(String username) {
+        ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
+        head.setSubNbt(SkullItem.SKULL_OWNER_KEY, NbtString.of(username));
+
+        return head;
+    }
+
+    public static ItemStack getPlayerHead(GameProfile profile) {
+        ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
+        NbtCompound skullOwner = new NbtCompound();
+
+        NbtHelper.writeGameProfile(skullOwner, profile);
+        head.setSubNbt(SkullItem.SKULL_OWNER_KEY, skullOwner);
+
+        return head;
     }
 }

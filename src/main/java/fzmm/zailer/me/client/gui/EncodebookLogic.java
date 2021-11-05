@@ -8,7 +8,6 @@ import net.minecraft.item.Items;
 import net.minecraft.item.WrittenBookItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
@@ -114,8 +113,8 @@ public class EncodebookLogic {
 				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText(encodeMessageString.toString())))
 			);
 
-		pages.add(NbtString.of(Text.Serializer.toJson(page1)));
-		pages.add(NbtString.of(Text.Serializer.toJson(page2)));
+		pages.add(FzmmUtils.textToNbtString(page1, false));
+		pages.add(FzmmUtils.textToNbtString(page2, false));
 		tag.put(WrittenBookItem.PAGES_KEY, pages);
 		book.setNbt(tag);
 

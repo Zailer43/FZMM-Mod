@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.InventoryUtils;
 import fzmm.zailer.me.utils.LoreUtils;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -20,8 +21,6 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.*;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.*;
@@ -320,7 +319,7 @@ public class FzmmCommand {
 
     private static NbtList fillSlots(NbtList slotsList, ItemStack stack, int slotsToFill, int firstSlot) {
         for (int i = 0; i != slotsToFill; i++) {
-            FzmmUtils.addSlot(slotsList, stack.getCount(), stack.getItem().toString(), i + firstSlot, stack.getNbt());
+            InventoryUtils.addSlot(slotsList, stack, i + firstSlot);
         }
         return slotsList;
     }

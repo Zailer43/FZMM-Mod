@@ -3,6 +3,7 @@ package fzmm.zailer.me.utils;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtDouble;
 import net.minecraft.nbt.NbtList;
@@ -21,12 +22,18 @@ public class ArmorStandUtils {
 
         if (itemName != null) {
             NbtCompound display = new NbtCompound();
-
-            display.putString(ItemStack.NAME_KEY, itemName);
+            display.put(ItemStack.NAME_KEY, FzmmUtils.stringToNbtString(itemName, true));
             tag.put(ItemStack.DISPLAY_KEY, display);
         }
+
         tag.put(EntityType.ENTITY_TAG_KEY, entityTag);
         return tag;
+    }
+
+    public ItemStack getItem(@Nullable String itemName) {
+        ItemStack armorStand = new ItemStack(Items.ARMOR_STAND);
+        armorStand.setNbt(this.getItemNbt(itemName));
+        return armorStand;
     }
 
     public ArmorStandUtils setAsHologram(String name) {
@@ -53,26 +60,16 @@ public class ArmorStandUtils {
     }
 
     public ArmorStandUtils setPos(NbtList coordinates) {
-        entityTag.put("Pos", coordinates);
+        this.entityTag.put("Pos", coordinates);
         return this;
     }
 
     public ArmorStandUtils setRightHandItem(ItemStack stack) {
-        return setRightHandItem(stack.getItem().toString(), (byte) stack.getCount(), stack.getNbt());
-    }
-
-    public ArmorStandUtils setRightHandItem(String id, byte count, @Nullable NbtCompound tag) {
         NbtList handItem = new NbtList();
-        NbtCompound itemTag = new NbtCompound();
-
-        itemTag.putString("id", id);
-        itemTag.putByte("Count", count);
-        if (tag != null && !tag.isEmpty()) {
-            itemTag.put("tag", tag);
-        }
+        NbtCompound itemTag = InventoryUtils.stackToTag(stack);
         handItem.add(itemTag);
 
-        entityTag.put("HandItems", handItem);
+        this.entityTag.put("HandItems", handItem);
         return this;
     }
 
@@ -83,7 +80,17 @@ public class ArmorStandUtils {
             tags.add(NbtString.of(tag));
         }
 
-        entityTag.put("Tags", tags);
+        this.entityTag.put("Tags", tags);
+        return this;
+    }
+
+    public ArmorStandUtils setShowArms() {
+        this.entityTag.putBoolean("ShowArms", true);
+        return this;
+    }
+
+    public ArmorStandUtils setSmall() {
+        this.entityTag.putBoolean("Small", true);
         return this;
     }
 }

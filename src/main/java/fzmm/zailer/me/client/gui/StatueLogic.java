@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.ArmorStandUtils;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.InventoryUtils;
 import fzmm.zailer.me.utils.LoreUtils;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -108,17 +109,11 @@ public class StatueLogic {
             uploadSkins();
 
             for (byte i = 0; i != 26; i++) {
-                NbtCompound tagItems = new NbtCompound();
-
-                if (statue[i] == null) {
+                if (statue[i] == null)
                     statue[i] = ERROR_ARMOR_STAND;
-                }
 
-                tagItems.putInt("Slot", i);
-                tagItems.putString("id", Items.ARMOR_STAND.toString());
-                tagItems.putInt("Count", 1);
-
-                tagItems.put("tag", statue[i].getItemNbt(String.valueOf(i)));
+                ItemStack armorStand = statue[i].getItem(String.valueOf(i));
+                NbtCompound tagItems = InventoryUtils.getSlotTag(armorStand, i);
 
                 containerItems.add(tagItems);
             }
@@ -531,10 +526,13 @@ public class StatueLogic {
             NbtCompound statueName = new ArmorStandUtils().setAsHologram(name)
                     .setPos(newCoords[26]).setTags("PlayerStatue", "StatueName").getItemNbt(String.valueOf(26));
 
+            ItemStack armorStand = new ItemStack(Items.ARMOR_STAND);
+            armorStand.setNbt(statueName);
+
             if (items.size() < 27) {
-                FzmmUtils.addSlot(items, 1, Items.ARMOR_STAND.toString(), 26, statueName);
+                InventoryUtils.addSlot(items, armorStand, 26);
             } else {
-                items.set(26, FzmmUtils.getSlotTag(1, Items.ARMOR_STAND.toString(), 26, statueName));
+                items.set(26, InventoryUtils.getSlotTag(armorStand, 26));
             }
 
             display.put(ItemStack.NAME_KEY, NbtString.of(name));
