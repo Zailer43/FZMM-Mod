@@ -1,5 +1,6 @@
 package fzmm.zailer.me.mixin;
 
+import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -8,7 +9,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -45,9 +45,7 @@ public abstract class EntityMixin {
         NbtCompound tag = new NbtCompound();
 
         if (Screen.hasControlDown()) {
-            NbtCompound skullOwner = new NbtCompound();
-            NbtHelper.writeGameProfile(skullOwner, player.getGameProfile());
-            tag.put(SkullItem.SKULL_OWNER_KEY, skullOwner);
+            tag = FzmmUtils.getPlayerHead(player.getGameProfile()).getNbt();
         } else if (Screen.hasAltDown()) {
             new Thread(() -> {
                 BufferedImage skinBuffered;

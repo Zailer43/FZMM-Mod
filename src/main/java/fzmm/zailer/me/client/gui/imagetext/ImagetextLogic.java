@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui.imagetext;
 import com.google.gson.*;
 import fzmm.zailer.me.utils.ArmorStandUtils;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.InventoryUtils;
 import fzmm.zailer.me.utils.LoreUtils;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -93,11 +94,11 @@ public class ImagetextLogic {
 
         JsonElement jsonMessage = parser.parse(getImagetextJSON());
 
-        pages.add(NbtString.of(Text.Serializer.toJson(
+        pages.add(FzmmUtils.textToNbtString(
                 new LiteralText(Formatting.BLUE + bookText)
                         .setStyle(Style.EMPTY
-                                .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(jsonMessage)))
-        )));
+                                .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(jsonMessage))), false
+        ));
 
         tag.putString(WrittenBookItem.TITLE_KEY, "Imagebook");
         tag.putString(WrittenBookItem.AUTHOR_KEY, author);
@@ -134,11 +135,10 @@ public class ImagetextLogic {
 
         for (byte i = 0; i != size; i++) {
             y += Y_DISTANCE;
-            NbtCompound entityTag = new ArmorStandUtils().setPos(x, y, z).setTags("ImagetextHologram")
-                    .setAsHologram(this.imagetext.get(size - i - 1).asString()).getItemNbt(String.valueOf(i));
+            ItemStack armorStandHologram = new ArmorStandUtils().setPos(x, y, z).setTags("ImagetextHologram")
+                    .setAsHologram(this.imagetext.get(size - i - 1).asString()).getItem(String.valueOf(i));
 
-            System.out.println(i + " % 27 = " + (i % 27));
-            FzmmUtils.addSlot(shulkerItems, 1, Items.ARMOR_STAND.toString(), i % 27, entityTag);
+            InventoryUtils.addSlot(shulkerItems, armorStandHologram, i % 27);
             if (i % 27 == 0 && i != 0) {
                 addShulker(shulkerItems, hopperItems, hopperIndex);
                 shulkerItems = new NbtList();
@@ -158,13 +158,12 @@ public class ImagetextLogic {
     }
 
     private void addShulker(NbtList shulkerItems, NbtList hopperItems, byte hopperIndex) {
-        NbtCompound shulkerBlockEntityTag = new NbtCompound(),
-                shulkerTag = new NbtCompound();
-
+        NbtCompound shulkerBlockEntityTag = new NbtCompound();
+        ItemStack shulker = new ItemStack(Items.LIGHT_BLUE_SHULKER_BOX);
         shulkerBlockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, shulkerItems);
-        shulkerTag.put(BlockItem.BLOCK_ENTITY_TAG_KEY, shulkerBlockEntityTag);
+        shulker.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, shulkerBlockEntityTag);
 
-        FzmmUtils.addSlot(hopperItems, 1, Items.LIGHT_BLUE_SHULKER_BOX.toString(), hopperIndex, shulkerTag);
+        InventoryUtils.addSlot(hopperItems, shulker, hopperIndex);
     }
 
     public String getImagetextJSON() {
