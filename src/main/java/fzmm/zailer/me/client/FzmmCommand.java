@@ -21,8 +21,6 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.*;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.*;
