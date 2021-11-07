@@ -26,6 +26,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation(fabricApi.module('fabric-command-api-v1', project.fabric_version))
     modImplementation(fabricApi.module('fabric-key-binding-api-v1', project.fabric_version))
+    modImplementation(fabricApi.module('fabric-item-groups-v0', project.fabric_version))
 
     // Cloth API
     modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {

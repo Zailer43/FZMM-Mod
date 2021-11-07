@@ -11,5 +11,6 @@ public class FzmmClient implements ClientModInitializer {
         FzmmConfig.init();
         FzmmGuiKey.init();
         FzmmCommand.registerCommands();
+        FzmmItemGroup.register();
     }
 }

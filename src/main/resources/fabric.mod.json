@@ -10,7 +10,7 @@
   "contact": {},
   "license": "Unlicense",
   "icon": "assets/fzmm/icon.png",
-  "environment": "*",
+  "environment": "client",
   "entrypoints": {
     "client": [
       "fzmm.zailer.me.client.FzmmClient"
@@ -24,7 +24,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.11.3",
-    "fabric": "*",
+    "fabric": ">=0.41.3",
     "minecraft": "1.17.x",
     "cloth-config2":"^5.0.34",
     "java": ">=16"
