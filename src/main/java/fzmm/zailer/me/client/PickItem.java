@@ -134,7 +134,7 @@ public class PickItem {
         NbtCompound blockStateTag = new NbtCompound();
 
         for (Property<?> property : state.getProperties()) {
-            blockStateTag.putString(property.getName(), state.get(property).toString());
+            blockStateTag.putString(property.getName(), state.get(property).toString().toLowerCase());
         }
 
         if (FzmmConfig.get().general.removeFacingState && blockStateTag.contains("facing")) {
