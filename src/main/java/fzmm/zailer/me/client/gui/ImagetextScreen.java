@@ -9,7 +9,6 @@ import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
 public class ImagetextScreen extends AbstractFzmmScreen {
 
-    protected ButtonWidget loreButton, bookButton, hologramButton, signButton, tellrawButton;
 
     protected ImagetextScreen() {
         super(new TranslatableText("imagetext.title"));
@@ -18,22 +17,25 @@ public class ImagetextScreen extends AbstractFzmmScreen {
     protected void init() {
         super.init();
         assert this.client != null;
+        final int[] buttonX = {this.width / 2 - 199, this.width / 2 - 65, this.width / 2 + 69};
 
-        this.loreButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 199, LINE1, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.lore"),
+        this.addDrawableChild(new ButtonWidget(buttonX[0], LINE1, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.lore"),
                 (buttonWidget) -> this.client.setScreen(new ImagetextLoreScreen())
         ));
-        this.bookButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 65, LINE1, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.book"),
-                (buttonWidget) -> this.client.setScreen(new ImagetextBookScreen())
+        this.addDrawableChild(new ButtonWidget(buttonX[1], LINE1, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.bookPage"),
+                (buttonWidget) -> this.client.setScreen(new ImagetextBookPageScreen())
         ));
-        this.hologramButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 69, LINE1, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.hologram"),
-                (buttonWidget) -> this.client.setScreen(new ImagetextHologramScreen())
+        this.addDrawableChild(new ButtonWidget(buttonX[2], LINE1, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.bookTooltip"),
+                (buttonWidget) -> this.client.setScreen(new ImagetextBookTooltipScreen())
         ));
 
-        this.signButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 199, LINE2, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.sign"), null
-                //(buttonWidget) -> this.client.setScreen(new ImagetextSignScreen())
+        this.addDrawableChild(new ButtonWidget(buttonX[0], LINE2, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.hologram"),
+                (buttonWidget) -> this.client.setScreen(new ImagetextHologramScreen())
         ));
-        this.signButton.active = false;
-        this.tellrawButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 65, LINE2, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.tellraw"),
+        this.addDrawableChild(new ButtonWidget(buttonX[1], LINE2, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.sign"), null
+                //(buttonWidget) -> this.client.setScreen(new ImagetextSignScreen())
+        )).active = false;
+        this.addDrawableChild(new ButtonWidget(buttonX[2], LINE2, 130, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.tellraw"),
                 (buttonWidget) -> this.client.setScreen(new ImagetextTellrawScreen())
         ));
     }

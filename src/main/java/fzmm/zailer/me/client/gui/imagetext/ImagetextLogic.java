@@ -1,16 +1,12 @@
 package fzmm.zailer.me.client.gui.imagetext;
 
 import com.google.gson.*;
-import fzmm.zailer.me.utils.ArmorStandUtils;
-import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.InventoryUtils;
-import fzmm.zailer.me.utils.LoreUtils;
+import fzmm.zailer.me.utils.*;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.WrittenBookItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -84,33 +80,47 @@ public class ImagetextLogic {
         FzmmUtils.giveItem(stack);
     }
 
-    public void giveBook(String author, String bookText) throws Exception {
+    public void giveBookTooltip(String author, String bookText) {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
-        ItemStack book = Items.WRITTEN_BOOK.getDefaultStack();
-        NbtCompound tag = new NbtCompound();
-        NbtList pages = new NbtList();
-        JsonParser parser = new JsonParser();
+        BookUtils bookUtils = new BookUtils("Imagebook", author);
+        JsonArray json = getImagetextJSON();
 
-        JsonElement jsonMessage = parser.parse(getImagetextJSON());
+        bookUtils.addPage(new LiteralText(Formatting.BLUE + bookText)
+                .setStyle(Style.EMPTY
+                        .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(json)))
+        );
 
-        pages.add(FzmmUtils.textToNbtString(
-                new LiteralText(Formatting.BLUE + bookText)
-                        .setStyle(Style.EMPTY
-                                .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(jsonMessage))), false
-        ));
+        FzmmUtils.giveItem(bookUtils.get());
+//        assert book.getNbt() != null;
 
-        tag.putString(WrittenBookItem.TITLE_KEY, "Imagebook");
-        tag.putString(WrittenBookItem.AUTHOR_KEY, author);
-        tag.put(WrittenBookItem.PAGES_KEY, pages);
+//        if (FzmmUtils.getNbtLength(book.getNbt()) > 32500) {
+//			throw new Exception();
+//		} else {
+//        FzmmUtils.giveItem(book);
+//		}
+    }
 
-        book.setNbt(tag);
-		assert book.getNbt() != null;
-		if (book.getNbt().toString().length() > 32500) {
-			throw new Exception();
-		} else {
-            FzmmUtils.giveItem(book);
-		}
+    public void giveBookPage() {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        assert mc.player != null;
+        BookUtils bookUtils = new BookUtils("Imagebook", mc.player.getName().asString());
+        bookUtils.addPage(Text.Serializer.fromJson(getImagetextJSON()));
+
+        FzmmUtils.giveItem(bookUtils.get());
+    }
+
+    public void addBookPage() {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        assert mc.player != null;
+        BookUtils bookUtils = BookUtils.of(mc.player.getMainHandStack());
+        if (bookUtils == null) {
+            bookUtils = new BookUtils("Imagebook", mc.player.getName().asString());
+        }
+
+        bookUtils.addPage(Text.Serializer.fromJson(getImagetextJSON()));
+
+        FzmmUtils.giveItem(bookUtils.get());
     }
 
     private void addResolution() {
@@ -166,7 +176,7 @@ public class ImagetextLogic {
         InventoryUtils.addSlot(hopperItems, shulker, hopperIndex);
     }
 
-    public String getImagetextJSON() {
+    public JsonArray getImagetextJSON() {
         this.generateImagetext(false);
 
         JsonParser parser = new JsonParser();
@@ -189,6 +199,10 @@ public class ImagetextLogic {
             }
         }
 
-        return json.toString();
+        return json;
+    }
+
+    public String getImagetextString() {
+        return this.getImagetextJSON().toString();
     }
 }

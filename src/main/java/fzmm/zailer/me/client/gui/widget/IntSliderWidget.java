@@ -24,7 +24,7 @@ public class IntSliderWidget extends SliderWidget {
     }
 
     public int getValue() {
-        return (int) Math.round(MathHelper.lerp(MathHelper.clamp(this.value, 0.0D, 1.0D), this.min, this.max));
+        return (int) Math.round(MathHelper.lerp(MathHelper.clamp(this.value, 0.0D, 1.0D), this.min, this.max)) - 1;
     }
 
     public double getRatio() {

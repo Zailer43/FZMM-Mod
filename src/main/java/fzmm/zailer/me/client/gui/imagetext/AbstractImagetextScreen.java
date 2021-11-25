@@ -192,7 +192,7 @@ public abstract class AbstractImagetextScreen extends AbstractFzmmScreen {
         }
     }
 
-    private void updateMax(int width, int height) {
+    protected void updateMax(int width, int height) {
         if (width == height)
             return;
 
@@ -200,7 +200,7 @@ public abstract class AbstractImagetextScreen extends AbstractFzmmScreen {
         height = Math.max(MAX_IMG_SIZE, height);
 
         boolean widthIsGreater = width > height;
-        int newValue = this.getProportions(width, height, MAX_IMG_SIZE, widthIsGreater);
+        int newValue = this.getProportions(width, height, widthIsGreater, MAX_IMG_SIZE);
 
         (widthIsGreater ? this.heightSlider : this.widthSlider).setMax(Math.min(newValue, MAX_IMG_SIZE));
         (widthIsGreater ? this.widthSlider : this.heightSlider).setMax(MAX_IMG_SIZE);
@@ -209,13 +209,23 @@ public abstract class AbstractImagetextScreen extends AbstractFzmmScreen {
 
     private void setProportions(boolean setWidth, int newValue) {
         if (this.imageIsSafe()) {
-            newValue = this.getProportions(this.image.getWidth(), this.image.getHeight(), newValue, setWidth);
+            newValue = this.getProportions(this.image.getWidth(), this.image.getHeight(), setWidth, newValue);
             (setWidth ? heightSlider : widthSlider).setValue(newValue);
         }
     }
 
-    private int getProportions(int x, int y, int newValue, boolean getWidth) {
-        return Math.round((float) newValue / (getWidth ? x : y) * (getWidth ? y : x));
+    /**
+     *
+     * @param side If getWidth is true this is width otherwise it is height. This is the original proportion.
+     * @param oppositeSide If getWidth is true this is height otherwise it is width. This is the original proportion.
+     * @param sideIsWidth If the first variable (side) is width, if false, it will be height.
+     * @param newSide The new proportion.
+     * @return In case sideIsWidth is true it returns height, otherwise it returns width.
+     *
+     * Example: side: 200, oppositeSide: 500, sideIsWidth: true, newSide: 300, return: 750
+     */
+    protected int getProportions(int side, int oppositeSide, boolean sideIsWidth, int newSide) {
+        return (int) ((float) newSide / (sideIsWidth ? side : oppositeSide) * (sideIsWidth ? oppositeSide : side));
     }
 
     public void setImageError(@Nullable String translateKey) {

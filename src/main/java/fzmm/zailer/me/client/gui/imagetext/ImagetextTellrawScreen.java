@@ -22,7 +22,7 @@ public class ImagetextTellrawScreen extends AbstractImagetextScreen {
                 (byte) this.widthSlider.getValue(),
                 (byte) this.heightSlider.getValue(),
                 this.smoothRescalingCheckbox.isChecked()
-        ).getImagetextJSON();
+        ).getImagetextString();
         this.client.keyboard.setClipboard(message);
         if (message.length() > 32500) {
             this.executeMessage = new TranslatableText("imagetext.execute.copied.warning");

@@ -8,11 +8,11 @@ import net.minecraft.text.TranslatableText;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
-public class ImagetextBookScreen extends AbstractImagetextScreen {
+public class ImagetextBookTooltipScreen extends AbstractImagetextScreen {
     private TextFieldWidget authorTextField, messageTextField;
 
-    public ImagetextBookScreen() {
-        super(new TranslatableText("imagetext.title.book"));
+    public ImagetextBookTooltipScreen() {
+        super(new TranslatableText("imagetext.title.bookTooltip"));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class ImagetextBookScreen extends AbstractImagetextScreen {
                     (byte) this.widthSlider.getValue(),
                     (byte) this.heightSlider.getValue(),
                     this.smoothRescalingCheckbox.isChecked()
-            ).giveBook(this.authorTextField.getText(), this.messageTextField.getText());
+            ).giveBookTooltip(this.authorTextField.getText(), this.messageTextField.getText());
             this.executed = true;
         } catch (Exception ignored) {
             this.setImageError("bookNbtTooLong");
