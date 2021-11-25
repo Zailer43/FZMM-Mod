@@ -113,7 +113,7 @@ public class FzmmItemGroup {
                         blockEntityTag.putString("LootTable", path);
 
                         chest.setCustomName(new LiteralText("LootChest: " + path));
-                        chest.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
+                        chest.setSubNbt(TagsConstant.BLOCK_ENTITY, blockEntityTag);
                         stacks.add(chest);
                     }
                 }).build();

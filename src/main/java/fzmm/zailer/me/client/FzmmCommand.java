@@ -7,6 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.InventoryUtils;
 import fzmm.zailer.me.utils.LoreUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
@@ -278,16 +279,7 @@ public class FzmmCommand {
     }
 
     private static void getHead(String skullOwner) {
-        assert MC.player != null;
-
-        ItemStack itemStack = Items.PLAYER_HEAD.getDefaultStack();
-
-        NbtCompound tag = new NbtCompound();
-
-        tag.putString(SkullItem.SKULL_OWNER_KEY, skullOwner);
-
-        itemStack.setNbt(tag);
-        FzmmUtils.giveItem(itemStack);
+        FzmmUtils.giveItem(FzmmUtils.getPlayerHead(skullOwner));
     }
 
     private static void fullContainer(int slotsToFill, int firstSlots) {
@@ -308,13 +300,13 @@ public class FzmmCommand {
         if (!(containerItemStack.getNbt() == null)) {
             tag = containerItemStack.getNbt();
 
-            if (!(containerItemStack.getNbt().getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY) == null)) {
-                items = fillSlots(tag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).getList(ShulkerBoxBlockEntity.ITEMS_KEY, 10), itemStack, slotsToFill, firstSlots);
+            if (!(containerItemStack.getNbt().getCompound(TagsConstant.BLOCK_ENTITY) == null)) {
+                items = fillSlots(tag.getCompound(TagsConstant.BLOCK_ENTITY).getList(ShulkerBoxBlockEntity.ITEMS_KEY, 10), itemStack, slotsToFill, firstSlots);
                 blockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, items);
             }
         }
 
-        tag.put(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
+        tag.put(TagsConstant.BLOCK_ENTITY, blockEntityTag);
         containerItemStack.setNbt(tag);
         FzmmUtils.giveItem(containerItemStack);
     }
@@ -337,17 +329,17 @@ public class FzmmCommand {
         NbtCompound tag = new NbtCompound();
         NbtCompound blockEntityTag = new NbtCompound();
 
-        if (containerItemStack.hasNbt() || tag.contains(BlockItem.BLOCK_ENTITY_TAG_KEY, NbtElement.COMPOUND_TYPE)) {
+        if (containerItemStack.hasNbt() || tag.contains(TagsConstant.BLOCK_ENTITY, NbtElement.COMPOUND_TYPE)) {
             tag = containerItemStack.getNbt();
             assert tag != null;
 
-            if (tag.contains(BlockItem.BLOCK_ENTITY_TAG_KEY, NbtElement.COMPOUND_TYPE)) {
-                tag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).putString("Lock", key);
+            if (tag.contains(TagsConstant.BLOCK_ENTITY, NbtElement.COMPOUND_TYPE)) {
+                tag.getCompound(TagsConstant.BLOCK_ENTITY).putString("Lock", key);
             }
 
         } else {
             blockEntityTag.putString("Lock", key);
-            tag.put(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
+            tag.put(TagsConstant.BLOCK_ENTITY, blockEntityTag);
         }
 
         containerItemStack.setNbt(tag);

@@ -4,14 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.config.FzmmConfig;
-import fzmm.zailer.me.utils.ArmorStandUtils;
-import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.InventoryUtils;
-import fzmm.zailer.me.utils.LoreUtils;
+import fzmm.zailer.me.utils.*;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.*;
@@ -119,7 +115,7 @@ public class StatueLogic {
             }
 
             blockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, containerItems);
-            container.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
+            container.setSubNbt(TagsConstant.BLOCK_ENTITY, blockEntityTag);
 
             FzmmUtils.giveItem(updateStatue(container, x, y, z, direction, name));
             StatueScreen.progress = new LiteralText("Finished statue");
@@ -497,7 +493,7 @@ public class StatueLogic {
 
         NbtList[] newCoords = fixZFight(statueDirection, statueCoords);
 
-        items = statueStack.getOrCreateSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY).getList(ShulkerBoxBlockEntity.ITEMS_KEY, 10);
+        items = statueStack.getOrCreateSubNbt(TagsConstant.BLOCK_ENTITY).getList(ShulkerBoxBlockEntity.ITEMS_KEY, 10);
         assert statueStack.getNbt() != null;
 
         if (items.size() < 26) {
@@ -540,7 +536,7 @@ public class StatueLogic {
             items.remove(26);
         }
         NbtCompound finalTag = statueStack.getNbt();
-        finalTag.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY).put(ShulkerBoxBlockEntity.ITEMS_KEY, items);
+        finalTag.getCompound(TagsConstant.BLOCK_ENTITY).put(ShulkerBoxBlockEntity.ITEMS_KEY, items);
         finalTag.put(ItemStack.DISPLAY_KEY, display);
         statueStack.setNbt(finalTag);
         return statueStack;
@@ -559,7 +555,7 @@ public class StatueLogic {
     public static String getStatueName() {
         assert mc.player != null;
         ItemStack stack = mc.player.getMainHandStack();
-        NbtCompound tag = stack.getOrCreateSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY);
+        NbtCompound tag = stack.getOrCreateSubNbt(TagsConstant.BLOCK_ENTITY);
 
         if (tag.contains(ShulkerBoxBlockEntity.ITEMS_KEY, NbtElement.LIST_TYPE)) {
             NbtList itemsTag = tag.getList(ShulkerBoxBlockEntity.ITEMS_KEY, NbtElement.COMPOUND_TYPE);
@@ -583,13 +579,12 @@ public class StatueLogic {
         URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        JsonParser parser = new JsonParser();
-        JsonObject obj = (JsonObject) parser.parse(new InputStreamReader(conn.getInputStream()));
+        JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(conn.getInputStream()));
         JsonArray properties = (JsonArray) obj.get("properties");
         JsonObject prop = (JsonObject) properties.get(0);
 
         String dataJsonStr = new String(Base64.getDecoder().decode(prop.get("value").getAsString()));
-        obj = (JsonObject) parser.parse(dataJsonStr);
+        obj = (JsonObject) JsonParser.parseString(dataJsonStr);
         String skinUrl = ((JsonObject) ((JsonObject) obj.get("textures")).get("SKIN")).get("url").getAsString();
 
         conn.disconnect();
@@ -601,8 +596,7 @@ public class StatueLogic {
         URL url = new URL("https://api.mineskin.org/get/delay?" + apiKey);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        JsonParser parser = new JsonParser();
-        JsonObject obj = (JsonObject) parser.parse(new InputStreamReader(conn.getInputStream()));
+        JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(conn.getInputStream()));
         int delay = obj.get("delay").getAsInt();
 
         conn.disconnect();

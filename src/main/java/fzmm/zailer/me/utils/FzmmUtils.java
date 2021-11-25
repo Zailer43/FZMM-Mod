@@ -91,8 +91,7 @@ public class FzmmUtils {
         URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        JsonParser parser = new JsonParser();
-        JsonObject obj = (JsonObject) parser.parse(new InputStreamReader(conn.getInputStream()));
+        JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(conn.getInputStream()));
         JsonElement uuid = obj.get("id");
 
         conn.disconnect();

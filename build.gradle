@@ -1,14 +1,13 @@
 plugins {
-    id 'fabric-loom' version '0.9-SNAPSHOT'
+    id 'fabric-loom' version '0.10-SNAPSHOT'
     id 'maven-publish'
 }
 
-group = project.maven_group
-version = project.mod_version
 archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
 
 repositories {
-
     maven {
         name = 'TerraformersMC Archive'
         url = 'https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases/'
@@ -38,13 +37,6 @@ dependencies {
 
 }
 
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-
-    // Minecraft 1.17 (21w19a) upwards uses Java 16.
-    it.options.release = 16
-}
-
 processResources {
     inputs.property "version", project.version
 
@@ -53,9 +45,13 @@ processResources {
     }
 }
 
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 17
+}
+
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     withSourcesJar()
 }
@@ -69,15 +65,7 @@ jar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact(jar) {
-                builtBy remapJar
-            }
-            artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar"){
-                builtBy remapJar
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
+            from components.java
         }
     }
 

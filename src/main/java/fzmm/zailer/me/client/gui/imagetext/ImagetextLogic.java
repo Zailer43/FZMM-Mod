@@ -4,7 +4,6 @@ import com.google.gson.*;
 import fzmm.zailer.me.utils.*;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -161,7 +160,7 @@ public class ImagetextLogic {
 
         display.put(ItemStack.LORE_KEY, lore);
         hopperBlockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, hopperItems);
-        hopper.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, hopperBlockEntityTag);
+        hopper.setSubNbt(TagsConstant.BLOCK_ENTITY, hopperBlockEntityTag);
         hopper.setSubNbt(ItemStack.DISPLAY_KEY, display);
 
         FzmmUtils.giveItem(hopper);
@@ -171,7 +170,7 @@ public class ImagetextLogic {
         NbtCompound shulkerBlockEntityTag = new NbtCompound();
         ItemStack shulker = new ItemStack(Items.LIGHT_BLUE_SHULKER_BOX);
         shulkerBlockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, shulkerItems);
-        shulker.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, shulkerBlockEntityTag);
+        shulker.setSubNbt(TagsConstant.BLOCK_ENTITY, shulkerBlockEntityTag);
 
         InventoryUtils.addSlot(hopperItems, shulker, hopperIndex);
     }
@@ -179,12 +178,11 @@ public class ImagetextLogic {
     public JsonArray getImagetextJSON() {
         this.generateImagetext(false);
 
-        JsonParser parser = new JsonParser();
         JsonArray json = new JsonArray();
 
         for (NbtElement lineTag : this.imagetext) {
-            String line = lineTag.asString().replaceAll(String.valueOf(Formatting.field_33292), "\\\\\\u00a7");
-            JsonElement jsonLine = parser.parse(line);
+            String line = lineTag.asString().replaceAll(String.valueOf(Formatting.FORMATTING_CODE_PREFIX), "\\\\\\u00a7");
+            JsonElement jsonLine = JsonParser.parseString(line);
             if (jsonLine instanceof JsonArray jsonArray) {
                 int size = jsonArray.size() - 1;
                 JsonElement lastElement = jsonArray.get(size);

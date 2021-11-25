@@ -3,6 +3,7 @@ package fzmm.zailer.me.client;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.LoreUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -69,7 +70,7 @@ public class PickItem {
                     if (stack.getItem() instanceof SkullItem)
                         stack.setSubNbt(SkullItem.SKULL_OWNER_KEY, blockEntityTag.get(SkullItem.SKULL_OWNER_KEY));
                     else
-                        stack.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
+                        stack.setSubNbt(TagsConstant.BLOCK_ENTITY, blockEntityTag);
                 }
 
                 formatItem(stack);
@@ -110,7 +111,7 @@ public class PickItem {
     private static NbtCompound getBlockEntityTag(World world, BlockPos blockPos) {
         BlockEntity blockEntity = world.getBlockEntity(blockPos);
         assert blockEntity != null;
-        return blockEntity.writeNbt(new NbtCompound());
+        return blockEntity.createNbt();
     }
 
     private static void formatItem(ItemStack stack) {
@@ -120,8 +121,8 @@ public class PickItem {
         List<String> keys = nbt.getKeys().stream().sorted().collect(Collectors.toList());
         NbtCompound display = LoreUtils.generateLoreMessage("(" + String.join(" + ", keys) + ")");
 
-        if (nbt.contains(BlockItem.BLOCK_ENTITY_TAG_KEY, NbtElement.COMPOUND_TYPE)) {
-            NbtCompound blockEntityTag = nbt.getCompound(BlockItem.BLOCK_ENTITY_TAG_KEY);
+        if (nbt.contains(TagsConstant.BLOCK_ENTITY, NbtElement.COMPOUND_TYPE)) {
+            NbtCompound blockEntityTag = nbt.getCompound(TagsConstant.BLOCK_ENTITY);
             if (blockEntityTag.contains("CustomName", NbtElement.STRING_TYPE)) {
                 display.putString(ItemStack.NAME_KEY, blockEntityTag.getString("CustomName"));
             }
