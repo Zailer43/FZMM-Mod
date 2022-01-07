@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui;
 
+import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
@@ -17,16 +18,17 @@ public class GradientScreen extends AbstractFzmmScreen {
 		super(new TranslatableText("gradient.title"));
 	}
 
-	protected ButtonWidget copyButton,
-		randomColorButton;
-	private TextFieldWidget messageTextField,
-		initialColorTextField,
-		finalColorTextField;
-	private CheckboxWidget obfuscatedCheckbox,
-		boldCheckbox,
-		strikethroughCheckbox,
-		underlineCheckbox,
-		italicCheckbox;
+	private ButtonWidget copyButton;
+	private ButtonWidget setItemNameButton;
+	private ButtonWidget addLoreButton;
+	private TextFieldWidget messageTextField;
+	private TextFieldWidget initialColorTextField;
+	private TextFieldWidget finalColorTextField;
+	private CheckboxWidget obfuscatedCheckbox;
+	private CheckboxWidget boldCheckbox;
+	private CheckboxWidget strikethroughCheckbox;
+	private CheckboxWidget underlineCheckbox;
+	private CheckboxWidget italicCheckbox;
 	private Text preview;
 
 	protected void init() {
@@ -39,9 +41,17 @@ public class GradientScreen extends AbstractFzmmScreen {
 			(buttonWidget) -> this.copyExecute()
 		));
 
+		this.setItemNameButton = this.addDrawableChild(new ButtonWidget(130, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gradient.setItemName"),
+				(buttonWidget) -> this.setItemName()
+		));
+
+		this.addLoreButton = this.addDrawableChild(new ButtonWidget(240, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gradient.addLore"),
+				(buttonWidget) -> this.addLore()
+		));
+
 		this.messageTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE1, 220, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("gradient.message"));
 		this.messageTextField.setMaxLength(256);
-		this.messageTextField.setChangedListener((text) -> updatePreview());
+		this.messageTextField.setChangedListener((text) -> this.preview = this.verifyAndGetGradient());
 		this.setInitialFocus(this.messageTextField);
 
 		this.initialColorTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE2, 220, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("gradient.initialColor"));
@@ -52,8 +62,8 @@ public class GradientScreen extends AbstractFzmmScreen {
 		this.finalColorTextField.setMaxLength(6);
 		this.finalColorTextField.setChangedListener(this::finalColorListener);
 
-		this.randomColorButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 150, LINE4, 220, NORMAL_BUTTON_HEIGHT, new TranslatableText("gradient.randomColors"),
-			(buttonWidget) -> this.randomColors()
+		this.addDrawableChild(new ButtonWidget(this.width / 2 - 150, LINE4, 220, NORMAL_BUTTON_HEIGHT, new TranslatableText("gradient.randomColors"),
+				(buttonWidget) -> this.randomColors()
 		));
 
 		obfuscatedCheckbox = this.addDrawableChild(new CheckboxWidget(CHECKBOX_ROW, 50, 20, 20, new LiteralText("Obfuscated"), false));
@@ -69,7 +79,7 @@ public class GradientScreen extends AbstractFzmmScreen {
 		this.messageTextField.setText("Hello world");
 		this.initialColorTextField.setText("ff0000");
 		this.finalColorTextField.setText("0000ff");
-		updatePreview();
+		this.preview = this.verifyAndGetGradient();
 	}
 
 	public void resize(MinecraftClient client, int width, int height) {
@@ -116,60 +126,58 @@ public class GradientScreen extends AbstractFzmmScreen {
 
 	public void copyExecute() {
 		assert this.client != null;
-		Text[] gradient = (Text[]) this.verifyAndGetGradient();
-		StringBuilder messageToCopy = new StringBuilder("[");
+		Text gradient = this.verifyAndGetGradient();
 
-		for (int i = 0; i != gradient.length; i++) {
-			String letter = Text.Serializer.toJson(gradient[i]);
-			messageToCopy.append(letter);
+		this.client.keyboard.setClipboard(Text.Serializer.toJson(gradient));
+	}
 
-			if (i != (gradient.length - 1)) {
-				messageToCopy.append(",");
-			}
-		}
-		messageToCopy.append("]");
+	public void setItemName() {
+		FzmmUtils.renameHandItem(this.verifyAndGetGradient());
+	}
 
-		this.client.keyboard.setClipboard(messageToCopy.toString());
+	public void addLore() {
+		FzmmUtils.addLoreToHandItem(this.verifyAndGetGradient());
 	}
 
 	public void initialColorListener(String text) {
 		String textHexDigits = text.replaceAll("[^\\da-f]", "");
 		if (!text.equals(textHexDigits))
 			this.initialColorTextField.setText(textHexDigits);
-		updatePreview();
+		this.preview = this.verifyAndGetGradient();
 	}
 
 	public void finalColorListener(String text) {
 		String textHexDigits = text.replaceAll("[^\\da-f]", "");
 		if (!text.equals(textHexDigits))
 			this.finalColorTextField.setText(textHexDigits);
-		updatePreview();
+		this.preview = this.verifyAndGetGradient();
 	}
 
-	public void updatePreview() {
-		Object gradientObject = this.verifyAndGetGradient();
-		this.preview = gradientObject instanceof MutableText[] ? GradientLogic.getGradientMessage((MutableText[]) gradientObject) : (MutableText) gradientObject;
-	}
-
-	public Object verifyAndGetGradient() {
+	public Text verifyAndGetGradient() {
 		String initialColor = this.initialColorTextField.getText(),
 			finalColor = this.finalColorTextField.getText(),
 			message = this.messageTextField.getText();
 
 		if (initialColor.length() != 6 || finalColor.length() != 6) {
-			this.copyButton.active = false;
+			this.toggleExecuteButtons(false);
 			return new TranslatableText("gradient.error.hexColorsLength").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(TEXT_ERROR_COLOR)));
 		} else if (message.length() <= 2) {
-			this.copyButton.active = false;
+			this.toggleExecuteButtons(false);
 			return new TranslatableText("gradient.error.messageLength").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(TEXT_ERROR_COLOR)));
 		} else {
-			this.copyButton.active = true;
+			this.toggleExecuteButtons(true);
 			return GradientLogic
 				.hexRgbToMutableText(
 					message, initialColor, finalColor,
 					this.obfuscatedCheckbox.isChecked(), this.boldCheckbox.isChecked(), this.strikethroughCheckbox.isChecked(), this.underlineCheckbox.isChecked(), this.italicCheckbox.isChecked()
 				);
 		}
+	}
+
+	public void toggleExecuteButtons(boolean bl) {
+		this.copyButton.active = bl;
+		this.setItemNameButton.active = bl;
+		this.addLoreButton.active = bl;
 	}
 
 	public void randomColors() {

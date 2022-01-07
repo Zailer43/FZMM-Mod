@@ -43,7 +43,7 @@ public class FzmmCommand {
 
                     Text name = ctx.getArgument("name", Text.class);
 
-                    renameItem(name);
+                    FzmmUtils.renameHandItem(name);
                     return 1;
                 }))
         );
@@ -54,7 +54,7 @@ public class FzmmCommand {
 
                             Text message = ctx.getArgument("message", Text.class);
 
-                            addLore(message);
+                            FzmmUtils.addLoreToHandItem(message);
                             return 1;
                         }))
                 ).then(ClientCommandManager.literal("remove")
@@ -184,14 +184,6 @@ public class FzmmCommand {
         ClientCommandManager.DISPATCHER.register(
                 fzmmCommand
         );
-    }
-
-    private static void renameItem(Text name) {
-        assert MC.player != null;
-
-        ItemStack stack = MC.player.getInventory().getMainHandStack();
-        stack.setCustomName(FzmmUtils.disableItalicConfig(name));
-        FzmmUtils.giveItem(stack);
     }
 
     private static void giveItem(ItemStackArgument item, int amount) throws CommandSyntaxException {
@@ -347,14 +339,6 @@ public class FzmmCommand {
 
         FzmmUtils.giveItem(containerItemStack);
         MC.player.equipStack(EquipmentSlot.OFFHAND, itemStack);
-    }
-
-    private static void addLore(Text text) {
-        assert MC.player != null;
-
-        ItemStack stack = MC.player.getMainHandStack();
-        LoreUtils.addLore(stack, text);
-        FzmmUtils.giveItem(stack);
     }
 
     private static void removeLore() {

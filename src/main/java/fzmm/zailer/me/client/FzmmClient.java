@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client;
 
-import fzmm.zailer.me.client.keys.*;
+import fzmm.zailer.me.client.keys.FzmmGuiKey;
 import fzmm.zailer.me.config.FzmmConfig;
 import net.fabricmc.api.ClientModInitializer;
 

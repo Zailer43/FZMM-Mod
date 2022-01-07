@@ -23,8 +23,10 @@ import java.util.regex.Pattern;
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
 public class StatueScreen extends AbstractFzmmScreen {
-	protected ButtonWidget executeButton, updateButton, directionButton,
-		skinButton, containerButton, faqButton;
+	private ButtonWidget executeButton;
+	private ButtonWidget directionButton;
+	private ButtonWidget skinButton;
+	private ButtonWidget containerButton;
 	protected static Text progress;
 	protected static boolean active, errorImage;
 	private TextFieldWidget skinTextField, nameTextField;
@@ -48,7 +50,7 @@ public class StatueScreen extends AbstractFzmmScreen {
 			(buttonWidget) -> this.execute()
 		));
 
-		this.faqButton = this.addDrawableChild(new ButtonWidget(this.width - 80, 20, 60, NORMAL_BUTTON_HEIGHT, new TranslatableText("gui.faq"),
+		this.addDrawableChild(new ButtonWidget(this.width - 80, 20, 60, NORMAL_BUTTON_HEIGHT, new TranslatableText("gui.faq"),
 				(buttonWidget) -> new UrlOpener(this.client, "https://github.com/Zailer43/FZMM-Mod/wiki/FAQ-Player-Statue").run()
 		));
 
@@ -100,8 +102,8 @@ public class StatueScreen extends AbstractFzmmScreen {
 				}
 		));
 
-		this.updateButton = this.addDrawableChild(new ButtonWidget(124, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("playerStatue.update"),
-			(buttonWidget) -> this.updateStatue()
+		this.addDrawableChild(new ButtonWidget(124, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("playerStatue.update"),
+				(buttonWidget) -> this.updateStatue()
 		));
 
 		this.nameTextField.setText(StatueLogic.getStatueName());

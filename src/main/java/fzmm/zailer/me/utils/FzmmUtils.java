@@ -37,7 +37,6 @@ import java.util.concurrent.CompletableFuture;
 public class FzmmUtils {
 
     public static final SuggestionProvider<FabricClientCommandSource> SUGGESTION_PLAYER = (context, builder) -> {
-
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.world != null;
 
@@ -180,5 +179,23 @@ public class FzmmUtils {
         head.setSubNbt(SkullItem.SKULL_OWNER_KEY, skullOwner);
 
         return head;
+    }
+
+    public static void renameHandItem(Text text) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        assert mc.player != null;
+
+        ItemStack stack = mc.player.getInventory().getMainHandStack();
+        stack.setCustomName(FzmmUtils.disableItalicConfig(text));
+        FzmmUtils.giveItem(stack);
+    }
+
+    public static void addLoreToHandItem(Text text) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        assert mc.player != null;
+
+        ItemStack stack = mc.player.getMainHandStack();
+        LoreUtils.addLore(stack, text);
+        FzmmUtils.giveItem(stack);
     }
 }

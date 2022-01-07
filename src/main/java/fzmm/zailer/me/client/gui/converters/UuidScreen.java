@@ -17,8 +17,6 @@ public class UuidScreen extends AbstractFzmmScreen {
 
 	private TextFieldWidget uuidTextField;
 	private final NumberFieldWidget[] intArrayFields = new NumberFieldWidget[4];
-	protected ButtonWidget setUuidFromIntArrayButton,
-		copyIntArrayTagButton;
 	private boolean uuidErrorLength,
 		uuidFormatError;
 
@@ -43,11 +41,11 @@ public class UuidScreen extends AbstractFzmmScreen {
 		}
 		this.addSelectableChild(this.uuidTextField);
 
-		this.setUuidFromIntArrayButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 150, LINE3, 148, NORMAL_BUTTON_HEIGHT, new TranslatableText("uuid.setUuid"),
-			(buttonWidget) -> this.setUuidFromIntArray()
+		this.addDrawableChild(new ButtonWidget(this.width / 2 - 150, LINE3, 148, NORMAL_BUTTON_HEIGHT, new TranslatableText("uuid.setUuid"),
+				(buttonWidget) -> this.setUuidFromIntArray()
 		));
-		this.copyIntArrayTagButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 2, LINE3, 148, NORMAL_BUTTON_HEIGHT, new TranslatableText("uuid.copyIntArray"),
-			(buttonWidget) -> this.copyIntArrayTag()
+		this.addDrawableChild(new ButtonWidget(this.width / 2 + 2, LINE3, 148, NORMAL_BUTTON_HEIGHT, new TranslatableText("uuid.copyIntArray"),
+				(buttonWidget) -> this.copyIntArrayTag()
 		));
 	}
 

@@ -12,8 +12,6 @@ import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
 public class EncodebookScreen extends AbstractFzmmScreen {
 
-	protected ButtonWidget executeButton,
-		getDecoderButton;
 	private TextFieldWidget messageTextField,
 		authorTextField,
 		paddingCharsTextField,
@@ -30,11 +28,11 @@ public class EncodebookScreen extends AbstractFzmmScreen {
 		assert this.client != null;
 		assert this.client.player != null;
 
-		this.executeButton = this.addDrawableChild(new ButtonWidget(20, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gui.execute"),
-			(buttonWidget) -> this.execute()
+		this.addDrawableChild(new ButtonWidget(20, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gui.execute"),
+				(buttonWidget) -> this.execute()
 		));
-		this.getDecoderButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 50, LINE5, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("encodebook.getDecoder"),
-			(buttonWidget) -> this.getDecoder()
+		this.addDrawableChild(new ButtonWidget(this.width / 2 - 50, LINE5, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("encodebook.getDecoder"),
+				(buttonWidget) -> this.getDecoder()
 		));
 
 		this.messageTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE1, 300, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("book.message"));

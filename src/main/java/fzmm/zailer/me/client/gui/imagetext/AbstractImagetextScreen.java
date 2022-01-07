@@ -25,8 +25,10 @@ public abstract class AbstractImagetextScreen extends AbstractFzmmScreen {
     private static final byte MAX_IMG_SIZE = 127;
     private static final byte DEFAULT_IMG_SIZE = 32;
     private static final byte MIN_IMG_SIZE = 2;
-    protected ButtonWidget executeButton, howGetImageButton, loadImageButton;
-    protected TextFieldWidget imageTextField, charTextField;
+    protected ButtonWidget executeButton;
+    private ButtonWidget howGetImageButton;
+    private TextFieldWidget imageTextField;
+    protected TextFieldWidget charTextField;
     protected IntSliderWidget widthSlider, heightSlider;
     protected CheckboxWidget smoothRescalingCheckbox;
     protected BufferedImage image;
@@ -62,7 +64,7 @@ public abstract class AbstractImagetextScreen extends AbstractFzmmScreen {
             this.updateGetImageMessage();
         }));
 
-        this.loadImageButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 154, LINE2, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.loadImage"),
+        this.addDrawableChild(new ButtonWidget(this.width / 2 - 154, LINE2, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.loadImage"),
                 (buttonWidget) -> this.loadImage()
         ));
 
@@ -115,7 +117,7 @@ public abstract class AbstractImagetextScreen extends AbstractFzmmScreen {
 
         if (this.imageError) {
             drawCenteredText(matrices, this.textRenderer, this.imageErrorMessage, this.width / 2, LINE5 - 8, TEXT_ERROR_COLOR);
-        } else  if (this.executed) {
+        } else if (this.executed) {
             drawCenteredText(matrices, this.textRenderer, this.executeMessage, this.width / 2, LINE5 - 8, TEXT_COLOR);
         } else if (this.imageIsSafe()) {
             drawCenteredText(matrices, this.textRenderer, new TranslatableText("imagetext.loadedImage"), this.width / 2, LINE5 - 8, TEXT_COLOR);
@@ -215,13 +217,12 @@ public abstract class AbstractImagetextScreen extends AbstractFzmmScreen {
     }
 
     /**
-     *
-     * @param side If getWidth is true this is width otherwise it is height. This is the original proportion.
+     * @param side         If getWidth is true this is width otherwise it is height. This is the original proportion.
      * @param oppositeSide If getWidth is true this is height otherwise it is width. This is the original proportion.
-     * @param sideIsWidth If the first variable (side) is width, if false, it will be height.
-     * @param newSide The new proportion.
+     * @param sideIsWidth  If the first variable (side) is width, if false, it will be height.
+     * @param newSide      The new proportion.
      * @return In case sideIsWidth is true it returns height, otherwise it returns width.
-     *
+     * <p>
      * Example: side: 200, oppositeSide: 500, sideIsWidth: true, newSide: 300, return: 750
      */
     protected int getProportions(int side, int oppositeSide, boolean sideIsWidth, int newSide) {
