@@ -37,7 +37,7 @@ public class StatueScreen extends AbstractFzmmScreen {
 	private Direction direction;
 	private SkinMode skinMode;
 
-	protected StatueScreen() {
+	public StatueScreen() {
 		super(new TranslatableText("playerStatue.title"));
 	}
 
