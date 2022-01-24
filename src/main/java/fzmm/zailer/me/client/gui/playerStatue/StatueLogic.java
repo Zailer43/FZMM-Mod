@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui;
+package fzmm.zailer.me.client.gui.playerStatue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -29,8 +29,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.UUID;
 
+// Antes solo dios y yo sabíamos cómo funcionaba este código, ahora solo dios lo sabe mucha suerte actualizando
 public class StatueLogic {
 
     public static final float Y_DIFFERENCE = 0.25f;
@@ -355,12 +358,10 @@ public class StatueLogic {
     }
 
     public static ItemStack updateStatue(ItemStack statueStack, float x, int y, float z, Direction statueDirection, @Nullable String name) {
-        NbtCompound tag,
-                pose = new NbtCompound(),
-                display = new NbtCompound();
-        NbtList items,
-                armPose = new NbtList(),
-                lore = new NbtList();
+        NbtCompound tag;
+        NbtCompound pose = new NbtCompound();
+        NbtList items;
+        NbtList armPose = new NbtList();
         String loreCoords;
         short directionSelect;
         float xRight, xLeft, zRight, zLeft,
@@ -467,10 +468,6 @@ public class StatueLogic {
             }
         }
 
-        LoreUtils.addLoreToList(lore, "Player Statue", 1666703);
-        LoreUtils.addLoreToList(lore, loreCoords, 4288392);
-
-        display.put(ItemStack.LORE_KEY, lore);
 
         y--;
 
@@ -531,14 +528,16 @@ public class StatueLogic {
                 items.set(26, InventoryUtils.getSlotTag(armorStand, 26));
             }
 
-            display.put(ItemStack.NAME_KEY, NbtString.of(name));
         } else if (items.size() == 27) {
             items.remove(26);
         }
         NbtCompound finalTag = statueStack.getNbt();
         finalTag.getCompound(TagsConstant.BLOCK_ENTITY).put(ShulkerBoxBlockEntity.ITEMS_KEY, items);
-        finalTag.put(ItemStack.DISPLAY_KEY, display);
         statueStack.setNbt(finalTag);
+        statueStack = new DisplayUtils(statueStack)
+                .addLore("Player Statue", 1666703).addLore(loreCoords, 4288392)
+                .setName(name)
+                .get();
         return statueStack;
     }
 

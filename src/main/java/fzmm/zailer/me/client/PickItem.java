@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client;
 
 import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.utils.DisplayUtils;
 import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.LoreUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -119,16 +119,16 @@ public class PickItem {
         if (nbt == null)
             return;
         List<String> keys = nbt.getKeys().stream().sorted().collect(Collectors.toList());
-        NbtCompound display = LoreUtils.generateLoreMessage("(" + String.join(" + ", keys) + ")");
 
+        DisplayUtils display = new DisplayUtils(stack).addLore("(" + String.join(" + ", keys) + ")");
         if (nbt.contains(TagsConstant.BLOCK_ENTITY, NbtElement.COMPOUND_TYPE)) {
             NbtCompound blockEntityTag = nbt.getCompound(TagsConstant.BLOCK_ENTITY);
             if (blockEntityTag.contains("CustomName", NbtElement.STRING_TYPE)) {
-                display.putString(ItemStack.NAME_KEY, blockEntityTag.getString("CustomName"));
+                display.setName(blockEntityTag.getString("CustomName"));
             }
         }
 
-        stack.setSubNbt(ItemStack.DISPLAY_KEY, display);
+        stack.setSubNbt(ItemStack.DISPLAY_KEY, display.getDisplay());
     }
 
     private static NbtCompound getBlockStateTag(BlockState state) {

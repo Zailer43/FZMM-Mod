@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui;
 
+import fzmm.zailer.me.utils.DisplayUtils;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -136,7 +137,7 @@ public class GradientScreen extends AbstractFzmmScreen {
 	}
 
 	public void addLore() {
-		FzmmUtils.addLoreToHandItem(this.verifyAndGetGradient());
+		DisplayUtils.addLoreToHandItem(this.verifyAndGetGradient());
 	}
 
 	public void initialColorListener(String text) {

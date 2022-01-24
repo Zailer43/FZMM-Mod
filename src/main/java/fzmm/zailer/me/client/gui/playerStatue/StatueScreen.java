@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui;
+package fzmm.zailer.me.client.gui.playerStatue;
 
 import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
 import fzmm.zailer.me.utils.FzmmUtils;

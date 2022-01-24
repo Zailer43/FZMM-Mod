@@ -10,7 +10,10 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.text.*;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.awt.*;
@@ -62,7 +65,7 @@ public class ImagetextLogic {
         this.generateImagetext(true);
         addResolution();
 
-        LoreUtils.setLore(stack, this.imagetext);
+        stack = new DisplayUtils(stack).setLore(this.imagetext).get();
 
         FzmmUtils.giveItem(stack);
     }
@@ -74,7 +77,7 @@ public class ImagetextLogic {
         this.generateImagetext(true);
         addResolution();
 
-        LoreUtils.addLoreList(stack, this.imagetext);
+        stack = new DisplayUtils(stack).addLore(this.imagetext).get();
 
         FzmmUtils.giveItem(stack);
     }
@@ -123,24 +126,21 @@ public class ImagetextLogic {
     }
 
     private void addResolution() {
-        LoreUtils.addLoreToList(this.imagetext, "Resolution: " + this.image.getWidth() + "x" + this.image.getHeight(), 7455391);
+        Text text = new LiteralText("Resolution: " + this.image.getWidth() + "x" + this.image.getHeight())
+                .setStyle(Style.EMPTY.withColor(7455391));
+        this.imagetext.add(FzmmUtils.textToNbtString(text, true));
     }
 
     public void giveAsHologram(int x, float y, int z) {
         final float Y_DISTANCE = 0.23f;
         ItemStack hopper = Items.HOPPER.getDefaultStack();
-        NbtCompound hopperBlockEntityTag = new NbtCompound(),
-                display = new NbtCompound();
+        NbtCompound hopperBlockEntityTag = new NbtCompound();
         NbtList hopperItems = new NbtList(),
-                shulkerItems = new NbtList(),
-                lore = new NbtList();
+                shulkerItems = new NbtList();
 
         this.generateImagetext(false);
         byte size = (byte) this.imagetext.size(),
             hopperIndex = 0;
-
-        LoreUtils.addLoreToList(lore, x + " " + y + " " + z, 0x796957);
-        LoreUtils.addLoreToList(lore, "Imagetext: Hologram", 0x796957);
 
         for (byte i = 0; i != size; i++) {
             y += Y_DISTANCE;
@@ -158,10 +158,9 @@ public class ImagetextLogic {
             addShulker(shulkerItems, hopperItems, hopperIndex);
         }
 
-        display.put(ItemStack.LORE_KEY, lore);
         hopperBlockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, hopperItems);
         hopper.setSubNbt(TagsConstant.BLOCK_ENTITY, hopperBlockEntityTag);
-        hopper.setSubNbt(ItemStack.DISPLAY_KEY, display);
+        hopper = new DisplayUtils(hopper).addLore(x + " " + y + " " + z, 0x796957).addLore("Imagetext: Hologram", 0x796957).get();
 
         FzmmUtils.giveItem(hopper);
     }

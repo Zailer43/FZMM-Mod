@@ -4,9 +4,9 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import fzmm.zailer.me.utils.DisplayUtils;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.InventoryUtils;
-import fzmm.zailer.me.utils.LoreUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
@@ -54,7 +54,7 @@ public class FzmmCommand {
 
                             Text message = ctx.getArgument("message", Text.class);
 
-                            FzmmUtils.addLoreToHandItem(message);
+                            DisplayUtils.addLoreToHandItem(message);
                             return 1;
                         }))
                 ).then(ClientCommandManager.literal("remove")
@@ -217,11 +217,9 @@ public class FzmmCommand {
         ItemStack stack = MC.player.getInventory().getMainHandStack();
         Text enchantMessage = enchant.getName(level);
 
-        System.out.println(enchantMessage);
         Style style = enchantMessage.getStyle();
         ((MutableText) enchantMessage).setStyle(style.withItalic(false));
-        System.out.println(enchantMessage);
-        LoreUtils.addLore(stack, enchantMessage);
+        stack = new DisplayUtils(stack).addLore(enchantMessage).get();
 
         NbtCompound tag = stack.getOrCreateNbt();
         if (!tag.contains(ItemStack.ENCHANTMENTS_KEY, NbtElement.LIST_TYPE)) {
