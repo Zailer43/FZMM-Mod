@@ -4,32 +4,31 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtString;
 
 public class BlockStateTagItem {
 
-    private final ItemStack stack;
+    private final Item item;
     private final NbtCompound blockStateTag;
-    private final NbtString itemName;
+    private final String itemName;
 
     public BlockStateTagItem(Item item, String itemName) {
-        this.stack = new ItemStack(item);
+        this.item = item;
         this.blockStateTag = new NbtCompound();
-        this.itemName = FzmmUtils.stringToNbtString(itemName, true);
+        this.itemName = itemName;
     }
 
     public BlockStateTagItem(Item item) {
-        this.stack = new ItemStack(item);
+        this.item = item;
         this.blockStateTag = new NbtCompound();
         this.itemName = null;
     }
 
     public ItemStack get() {
-        if (itemName != null) {
-            NbtCompound display = new NbtCompound();
-            display.put(ItemStack.NAME_KEY, this.itemName);
-            stack.setSubNbt(ItemStack.DISPLAY_KEY, display);
+        DisplayUtils displayUtils = new DisplayUtils(this.item);
+        if (this.itemName != null) {
+            displayUtils.setName(this.itemName, 0x66F5B7).addLore("Place me!", 0x66F5B7);
         }
+        ItemStack stack = displayUtils.get();
 
         stack.setSubNbt(BlockItem.BLOCK_STATE_TAG_KEY, this.blockStateTag);
         return stack;

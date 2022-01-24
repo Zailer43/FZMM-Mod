@@ -7,9 +7,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.*;
+import net.minecraft.item.FireworkRocketItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.tag.ItemTags;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.util.Identifier;
@@ -17,7 +21,6 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.village.raid.Raid;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FzmmItemGroup {
 
@@ -65,6 +68,7 @@ public class FzmmItemGroup {
                     stacks.add(new BlockStateTagItem(Items.GRASS_BLOCK, "Snowy grass block").add("snowy", true).get());
                     stacks.add(new BlockStateTagItem(Items.MYCELIUM, "Snowy mycelium").add("snowy", true).get());
                     stacks.add(new BlockStateTagItem(Items.PODZOL, "Snowy podzol").add("snowy", true).get());
+                    stacks.add(new BlockStateTagItem(Items.SNOW, "Snow block").add("layers", 8).get());
                     stacks.add(new BlockStateTagItem(Items.BARREL, "Open barrel").add("open", true).get());
                     stacks.add(new BlockStateTagItem(Items.IRON_TRAPDOOR, "Open iron trapdoor").add("open", true).get());
                     stacks.add(new BlockStateTagItem(Items.IRON_DOOR, "Open iron door").add("open", true).get());
@@ -75,6 +79,7 @@ public class FzmmItemGroup {
                     stacks.add(new BlockStateTagItem(Items.SOUL_LANTERN, "Soul lantern on the floor").add("hanging", false).get());
                     stacks.add(new BlockStateTagItem(Items.COMPOSTER, "Full composter").add("level", 8).get());
                     stacks.add(new BlockStateTagItem(Items.RESPAWN_ANCHOR, "Full respawn anchor").add("charges", 4).get());
+                    stacks.add(new BlockStateTagItem(Items.BAMBOO, "Bamboo with leaves").add("leaves", "large").get());
                     stacks.add(new BlockStateTagItem(Items.WHEAT_SEEDS, "Full grown wheat").add("age", 7).get());
                     stacks.add(new BlockStateTagItem(Items.PUMPKIN_SEEDS, "Full grown pumpkin").add("age", 7).get());
                     stacks.add(new BlockStateTagItem(Items.MELON_SEEDS, "Full grown melon").add("age", 7).get());
@@ -91,8 +96,11 @@ public class FzmmItemGroup {
                     stacks.add(new BlockStateTagItem(Items.TURTLE_EGG, "Turtle egg (4)").add("eggs", 4).get());
                     stacks.add(new BlockStateTagItem(Items.CAKE, "A slice of cake").add("bites", 6).get());
                     stacks.add(new BlockStateTagItem(Items.REDSTONE, "Powered redstone").add("power", 15).get());
+                    addHalfDoors(stacks);
+                    addTallFlowers(stacks);
                     addLeaves(stacks);
                     addLitCandles(stacks);
+                    addHalfBed(stacks);
                 }).build();
 
         FabricItemGroupBuilder.create(new Identifier("fzmm", "loot_chests"))
@@ -101,7 +109,7 @@ public class FzmmItemGroup {
                     List<String> lootTablesPath = LootTables.getAll().stream()
                             .map(Identifier::getPath)
                             .sorted()
-                            .collect(Collectors.toList());
+                            .toList();
 
                     for (String path : lootTablesPath) {
                         if (path.startsWith("entities"))
@@ -127,7 +135,7 @@ public class FzmmItemGroup {
                     if (clientPlayer != null) {
                         List<GameProfile> profileList = clientPlayer.networkHandler.getPlayerList().stream()
                                 .map(PlayerListEntry::getProfile)
-                                .collect(Collectors.toList());
+                                .toList();
 
                         for (GameProfile profile : profileList) {
                             stacks.add(FzmmUtils.getPlayerHead(profile));
@@ -169,40 +177,20 @@ public class FzmmItemGroup {
     }
 
     private static void addNameTags(List<ItemStack> stacks) {
-        ItemStack emptyNameTag = new ItemStack(Items.NAME_TAG),
-                dinnerbone = new ItemStack(Items.NAME_TAG),
-                grumm = new ItemStack(Items.NAME_TAG),
-                toast = new ItemStack(Items.NAME_TAG),
-                jeb_ = new ItemStack(Items.NAME_TAG),
-                johnny = new ItemStack(Items.NAME_TAG);
         final int LORE_COLOR = 0x1ecbe1;
-
-        emptyNameTag.setCustomName(new LiteralText(""));
-        LoreUtils.addLore(emptyNameTag, "Empty name tag", LORE_COLOR);
-        stacks.add(emptyNameTag);
-
-        dinnerbone.setCustomName(new LiteralText("Dinnerbone"));
-        LoreUtils.addLore(dinnerbone, "Any mob to receive this name is rendered upside down.", LORE_COLOR);
-        stacks.add(dinnerbone);
-
-        grumm.setCustomName(new LiteralText("Grumm"));
-        LoreUtils.addLore(grumm, "Any mob to receive this name is rendered upside down.", LORE_COLOR);
-        stacks.add(grumm);
-
-        toast.setCustomName(new LiteralText("Toast"));
-        LoreUtils.addLore(toast, "Naming a rabbit \"Toast\" causes it to have a special memorial", LORE_COLOR);
-        LoreUtils.addLore(toast, "skin of user xyzen420's girlfriend's missing rabbit.", LORE_COLOR);
-        stacks.add(toast);
-
-        jeb_.setCustomName(new LiteralText("jeb_"));
-        LoreUtils.addLore(jeb_, "Naming a sheep \"jeb_\" causes its wool to fade between", LORE_COLOR);
-        LoreUtils.addLore(jeb_, "the dye colors, producing a rainbow effect.", LORE_COLOR);
-        stacks.add(jeb_);
-
-        johnny.setCustomName(new LiteralText("Johnny"));
-        LoreUtils.addLore(johnny, "Naming a vindicator \"Johnny\" causes it to be aggressive and attack", LORE_COLOR);
-        LoreUtils.addLore(johnny, " all mobs including the wither (except ghasts and other illagers).", LORE_COLOR);
-        stacks.add(johnny);
+        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("").addLore("Empty name tag", LORE_COLOR).get());
+        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("Dinnerbone").addLore("Any mob to receive this name is rendered upside down.", LORE_COLOR).get());
+        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("Grumm").addLore("Any mob to receive this name is rendered upside down.", LORE_COLOR).get());
+        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("Toast")
+                .addLore("Naming a rabbit \"Toast\" causes it to have a special memorial", LORE_COLOR)
+                .addLore("skin of user xyzen420's girlfriend's missing rabbit.", LORE_COLOR).get());
+        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("jeb_")
+                .addLore("Naming a sheep \"jeb_\" causes its wool to fade between", LORE_COLOR)
+                .addLore("the dye colors, producing a rainbow effect.", LORE_COLOR).get());
+        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("Johnny")
+                .addLore("Naming a vindicator \"Johnny\" causes it to be", LORE_COLOR)
+                .addLore("aggressive and attack all mobs including the wither", LORE_COLOR)
+                .addLore("(except ghasts and other illagers)", LORE_COLOR).get());
     }
 
     private static void addCrossbows(List<ItemStack> stacks) {
@@ -221,21 +209,42 @@ public class FzmmItemGroup {
 
     private static void addLightBlock(List<ItemStack> stacks) {
         for (int i = 0; i != 16; i++) {
-            stacks.add(new BlockStateTagItem(Items.LIGHT).add("level", String.valueOf(i)).get());
+            stacks.add(new BlockStateTagItem(Items.LIGHT).add("level", i).get());
         }
     }
 
     private static void addLeaves(List<ItemStack> stacks) {
         for (Item item : Registry.ITEM) {
-            if (item.toString().contains("leave"))
+            if (ItemTags.LEAVES.contains(item))
                 stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (persistent: false)").add("persistent", false).get());
+        }
+    }
+
+    private static void addHalfDoors(List<ItemStack> stacks) {
+        for (Item item : Registry.ITEM) {
+            if (ItemTags.DOORS.contains(item))
+                stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (upper half)").add("half", "upper").get());
+        }
+    }
+
+    private static void addTallFlowers(List<ItemStack> stacks) {
+        for (Item item : Registry.ITEM) {
+            if (ItemTags.TALL_FLOWERS.contains(item))
+                stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (self-destructs)").add("half", "upper").get());
         }
     }
 
     private static void addLitCandles(List<ItemStack> stacks) {
         for (Item item : Registry.ITEM) {
-            if (item.toString().contains("candle"))
+            if (ItemTags.CANDLES.contains(item))
                 stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (lit)").add("lit", true).get());
+        }
+    }
+
+    private static void addHalfBed(List<ItemStack> stacks) {
+        for (Item item : Registry.ITEM) {
+            if (ItemTags.BEDS.contains(item))
+                stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (head part)").add("part", "head").get());
         }
     }
 }

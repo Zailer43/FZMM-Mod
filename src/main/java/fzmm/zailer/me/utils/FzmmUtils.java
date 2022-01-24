@@ -189,13 +189,4 @@ public class FzmmUtils {
         stack.setCustomName(FzmmUtils.disableItalicConfig(text));
         FzmmUtils.giveItem(stack);
     }
-
-    public static void addLoreToHandItem(Text text) {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        assert mc.player != null;
-
-        ItemStack stack = mc.player.getMainHandStack();
-        LoreUtils.addLore(stack, text);
-        FzmmUtils.giveItem(stack);
-    }
 }
