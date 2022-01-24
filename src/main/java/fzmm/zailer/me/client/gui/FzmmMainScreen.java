@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui;
 
+import fzmm.zailer.me.client.gui.playerStatue.StatueScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.NarratorManager;
 import net.minecraft.item.ItemStack;
