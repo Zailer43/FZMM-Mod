@@ -1,6 +1,7 @@
 package fzmm.zailer.me.utils;
 
 import fzmm.zailer.me.config.FzmmConfig;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -38,6 +39,12 @@ public class DisplayUtils {
         return display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE) ? display.getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE) : new NbtList();
     }
 
+    @Nullable
+    public String getName() {
+        NbtCompound display = this.getDisplay();
+        return display.contains(ItemStack.NAME_KEY, NbtElement.STRING_TYPE) ? display.getString(ItemStack.NAME_KEY) : null;
+    }
+
     public ItemStack get() {
         ItemStack stack = new ItemStack(this.item);
         stack.setCount(this.count);
@@ -67,15 +74,15 @@ public class DisplayUtils {
     }
 
     public DisplayUtils setName(String name) {
-        this.setName(NbtString.of(name));
-        return this;
+        return this.setName(NbtString.of(name));
     }
 
     public DisplayUtils setName(String name, int color) {
-        Text message = new LiteralText(name).setStyle(Style.EMPTY.withColor(color));
+        return this.setName(new LiteralText(name).setStyle(Style.EMPTY.withColor(color)));
+    }
 
-        this.setName(FzmmUtils.textToNbtString(message, true));
-        return this;
+    public DisplayUtils setName(Text name) {
+        return this.setName(FzmmUtils.textToNbtString(name, true));
     }
 
     public DisplayUtils addLore(NbtList lore) {

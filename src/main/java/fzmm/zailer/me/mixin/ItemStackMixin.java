@@ -33,7 +33,7 @@ public abstract class ItemStackMixin {
             assert nbt != null;
             List<String> tags = nbt.getKeys().stream().toList();
             int tagsSize = tags.size();
-            MutableText loreText = new LiteralText("Tag's: ");
+            MutableText loreText = new LiteralText("Tags: ");
             List<Text> list = cir.getReturnValue();
 
 

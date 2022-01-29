@@ -84,6 +84,7 @@
   "playerStatue.skin.fromUsername": "Skin from username",
   "playerStatue.title": "Player Statue",
   "playerStatue.update": "Update",
+  "playerStatue.statueGenerated": "Statue ready, you can close this GUI",
   "text.autoconfig.fzmm.category.encodebook": "Encodebook",
   "text.autoconfig.fzmm.category.general": "General",
   "text.autoconfig.fzmm.option.encodebook.asymmetricEncodeKey": "Asymmetric encode key",

@@ -15,10 +15,13 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3f;
 
-import java.nio.file.Files;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
@@ -27,11 +30,14 @@ public class StatueScreen extends AbstractFzmmScreen {
 	private ButtonWidget executeButton;
 	private ButtonWidget directionButton;
 	private ButtonWidget skinButton;
-	private ButtonWidget containerButton;
 	protected static Text progress;
-	protected static boolean active, errorImage;
-	private TextFieldWidget skinTextField, nameTextField;
-	private NumberFieldWidget xNumberField, yNumberField, zNumberField;
+	protected static boolean active;
+	protected static boolean errorImage;
+	private TextFieldWidget skinTextField;
+	private TextFieldWidget nameTextField;
+	private NumberFieldWidget xNumberField;
+	private NumberFieldWidget yNumberField;
+	private NumberFieldWidget zNumberField;
 	private boolean isShulker;
 	private TranslatableText errorImageMessage;
 	private Direction direction;
@@ -62,8 +68,8 @@ public class StatueScreen extends AbstractFzmmScreen {
 
 		this.skinButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 50, LINE1, 104, NORMAL_BUTTON_HEIGHT, new LiteralText(""),
 				(buttonWidget) -> {
-					this.cycleSkin();
-					this.updateSkin();
+					this.cycleSkinMode();
+					this.updateSkinMode();
 				}
 		));
 
@@ -81,7 +87,7 @@ public class StatueScreen extends AbstractFzmmScreen {
 		this.zNumberField.setText(String.valueOf(this.client.player.getBlockZ()));
 
 		this.nameTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 154, LINE3, 308, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("playerStatue.name"));
-		this.nameTextField.setMaxLength(1024);
+		this.nameTextField.setMaxLength(2048);
 
 		this.addSelectableChild(this.skinTextField);
 		this.addSelectableChild(this.xNumberField);
@@ -89,17 +95,16 @@ public class StatueScreen extends AbstractFzmmScreen {
 		this.addSelectableChild(this.zNumberField);
 		this.addSelectableChild(this.nameTextField);
 
-		this.directionButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 102, LINE4, 100, NORMAL_BUTTON_HEIGHT, new LiteralText(""),
+		this.addDrawableChild(this.skinTextField);
+		this.addDrawableChild(this.xNumberField);
+		this.addDrawableChild(this.yNumberField);
+		this.addDrawableChild(this.zNumberField);
+		this.addDrawableChild(this.nameTextField);
+
+		this.directionButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 50, LINE4, 100, NORMAL_BUTTON_HEIGHT, new LiteralText(""),
 				(buttonWidget) -> {
 					this.cycleDirection();
 					this.updateDirection();
-				}
-		));
-
-		this.containerButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 2, LINE4, 100, NORMAL_BUTTON_HEIGHT, new LiteralText(""),
-				(buttonWidget) -> {
-					this.isShulker = !this.isShulker;
-					this.updateContainer();
 				}
 		));
 
@@ -107,15 +112,12 @@ public class StatueScreen extends AbstractFzmmScreen {
 				(buttonWidget) -> this.updateStatue()
 		));
 
-		this.nameTextField.setText(StatueLogic.getStatueName());
-
 		this.direction = this.client.player.getHorizontalFacing();
 		this.skinMode = SkinMode.NICK;
 		this.isShulker = true;
 
 		this.updateDirection();
-		this.updateSkin();
-		this.updateContainer();
+		this.updateSkinMode();
 
 	}
 
@@ -141,7 +143,7 @@ public class StatueScreen extends AbstractFzmmScreen {
 		this.direction = direction2;
 		this.updateDirection();
 		skinMode = skinMode2;
-		this.updateSkin();
+		this.updateSkinMode();
 		this.isShulker = isShulker2;
 	}
 
@@ -149,17 +151,12 @@ public class StatueScreen extends AbstractFzmmScreen {
 		super.render(matrices, mouseX, mouseY, delta);
 
 		drawCenteredText(matrices, this.textRenderer, new TranslatableText("playerStatue.skin"), this.width / 2 - 54, LINE1 - 10, TEXT_COLOR);
-		this.skinTextField.render(matrices, mouseX, mouseY, delta);
 
 		drawCenteredText(matrices, this.textRenderer, new LiteralText("X"), this.width / 2 - 104, LINE2 - 10, TEXT_COLOR);
-		this.xNumberField.render(matrices, mouseX, mouseY, delta);
 		drawCenteredText(matrices, this.textRenderer, new LiteralText("Y"), this.width / 2, LINE2 - 10, TEXT_COLOR);
-		this.yNumberField.render(matrices, mouseX, mouseY, delta);
 		drawCenteredText(matrices, this.textRenderer, new LiteralText("Z"), this.width / 2 + 104, LINE2 - 10, TEXT_COLOR);
-		this.zNumberField.render(matrices, mouseX, mouseY, delta);
 
 		drawCenteredText(matrices, this.textRenderer, new TranslatableText("playerStatue.name"), this.width / 2, LINE3 - 10, TEXT_COLOR);
-		this.nameTextField.render(matrices, mouseX, mouseY, delta);
 
 		if (errorImage) {
 			drawCenteredText(matrices, this.textRenderer, this.errorImageMessage, this.width / 2, LINE5 - 10, TEXT_ERROR_COLOR);
@@ -174,30 +171,50 @@ public class StatueScreen extends AbstractFzmmScreen {
 
 	public void execute() {
 		active = true;
-		String name = null;
-		if (!this.nameTextField.getText().isEmpty()) {
-			name = this.nameTextField.getText();
-		}
-		StatueLogic.generateStatue(this.skinTextField.getText(),
-				this.xNumberField.getNumber(),
-				(short) this.yNumberField.getNumber(),
-				this.zNumberField.getNumber(),
-				name,
-				this.direction,
-				this.skinMode,
-				this.isShulker);
+
+		new Thread(() -> {
+			Vec3f pos = new Vec3f(this.xNumberField.getNumber(), this.yNumberField.getNumber(), this.zNumberField.getNumber());
+			PlayerStatue statue = null;
+			String skin = this.skinTextField.getText();
+
+			String statueNameTag = this.nameTextField.getText();
+
+			if (this.skinMode == SkinMode.FROM_PC) {
+				File skinFile = new File(skin);
+				BufferedImage skinBuffered;
+				try {
+					skinBuffered = ImageIO.read(skinFile);
+					statue = new PlayerStatue(skinBuffered, statueNameTag, pos, this.direction);
+				} catch (IOException ignored) {
+				}
+			} else {
+				try {
+					statue = new PlayerStatue(PlayerStatue.getPlayerSkin(skin), statueNameTag, pos, this.direction);
+				} catch (IOException | NullPointerException ignored) {
+				}
+			}
+
+			if (statue != null) {
+				ItemStack statueInContainer = statue.generateStatues().getStatueInContainer();
+
+				FzmmUtils.giveItem(statueInContainer);
+
+				progress = new TranslatableText("playerStatue.statueGenerated");
+			} else {
+				PlayerStatue.LOGGER.warn("Error loading player skin");
+				progress = new LiteralText("Error loading player skin");
+			}
+
+			active = false;
+		}).start();
 	}
 
 	public void updateStatue() {
 		assert this.client != null;
 		assert this.client.player != null;
-		ItemStack statue = StatueLogic.updateStatue(this.client.player.getMainHandStack(),
-				this.xNumberField.getNumber(),
-				(short) this.yNumberField.getNumber(),
-				this.zNumberField.getNumber(),
-				this.direction,
-				this.nameTextField.getText()
-				);
+		Vec3f pos = new Vec3f(this.xNumberField.getNumber(), this.yNumberField.getNumber(), this.zNumberField.getNumber());
+
+		ItemStack statue = PlayerStatue.updateStatue(this.client.player.getMainHandStack(), pos, this.direction, this.nameTextField.getText());
 		FzmmUtils.giveItem(statue);
 	}
 
@@ -207,9 +224,15 @@ public class StatueScreen extends AbstractFzmmScreen {
 		}
 		if (skinMode == SkinMode.FROM_PC) {
 			try {
-				if (Files.exists(Paths.get(text)))
-					errorImage = false;
-				else {
+				File file = new File(text);
+				if (file.exists()) {
+					if (file.isFile()) {
+						errorImage = false;
+					} else {
+						errorImage = true;
+						this.errorImageMessage = new TranslatableText("imagetext.error.notIsFile");
+					}
+				} else {
 					errorImage = true;
 					this.errorImageMessage = new TranslatableText("imagetext.error.pathNotExists");
 				}
@@ -244,7 +267,7 @@ public class StatueScreen extends AbstractFzmmScreen {
 		}
 	}
 
-	public void cycleSkin() {
+	public void cycleSkinMode() {
 		switch (this.skinMode) {
 			case NICK -> this.skinMode = SkinMode.FROM_PC;
 			case FROM_PC -> {
@@ -255,7 +278,7 @@ public class StatueScreen extends AbstractFzmmScreen {
 		}
 	}
 
-	public void updateSkin() {
+	public void updateSkinMode() {
 		switch (this.skinMode) {
 			case NICK -> {
 				this.skinButton.setMessage(new TranslatableText("playerStatue.skin.fromUsername"));
@@ -276,11 +299,12 @@ public class StatueScreen extends AbstractFzmmScreen {
 		}
 	}
 
-	public void updateContainer() {
-		if (isShulker) {
-			this.containerButton.setMessage(new TranslatableText("block.minecraft.shulker_box"));
-		} else {
-			this.containerButton.setMessage(new TranslatableText("block.minecraft.barrel"));
+	public static void showMessage(Text message) {
+		MinecraftClient client = MinecraftClient.getInstance();
+		StatueScreen.progress = message;
+
+		if (!(client.currentScreen instanceof StatueScreen)) {
+			client.inGameHud.setOverlayMessage(message, false);
 		}
 	}
 

@@ -4,10 +4,8 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.N
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtDouble;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
+import net.minecraft.nbt.*;
+import net.minecraft.util.math.Vec3f;
 
 public class ArmorStandUtils {
 
@@ -70,6 +68,19 @@ public class ArmorStandUtils {
         handItem.add(itemTag);
 
         this.entityTag.put("HandItems", handItem);
+        return this;
+    }
+
+    public ArmorStandUtils setRightArmPose(Vec3f pos) {
+        NbtList armPose = new NbtList();
+        NbtCompound pose = new NbtCompound();
+
+        armPose.add(NbtFloat.of(pos.getX()));
+        armPose.add(NbtFloat.of(pos.getY()));
+        armPose.add(NbtFloat.of(pos.getZ()));
+
+        pose.put("RightArm", armPose);
+        this.entityTag.put("Pose", pose);
         return this;
     }
 

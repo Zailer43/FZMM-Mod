@@ -1,11 +1,11 @@
 package fzmm.zailer.me.utils;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fzmm.zailer.me.config.FzmmConfig;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -19,6 +19,11 @@ import net.minecraft.network.MessageType;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,8 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
@@ -86,30 +89,41 @@ public class FzmmUtils {
         }
     }
 
-    public static String getPlayerUuid(String name) throws IOException, ClassCastException {
-        URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-        JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(conn.getInputStream()));
-        JsonElement uuid = obj.get("id");
-
-        conn.disconnect();
-
-        return uuid.getAsString();
+    public static String getPlayerUuid(String name) throws IOException {
+        InputStream response = httpGetRequest("https://api.mojang.com/users/profiles/minecraft/" + name, false);
+        if (response == null)
+            return "";
+        JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(response));
+        return obj.get("id").getAsString();
     }
 
     public static BufferedImage getImageFromPath(String path) throws IOException {
         return getImageFromUrl("file:///" + path);
     }
 
+    @Nullable
     public static BufferedImage getImageFromUrl(String urlLocation) throws IOException {
-        URL url = new URL(urlLocation);
-        URLConnection conn = url.openConnection();
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+        InputStream response = httpGetRequest(urlLocation, true);
+        if (response == null)
+            return null;
+        return ImageIO.read(response);
+    }
 
-        conn.connect();
-        InputStream urlStream = conn.getInputStream();
-        return ImageIO.read(urlStream);
+    @Nullable
+    public static InputStream httpGetRequest(String url, boolean isImage) throws IOException {
+        InputStream inputResponse = null;
+        HttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
+
+        if (isImage)
+            httpGet.addHeader("content-type", "image/jpeg");
+
+        HttpResponse response = httpclient.execute(httpGet);
+        HttpEntity resEntity = response.getEntity();
+        if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK)
+            inputResponse = resEntity.getContent();
+
+        return inputResponse;
     }
 
     public static Text disableItalicConfig(Text message) {

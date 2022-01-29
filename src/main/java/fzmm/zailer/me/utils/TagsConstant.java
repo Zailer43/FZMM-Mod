@@ -1,6 +1,9 @@
 package fzmm.zailer.me.utils;
 
 public class TagsConstant {
+    public static final String FZMM = "FZMM_MOD";
+    public static final String FZMM_PLAYER_STATUE = "PlayerStatue";
+
     public static final String BLOCK_ENTITY = "BlockEntityTag";
     public static final String INVENTORY_COUNT = "Count";
     public static final String INVENTORY_ID = "id";
