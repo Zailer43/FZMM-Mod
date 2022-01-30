@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client.gui.imagetext;
 
-import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.config.Configs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
@@ -16,7 +16,7 @@ public class ImagetextBookTooltipScreen extends AbstractImagetextScreen {
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         this.authorTextField = this.addDrawableChild(new TextFieldWidget(this.textRenderer, this.width / 2 - 154, LINE4, NORMAL_BUTTON_WIDTH, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("book.author")));
         this.authorTextField.setMaxLength(127);
@@ -27,7 +27,7 @@ public class ImagetextBookTooltipScreen extends AbstractImagetextScreen {
         assert this.client != null;
         assert this.client.player != null;
         this.authorTextField.setText(this.client.player.getName().asString());
-        this.messageTextField.setText(FzmmConfig.get().general.defaultImagetextBookMessage);
+        this.messageTextField.setText(Configs.Generic.DEFAULT_IMAGETEXT_BOOK_MESSAGE.getStringValue());
     }
 
     @Override

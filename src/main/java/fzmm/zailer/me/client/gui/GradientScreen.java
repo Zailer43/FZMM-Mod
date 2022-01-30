@@ -15,7 +15,7 @@ import java.util.Random;
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
 public class GradientScreen extends AbstractFzmmScreen {
-	protected GradientScreen() {
+	public GradientScreen() {
 		super(new TranslatableText("gradient.title"));
 	}
 
@@ -32,7 +32,7 @@ public class GradientScreen extends AbstractFzmmScreen {
 	private CheckboxWidget italicCheckbox;
 	private Text preview;
 
-	protected void init() {
+	public void init() {
 		super.init();
 		final short CHECKBOX_ROW = (short) (this.width / 2 + 80);
 		assert this.client != null;
@@ -53,7 +53,7 @@ public class GradientScreen extends AbstractFzmmScreen {
 		this.messageTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE1, 220, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("gradient.message"));
 		this.messageTextField.setMaxLength(256);
 		this.messageTextField.setChangedListener((text) -> this.preview = this.verifyAndGetGradient());
-		this.setInitialFocus(this.messageTextField);
+//		this.setInitialFocus(this.messageTextField);
 
 		this.initialColorTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE2, 220, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("gradient.initialColor"));
 		this.initialColorTextField.setMaxLength(6);

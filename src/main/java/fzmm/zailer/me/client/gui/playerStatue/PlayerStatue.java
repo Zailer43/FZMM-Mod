@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui.playerStatue;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.gui.playerStatue.statueHeadSkin.*;
+import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -148,16 +149,17 @@ public class PlayerStatue {
         int x = (int) pos.getX();
         int y = (int) pos.getY();
         int z = (int) pos.getZ();
+        int color = FzmmUtils.RGBAtoRGB(Configs.Colors.PLAYER_STATUE.getColor()).intValue;
 
         DisplayUtils displayUtils = new DisplayUtils(Items.WHITE_SHULKER_BOX)
-                .setName(new LiteralText("Player Statue").setStyle(Style.EMPTY.withColor(0xCB347D).withBold(true)))
-                .addLore("Pos: " + x + " " + y + " " + z, 0xCB347D);
+                .setName(new LiteralText("Player Statue").setStyle(Style.EMPTY.withColor(color).withBold(true)))
+                .addLore("Pos: " + x + " " + y + " " + z, color);
 
         InventoryUtils invUtils = new InventoryUtils(displayUtils.get())
                 .addItem(statueList)
-                .setNameStyleToItems(Style.EMPTY.withColor(0xCB347D))
-                .addLoreToItems(Items.ARMOR_STAND,"Player statue part, put in a dispenser that " , 0xCB347D)
-                .addLoreToItems(Items.ARMOR_STAND,"is " + Formatting.UNDERLINE + "FACING UP" + Formatting.RESET + " and activate the dispenser", 0xCB347D);
+                .setNameStyleToItems(Style.EMPTY.withColor(color))
+                .addLoreToItems(Items.ARMOR_STAND,"Player statue part, put in a dispenser that " , color)
+                .addLoreToItems(Items.ARMOR_STAND,"is " + Formatting.UNDERLINE + "FACING UP" + Formatting.RESET + " and activate the dispenser", color);
 
         return invUtils.get();
     }

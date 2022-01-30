@@ -16,7 +16,7 @@ public class ImagetextLoreScreen extends AbstractImagetextScreen {
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
 
         this.loreButton = this.addDrawableChild(new ButtonWidget(this.width / 2 - 154, LINE4, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.lore.add"),

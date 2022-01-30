@@ -20,7 +20,7 @@ public class ConvertersScreen extends AbstractFzmmScreen {
 		super(new TranslatableText("converters.title"));
 	}
 
-	protected void init() {
+	public void init() {
 		super.init();
 		assert this.client != null;
 

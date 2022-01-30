@@ -10,11 +10,11 @@ import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 public class ImagetextScreen extends AbstractFzmmScreen {
 
 
-    protected ImagetextScreen() {
+    public ImagetextScreen() {
         super(new TranslatableText("imagetext.title"));
     }
 
-    protected void init() {
+    public void init() {
         super.init();
         assert this.client != null;
         final int[] buttonX = {this.width / 2 - 199, this.width / 2 - 65, this.width / 2 + 69};

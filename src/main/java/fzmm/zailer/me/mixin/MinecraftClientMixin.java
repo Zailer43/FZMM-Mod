@@ -2,7 +2,6 @@ package fzmm.zailer.me.mixin;
 
 import fzmm.zailer.me.client.PickItem;
 import fzmm.zailer.me.client.gui.AbstractFzmmScreen;
-import fzmm.zailer.me.client.keys.FzmmGuiKey;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -18,11 +17,6 @@ public class MinecraftClientMixin {
 
 	@Shadow
 	public ClientPlayerEntity player;
-
-	@Inject(method = "handleInputEvents", at = @At("HEAD"))
-	public void handleInputEvents(CallbackInfo ci) {
-		FzmmGuiKey.handleInputEvents();
-	}
 
 	@Redirect(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;doItemPick()V"))
 	private void doItemPick(MinecraftClient client) {

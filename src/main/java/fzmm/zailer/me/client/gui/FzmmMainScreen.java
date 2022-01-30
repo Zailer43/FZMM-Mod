@@ -2,8 +2,6 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.gui.playerStatue.StatueScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.NarratorManager;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
@@ -12,14 +10,13 @@ import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 public class FzmmMainScreen extends AbstractFzmmScreen {
 
 	public FzmmMainScreen() {
-		super(NarratorManager.EMPTY);
+		super(new TranslatableText("fzmm.gui.title.fzmm"));
 	}
 
-	protected void init() {
+	public void init() {
 		super.init();
 		assert this.client != null;
 		assert this.client.player != null;
-		ItemStack stack = this.client.player.getMainHandStack();
 		int col1 = this.width / 2 - 154,
 			col2 = this.width / 2 - 50,
 			col3 = this.width / 2 + 54;

@@ -3,11 +3,14 @@
   "id": "fzmm",
   "version": "${version}",
   "name": "FZMM",
-  "description": "A fabric mod so it is mainly for editing or creating NBT of items in creative but it also has a few utilities, WIP",
+  "description": "A fabric mod that is mainly for editing or creating NBT of items in creative but it also has a few utilities",
   "authors": [
     "Zailer43"
   ],
-  "contact": {},
+  "contact": {
+    "issues": "https://github.com/Zailer43/FZMM-Mod/issues",
+    "sources": "https://github.com/Zailer43/FZMM-Mod"
+  },
   "license": "Unlicense",
   "icon": "assets/fzmm/icon.png",
   "environment": "client",
@@ -16,7 +19,7 @@
       "fzmm.zailer.me.client.FzmmClient"
     ],
     "modmenu": [
-      "fzmm.zailer.me.config.ModMenuEntry"
+      "fzmm.zailer.me.config.ModMenuImpl"
     ]
   },
   "mixins": [
@@ -26,7 +29,6 @@
     "fabricloader": ">=0.12.5",
     "fabric": ">=0.41.3",
     "minecraft": "1.18.x",
-    "cloth-config2":">=5.0.34",
-    "java": ">=17"
+    "malilib":">=0.11.5"
   }
 }

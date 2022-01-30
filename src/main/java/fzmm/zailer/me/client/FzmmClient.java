@@ -1,16 +1,18 @@
 package fzmm.zailer.me.client;
 
-import fzmm.zailer.me.client.keys.FzmmGuiKey;
-import fzmm.zailer.me.config.FzmmConfig;
+import fi.dy.masa.malilib.event.InitializationHandler;
+import fzmm.zailer.me.FzmmInitializer;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
-@net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
+@Environment(EnvType.CLIENT)
 public class FzmmClient implements ClientModInitializer {
+
+    public final static String MOD_ID = "fzmm";
+
     @Override
     public void onInitializeClient() {
-        FzmmConfig.init();
-        FzmmGuiKey.init();
-        FzmmCommand.registerCommands();
-        FzmmItemGroup.register();
+        InitializationHandler.getInstance().registerInitializationHandler(new FzmmInitializer());
     }
 }

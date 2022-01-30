@@ -1,11 +1,12 @@
 package fzmm.zailer.me.utils;
 
-import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.*;
 import net.minecraft.util.math.Vec3f;
+
+import javax.annotation.Nullable;
 
 public class ArmorStandUtils {
 

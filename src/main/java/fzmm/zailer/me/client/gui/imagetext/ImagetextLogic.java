@@ -1,6 +1,8 @@
 package fzmm.zailer.me.client.gui.imagetext;
 
 import com.google.gson.*;
+import fi.dy.masa.malilib.util.Color4f;
+import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.*;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -135,8 +137,9 @@ public class ImagetextLogic {
         final float Y_DISTANCE = 0.23f;
         ItemStack hopper = Items.HOPPER.getDefaultStack();
         NbtCompound hopperBlockEntityTag = new NbtCompound();
-        NbtList hopperItems = new NbtList(),
-                shulkerItems = new NbtList();
+        NbtList hopperItems = new NbtList();
+        NbtList shulkerItems = new NbtList();
+        Color4f color = Configs.Colors.IMAGETEXT_HOLOGRAM.getColor();
 
         this.generateImagetext(false);
         byte size = (byte) this.imagetext.size(),
@@ -160,7 +163,7 @@ public class ImagetextLogic {
 
         hopperBlockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, hopperItems);
         hopper.setSubNbt(TagsConstant.BLOCK_ENTITY, hopperBlockEntityTag);
-        hopper = new DisplayUtils(hopper).addLore(x + " " + y + " " + z, 0x796957).addLore("Imagetext: Hologram", 0x796957).get();
+        hopper = new DisplayUtils(hopper).addLore(x + " " + y + " " + z, color).addLore("Imagetext: Hologram", color).get();
 
         FzmmUtils.giveItem(hopper);
     }

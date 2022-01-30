@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client;
 
-import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.DisplayUtils;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.TagsConstant;
@@ -120,7 +120,7 @@ public class PickItem {
             return;
         List<String> keys = nbt.getKeys().stream().sorted().collect(Collectors.toList());
 
-        DisplayUtils display = new DisplayUtils(stack).addLore("(" + String.join(" + ", keys) + ")");
+        DisplayUtils display = new DisplayUtils(stack).addLore("(" + String.join(" + ", keys) + ")", Configs.Colors.LORE_PICK_BLOCK.getColor());
         if (nbt.contains(TagsConstant.BLOCK_ENTITY, NbtElement.COMPOUND_TYPE)) {
             NbtCompound blockEntityTag = nbt.getCompound(TagsConstant.BLOCK_ENTITY);
             if (blockEntityTag.contains("CustomName", NbtElement.STRING_TYPE)) {
@@ -138,7 +138,7 @@ public class PickItem {
             blockStateTag.putString(property.getName(), state.get(property).toString().toLowerCase());
         }
 
-        if (FzmmConfig.get().general.removeFacingState && blockStateTag.contains("facing")) {
+        if (Configs.Generic.REMOVE_FACING_STATE.getBooleanValue() && blockStateTag.contains("facing")) {
             blockStateTag.remove("facing");
         }
 

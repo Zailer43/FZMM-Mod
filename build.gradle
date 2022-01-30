@@ -13,7 +13,7 @@ repositories {
         url = 'https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases/'
     }
 
-    maven { url "https://maven.shedaniel.me/" }
+    maven { url 'https://masa.dy.fi/maven' }
 }
 
 dependencies {
@@ -24,13 +24,10 @@ dependencies {
     // Fabric API
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation(fabricApi.module('fabric-command-api-v1', project.fabric_version))
-    modImplementation(fabricApi.module('fabric-key-binding-api-v1', project.fabric_version))
     modImplementation(fabricApi.module('fabric-item-groups-v0', project.fabric_version))
 
-    // Cloth API
-    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
+    // Malilib
+    modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
 
     // Mod Menu
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"

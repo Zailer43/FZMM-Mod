@@ -1,5 +1,6 @@
 package fzmm.zailer.me.mixin;
 
+import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.DisplayUtils;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.EntityType;
@@ -30,7 +31,7 @@ public abstract class ArmorStandEntityMixin {
 			// FIXME: DisabledSlots and NoGravity do not work
 
 			stack.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
-			stack = new DisplayUtils(stack).addLore("(" + EntityType.ENTITY_TAG_KEY + ")").get();
+			stack = new DisplayUtils(stack).addLore("(" + EntityType.ENTITY_TAG_KEY + ")", Configs.Colors.LORE_PICK_BLOCK.getColor()).get();
 		}
 		return stack;
 	}

@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
-import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.config.Configs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -19,11 +19,11 @@ public class EncodebookScreen extends AbstractFzmmScreen {
 	private NumberFieldWidget seedNumberField,
 		maxMsgLengthNumberField;
 
-	protected EncodebookScreen() {
+	public EncodebookScreen() {
 		super(new TranslatableText("encodebook.title"));
 	}
 
-	protected void init() {
+	public void init() {
 		super.init();
 		assert this.client != null;
 		assert this.client.player != null;
@@ -37,7 +37,7 @@ public class EncodebookScreen extends AbstractFzmmScreen {
 
 		this.messageTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE1, 300, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("book.message"));
 		this.messageTextField.setMaxLength(256);
-		this.setInitialFocus(this.messageTextField);
+//		this.setInitialFocus(this.messageTextField);
 
 		this.paddingCharsTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE2, 300, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("encodebook.paddingCharacters"));
 		this.paddingCharsTextField.setMaxLength(256);
@@ -61,14 +61,12 @@ public class EncodebookScreen extends AbstractFzmmScreen {
 		this.addSelectableChild(this.maxMsgLengthNumberField);
 		this.addSelectableChild(this.bookTitleTextField);
 
-		FzmmConfig.Encodebook config = FzmmConfig.get().encodebook;
-
-		messageTextField.setText(config.defaultBookMessage);
+		messageTextField.setText(Configs.Encodebook.DEFAULT_BOOK_MESSAGE.getDefaultStringValue());
 		seedNumberField.setText("1");
 		authorTextField.setText(this.client.player.getName().getString());
-		paddingCharsTextField.setText(config.padding);
-		maxMsgLengthNumberField.setText(String.valueOf(config.messageLength));
-		bookTitleTextField.setText(config.bookTitle);
+		paddingCharsTextField.setText(Configs.Encodebook.PADDING.getStringValue());
+		maxMsgLengthNumberField.setText(String.valueOf(Configs.Encodebook.MESSAGE_MAX_LENGTH.getIntegerValue()));
+		bookTitleTextField.setText(Configs.Encodebook.DEFAULT_BOOK_TITLE.getStringValue());
 	}
 
 	public void resize(MinecraftClient client, int width, int height) {
