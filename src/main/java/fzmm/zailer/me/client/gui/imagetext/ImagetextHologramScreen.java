@@ -16,7 +16,7 @@ public class ImagetextHologramScreen extends AbstractImagetextScreen {
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         assert this.client != null;
         assert this.client.player != null;

@@ -25,13 +25,13 @@ public class UuidScreen extends AbstractFzmmScreen {
 		super(new TranslatableText("converters.uuid"));
 	}
 
-	protected void init() {
+	public void init() {
 		super.init();
 
 		this.uuidTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE1, 300, NORMAL_TEXT_FIELD_HEIGHT, new LiteralText("UUID"));
 		this.uuidTextField.setMaxLength(36); // 32 hex digits + 4 dash
 		this.uuidTextField.setChangedListener(this::uuidListener);
-		this.setInitialFocus(this.uuidTextField);
+//		this.setInitialFocus(this.uuidTextField);
 
 		for (short i = 0; i != 4; i++) {
 			short intArrayWidth = 332 / 4;

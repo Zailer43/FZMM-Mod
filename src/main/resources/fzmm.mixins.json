@@ -7,13 +7,12 @@
     "ArmorStandEntityMixin",
     "ChatScreenMixin",
     "EntityMixin",
-    "HandledScreenMixin",
+    "HandledScreenAccessor",
     "ItemFrameEntityMixin",
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
-    "MinecraftClientMixin",
-    "ScreenMixin"
+    "MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

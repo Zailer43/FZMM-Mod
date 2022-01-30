@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.gui.playerStatue.statueHeadSkin.AbstractStatueSkinManager;
 import fzmm.zailer.me.client.gui.playerStatue.statueHeadSkin.HeadModelSkin;
-import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.ArmorStandUtils;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.TagsConstant;
@@ -232,7 +232,7 @@ public class StatuePart {
     }
 
     private void apiRequest() throws IOException {
-        String apiKey = FzmmConfig.get().general.mineSkinApiKey;
+        String apiKey = Configs.Generic.MINESKIN_API_KEY.getStringValue();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(this.headSkin, "png", baos);
         byte[] skin = baos.toByteArray();

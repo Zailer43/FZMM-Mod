@@ -9,7 +9,7 @@ public class ImagetextTellrawScreen extends AbstractImagetextScreen {
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         this.executeButton.setMessage(new TranslatableText("chat.copy"));
     }

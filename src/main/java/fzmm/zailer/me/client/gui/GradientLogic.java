@@ -1,6 +1,5 @@
 package fzmm.zailer.me.client.gui;
 
-import fzmm.zailer.me.config.FzmmConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
@@ -71,7 +70,7 @@ public class GradientLogic {
             style = style.withUnderline(true);
         if (italic)
             style = style.withItalic(true);
-        else if (FzmmConfig.get().general.disableItalic)
+        else
             style = style.withItalic(false);
 
         return getGradient(message, red, green, blue, red2, green2, blue2, style);

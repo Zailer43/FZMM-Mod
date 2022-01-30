@@ -20,13 +20,13 @@ public class CoordinatesScreen extends AbstractFzmmScreen {
 		super(new TranslatableText("converters.coordinates"));
 	}
 
-	protected void init() {
+	public void init() {
 		super.init();
 
 		this.netherXNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 - 84, LINE1, 100, NORMAL_TEXT_FIELD_HEIGHT, new LiteralText("Nether X"), -30000000, 30000000);
 		this.netherXNumberField.setMaxLength(9);
 		this.netherXNumberField.setChangedListener(this::netherXListener);
-		this.setInitialFocus(this.netherXNumberField);
+//		this.setInitialFocus(this.netherXNumberField);
 
 		this.netherZNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 + 20, LINE1, 100, NORMAL_TEXT_FIELD_HEIGHT, new LiteralText("Nether Z"), -30000000, 30000000);
 		this.netherZNumberField.setMaxLength(9);

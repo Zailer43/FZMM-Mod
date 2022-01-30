@@ -1,7 +1,6 @@
 package fzmm.zailer.me.utils;
 
-import fzmm.zailer.me.config.FzmmConfig;
-import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
+import fi.dy.masa.malilib.util.Color4f;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,6 +11,8 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+
+import javax.annotation.Nullable;
 
 public class DisplayUtils {
     private final NbtCompound nbt;
@@ -77,6 +78,10 @@ public class DisplayUtils {
         return this.setName(NbtString.of(name));
     }
 
+    public DisplayUtils setName(String name, Color4f color) {
+        return this.setName(name, FzmmUtils.RGBAtoRGB(color).intValue);
+    }
+
     public DisplayUtils setName(String name, int color) {
         return this.setName(new LiteralText(name).setStyle(Style.EMPTY.withColor(color)));
     }
@@ -101,21 +106,8 @@ public class DisplayUtils {
         return this;
     }
 
-    public DisplayUtils addLore(String message) {
-        NbtList lore = this.getLore();
-        String color = FzmmConfig.get().general.loreColorPickBlock;
-
-        color = color.replaceAll("[^0-9A-Fa-f]]", "");
-        if (color.length() != 6) {
-            color = "19b2ff";
-        }
-
-        Text text = new LiteralText(message).setStyle(
-                Style.EMPTY.withColor(Integer.valueOf(color, 16))
-        );
-        lore.add(FzmmUtils.textToNbtString(text, true));
-
-        this.setLore(lore);
+    public DisplayUtils addLore(String message, Color4f color) {
+        this.addLore(message, FzmmUtils.RGBAtoRGB(color).intValue);
         return this;
     }
 

@@ -21,13 +21,13 @@ public class Base64Screen extends AbstractFzmmScreen {
 		super(new TranslatableText("converters.base64"));
 	}
 
-	protected void init() {
+	public void init() {
 		super.init();
 
 		this.stringTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 200, LINE1, 400, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("base64.text"));
 		this.stringTextField.setMaxLength(2048);
 		this.stringTextField.setChangedListener(this::textListener);
-		this.setInitialFocus(this.stringTextField);
+//		this.setInitialFocus(this.stringTextField);
 
 		this.base64TextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 200, LINE2, 400, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("base64.encode"));
 		this.base64TextField.setMaxLength(4096);

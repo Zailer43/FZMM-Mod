@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import fzmm.zailer.me.config.FzmmConfig;
-import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
+import fi.dy.masa.malilib.util.Color4f;
+import fzmm.zailer.me.config.Configs;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -25,6 +25,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 
+import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -78,7 +79,7 @@ public class FzmmUtils {
             }
         }
 
-        if (FzmmConfig.get().general.giveClientSideItem) {
+        if (Configs.Generic.GIVE_CLIENT_SIDE.getBooleanValue()) {
             mc.player.equipStack(EquipmentSlot.MAINHAND, stack);
         } else {
             assert mc.interactionManager != null;
@@ -129,7 +130,7 @@ public class FzmmUtils {
     public static Text disableItalicConfig(Text message) {
         Style style = message.getStyle();
 
-        if (FzmmConfig.get().general.disableItalic && !style.isItalic()) {
+        if (Configs.Generic.DISABLE_ITALIC.getBooleanValue() && !style.isItalic()) {
             ((MutableText) message).setStyle(style.withItalic(false));
         }
 
@@ -202,5 +203,9 @@ public class FzmmUtils {
         ItemStack stack = mc.player.getInventory().getMainHandStack();
         stack.setCustomName(FzmmUtils.disableItalicConfig(text));
         FzmmUtils.giveItem(stack);
+    }
+
+    public static Color4f RGBAtoRGB(Color4f color) {
+        return new Color4f(color.r, color.g, color.b, 0);
     }
 }

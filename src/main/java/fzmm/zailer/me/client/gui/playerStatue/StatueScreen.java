@@ -47,7 +47,7 @@ public class StatueScreen extends AbstractFzmmScreen {
 		super(new TranslatableText("playerStatue.title"));
 	}
 
-	protected void init() {
+	public void init() {
 		super.init();
 		assert this.client != null;
 		assert this.client.player != null;
@@ -64,7 +64,7 @@ public class StatueScreen extends AbstractFzmmScreen {
 		this.skinTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 154, LINE1, 200, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("playerStatue.skin.fromPath"));
 		this.skinTextField.setMaxLength(512);
 		this.skinTextField.setChangedListener(this::skinListener);
-		this.setInitialFocus(this.skinTextField);
+//		this.setInitialFocus(this.skinTextField);
 
 		this.skinButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 50, LINE1, 104, NORMAL_BUTTON_HEIGHT, new LiteralText(""),
 				(buttonWidget) -> {

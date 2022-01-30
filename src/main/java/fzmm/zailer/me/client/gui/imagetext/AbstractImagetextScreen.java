@@ -3,7 +3,6 @@ package fzmm.zailer.me.client.gui.imagetext;
 import fzmm.zailer.me.client.gui.AbstractFzmmScreen;
 import fzmm.zailer.me.client.gui.widget.IntSliderWidget;
 import fzmm.zailer.me.utils.FzmmUtils;
-import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
@@ -12,6 +11,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
+import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,7 +47,7 @@ public abstract class AbstractImagetextScreen extends AbstractFzmmScreen {
         this.executeMessage = new TranslatableText("imagetext.execute.successful");
     }
 
-    protected void init() {
+    public void init() {
         super.init();
 
         this.executeButton = this.addDrawableChild(new ButtonWidget(20, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gui.execute"),
@@ -57,7 +57,7 @@ public abstract class AbstractImagetextScreen extends AbstractFzmmScreen {
         this.imageTextField = this.addDrawableChild(new TextFieldWidget(this.textRenderer, this.width / 2 - 154, LINE1, 204, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("imagetext.imageUrl")));
         this.imageTextField.setMaxLength(1024);
         this.imageTextField.setChangedListener(this::imagetextListener);
-        this.setInitialFocus(this.imageTextField);
+//        this.setInitialFocus(this.imageTextField);
 
         this.howGetImageButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 54, LINE1, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.url"), (buttonWidget) -> {
             this.cycleHowGetImage();

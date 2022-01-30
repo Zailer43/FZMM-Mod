@@ -5,9 +5,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.TranslatableText;
 
-import static fzmm.zailer.me.client.gui.ScreenConstants.NORMAL_BUTTON_HEIGHT;
-import static fzmm.zailer.me.client.gui.ScreenConstants.NORMAL_BUTTON_WIDTH;
-import static fzmm.zailer.me.client.gui.ScreenConstants.LINE3;
+import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
 public class ImagetextBookPageScreen extends AbstractImagetextScreen {
     private static final byte MAX_TEXT_WIDTH = 114;
@@ -20,7 +18,7 @@ public class ImagetextBookPageScreen extends AbstractImagetextScreen {
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
 
         this.modeButton = this.addDrawableChild(new ButtonWidget(this.width / 2 + 54, LINE3, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("imagetext.book.createBook"),

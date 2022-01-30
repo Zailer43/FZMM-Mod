@@ -1,5 +1,7 @@
 package fzmm.zailer.me.utils;
 
+import fi.dy.masa.malilib.util.Color4f;
+import fzmm.zailer.me.config.Configs;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,7 +28,8 @@ public class BlockStateTagItem {
     public ItemStack get() {
         DisplayUtils displayUtils = new DisplayUtils(this.item);
         if (this.itemName != null) {
-            displayUtils.setName(this.itemName, 0x66F5B7).addLore("Place me!", 0x66F5B7);
+            Color4f color = Configs.Colors.USEFUL_BLOCK_STATES.getColor();
+            displayUtils.setName(this.itemName, color).addLore("Place me!", color);
         }
         ItemStack stack = displayUtils.get();
 

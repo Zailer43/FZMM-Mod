@@ -26,7 +26,7 @@ public class FzmmItemGroup {
 
     public static void register() {
 
-        FabricItemGroupBuilder.create(new Identifier("fzmm", "unobtainable_items"))
+        FabricItemGroupBuilder.create(new Identifier(FzmmClient.MOD_ID, "unobtainable_items"))
                 .icon(() -> new ItemStack(Items.JIGSAW))
                 .appendItems((stacks, itemGroup) -> {
                     for (Item item : Registry.ITEM) {
@@ -53,7 +53,7 @@ public class FzmmItemGroup {
 
                 }).build();
 
-        FabricItemGroupBuilder.create(new Identifier("fzmm", "useful_block_states"))
+        FabricItemGroupBuilder.create(new Identifier(FzmmClient.MOD_ID, "useful_block_states"))
                 .icon(() -> new ItemStack(Items.REDSTONE_LAMP))
                 .appendItems((stacks, itemGroup) -> {
 
@@ -103,7 +103,7 @@ public class FzmmItemGroup {
                     addHalfBed(stacks);
                 }).build();
 
-        FabricItemGroupBuilder.create(new Identifier("fzmm", "loot_chests"))
+        FabricItemGroupBuilder.create(new Identifier(FzmmClient.MOD_ID, "loot_chests"))
                 .icon(() -> new ItemStack(Items.CHEST))
                 .appendItems((stacks, itemGroup) -> {
                     List<String> lootTablesPath = LootTables.getAll().stream()
@@ -126,7 +126,7 @@ public class FzmmItemGroup {
                     }
                 }).build();
 
-        FabricItemGroupBuilder.create(new Identifier("fzmm", "player_heads"))
+        FabricItemGroupBuilder.create(new Identifier(FzmmClient.MOD_ID, "player_heads"))
                 .icon(() -> new ItemStack(Items.PLAYER_HEAD))
                 .appendItems((stacks, itemGroup) -> {
                     stacks.clear();
