@@ -28,6 +28,7 @@ import org.apache.http.impl.client.HttpClients;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -99,7 +100,8 @@ public class FzmmUtils {
     }
 
     public static BufferedImage getImageFromPath(String path) throws IOException {
-        return getImageFromUrl("file:///" + path);
+        File imgFile = new File(path);
+        return ImageIO.read(imgFile);
     }
 
     @Nullable
