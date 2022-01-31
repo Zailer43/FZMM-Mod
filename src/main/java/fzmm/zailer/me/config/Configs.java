@@ -39,10 +39,10 @@ public class Configs implements IConfigHandler
     }
 
     public static class Colors {
-        public static final ConfigColor LORE_PICK_BLOCK = new ConfigColor("lorePickBlock", "#FF19B2FF", "");
-        public static final ConfigColor USEFUL_BLOCK_STATES = new ConfigColor("usefulBlockStates", "#FF66F5B7", "");
-        public static final ConfigColor PLAYER_STATUE = new ConfigColor("playerStatue", "#FFCB347D", "");
-        public static final ConfigColor IMAGETEXT_HOLOGRAM = new ConfigColor("imagetextHologram", "#FF796957", "");
+        public static final ConfigColor LORE_PICK_BLOCK = new ConfigColor("lorePickBlock", "#19B2FF", "");
+        public static final ConfigColor USEFUL_BLOCK_STATES = new ConfigColor("usefulBlockStates", "#66F5B7", "");
+        public static final ConfigColor PLAYER_STATUE = new ConfigColor("playerStatue", "#CB347D", "");
+        public static final ConfigColor IMAGETEXT_HOLOGRAM = new ConfigColor("imagetextHologram", "#796957", "");
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 LORE_PICK_BLOCK,
@@ -100,10 +100,10 @@ public class Configs implements IConfigHandler
         {
             JsonObject root = new JsonObject();
 
-            ConfigUtils.readConfigBase(root, "Generic", Generic.OPTIONS);
-            ConfigUtils.readConfigBase(root, "Colors", Colors.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Generic", Generic.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Colors", Colors.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
-            ConfigUtils.readConfigBase(root, "Encodebook", Encodebook.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Encodebook", Encodebook.OPTIONS);
 
             JsonUtils.writeJsonToFile(root, new File(dir, CONFIG_FILE_NAME));
         }
