@@ -223,15 +223,23 @@ public class FzmmItemGroup {
     private static void addHalfDoors(List<ItemStack> stacks) {
         for (Item item : Registry.ITEM) {
             if (ItemTags.DOORS.contains(item))
-                stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (upper half)").add("half", "upper").get());
+                addHalfUpper(stacks, item, " (upper half)");
         }
     }
 
     private static void addTallFlowers(List<ItemStack> stacks) {
+        String suffix = " (self-destructs)";
         for (Item item : Registry.ITEM) {
             if (ItemTags.TALL_FLOWERS.contains(item))
-                stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (self-destructs)").add("half", "upper").get());
+                addHalfUpper(stacks, item, suffix);
         }
+        addHalfUpper(stacks, Items.TALL_GRASS, suffix);
+        addHalfUpper(stacks, Items.LARGE_FERN, suffix);
+        addHalfUpper(stacks, Items.SMALL_DRIPLEAF, suffix);
+    }
+
+    private static void addHalfUpper(List<ItemStack> stacks, Item item, String suffix) {
+        stacks.add(new BlockStateTagItem(item, item.getName().getString() + suffix).add("half", "upper").get());
     }
 
     private static void addLitCandles(List<ItemStack> stacks) {
