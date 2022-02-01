@@ -7,10 +7,13 @@ import net.minecraft.text.Style;
 import net.minecraft.text.TextColor;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class GradientLogic {
     public static MutableText getGradient(String message, byte red, byte green, byte blue, byte red2, byte green2, byte blue2, Style style) {
-        int gradientLength = message.length();
+        List<String> messageList = splitString(message);
+        int gradientLength = messageList.size();
         byte[] gradientRed = getByteGradient(red, red2, gradientLength);
         byte[] gradientGreen = getByteGradient(green, green2, gradientLength);
         byte[] gradientBlue = getByteGradient(blue, blue2, gradientLength);
@@ -18,7 +21,7 @@ public class GradientLogic {
 
         for (int i = 0; i != gradientLength; i++) {
             int rgb = rgbToInt(gradientRed[i], gradientGreen[i], gradientBlue[i]);
-            gradientText.append(new LiteralText(String.valueOf(message.charAt(i)))
+            gradientText.append(new LiteralText(String.valueOf(messageList.get(i)))
                     .setStyle(style
                             .withColor(TextColor.fromRgb(rgb))
                     ));
@@ -74,6 +77,11 @@ public class GradientLogic {
             style = style.withItalic(false);
 
         return getGradient(message, red, green, blue, red2, green2, blue2, style);
+    }
+
+    //split string well with multibyte characters
+    public static List<String> splitString(String data) {
+        return Arrays.asList(data.split("(?s)(?<=\\G.{1," + GradientScreen.MAX_MESSAGE_LENGTH + "})"));
     }
 
 }
