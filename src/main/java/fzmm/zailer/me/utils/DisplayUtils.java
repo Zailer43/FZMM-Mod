@@ -75,7 +75,7 @@ public class DisplayUtils {
     }
 
     public DisplayUtils setName(String name) {
-        return this.setName(NbtString.of(name));
+        return this.setName(new LiteralText(name));
     }
 
     public DisplayUtils setName(String name, Color4f color) {
