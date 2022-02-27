@@ -9,14 +9,16 @@ import fi.dy.masa.malilib.util.StringUtils;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.config.hotkeys.Hotkeys;
+import net.minecraft.client.gui.screen.Screen;
 
 import java.util.List;
 
 public class ConfigScreen extends GuiConfigsBase {
     private static ConfigGuiTab tab = ConfigGuiTab.GENERIC;
 
-    public ConfigScreen() {
+    public ConfigScreen(Screen parent) {
         super(10, 50, FzmmClient.MOD_ID, null, "fzmm.gui.title.configs");
+        this.setParent(parent);
     }
 
     @Override
@@ -34,7 +36,7 @@ public class ConfigScreen extends GuiConfigsBase {
     }
 
     private int createButton(int x, int y, ConfigGuiTab tab) {
-        ButtonGeneric button = new ButtonGeneric(x, y, -1, 20, tab.getDisplayName());
+        ButtonGeneric button = new ButtonGeneric(x, y, -1, ScreenConstants.NORMAL_BUTTON_HEIGHT, tab.getDisplayName());
         button.setEnabled(ConfigScreen.tab != tab);
         this.addButton(button, new ButtonListener(tab, this));
 
@@ -74,7 +76,7 @@ public class ConfigScreen extends GuiConfigsBase {
         COLORS("colors"),
         HOTKEYS("hotkeys");
 
-        static final String BASE_KEY = "fzmm.gui.button.configGui.";
+        static final String BASE_KEY = "fzmm.gui.configGui.";
 
         private final String translationKey;
 

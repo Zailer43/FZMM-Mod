@@ -1,117 +1,105 @@
 package fzmm.zailer.me.client.gui;
 
-import fzmm.zailer.me.client.gui.widget.NumberFieldWidget;
+import fi.dy.masa.malilib.config.IConfigBase;
+import fi.dy.masa.malilib.config.options.ConfigInteger;
+import fi.dy.masa.malilib.config.options.ConfigString;
+import fi.dy.masa.malilib.gui.button.ButtonBase;
+import fi.dy.masa.malilib.gui.button.ButtonGeneric;
+import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fzmm.zailer.me.client.gui.enums.Buttons;
+import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
+import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
+import fzmm.zailer.me.client.guiLogic.EncodebookLogic;
 import fzmm.zailer.me.config.Configs;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.client.gui.screen.Screen;
 
-import static fzmm.zailer.me.client.gui.ScreenConstants.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class EncodebookScreen extends AbstractFzmmScreen {
+public class EncodebookScreen extends GuiOptionsBase {
 
-	private TextFieldWidget messageTextField,
-		authorTextField,
-		paddingCharsTextField,
-		bookTitleTextField;
-	private NumberFieldWidget seedNumberField,
-		maxMsgLengthNumberField;
+	private static final ConfigInteger seed = new ConfigInteger("seed", 0, 0, 0xFFFFFF, "");
+	private final ConfigString message;
+    private final ConfigString author;
+    private final ConfigString paddingChars;
+    private final ConfigString bookTitle;
+    private final ConfigInteger maxMsgLength;
 
-	public EncodebookScreen() {
-		super(new TranslatableText("encodebook.title"));
+	public EncodebookScreen(Screen parent) {
+		super("fzmm.gui.title.encodebook", parent);
+		MinecraftClient client = MinecraftClient.getInstance();
+        assert client.player != null;
+
+        this.message = new ConfigString("message", Configs.Encodebook.DEFAULT_BOOK_MESSAGE.getStringValue(), "");
+        this.author = new ConfigString("author", client.player.getName().getString(), "");
+        this.paddingChars = new ConfigString("paddingCharacters", Configs.Encodebook.PADDING.getStringValue(), "");
+        this.bookTitle = new ConfigString("bookTitle", Configs.Encodebook.DEFAULT_BOOK_TITLE.getStringValue(), "");
+        this.maxMsgLength = new ConfigInteger("maxMessageLength", Configs.Encodebook.MESSAGE_MAX_LENGTH.getIntegerValue(), 0, 0x1ff, "");
 	}
 
-	public void init() {
-		super.init();
-		assert this.client != null;
-		assert this.client.player != null;
+    @Override
+	public void initGui() {
+		super.initGui();
 
-		this.addDrawableChild(new ButtonWidget(20, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gui.execute"),
-				(buttonWidget) -> this.execute()
-		));
-		this.addDrawableChild(new ButtonWidget(this.width / 2 - 50, LINE5, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("encodebook.getDecoder"),
-				(buttonWidget) -> this.getDecoder()
-		));
+		int x = 20;
+		int y = this.height - 40;
 
-		this.messageTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE1, 300, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("book.message"));
-		this.messageTextField.setMaxLength(256);
-//		this.setInitialFocus(this.messageTextField);
-
-		this.paddingCharsTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE2, 300, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("encodebook.paddingCharacters"));
-		this.paddingCharsTextField.setMaxLength(256);
-
-		this.seedNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 - 150, LINE3, 50, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("encodebook.seed"), 0, 10000000);
-		this.seedNumberField.setMaxLength(8);
-
-		this.authorTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 96, LINE3, 246, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("book.author"));
-		this.authorTextField.setMaxLength(100);
-
-		this.maxMsgLengthNumberField = new NumberFieldWidget(this.textRenderer, this.width / 2 - 150, LINE4, 50, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("encodebook.messageLength"), 0, 255);
-		this.maxMsgLengthNumberField.setMaxLength(3);
-
-		this.bookTitleTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 96, LINE4, 246, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("book.title"));
-		this.bookTitleTextField.setMaxLength(100);
-
-		this.addSelectableChild(this.messageTextField);
-		this.addSelectableChild(this.seedNumberField);
-		this.addSelectableChild(this.authorTextField);
-		this.addSelectableChild(this.paddingCharsTextField);
-		this.addSelectableChild(this.maxMsgLengthNumberField);
-		this.addSelectableChild(this.bookTitleTextField);
-
-		messageTextField.setText(Configs.Encodebook.DEFAULT_BOOK_MESSAGE.getDefaultStringValue());
-		seedNumberField.setText("1");
-		authorTextField.setText(this.client.player.getName().getString());
-		paddingCharsTextField.setText(Configs.Encodebook.PADDING.getStringValue());
-		maxMsgLengthNumberField.setText(String.valueOf(Configs.Encodebook.MESSAGE_MAX_LENGTH.getIntegerValue()));
-		bookTitleTextField.setText(Configs.Encodebook.DEFAULT_BOOK_TITLE.getStringValue());
+		x += this.createButton(x, y, Buttons.GIVE);
+		this.createButton(x, y, Buttons.ENCODEBOOK_GET_DECODER);
 	}
 
-	public void resize(MinecraftClient client, int width, int height) {
-		String messageTextField2 = messageTextField.getText(),
-			seedTextField2 = seedNumberField.getText(),
-			authorTextField2 = authorTextField.getText(),
-			paddingCharsTextField2 = paddingCharsTextField.getText(),
-			maxMessageLengthTextField2 = maxMsgLengthNumberField.getText(),
-			bookTitleTextField2 = bookTitleTextField.getText();
+	private int createButton(int x, int y, Buttons button) {
+		ButtonGeneric buttonGeneric = button.get(x, y);
+		this.addButton(buttonGeneric, new ButtonActionListener(button, this));
 
-		this.init(client, width, height);
-
-		messageTextField.setText(messageTextField2);
-		seedNumberField.setText(seedTextField2);
-		authorTextField.setText(authorTextField2);
-		paddingCharsTextField.setText(paddingCharsTextField2);
-		maxMsgLengthNumberField.setText(maxMessageLengthTextField2);
-		bookTitleTextField.setText(bookTitleTextField2);
+		return buttonGeneric.getWidth() + 2;
 	}
 
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		super.render(matrices, mouseX, mouseY, delta);
+	@Override
+	public List<OptionWrapper> getOptions() {
+		List<IConfigBase> options = new ArrayList<>();
 
-		drawCenteredText(matrices, this.textRenderer, new TranslatableText("book.message"), this.width / 2, LINE1 - 10, TEXT_COLOR);
-		this.messageTextField.render(matrices, mouseX, mouseY, delta);
-		drawCenteredText(matrices, this.textRenderer, new TranslatableText("encodebook.paddingCharacters"), this.width / 2, LINE2 - 10, TEXT_COLOR);
-		this.paddingCharsTextField.render(matrices, mouseX, mouseY, delta);
-		drawCenteredText(matrices, this.textRenderer, new TranslatableText("encodebook.seed"), this.width / 2 - 125, LINE3 - 10, TEXT_COLOR);
-		this.seedNumberField.render(matrices, mouseX, mouseY, delta);
-		drawCenteredText(matrices, this.textRenderer, new TranslatableText("book.author"), this.width / 2 + 27, LINE3 - 10, TEXT_COLOR);
-		this.authorTextField.render(matrices, mouseX, mouseY, delta);
-		drawCenteredText(matrices, this.textRenderer, new TranslatableText("encodebook.messageLength"), this.width / 2 - 125, LINE4 - 10, TEXT_COLOR);
-		this.maxMsgLengthNumberField.render(matrices, mouseX, mouseY, delta);
-		drawCenteredText(matrices, this.textRenderer, new TranslatableText("book.title"), this.width / 2 + 27, LINE4 - 10, TEXT_COLOR);
-		this.bookTitleTextField.render(matrices, mouseX, mouseY, delta);
+		options.add(this.message);
+		options.add(seed);
+		options.add(this.author);
+		options.add(this.paddingChars);
+		options.add(this.maxMsgLength);
+		options.add(this.bookTitle);
+
+		return OptionWrapper.createFor(options);
 	}
 
-	public void execute() {
-		String message = this.messageTextField.getText().isEmpty() ? "Hello world" : this.messageTextField.getText(),
-			paddingChars = this.paddingCharsTextField.getText().isEmpty() ? "qwertyuiopasdfghjklzxcvbnm" : this.paddingCharsTextField.getText();
-
-		EncodebookLogic.EncodeBook(this.seedNumberField.getNumber(), message, this.authorTextField.getText(), paddingChars, (short) this.maxMsgLengthNumberField.getNumber(), this.bookTitleTextField.getText());
+	@Override
+	public boolean isTab(IScreenTab tab) {
+		return false;
 	}
 
-	public void getDecoder() {
-		EncodebookLogic.showDecoderInChat(this.seedNumberField.getNumber(), (short) this.maxMsgLengthNumberField.getNumber());
+	private record ButtonActionListener(Buttons button, EncodebookScreen parent) implements IButtonActionListener {
+
+		@Override
+		public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
+
+			int seed = EncodebookScreen.seed.getIntegerValue();
+			int maxMsgLength = this.parent.maxMsgLength.getIntegerValue();
+
+			switch (this.button) {
+				case GIVE -> {
+					String message = this.parent.message.getStringValue();
+					if (message.isEmpty())
+						message = this.parent.message.getDefaultStringValue();
+
+					String paddingChars = this.parent.paddingChars.getStringValue();
+					if (paddingChars.isEmpty())
+						paddingChars = this.parent.paddingChars.getDefaultStringValue();
+
+					String author = this.parent.author.getStringValue();
+					String title = this.parent.bookTitle.getStringValue();
+
+					EncodebookLogic.EncodeBook(seed, message, author, paddingChars, maxMsgLength, title);
+				}
+				case ENCODEBOOK_GET_DECODER -> EncodebookLogic.showDecoderInChat(seed, maxMsgLength);
+			}
+		}
 	}
 }

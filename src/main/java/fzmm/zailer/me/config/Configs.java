@@ -13,6 +13,10 @@ import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fzmm.zailer.me.config.hotkeys.Hotkeys;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import java.io.File;
 
@@ -27,6 +31,7 @@ public class Configs implements IConfigHandler
         public static final ConfigBoolean DISABLE_ITALIC = new ConfigBoolean("disableItalic", true, "");
         public static final ConfigString MINESKIN_API_KEY = new ConfigString("mineskinApiKey", "", "");
         public static final ConfigString DEFAULT_IMAGETEXT_BOOK_MESSAGE = new ConfigString("defaultImagetextBookMessage", "Hover over this message to see an image", "");
+        public static final ConfigString DEFAULT_GRADIENT_ITEM = new ConfigString("defaultGradientItem", Items.PAPER.toString(), "");
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 FORCE_INVISIBLE_ITEM_FRAME,
@@ -34,7 +39,8 @@ public class Configs implements IConfigHandler
                 REMOVE_FACING_STATE,
                 DISABLE_ITALIC,
                 MINESKIN_API_KEY,
-                DEFAULT_IMAGETEXT_BOOK_MESSAGE
+                DEFAULT_IMAGETEXT_BOOK_MESSAGE,
+                DEFAULT_GRADIENT_ITEM
         );
     }
 
@@ -119,5 +125,13 @@ public class Configs implements IConfigHandler
     public void save()
     {
         saveToFile();
+    }
+
+    public static Item getConfigItem(ConfigString config) {
+        try {
+            return Registry.ITEM.get(new Identifier(config.getStringValue()));
+        } catch (Exception ignored) {
+            return Registry.ITEM.get(new Identifier(config.getDefaultStringValue()));
+        }
     }
 }

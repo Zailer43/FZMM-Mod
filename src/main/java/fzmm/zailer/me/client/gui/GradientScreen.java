@@ -1,200 +1,181 @@
 package fzmm.zailer.me.client.gui;
 
+import fi.dy.masa.malilib.config.IConfigBase;
+import fi.dy.masa.malilib.config.options.ConfigBoolean;
+import fi.dy.masa.malilib.config.options.ConfigColor;
+import fi.dy.masa.malilib.config.options.ConfigString;
+import fi.dy.masa.malilib.gui.button.ButtonBase;
+import fi.dy.masa.malilib.gui.button.ButtonGeneric;
+import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fi.dy.masa.malilib.util.Color4f;
+import fzmm.zailer.me.client.gui.enums.Buttons;
+import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
+import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
+import fzmm.zailer.me.client.guiLogic.GradientLogic;
+import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.DisplayUtils;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.CheckboxWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.*;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
-import static fzmm.zailer.me.client.gui.ScreenConstants.*;
+public class GradientScreen extends GuiOptionsBase {
 
-public class GradientScreen extends AbstractFzmmScreen {
+	public static final int MAX_MESSAGE_LENGTH = 0xFF;
+	private final ConfigString message;
+	private final ConfigColor initialColor;
+	private final ConfigColor finalColor;
+	private final ConfigBoolean obfuscated;
+	private final ConfigBoolean bold;
+	private final ConfigBoolean strikethrough;
+	private final ConfigBoolean underline;
+	private final ConfigBoolean italic;
+	private ButtonGeneric addLoreButton;
+	private ButtonGeneric setNameButton;
+	private ButtonGeneric copyButton;
 
-	public static final int MAX_MESSAGE_LENGTH = 256;
-	private ButtonWidget copyButton;
-	private ButtonWidget setItemNameButton;
-	private ButtonWidget addLoreButton;
-	private TextFieldWidget messageTextField;
-	private TextFieldWidget initialColorTextField;
-	private TextFieldWidget finalColorTextField;
-	private CheckboxWidget obfuscatedCheckbox;
-	private CheckboxWidget boldCheckbox;
-	private CheckboxWidget strikethroughCheckbox;
-	private CheckboxWidget underlineCheckbox;
-	private CheckboxWidget italicCheckbox;
-	private Text preview;
+	public GradientScreen(Screen parent) {
+		super("fzmm.gui.title.gradient", parent);
 
-	public GradientScreen() {
-		super(new TranslatableText("gradient.title"));
+		this.message = new ConfigString("message", "Hello world", "");
+		this.initialColor = new ConfigColor("initialColor", "0xFFFF0000", "");
+		this.finalColor = new ConfigColor("finalColor", "0xFF0000FF", "");
+		this.obfuscated = new ConfigBoolean("obfuscated", false, "");
+		this.bold = new ConfigBoolean("bold", false, "");
+		this.strikethrough = new ConfigBoolean("strikethrough", false, "");
+		this.underline = new ConfigBoolean("underline", false, "");
+		this.italic = new ConfigBoolean("italic", false, "");
 	}
 
-	public void init() {
-		super.init();
-		final short CHECKBOX_ROW = (short) (this.width / 2 + 80);
-		assert this.client != null;
-		assert this.client.player != null;
+	@Override
+	public void initGui() {
+		super.initGui();
 
-		this.copyButton = this.addDrawableChild(new ButtonWidget(20, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("chat.copy"),
-			(buttonWidget) -> this.copyExecute()
-		));
+		int x = 20;
+		int y = this.height - 40;
 
-		this.setItemNameButton = this.addDrawableChild(new ButtonWidget(130, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gradient.setItemName"),
-				(buttonWidget) -> this.setItemName()
-		));
+		x += this.createButton(x, y, Buttons.GRADIENT_RANDOM_COLOR).getWidth() + 2;
+		this.addLoreButton = this.createButton(x, y, Buttons.GRADIENT_ADD_LORE);
+		x += this.addLoreButton.getWidth() + 2;
+		this.setNameButton = this.createButton(x, y, Buttons.GRADIENT_SET_NAME);
+		x += this.setNameButton.getWidth() + 2;
+		this.copyButton = this.createButton(x, y, Buttons.GRADIENT_COPY);
 
-		this.addLoreButton = this.addDrawableChild(new ButtonWidget(240, this.height - 40, NORMAL_BUTTON_WIDTH, NORMAL_BUTTON_HEIGHT, new TranslatableText("gradient.addLore"),
-				(buttonWidget) -> this.addLore()
-		));
-
-		this.messageTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE1, 220, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("gradient.message"));
-		this.messageTextField.setMaxLength(MAX_MESSAGE_LENGTH);
-		this.messageTextField.setChangedListener((text) -> this.preview = this.verifyAndGetGradient());
-//		this.setInitialFocus(this.messageTextField);
-
-		this.initialColorTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE2, 220, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("gradient.initialColor"));
-		this.initialColorTextField.setMaxLength(6);
-		this.initialColorTextField.setChangedListener(this::initialColorListener);
-
-		this.finalColorTextField = new TextFieldWidget(this.textRenderer, this.width / 2 - 150, LINE3, 220, NORMAL_TEXT_FIELD_HEIGHT, new TranslatableText("gradient.finalColor"));
-		this.finalColorTextField.setMaxLength(6);
-		this.finalColorTextField.setChangedListener(this::finalColorListener);
-
-		this.addDrawableChild(new ButtonWidget(this.width / 2 - 150, LINE4, 220, NORMAL_BUTTON_HEIGHT, new TranslatableText("gradient.randomColors"),
-				(buttonWidget) -> this.randomColors()
-		));
-
-		obfuscatedCheckbox = this.addDrawableChild(new CheckboxWidget(CHECKBOX_ROW, 50, 20, 20, new LiteralText("Obfuscated"), false));
-		boldCheckbox = this.addDrawableChild(new CheckboxWidget(CHECKBOX_ROW, 80, 20, 20, new LiteralText("Bold"), false));
-		strikethroughCheckbox = this.addDrawableChild(new CheckboxWidget(CHECKBOX_ROW, 110, 20, 20, new LiteralText("Strikethrough"), false));
-		underlineCheckbox = this.addDrawableChild(new CheckboxWidget(CHECKBOX_ROW, 140, 20, 20, new LiteralText("Underline"), false));
-		italicCheckbox = this.addDrawableChild(new CheckboxWidget(CHECKBOX_ROW, 170, 20, 20, new LiteralText("Italic"), false));
-
-		this.addSelectableChild(this.messageTextField);
-		this.addSelectableChild(this.initialColorTextField);
-		this.addSelectableChild(this.finalColorTextField);
-
-		this.messageTextField.setText("Hello world");
-		this.initialColorTextField.setText("ff0000");
-		this.finalColorTextField.setText("0000ff");
-		this.preview = this.verifyAndGetGradient();
 	}
 
-	public void resize(MinecraftClient client, int width, int height) {
-		String messageTextField2 = messageTextField.getText(),
-			initialColorTextField2 = initialColorTextField.getText(),
-			finalColorTextField2 = finalColorTextField.getText();
-		boolean obfuscated = obfuscatedCheckbox.isChecked(),
-			bold = boldCheckbox.isChecked(),
-			strikethrough = strikethroughCheckbox.isChecked(),
-			underline = underlineCheckbox.isChecked(),
-			italic = italicCheckbox.isChecked();
-		Text preview2 = this.preview;
-
-		this.init(client, width, height);
-
-		this.messageTextField.setText(messageTextField2);
-		this.initialColorTextField.setText(initialColorTextField2);
-		this.finalColorTextField.setText(finalColorTextField2);
-
-		if (this.obfuscatedCheckbox.isChecked() != obfuscated)
-			this.obfuscatedCheckbox.onPress();
-		if (this.boldCheckbox.isChecked() != bold)
-			this.boldCheckbox.onPress();
-		if (this.strikethroughCheckbox.isChecked() != strikethrough)
-			this.strikethroughCheckbox.onPress();
-		if (this.underlineCheckbox.isChecked() != underline)
-			this.underlineCheckbox.onPress();
-		if (this.italicCheckbox.isChecked() != italic)
-			this.italicCheckbox.onPress();
-		this.preview = preview2;
+	@Override
+	public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+		super.render(matrixStack, mouseX, mouseY, partialTicks);
+		Text preview = this.getGradient();
+		int x = this.width / 2 - this.textRenderer.getWidth(preview) / 2;
+		this.textRenderer.draw(matrixStack, preview, x, 26, ScreenConstants.TEXT_COLOR);
 	}
 
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		super.render(matrices, mouseX, mouseY, delta);
+	private ButtonGeneric createButton(int x, int y, Buttons button) {
+		ButtonGeneric buttonGeneric = button.get(x, y);
+		this.addButton(buttonGeneric, new ButtonActionListener(button, this));
 
-		drawCenteredText(matrices, this.textRenderer, new TranslatableText("gradient.message"), this.width / 2 - 40, LINE1 - 10, TEXT_COLOR);
-		this.messageTextField.render(matrices, mouseX, mouseY, delta);
-		drawCenteredText(matrices, this.textRenderer, new TranslatableText("gradient.initialColor"), this.width / 2 - 40, LINE2 - 10, TEXT_COLOR);
-		this.initialColorTextField.render(matrices, mouseX, mouseY, delta);
-		drawCenteredText(matrices, this.textRenderer, new TranslatableText("gradient.finalColor"), this.width / 2 - 40, LINE3 - 10, TEXT_COLOR);
-		this.finalColorTextField.render(matrices, mouseX, mouseY, delta);
-		drawCenteredText(matrices, this.textRenderer, this.preview, this.width / 2 - 40, LINE5 - 10, TEXT_COLOR);
+		return buttonGeneric;
 	}
 
-	public void copyExecute() {
-		assert this.client != null;
-		Text gradient = this.verifyAndGetGradient();
+	private Text getGradient() {
+		String message = this.message.getStringValue();
+		Color4f initialColor = this.initialColor.getColor();
+		Color4f finalColor = this.finalColor.getColor();
+		boolean obfuscated = this.obfuscated.getBooleanValue();
+		boolean bold = this.bold.getBooleanValue();
+		boolean strikethrough = this.strikethrough.getBooleanValue();
+		boolean underline = this.underline.getBooleanValue();
+		boolean italic = this.italic.getBooleanValue();
 
-		this.client.keyboard.setClipboard(Text.Serializer.toJson(gradient));
-	}
-
-	public void setItemName() {
-		FzmmUtils.renameHandItem(this.verifyAndGetGradient());
-	}
-
-	public void addLore() {
-		DisplayUtils.addLoreToHandItem(this.verifyAndGetGradient());
-	}
-
-	public void initialColorListener(String text) {
-		String textHexDigits = text.replaceAll("[^\\da-f]", "");
-		if (!text.equals(textHexDigits))
-			this.initialColorTextField.setText(textHexDigits);
-		this.preview = this.verifyAndGetGradient();
-	}
-
-	public void finalColorListener(String text) {
-		String textHexDigits = text.replaceAll("[^\\da-f]", "");
-		if (!text.equals(textHexDigits))
-			this.finalColorTextField.setText(textHexDigits);
-		this.preview = this.verifyAndGetGradient();
-	}
-
-	public Text verifyAndGetGradient() {
-		String initialColor = this.initialColorTextField.getText(),
-			finalColor = this.finalColorTextField.getText(),
-			message = this.messageTextField.getText();
-
-		if (initialColor.length() != 6 || finalColor.length() != 6) {
+		if (message.length() < 2) {
 			this.toggleExecuteButtons(false);
-			return new TranslatableText("gradient.error.hexColorsLength").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(TEXT_ERROR_COLOR)));
-		} else if (message.length() <= 2) {
-			this.toggleExecuteButtons(false);
-			return new TranslatableText("gradient.error.messageLength").setStyle(Style.EMPTY.withColor(TextColor.fromRgb(TEXT_ERROR_COLOR)));
+			return new TranslatableText("fzmm.gui.gradient.error.messageLength").setStyle(Style.EMPTY.withColor(ScreenConstants.TEXT_ERROR_COLOR));
 		} else {
 			this.toggleExecuteButtons(true);
-			return GradientLogic
-				.hexRgbToMutableText(
-					message, initialColor, finalColor,
-					this.obfuscatedCheckbox.isChecked(), this.boldCheckbox.isChecked(), this.strikethroughCheckbox.isChecked(), this.underlineCheckbox.isChecked(), this.italicCheckbox.isChecked()
-				);
+			return GradientLogic.getGradient(message, initialColor, finalColor, obfuscated, bold, strikethrough, underline, italic);
 		}
 	}
 
 	public void toggleExecuteButtons(boolean bl) {
-		this.copyButton.active = bl;
-		this.setItemNameButton.active = bl;
-		this.addLoreButton.active = bl;
+		this.addLoreButton.setEnabled(bl);
+		this.copyButton.setEnabled(bl);
+		this.setNameButton.setEnabled(bl);
 	}
 
-	public void randomColors() {
-		Random random = new Random(new Date().getTime());
-		String initialColor = Integer.toString(random.nextInt(16777215), 16),
-			finalColor = Integer.toString(random.nextInt(16777215), 16);
+	@Override
+	public List<OptionWrapper> getOptions() {
+		List<IConfigBase> options = new ArrayList<>();
 
-		while (initialColor.length() < 6)
-			initialColor = "0".concat(initialColor);
+		options.add(this.message);
+		options.add(this.initialColor);
+		options.add(this.finalColor);
+		options.add(this.obfuscated);
+		options.add(this.bold);
+		options.add(this.strikethrough);
+		options.add(this.underline);
+		options.add(this.italic);
 
-		while (finalColor.length() < 6)
-			finalColor = "0".concat(finalColor);
-
-		this.initialColorTextField.setText(initialColor);
-		this.finalColorTextField.setText(finalColor);
+		return OptionWrapper.createFor(options);
 	}
+
+	@Override
+	public boolean isTab(IScreenTab tab) {
+		return false;
+	}
+
+	private record ButtonActionListener(Buttons button, GradientScreen parent) implements IButtonActionListener {
+
+		@Override
+		public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
+			Text gradient = this.parent.getGradient();
+			MinecraftClient client = MinecraftClient.getInstance();
+			assert client.player != null;
+			boolean handItemIsEmpty = client.player.getInventory().getMainHandStack().isEmpty();
+
+			switch (this.button) {
+				case GRADIENT_RANDOM_COLOR -> {
+					Random random = new Random(new Date().getTime());
+					int initialColor = random.nextInt(0xFFFFFF);
+					int finalColor = random.nextInt(0xFFFFFF);
+
+					this.parent.initialColor.setIntegerValue(initialColor);
+					this.parent.finalColor.setIntegerValue(finalColor);
+
+					this.parent.reload();
+				}
+				case GRADIENT_ADD_LORE -> {
+					if (handItemIsEmpty) {
+						ItemStack stack = new DisplayUtils(Configs.getConfigItem(Configs.Generic.DEFAULT_GRADIENT_ITEM))
+								.addLore(gradient)
+								.get();
+						FzmmUtils.giveItem(stack);
+					} else {
+						DisplayUtils.addLoreToHandItem(gradient);
+					}
+				}
+				case GRADIENT_SET_NAME -> {
+					if (handItemIsEmpty) {
+						ItemStack stack = new DisplayUtils(Configs.getConfigItem(Configs.Generic.DEFAULT_GRADIENT_ITEM))
+								.setName(gradient)
+								.get();
+						FzmmUtils.giveItem(stack);
+					} else {
+						FzmmUtils.renameHandItem(gradient);
+					}
+				}
+				case GRADIENT_COPY -> client.keyboard.setClipboard(Text.Serializer.toJson(gradient));
+			}
+		}
+	}
+
 }

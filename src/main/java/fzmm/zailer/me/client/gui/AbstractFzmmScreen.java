@@ -1,47 +1,41 @@
 package fzmm.zailer.me.client.gui;
 
-import net.minecraft.client.MinecraftClient;
+import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.gui.button.ButtonBase;
+import fi.dy.masa.malilib.gui.button.ButtonGeneric;
+import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fzmm.zailer.me.client.gui.enums.Buttons;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ScreenTexts;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.NarratorManager;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
-import java.util.ArrayList;
+public abstract class AbstractFzmmScreen extends GuiBase {
 
-import static fzmm.zailer.me.client.gui.ScreenConstants.TEXT_COLOR;
+    public AbstractFzmmScreen(String titleKey, Screen parent) {
+        super();
+        this.setParent(parent);
+        this.setTitle(new TranslatableText(titleKey).getString());
+    }
 
-public abstract class AbstractFzmmScreen extends Screen {
+    @Override
+    public void initGui() {
+        super.initGui();
 
-	protected ButtonWidget backButton;
-	public static ArrayList<Screen> previousScreen = new ArrayList<>();
+        this.addButton(Buttons.BACK.getToLeft(this.width - 30, this.height - 40), new ButtonActionListener());
+    }
 
-	public AbstractFzmmScreen(Text title)  {
-		super(NarratorManager.EMPTY);
-//		this.setTitle(title.getString());
-	}
+    protected ButtonGeneric createGenericButton(int x, int y, Buttons button) {
+        ButtonGeneric buttonGeneric = button.get(x, y, ScreenConstants.NORMAL_BUTTON_WIDTH);
+        this.addButton(buttonGeneric, this.getActionListener(button));
+        return buttonGeneric;
+    }
 
-	public void init() {
-		assert this.client != null;
+    protected abstract IButtonActionListener getActionListener(Buttons button);
 
-		this.backButton = this.addDrawableChild(new ButtonWidget(this.width - 120, this.height - 40, 100, 20, ScreenTexts.BACK,
-			(buttonWidget) -> previousScreen()
-		));
-	}
+    private class ButtonActionListener implements IButtonActionListener {
 
-	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-		this.renderBackground(matrices);
-		drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 20, TEXT_COLOR);
-		super.render(matrices, mouseX, mouseY, delta);
-	}
-
-	public static void previousScreen() {
-		MinecraftClient mc = MinecraftClient.getInstance();
-		if (mc.currentScreen instanceof AbstractFzmmScreen) {
-			int size = previousScreen.size();
-			previousScreen.remove(--size);
-			mc.setScreen(size <= 0 ? null : previousScreen.get(size - 1));
-		}
-	}
+        @Override
+        public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
+            GuiBase.openGui(AbstractFzmmScreen.this.getParent());
+        }
+    }
 }

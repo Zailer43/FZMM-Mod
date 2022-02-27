@@ -3,7 +3,6 @@ package fzmm.zailer.me.config.hotkeys;
 import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
-import fzmm.zailer.me.client.gui.AbstractFzmmScreen;
 import fzmm.zailer.me.mixin.HandledScreenAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -29,9 +28,6 @@ public class GenericCallback implements IHotkeyCallback {
             return true;
         } else if (key == Hotkeys.COPY_ITEM_NAME_JSON.getKeybind()) {
             this.copyItemName(true);
-            return true;
-        } else if (key == Hotkeys.BACK_IN_FZMM_GUI.getKeybind()) {
-            AbstractFzmmScreen.previousScreen();
             return true;
         }
 

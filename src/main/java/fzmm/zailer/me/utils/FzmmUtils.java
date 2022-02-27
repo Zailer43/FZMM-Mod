@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.text.DecimalFormat;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -209,5 +210,19 @@ public class FzmmUtils {
 
     public static Color4f RGBAtoRGB(Color4f color) {
         return new Color4f(color.r, color.g, color.b, 0);
+    }
+
+    public static BufferedImage getPlayerSkin(String name) throws IOException, NullPointerException {
+        String uuid = FzmmUtils.getPlayerUuid(name);
+        InputStream inputStream = FzmmUtils.httpGetRequest("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid, false);
+
+        JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(inputStream));
+        JsonObject properties = (JsonObject) obj.getAsJsonArray("properties").get(0);
+
+        String valueJsonStr = new String(Base64.getDecoder().decode(properties.get("value").getAsString()));
+        obj = (JsonObject) JsonParser.parseString(valueJsonStr);
+        String skinUrl = obj.getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+
+        return FzmmUtils.getImageFromUrl(skinUrl);
     }
 }
