@@ -175,7 +175,7 @@ public class PlayerStatue {
         int z = (int) pos.getZ();
         int color = FzmmUtils.RGBAtoRGB(Configs.Colors.PLAYER_STATUE.getColor()).intValue;
 
-        DisplayUtils displayUtils = new DisplayUtils(Items.WHITE_SHULKER_BOX)
+        DisplayUtils displayUtils = new DisplayUtils(Configs.getConfigItem(Configs.Generic.PLAYER_STATUE_DEFAULT_CONTAINER))
                 .setName(new LiteralText("Player Statue").setStyle(Style.EMPTY.withColor(color).withBold(true)))
                 .addLore("Pos: " + x + " " + y + " " + z, color);
 

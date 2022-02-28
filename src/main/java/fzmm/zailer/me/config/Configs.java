@@ -32,6 +32,7 @@ public class Configs implements IConfigHandler
         public static final ConfigString MINESKIN_API_KEY = new ConfigString("mineskinApiKey", "", "");
         public static final ConfigString DEFAULT_IMAGETEXT_BOOK_MESSAGE = new ConfigString("defaultImagetextBookMessage", "Hover over this message to see an image", "");
         public static final ConfigString DEFAULT_GRADIENT_ITEM = new ConfigString("defaultGradientItem", Items.PAPER.toString(), "");
+        public static final ConfigString PLAYER_STATUE_DEFAULT_CONTAINER = new ConfigString("playerStatueDefaultContainer", Items.WHITE_SHULKER_BOX.toString(), "");
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 FORCE_INVISIBLE_ITEM_FRAME,
@@ -40,7 +41,8 @@ public class Configs implements IConfigHandler
                 DISABLE_ITALIC,
                 MINESKIN_API_KEY,
                 DEFAULT_IMAGETEXT_BOOK_MESSAGE,
-                DEFAULT_GRADIENT_ITEM
+                DEFAULT_GRADIENT_ITEM,
+                PLAYER_STATUE_DEFAULT_CONTAINER
         );
     }
 
