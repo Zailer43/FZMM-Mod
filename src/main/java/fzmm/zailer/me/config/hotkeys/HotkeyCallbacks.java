@@ -18,5 +18,6 @@ public class HotkeyCallbacks {
         Hotkeys.DECREMENT_GUI_SCALE.getKeybind().setCallback(genericCallback);
         Hotkeys.COPY_ITEM_NAME.getKeybind().setCallback(genericCallback);
         Hotkeys.COPY_ITEM_NAME_JSON.getKeybind().setCallback(genericCallback);
+        Hotkeys.GIVE_IN_ITEM_FRAME.getKeybind().setCallback(genericCallback);
     }
 }

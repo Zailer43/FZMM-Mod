@@ -21,6 +21,7 @@ public class Hotkeys {
     public static final ConfigHotkey DECREMENT_GUI_SCALE = new ConfigHotkey("decrementGuiScale", "LEFT_CONTROL,KP_SUBTRACT", ANY_CONTEXT, "");
     public static final ConfigHotkey COPY_ITEM_NAME = new ConfigHotkey("copyItemName", "LEFT_CONTROL,C", KeybindSettings.MODIFIER_GUI, "");
     public static final ConfigHotkey COPY_ITEM_NAME_JSON = new ConfigHotkey("copyItemNameJson", "LEFT_ALT,C", KeybindSettings.MODIFIER_GUI, "");
+    public static final ConfigHotkey GIVE_IN_ITEM_FRAME = new ConfigHotkey("giveInItemFrame", "LEFT_CONTROL,I", KeybindSettings.MODIFIER_GUI, "");
 
     public static final ImmutableList<IHotkey> HOTKEY_LIST = ImmutableList.of(
             FZMM_MAIN_GUI,
@@ -34,7 +35,8 @@ public class Hotkeys {
             INCREMENT_GUI_SCALE,
             DECREMENT_GUI_SCALE,
             COPY_ITEM_NAME,
-            COPY_ITEM_NAME_JSON
+            COPY_ITEM_NAME_JSON,
+            GIVE_IN_ITEM_FRAME
     );
 
 }

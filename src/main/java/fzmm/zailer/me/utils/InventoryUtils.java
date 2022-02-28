@@ -1,11 +1,17 @@
 package fzmm.zailer.me.utils;
 
+import fzmm.zailer.me.mixin.HandledScreenAccessor;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -13,6 +19,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,5 +143,28 @@ public class InventoryUtils {
         }
 
         return items;
+    }
+
+    @Nullable
+    public static ItemStack getFocusedSlot() {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (!(mc.currentScreen instanceof HandledScreen<?> screen))
+            return null;
+
+        Slot slot = ((HandledScreenAccessor) screen).getFocusedSlot();
+        if (slot == null)
+            return null;
+        return slot.getStack();
+    }
+
+    public static ItemStack getInItemFrame(ItemStack stack, boolean glowing) {
+        ItemStack itemFrame = new ItemStack(glowing ? Items.GLOW_ITEM_FRAME : Items.ITEM_FRAME);
+        NbtCompound itemTag = stackToTag(stack);
+        NbtCompound entityTag = new NbtCompound();
+
+        entityTag.put(TagsConstant.ITEM_FRAME_ITEM, itemTag);
+        itemFrame.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
+
+        return itemFrame;
     }
 }
