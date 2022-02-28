@@ -13,7 +13,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.tag.ItemTags;
+import net.minecraft.tag.TagKey;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.util.Identifier;
@@ -215,14 +217,14 @@ public class FzmmItemGroup {
 
     private static void addLeaves(List<ItemStack> stacks) {
         for (Item item : Registry.ITEM) {
-            if (ItemTags.LEAVES.contains(item))
+            if (contains(item, ItemTags.LEAVES))
                 stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (persistent: false)").add("persistent", false).get());
         }
     }
 
     private static void addHalfDoors(List<ItemStack> stacks) {
         for (Item item : Registry.ITEM) {
-            if (ItemTags.DOORS.contains(item))
+            if (contains(item, ItemTags.DOORS))
                 addHalfUpper(stacks, item, " (upper half)");
         }
     }
@@ -230,7 +232,7 @@ public class FzmmItemGroup {
     private static void addTallFlowers(List<ItemStack> stacks) {
         String suffix = " (self-destructs)";
         for (Item item : Registry.ITEM) {
-            if (ItemTags.TALL_FLOWERS.contains(item))
+            if (contains(item, ItemTags.TALL_FLOWERS))
                 addHalfUpper(stacks, item, suffix);
         }
         addHalfUpper(stacks, Items.TALL_GRASS, suffix);
@@ -244,15 +246,19 @@ public class FzmmItemGroup {
 
     private static void addLitCandles(List<ItemStack> stacks) {
         for (Item item : Registry.ITEM) {
-            if (ItemTags.CANDLES.contains(item))
+            if (contains(item, ItemTags.CANDLES))
                 stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (lit)").add("lit", true).get());
         }
     }
 
     private static void addHalfBed(List<ItemStack> stacks) {
         for (Item item : Registry.ITEM) {
-            if (ItemTags.BEDS.contains(item))
+            if (contains(item, ItemTags.BEDS))
                 stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (head part)").add("part", "head").get());
         }
+    }
+
+    private static boolean contains(Item item, TagKey<Item> tag) {
+        return ItemPredicate.Builder.create().tag(tag).build().test(new ItemStack(item));
     }
 }

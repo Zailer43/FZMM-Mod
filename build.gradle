@@ -9,8 +9,8 @@ group = project.maven_group
 
 repositories {
     maven {
-        name = 'TerraformersMC Archive'
-        url = 'https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases/'
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/releases/"
     }
 
     maven { url 'https://masa.dy.fi/maven' }
@@ -27,7 +27,8 @@ dependencies {
     modImplementation(fabricApi.module('fabric-item-groups-v0', project.fabric_version))
 
     // Malilib
-    modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
+    //modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
+    modImplementation "fi.dy.masa.malilib:malilib-fabric-1.18.1:${project.malilib_version}"
 
     // Mod Menu
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
