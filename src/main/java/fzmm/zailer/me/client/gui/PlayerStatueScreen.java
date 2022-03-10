@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerStatueScreen extends GuiOptionsBase {
-    private static final Thread CREATE_THREAD = new Thread(null, PlayerStatueScreen::createPlayerStatue, "Fzmm: Player Statue");
+    private static Thread CREATE_THREAD = new Thread(null, PlayerStatueScreen::createPlayerStatue, "Fzmm: Player Statue");
     private static ButtonGeneric executeButton;
     private static ButtonGeneric lastStatueButton;
     private static PlayerStatue statue = null;
@@ -197,9 +197,7 @@ public class PlayerStatueScreen extends GuiOptionsBase {
                 BufferedImage skin = PlayerStatueScreen.this.configSkin.getImage();
                 statue = new PlayerStatue(skin, name, pos, direction);
 
-                if (CREATE_THREAD.isAlive())
-                    CREATE_THREAD.interrupt();
-
+                CREATE_THREAD = new Thread(null, PlayerStatueScreen::createPlayerStatue, "Fzmm: Player Statue");
                 CREATE_THREAD.start();
             } else {
                 MinecraftClient client = MinecraftClient.getInstance();
