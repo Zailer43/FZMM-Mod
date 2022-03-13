@@ -25,7 +25,7 @@ public class FzmmMainScreen extends AbstractFzmmScreen {
 		this.createGenericButton(col1, LINE1, Buttons.MAIN_IMAGETEXT);
 		this.createGenericButton(col2, LINE1, Buttons.MAIN_GRADIENT);
 		this.createGenericButton(col3, LINE1, Buttons.MAIN_PLAYER_STATUE);
-		this.createGenericButton(col1, LINE2, Buttons.MAIN_ENCODEBOOK);
+		this.createGenericButton(col1, LINE2, Buttons.MAIN_ENCRYPTBOOK);
 		this.createGenericButton(col2, LINE2, Buttons.MAIN_ITEMS_EDITOR).setEnabled(false);
 		this.createGenericButton(col3, LINE2, Buttons.MAIN_CONVERTERS);
 	}
@@ -48,7 +48,7 @@ public class FzmmMainScreen extends AbstractFzmmScreen {
 			GuiBase guiBase = switch (this.button) {
 				case MAIN_CONFIGURATION -> new ConfigScreen(parent);
 				case MAIN_CONVERTERS -> new ConvertersScreen(parent);
-				case MAIN_ENCODEBOOK -> new EncodebookScreen(parent);
+				case MAIN_ENCRYPTBOOK -> new EncryptbookScreen(parent);
 				case MAIN_GRADIENT -> new GradientScreen(parent);
 				case MAIN_IMAGETEXT -> new ImagetextScreen(parent);
 //				case MAIN_ITEMS_EDITOR -> null;

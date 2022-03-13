@@ -5,7 +5,8 @@
   "name": "FZMM",
   "description": "A fabric mod that is mainly for editing or creating NBT of items in creative but it also has a few utilities",
   "authors": [
-    "Zailer43"
+    "Zailer43",
+    "DNTranslator"
   ],
   "contact": {
     "issues": "https://github.com/Zailer43/FZMM-Mod/issues",

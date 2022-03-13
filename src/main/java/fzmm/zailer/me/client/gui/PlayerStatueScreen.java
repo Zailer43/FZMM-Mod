@@ -50,18 +50,18 @@ public class PlayerStatueScreen extends GuiOptionsBase {
     private final ConfigString configName;
 
     public PlayerStatueScreen(Screen parent) {
-        super("fzmm.gui.title.playerStatue", parent);
+        super("playerStatue", parent);
 
         MinecraftClient mc = MinecraftClient.getInstance();
         ClientPlayerEntity player = mc.player;
         assert player != null;
 
-        this.configDirectionOption = new ConfigOptionList("direction", DirectionOption.getPlayerDirection(), "");
-        this.configPosX = new ConfigInteger("x", player.getBlockX(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, "");
-        this.configPosY = new ConfigInteger("y", player.getBlockY(), -0xffff, 0xffff, "");
-        this.configPosZ = new ConfigInteger("z", player.getBlockZ(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, "");
-        this.configSkin = new ImageOption("skin", "", "", SkinOption.NAME);
-        this.configName = new ConfigString("statueName", "", "");
+        this.configDirectionOption = new ConfigOptionList("direction", DirectionOption.getPlayerDirection(), this.commentBase + "direction");
+        this.configPosX = new ConfigInteger("x", player.getBlockX(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "coordinates");
+        this.configPosY = new ConfigInteger("y", player.getBlockY(), -0xffff, 0xffff, this.commentBase + "coordinates");
+        this.configPosZ = new ConfigInteger("z", player.getBlockZ(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "coordinates");
+        this.configSkin = new ImageOption("skin", "", SkinOption.NAME, this.commentBase + "skin");
+        this.configName = new ConfigString("statueName", "", this.commentBase + "statueName");
     }
 
     @Override

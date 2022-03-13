@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.gui.GuiListBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.enums.Buttons;
 import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
 import fzmm.zailer.me.client.gui.interfaces.ITabListener;
@@ -17,11 +18,13 @@ import net.minecraft.text.TranslatableText;
 import java.util.List;
 
 public abstract class GuiOptionsBase extends GuiListBase<OptionWrapper, WidgetOption, WidgetListOptions> {
+    protected final String commentBase;
     protected int configWidth = 204;
 
     protected GuiOptionsBase(String titleKey, Screen parent) {
         super(10, 50);
-        this.setTitle(new TranslatableText(titleKey).getString());
+        this.commentBase =  FzmmClient.MOD_ID + ".gui." + titleKey + ".comment.";
+        this.setTitle(new TranslatableText(FzmmClient.MOD_ID + ".gui.title." + titleKey).getString());
         this.setParent(parent);
     }
 

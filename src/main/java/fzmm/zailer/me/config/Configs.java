@@ -6,10 +6,7 @@ import com.google.gson.JsonObject;
 import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigHandler;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
-import fi.dy.masa.malilib.config.options.ConfigColor;
-import fi.dy.masa.malilib.config.options.ConfigInteger;
-import fi.dy.masa.malilib.config.options.ConfigString;
+import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fzmm.zailer.me.config.hotkeys.Hotkeys;
@@ -62,9 +59,9 @@ public class Configs implements IConfigHandler
         );
     }
 
-    public static class Encodebook {
+    public static class Encryptbook {
         public static final ConfigInteger MESSAGE_MAX_LENGTH = new ConfigInteger("messageMaxLength", 255, 0, 0x1ff, "");
-        public static final ConfigInteger ASYMMETRIC_ENCODE_KEY = new ConfigInteger("asymmetricEncodeKey", 0, -0xffff, 0xffff, "");
+        public static final ConfigInteger ASYMMETRIC_ENCRYPT_KEY = new ConfigInteger("asymmetricEncryptKey", 0, -0xffff, 0xffff, "");
         public static final ConfigString PADDING = new ConfigString("padding", "1234567890qwertyuiopsdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM_,.", "");
         public static final ConfigString TRANSLATION_KEY_PREFIX = new ConfigString("translationKeyPrefix", "secret_mc_", "");
         public static final ConfigString DEFAULT_BOOK_MESSAGE = new ConfigString("defaultBookMessage", "Hello world", "");
@@ -73,7 +70,7 @@ public class Configs implements IConfigHandler
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 MESSAGE_MAX_LENGTH,
-                ASYMMETRIC_ENCODE_KEY,
+                ASYMMETRIC_ENCRYPT_KEY,
                 PADDING,
                 TRANSLATION_KEY_PREFIX,
                 DEFAULT_BOOK_MESSAGE,
@@ -97,7 +94,7 @@ public class Configs implements IConfigHandler
                 ConfigUtils.readConfigBase(root, "Generic", Generic.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Colors", Colors.OPTIONS);
                 ConfigUtils.readConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
-                ConfigUtils.readConfigBase(root, "Encodebook", Encodebook.OPTIONS);
+                ConfigUtils.readConfigBase(root, "Encryptbook", Encryptbook.OPTIONS);
             }
         }
     }
@@ -113,7 +110,7 @@ public class Configs implements IConfigHandler
             ConfigUtils.writeConfigBase(root, "Generic", Generic.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Colors", Colors.OPTIONS);
             ConfigUtils.writeConfigBase(root, "Hotkeys", Hotkeys.HOTKEY_LIST);
-            ConfigUtils.writeConfigBase(root, "Encodebook", Encodebook.OPTIONS);
+            ConfigUtils.writeConfigBase(root, "Encryptbook", Encryptbook.OPTIONS);
 
             JsonUtils.writeJsonToFile(root, new File(dir, CONFIG_FILE_NAME));
         }
@@ -136,6 +133,22 @@ public class Configs implements IConfigHandler
             return Registry.ITEM.get(new Identifier(config.getStringValue()));
         } catch (Exception ignored) {
             return Registry.ITEM.get(new Identifier(config.getDefaultStringValue()));
+        }
+    }
+
+    public static void setComments() {
+        setComments("generic", Generic.OPTIONS);
+        setComments("colors", Colors.OPTIONS);
+        setComments("hotkeys", (ImmutableList<IConfigBase>) ((Object) Hotkeys.HOTKEY_LIST));
+        setComments("encryptbook", Encryptbook.OPTIONS);
+    }
+
+    private static void setComments(String commentKey, ImmutableList<IConfigBase> configs) {
+        String commentBase = "fzmm.gui.configGui." + commentKey + ".comment.";
+        for (IConfigBase config : configs) {
+            if (config instanceof ConfigBase<?> configBase) {
+                configBase.setComment(commentBase + configBase.getName());
+            }
         }
     }
 }

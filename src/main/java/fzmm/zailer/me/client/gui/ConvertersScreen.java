@@ -24,17 +24,15 @@ public class ConvertersScreen extends GuiOptionsBase {
 	private final ConfigString base64Message;
 	private final ConfigString uuidValue;
 	private final ConfigInteger[] arrayValues;
-	//private final ConfigString arrayString;
 
 	public ConvertersScreen(Screen parent) {
-		super("fzmm.gui.title.converters", parent);
+		super("converters", parent);
 
-		this.base64Message = new ConfigString("message", "", "");
-		this.uuidValue = new ConfigString("uuid", "", "");
-		//this.arrayString = new ConfigString("arrayString", "", "");
+		this.base64Message = new ConfigString("message", "",  this.commentBase + "base64.message");
+		this.uuidValue = new ConfigString("uuid", "",  this.commentBase + "uuid.value");
 		this.arrayValues = new ConfigInteger[4];
 		for (int i = 0; i != 4; i++)
-			this.arrayValues[i] = new ConfigInteger("array[" + i + "]", 0, Integer.MIN_VALUE, Integer.MAX_VALUE, "");
+			this.arrayValues[i] = new ConfigInteger("array[" + i + "]", 0, Integer.MIN_VALUE, Integer.MAX_VALUE,  this.commentBase + "array.value");
 	}
 
 	@Override
@@ -72,7 +70,6 @@ public class ConvertersScreen extends GuiOptionsBase {
 			}
 			case ARRAY_TO_UUID -> {
 				options.addAll(Arrays.asList(this.arrayValues));
-				//options.add(this.arrayString);
 				ButtonGeneric arrayToUuidCopyButton = this.createButton(x, y, Buttons.CONVERTERS_COPY_UUID);
 				x += arrayToUuidCopyButton.getWidth() + 2;
 				this.createButton(x, y, Buttons.RANDOM);

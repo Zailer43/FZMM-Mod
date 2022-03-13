@@ -44,16 +44,16 @@ public class GradientScreen extends GuiOptionsBase {
 	private ButtonGeneric copyButton;
 
 	public GradientScreen(Screen parent) {
-		super("fzmm.gui.title.gradient", parent);
+		super("gradient", parent);
 
-		this.message = new ConfigString("message", "Hello world", "");
-		this.initialColor = new ConfigColor("initialColor", "0xFFFF0000", "");
-		this.finalColor = new ConfigColor("finalColor", "0xFF0000FF", "");
-		this.obfuscated = new ConfigBoolean("obfuscated", false, "");
-		this.bold = new ConfigBoolean("bold", false, "");
-		this.strikethrough = new ConfigBoolean("strikethrough", false, "");
-		this.underline = new ConfigBoolean("underline", false, "");
-		this.italic = new ConfigBoolean("italic", false, "");
+		this.message = new ConfigString("message", "Hello world", this.commentBase + "message");
+		this.initialColor = new ConfigColor("initialColor", "0xFFFF0000", this.commentBase + "initialColor");
+		this.finalColor = new ConfigColor("finalColor", "0xFF0000FF", this.commentBase + "finalColor");
+		this.obfuscated = new ConfigBoolean("obfuscated", false, this.commentBase + "obfuscated");
+		this.bold = new ConfigBoolean("bold", false, this.commentBase + "bold");
+		this.strikethrough = new ConfigBoolean("strikethrough", false, this.commentBase + "strikethrough");
+		this.underline = new ConfigBoolean("underline", false, this.commentBase + "underline");
+		this.italic = new ConfigBoolean("italic", false, this.commentBase + "italic");
 	}
 
 	@Override

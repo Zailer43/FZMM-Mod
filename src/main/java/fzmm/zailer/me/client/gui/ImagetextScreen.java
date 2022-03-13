@@ -50,24 +50,24 @@ public class ImagetextScreen extends GuiOptionsBase {
     private final ConfigInteger configPosZ;
 
     public ImagetextScreen(Screen parent) {
-        super("fzmm.gui.title.imagetext", parent);
+        super("imagetext", parent);
 
         MinecraftClient mc = MinecraftClient.getInstance();
         ClientPlayerEntity player = mc.player;
         assert player != null;
 
-        this.configImage = new ImageOption("image", "", "", ImageModeOption.URL);
-        this.configWidth = new ConfigInteger("width", DEFAULT_SIZE_VALUE, MIN_SIZE_VALUE, MAX_SIZE_VALUE, "");
-        this.configHeight = new ConfigInteger("height", DEFAULT_SIZE_VALUE, MIN_SIZE_VALUE, MAX_SIZE_VALUE, "");
-        this.configCharacters = new ConfigString("characters", DEFAULT_CHARACTER, "");
-        this.configSmoothImage = new ConfigBoolean("smoothImage", true, "");
-        this.configLoreOption = new ConfigOptionList("lore", LoreOption.ADD, "");
-        this.configBookOption = new ConfigOptionList("book", BookOption.ADD_PAGE, "");
-        this.configBookAuthor = new ConfigString("author", player.getName().asString(), "");
-        this.configBookMessage = new ConfigString("message", Configs.Generic.DEFAULT_IMAGETEXT_BOOK_MESSAGE.getStringValue(), "");
-        this.configPosX = new ConfigInteger("x", player.getBlockX(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, "");
-        this.configPosY = new ConfigInteger("y", player.getBlockY(), -0xffff, 0xffff, "");
-        this.configPosZ = new ConfigInteger("z", player.getBlockZ(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, "");
+        this.configImage = new ImageOption("image", "", ImageModeOption.URL, this.commentBase + "image");
+        this.configWidth = new ConfigInteger("width", DEFAULT_SIZE_VALUE, MIN_SIZE_VALUE, MAX_SIZE_VALUE, this.commentBase + "resolution");
+        this.configHeight = new ConfigInteger("height", DEFAULT_SIZE_VALUE, MIN_SIZE_VALUE, MAX_SIZE_VALUE, this.commentBase + "resolution");
+        this.configCharacters = new ConfigString("characters", DEFAULT_CHARACTER, this.commentBase + "characters");
+        this.configSmoothImage = new ConfigBoolean("smoothImage", true, this.commentBase + "smoothImage");
+        this.configLoreOption = new ConfigOptionList("loreMode", LoreOption.ADD, this.commentBase + "loreMode");
+        this.configBookOption = new ConfigOptionList("bookMode", BookOption.ADD_PAGE, this.commentBase + "bookMode");
+        this.configBookAuthor = new ConfigString("author", player.getName().asString(), this.commentBase + "bookAuthor");
+        this.configBookMessage = new ConfigString("message", Configs.Generic.DEFAULT_IMAGETEXT_BOOK_MESSAGE.getStringValue(), this.commentBase + "bookMessage");
+        this.configPosX = new ConfigInteger("x", player.getBlockX(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "hologramCoordinates");
+        this.configPosY = new ConfigInteger("y", player.getBlockY(), -0xffff, 0xffff, this.commentBase + "hologramCoordinates");
+        this.configPosZ = new ConfigInteger("z", player.getBlockZ(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "hologramCoordinates");
 
         this.configWidth.toggleUseSlider();
         this.configHeight.toggleUseSlider();

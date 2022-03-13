@@ -20,7 +20,7 @@ public class OpenGuiCallback implements IHotkeyCallback {
         else if (key == Hotkeys.CONVERTERS_GUI.getKeybind())
             screen = new ConvertersScreen(null);
         else if (key == Hotkeys.ENCODEBOOK_GUI.getKeybind())
-            screen = new EncodebookScreen(null);
+            screen = new EncryptbookScreen(null);
         else if (key == Hotkeys.GRADIENT_GUI.getKeybind())
             screen = new GradientScreen(null);
         else if (key == Hotkeys.IMAGETEXT_GUI.getKeybind())

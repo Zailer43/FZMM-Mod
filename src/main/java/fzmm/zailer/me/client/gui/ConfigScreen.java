@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 import fi.dy.masa.malilib.util.StringUtils;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.Configs;
@@ -30,7 +31,7 @@ public class ConfigScreen extends GuiConfigsBase {
         int y = 26;
 
         x += this.createButton(x, y, ConfigGuiTab.GENERIC);
-        x += this.createButton(x, y, ConfigGuiTab.ENCODEBOOK);
+        x += this.createButton(x, y, ConfigGuiTab.ENCRYPTBOOK);
         x += this.createButton(x, y, ConfigGuiTab.COLORS);
         this.createButton(x, y, ConfigGuiTab.HOTKEYS);
     }
@@ -50,7 +51,7 @@ public class ConfigScreen extends GuiConfigsBase {
 
         configs = switch (tab) {
             case GENERIC -> Configs.Generic.OPTIONS;
-            case ENCODEBOOK -> Configs.Encodebook.OPTIONS;
+            case ENCRYPTBOOK -> Configs.Encryptbook.OPTIONS;
             case COLORS -> Configs.Colors.OPTIONS;
             case HOTKEYS -> Hotkeys.HOTKEY_LIST;
         };
@@ -65,14 +66,16 @@ public class ConfigScreen extends GuiConfigsBase {
             ConfigScreen.tab = this.tab;
 
             this.parent.reCreateListWidget();
-            this.parent.getListWidget().resetScrollbarPosition();
+            WidgetListConfigOptions listWidget = this.parent.getListWidget();
+            assert listWidget != null;
+            listWidget.resetScrollbarPosition();
             this.parent.initGui();
         }
     }
 
     private enum ConfigGuiTab {
         GENERIC("generic"),
-        ENCODEBOOK("encodebook"),
+        ENCRYPTBOOK("encryptbook"),
         COLORS("colors"),
         HOTKEYS("hotkeys");
 

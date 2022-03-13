@@ -12,7 +12,7 @@ public class Hotkeys {
     public static final ConfigHotkey FZMM_MAIN_GUI = new ConfigHotkey("fzmmMainGui", "Z", KeybindSettings.RELEASE_EXCLUSIVE,  "");
     public static final ConfigHotkey CONFIG_GUI = new ConfigHotkey("configGui", "Z,C",  "");
     public static final ConfigHotkey CONVERTERS_GUI = new ConfigHotkey("convertersGui", "", "");
-    public static final ConfigHotkey ENCODEBOOK_GUI = new ConfigHotkey("encodebookGui", "", "");
+    public static final ConfigHotkey ENCODEBOOK_GUI = new ConfigHotkey("encryptbook", "", "");
     public static final ConfigHotkey GRADIENT_GUI = new ConfigHotkey("gradientGui", "Z,G", "");
     public static final ConfigHotkey IMAGETEXT_GUI = new ConfigHotkey("imagetextGui", "Z,I", "");
     public static final ConfigHotkey PLAYER_STATUE_GUI = new ConfigHotkey("playerStatueGui", "Z,P", "");

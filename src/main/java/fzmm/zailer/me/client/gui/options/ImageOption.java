@@ -31,7 +31,7 @@ public class ImageOption extends ConfigBase<ImageOption> implements ICustomOptio
     private ImageStatus status;
     public ConfigOptionList mode;
 
-    public ImageOption(String name, String defaultValue, String comment, IConfigOptionListEntry defaultMode) {
+    public ImageOption(String name, String defaultValue, IConfigOptionListEntry defaultMode, String comment) {
         super(ConfigType.STRING, name, comment);
 
         this.defaultValue = defaultValue;
