@@ -50,7 +50,7 @@ public class ConvertersScreen extends GuiOptionsBase {
 	}
 
 	@Override
-	public List<OptionWrapper> getOptions() {
+	public List<ConfigOptionWrapper> getConfigs() {
 		List<IConfigBase> options = new ArrayList<>();
 		int x = 20;
 		int y = this.height - 40;

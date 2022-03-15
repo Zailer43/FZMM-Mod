@@ -58,7 +58,7 @@ public class EncryptbookScreen extends GuiOptionsBase {
 	}
 
 	@Override
-	public List<OptionWrapper> getOptions() {
+	public List<ConfigOptionWrapper> getConfigs() {
 		List<IConfigBase> options = new ArrayList<>();
 
 		options.add(this.message);

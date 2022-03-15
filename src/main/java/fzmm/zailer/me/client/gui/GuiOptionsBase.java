@@ -1,31 +1,24 @@
 package fzmm.zailer.me.client.gui;
 
 import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.gui.GuiListBase;
+import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.enums.Buttons;
 import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
 import fzmm.zailer.me.client.gui.interfaces.ITabListener;
-import fzmm.zailer.me.client.gui.widget.WidgetListOptions;
-import fzmm.zailer.me.client.gui.widget.WidgetOption;
-import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.TranslatableText;
 
-import java.util.List;
-
-public abstract class GuiOptionsBase extends GuiListBase<OptionWrapper, WidgetOption, WidgetListOptions> {
+public abstract class GuiOptionsBase extends GuiConfigsBase {
     protected final String commentBase;
     protected int configWidth = 204;
 
     protected GuiOptionsBase(String titleKey, Screen parent) {
-        super(10, 50);
+        super(10, 50, FzmmClient.MOD_ID, parent, FzmmClient.MOD_ID + ".gui.title." + titleKey);
         this.commentBase =  FzmmClient.MOD_ID + ".gui." + titleKey + ".comment.";
-        this.setTitle(new TranslatableText(FzmmClient.MOD_ID + ".gui.title." + titleKey).getString());
-        this.setParent(parent);
     }
 
     @Override
@@ -55,11 +48,9 @@ public abstract class GuiOptionsBase extends GuiListBase<OptionWrapper, WidgetOp
     }
 
     @Override
-    protected WidgetListOptions createListWidget(int listX, int listY) {
-        return new WidgetListOptions(listX, listY, this.getBrowserWidth(), this.getBrowserHeight(), this.getConfigWidth(), this);
+    protected WidgetListConfigOptions createListWidget(int listX, int listY) {
+        return new WidgetListConfigOptions(listX, listY, this.getBrowserWidth(), this.getBrowserHeight(), this.getConfigWidth(), this.getZOffset(), false, this);
     }
-
-    public abstract List<OptionWrapper> getOptions();
 
     public class BackButtonActionListener implements IButtonActionListener {
 
@@ -86,7 +77,7 @@ public abstract class GuiOptionsBase extends GuiListBase<OptionWrapper, WidgetOp
 
     public void reload() {
         this.reCreateListWidget();
-        WidgetListOptions listOptions = this.getListWidget();
+        WidgetListConfigOptions listOptions = this.getListWidget();
         assert listOptions != null;
         listOptions.resetScrollbarPosition();
         this.initGui();

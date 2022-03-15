@@ -12,7 +12,9 @@
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
-    "MinecraftClientMixin"
+    "MinecraftClientMixin",
+    "malilib.ConfigOptionWrapperAccessor",
+    "malilib.WidgetConfigOptionMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -41,7 +41,7 @@ public class PlayerStatueScreen extends GuiOptionsBase {
     private static PlayerStatue statue = null;
     private static PlayerStatue lastStatueGenerated;
     private static PlayerStatueGuiTab tab = PlayerStatueGuiTab.CREATE;
-    public static OptionWrapper status = new OptionWrapper("fzmm.gui.playerStatue.status", true);
+    public static ConfigOptionWrapper status = new OptionWrapper("fzmm.gui.playerStatue.status");
     private final ConfigOptionList configDirectionOption;
     private final ConfigInteger configPosX;
     private final ConfigInteger configPosY;
@@ -72,6 +72,7 @@ public class PlayerStatueScreen extends GuiOptionsBase {
 
         executeButton = Buttons.EXECUTE.get(20, this.height - 40, ScreenConstants.NORMAL_BUTTON_WIDTH);
         executeButton.setEnabled(!CREATE_THREAD.isAlive());
+        ((OptionWrapper) status).setHide(CREATE_THREAD.isAlive());
 
         lastStatueButton = Buttons.PLAYER_STATUE_LAST_GENERATED.get(22 + executeButton.getWidth(), this.height - 40, -1);
         lastStatueButton.setEnabled(lastStatueGenerated != null);
@@ -84,7 +85,7 @@ public class PlayerStatueScreen extends GuiOptionsBase {
     }
 
     @Override
-    public List<OptionWrapper> getOptions() {
+    public List<ConfigOptionWrapper> getConfigs() {
         List<IConfigBase> options = new ArrayList<>();
 
         options.add(this.configDirectionOption);
@@ -93,10 +94,10 @@ public class PlayerStatueScreen extends GuiOptionsBase {
         options.add(this.configPosZ);
         options.add(this.configName);
 
-        List<OptionWrapper> optionsWrapper = OptionWrapper.createFor(options);
+        List<ConfigOptionWrapper> optionsWrapper = OptionWrapper.createFor(options);
         this.addTabOptions(optionsWrapper);
 
-        if (!status.isHide())
+        if (!((OptionWrapper) status).isHide())
             optionsWrapper.add(0,  new OptionWrapper(""));
 
         return optionsWrapper;
@@ -108,7 +109,7 @@ public class PlayerStatueScreen extends GuiOptionsBase {
         return PlayerStatueScreen.tab == tab;
     }
 
-    private void addTabOptions(List<OptionWrapper> list) {
+    private void addTabOptions(List<ConfigOptionWrapper> list) {
         List<IConfigBase> options = new ArrayList<>();
 
         if (tab == PlayerStatueGuiTab.CREATE) {
@@ -124,7 +125,7 @@ public class PlayerStatueScreen extends GuiOptionsBase {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
 
-        if (!status.isHide())
+        if (!((OptionWrapper) status).isHide())
             this.textRenderer.draw(matrixStack, new LiteralText(status.getLabel()), 12, 60, ScreenConstants.TEXT_COLOR);
     }
 

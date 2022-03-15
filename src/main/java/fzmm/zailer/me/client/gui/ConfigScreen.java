@@ -8,6 +8,7 @@ import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 import fi.dy.masa.malilib.util.StringUtils;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.config.hotkeys.Hotkeys;
 import net.minecraft.client.gui.screen.Screen;
@@ -56,7 +57,7 @@ public class ConfigScreen extends GuiConfigsBase {
             case HOTKEYS -> Hotkeys.HOTKEY_LIST;
         };
 
-        return ConfigOptionWrapper.createFor(configs);
+        return OptionWrapper.createFor(configs);
     }
 
     private record ButtonListener(ConfigGuiTab tab, ConfigScreen parent) implements IButtonActionListener {

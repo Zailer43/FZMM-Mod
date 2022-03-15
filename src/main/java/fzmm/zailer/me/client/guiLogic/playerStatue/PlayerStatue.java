@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.guiLogic.playerStatue;
 
 import fzmm.zailer.me.client.gui.PlayerStatueScreen;
 import fzmm.zailer.me.client.gui.enums.options.DirectionOption;
+import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
 import fzmm.zailer.me.client.guiLogic.playerStatue.statueHeadSkin.*;
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.*;
@@ -48,7 +49,7 @@ public class PlayerStatue {
     public PlayerStatue generateStatues() {
         this.statueList.clear();
 
-        PlayerStatueScreen.status.setHide(false);
+        ((OptionWrapper) PlayerStatueScreen.status).setHide(false);
         if (MinecraftClient.getInstance().currentScreen instanceof PlayerStatueScreen playerStatueScreen)
             playerStatueScreen.reload();
         updateStatus();
@@ -99,7 +100,7 @@ public class PlayerStatue {
         this.fixGeneratingError();
         this.fixGeneratingError();
 
-        PlayerStatueScreen.status.setHide(true);
+        ((OptionWrapper) PlayerStatueScreen.status).setHide(true);
         return this;
     }
 
@@ -189,7 +190,7 @@ public class PlayerStatue {
     }
 
     protected static void updateStatus() {
-        PlayerStatueScreen.status.setTranslationValues(String.valueOf(progress), String.valueOf(errors), String.valueOf(nextDelayMillis / 1000f));
+        ((OptionWrapper) PlayerStatueScreen.status).setTranslationValues(String.valueOf(progress), String.valueOf(errors), String.valueOf(nextDelayMillis / 1000f));
     }
 
     public static ItemStack updateStatue(ItemStack container, Vec3f pos, DirectionOption direction, String name) {

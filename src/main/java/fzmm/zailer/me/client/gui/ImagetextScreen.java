@@ -85,7 +85,7 @@ public class ImagetextScreen extends GuiOptionsBase {
     }
 
     @Override
-    public List<OptionWrapper> getOptions() {
+    public List<ConfigOptionWrapper> getConfigs() {
         List<IConfigBase> options = new ArrayList<>();
 
         options.add(this.configImage);
@@ -94,7 +94,7 @@ public class ImagetextScreen extends GuiOptionsBase {
         options.add(this.configCharacters);
         options.add(this.configSmoothImage);
 
-        List<OptionWrapper> optionsWrapper = OptionWrapper.createFor(options);
+        List<ConfigOptionWrapper> optionsWrapper = OptionWrapper.createFor(options);
         this.addTabOptions(optionsWrapper);
 
         return optionsWrapper;
@@ -105,7 +105,7 @@ public class ImagetextScreen extends GuiOptionsBase {
         return ImagetextScreen.tab == tab;
     }
 
-    private void addTabOptions(List<OptionWrapper> list) {
+    private void addTabOptions(List<ConfigOptionWrapper> list) {
         List<IConfigBase> options = new ArrayList<>();
 
         switch (tab) {
