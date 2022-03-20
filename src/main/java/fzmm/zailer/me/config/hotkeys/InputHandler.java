@@ -6,6 +6,9 @@ import fzmm.zailer.me.client.FzmmClient;
 public class InputHandler implements IKeybindProvider, IKeyboardInputHandler, IMouseInputHandler {
     private static final InputHandler INSTANCE = new InputHandler();
 
+    private InputHandler() {
+    }
+
     public static InputHandler getInstance() {
         return INSTANCE;
     }

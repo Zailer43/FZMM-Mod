@@ -130,7 +130,7 @@ public class ImagetextLogic {
     private void addResolution() {
         Text text = new LiteralText("Resolution: " + this.image.getWidth() + "x" + this.image.getHeight())
                 .setStyle(Style.EMPTY.withColor(7455391));
-        this.imagetext.add(FzmmUtils.textToNbtString(text, true));
+        this.imagetext.add(FzmmUtils.toNbtString(text, true));
     }
 
     public void giveAsHologram(int x, float y, int z) {

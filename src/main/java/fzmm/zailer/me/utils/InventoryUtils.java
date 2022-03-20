@@ -146,15 +146,18 @@ public class InventoryUtils {
     }
 
     @Nullable
-    public static ItemStack getFocusedSlot() {
+    public static ItemStack getFocusedItem() {
+        Slot slot = getFocusedSlot();
+        return slot == null ? null : slot.getStack();
+    }
+
+    @Nullable
+    public static Slot getFocusedSlot() {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (!(mc.currentScreen instanceof HandledScreen<?> screen))
             return null;
 
-        Slot slot = ((HandledScreenAccessor) screen).getFocusedSlot();
-        if (slot == null)
-            return null;
-        return slot.getStack();
+        return ((HandledScreenAccessor) screen).getFocusedSlot();
     }
 
     public static ItemStack getInItemFrame(ItemStack stack, boolean glowing) {

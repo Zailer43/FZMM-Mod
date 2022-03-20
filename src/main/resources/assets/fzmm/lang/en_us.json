@@ -42,6 +42,7 @@
   "fzmm.gui.configGui.hotkeys.comment.imagetextGui": "Open the Imagetext GUI",
   "fzmm.gui.configGui.hotkeys.comment.incrementGuiScale": "Increase the minecraft GUI scale setting",
   "fzmm.gui.configGui.hotkeys.comment.playerStatueGui": "Open the Player Statue GUI",
+  "fzmm.gui.configGui.hotkeys.comment.parseInSlot": "Pasting on an empty slot gives the item in the command in the clipboard\nand if pasted on an item it adds the lore to the item\nNote: it may be useful to paste ASCII Art found from the internet",
   "fzmm.gui.converters.arrayToUuid": "Array -> UUID",
   "fzmm.gui.converters.base64": "Base64",
   "fzmm.gui.converters.comment.array.value": "Array UUID\n\nEach of the 4 values in the array must contain a 32-bit signed integer",

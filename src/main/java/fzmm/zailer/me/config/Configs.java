@@ -9,6 +9,7 @@ import fi.dy.masa.malilib.config.IConfigHandler;
 import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.hotkeys.Hotkeys;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -19,7 +20,7 @@ import java.io.File;
 
 public class Configs implements IConfigHandler
 {
-    private static final String CONFIG_FILE_NAME = "fzmm.json";
+    private static final String CONFIG_FILE_NAME = FzmmClient.MOD_ID + ".json";
 
     public static class Generic {
         public static final ConfigBoolean FORCE_INVISIBLE_ITEM_FRAME = new ConfigBoolean("forceInvisibleItemFrame", false, "");

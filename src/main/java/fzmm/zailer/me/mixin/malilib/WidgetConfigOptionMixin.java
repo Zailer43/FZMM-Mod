@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class WidgetConfigOptionMixin extends WidgetConfigOptionBase<GuiConfigsBase.ConfigOptionWrapper> {
     private int imageStatusPosX;
 
-    @Shadow @Final protected GuiConfigsBase.ConfigOptionWrapper wrapper;
+    @Shadow(remap = false) @Final protected GuiConfigsBase.ConfigOptionWrapper wrapper;
 
     public WidgetConfigOptionMixin(int x, int y, int width, int height, WidgetListConfigOptionsBase<?, ?> parent, GuiConfigsBase.ConfigOptionWrapper entry, int listIndex) {
         super(x, y, width, height, parent, entry, listIndex);

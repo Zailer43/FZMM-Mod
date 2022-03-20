@@ -64,7 +64,6 @@ public class FzmmUtils {
 
     };
 
-
     public static void giveItem(ItemStack stack) {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
@@ -73,8 +72,6 @@ public class FzmmUtils {
             NbtCompound tag = stack.getNbt();
             assert tag != null;
 
-            // FIXME: MC-86153
-            //  No funciona cuando se tiene que recibir el paquete del NBT de los blockEntity
             if (getNbtLength(tag) > 1950000) {
                 mc.inGameHud.addChatMessage(MessageType.SYSTEM, new TranslatableText("giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)), mc.player.getUuid());
                 return;
@@ -171,12 +168,12 @@ public class FzmmUtils {
         return nbt.asString().length();
     }
 
-    public static NbtString stringToNbtString(String string, boolean useDisableItalicConfig) {
+    public static NbtString toNbtString(String string, boolean useDisableItalicConfig) {
         Text text = new LiteralText(string);
-        return textToNbtString(text, useDisableItalicConfig);
+        return toNbtString(text, useDisableItalicConfig);
     }
 
-    public static NbtString textToNbtString(Text text, boolean useDisableItalicConfig) {
+    public static NbtString toNbtString(Text text, boolean useDisableItalicConfig) {
         if (useDisableItalicConfig)
             disableItalicConfig(text);
         return NbtString.of(Text.Serializer.toJson(text));

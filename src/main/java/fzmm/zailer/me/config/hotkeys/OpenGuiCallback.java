@@ -8,6 +8,14 @@ import fzmm.zailer.me.client.gui.*;
 import net.minecraft.client.gui.screen.Screen;
 
 public class OpenGuiCallback implements IHotkeyCallback {
+    private static final OpenGuiCallback instance = new OpenGuiCallback();
+
+    private OpenGuiCallback() {
+    }
+
+    public static OpenGuiCallback getInstance() {
+        return instance;
+    }
 
     @Override
     public boolean onKeyAction(KeyAction action, IKeybind key) {

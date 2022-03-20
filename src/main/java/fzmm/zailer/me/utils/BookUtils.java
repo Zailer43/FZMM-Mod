@@ -52,7 +52,7 @@ public class BookUtils {
     }
 
     public void addPage(Text text) {
-        this.addPage(FzmmUtils.textToNbtString(text, false));
+        this.addPage(FzmmUtils.toNbtString(text, false));
     }
 
     public ItemStack get() {

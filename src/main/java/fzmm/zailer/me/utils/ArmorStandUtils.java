@@ -21,7 +21,7 @@ public class ArmorStandUtils {
 
         if (itemName != null) {
             NbtCompound display = new NbtCompound();
-            display.put(ItemStack.NAME_KEY, FzmmUtils.stringToNbtString(itemName, true));
+            display.put(ItemStack.NAME_KEY, FzmmUtils.toNbtString(itemName, true));
             tag.put(ItemStack.DISPLAY_KEY, display);
         }
 

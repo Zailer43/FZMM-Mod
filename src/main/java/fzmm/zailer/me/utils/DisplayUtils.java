@@ -87,7 +87,7 @@ public class DisplayUtils {
     }
 
     public DisplayUtils setName(Text name) {
-        return this.setName(FzmmUtils.textToNbtString(name, true));
+        return this.setName(FzmmUtils.toNbtString(name, true));
     }
 
     public DisplayUtils addLore(NbtList lore) {
@@ -98,10 +98,18 @@ public class DisplayUtils {
         return this;
     }
 
+    public DisplayUtils addLore(String[] loreArr) {
+        NbtList nbtList = new NbtList();
+        for (String loreLine : loreArr)
+            nbtList.add(FzmmUtils.toNbtString(loreLine, true));
+
+        return this.addLore(nbtList);
+    }
+
     public DisplayUtils addLore(Text lore) {
         NbtList oldLore = this.getLore();
 
-        oldLore.add(FzmmUtils.textToNbtString(lore, true));
+        oldLore.add(FzmmUtils.toNbtString(lore, true));
         this.setLore(oldLore);
         return this;
     }

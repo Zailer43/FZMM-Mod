@@ -3,8 +3,8 @@ package fzmm.zailer.me.config.hotkeys;
 public class HotkeyCallbacks {
 
     public static void init() {
-        OpenGuiCallback openGuiCallback = new OpenGuiCallback();
-        GenericCallback genericCallback = new GenericCallback();
+        OpenGuiCallback openGuiCallback = OpenGuiCallback.getInstance();
+        GenericCallback genericCallback = GenericCallback.getInstance();
 
         Hotkeys.FZMM_MAIN_GUI.getKeybind().setCallback(openGuiCallback);
         Hotkeys.CONFIG_GUI.getKeybind().setCallback(openGuiCallback);
@@ -19,5 +19,6 @@ public class HotkeyCallbacks {
         Hotkeys.COPY_ITEM_NAME.getKeybind().setCallback(genericCallback);
         Hotkeys.COPY_ITEM_NAME_JSON.getKeybind().setCallback(genericCallback);
         Hotkeys.GIVE_IN_ITEM_FRAME.getKeybind().setCallback(genericCallback);
+        Hotkeys.PASTE_IN_SLOT.getKeybind().setCallback(genericCallback);
     }
 }

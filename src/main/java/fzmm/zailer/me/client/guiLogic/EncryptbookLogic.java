@@ -113,8 +113,8 @@ public class EncryptbookLogic {
 				.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText(encryptMessageString.toString())))
 			);
 
-		pages.add(FzmmUtils.textToNbtString(page1, false));
-		pages.add(FzmmUtils.textToNbtString(page2, false));
+		pages.add(FzmmUtils.toNbtString(page1, false));
+		pages.add(FzmmUtils.toNbtString(page2, false));
 		tag.put(WrittenBookItem.PAGES_KEY, pages);
 		book.setNbt(tag);
 

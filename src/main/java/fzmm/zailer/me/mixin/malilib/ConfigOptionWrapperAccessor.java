@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(ConfigOptionWrapper.class)
 public interface ConfigOptionWrapperAccessor {
 
-    @Accessor
+    @Accessor(remap = false)
     void setType(ConfigOptionWrapper.Type type);
 
-    @Accessor
+    @Accessor(remap = false)
     void setConfig(IConfigBase config);
 
-    @Accessor
+    @Accessor(remap = false)
     void setLabel(String label);
 }
