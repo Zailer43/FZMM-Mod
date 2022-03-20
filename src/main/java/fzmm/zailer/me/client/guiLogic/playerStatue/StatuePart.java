@@ -165,6 +165,10 @@ public class StatuePart {
         return zFight.contains("x", NbtElement.INT_TYPE) && zFight.contains("y", NbtElement.INT_TYPE) && zFight.contains("z", NbtElement.INT_TYPE);
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public ItemStack get(Vec3f pos, DirectionOption direction) {
         if (!this.isSkinGenerated())
             return new ItemStack(Items.BARRIER);
@@ -276,7 +280,7 @@ public class StatuePart {
 
         PlayerStatue.progress++;
         PlayerStatue.nextDelayMillis = (short) this.getDelay(json.getAsJsonObject("delayInfo").get("millis").getAsInt());
-        PlayerStatue.updateStatus();
+        PlayerStatue.showGenerated(this.name);
 
         Thread.sleep(PlayerStatue.nextDelayMillis);
     }
@@ -287,8 +291,7 @@ public class StatuePart {
 
     private void errorGeneratingSkin() {
         this.skinGenerated = false;
-        PlayerStatue.errors++;
-        PlayerStatue.updateStatus();
+        PlayerStatue.showError(this.name);
     }
 
     /**

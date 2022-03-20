@@ -1,8 +1,9 @@
 package fzmm.zailer.me.client.guiLogic.playerStatue;
 
+import fi.dy.masa.malilib.gui.Message;
+import fi.dy.masa.malilib.util.InfoUtils;
 import fzmm.zailer.me.client.gui.PlayerStatueScreen;
 import fzmm.zailer.me.client.gui.enums.options.DirectionOption;
-import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
 import fzmm.zailer.me.client.guiLogic.playerStatue.statueHeadSkin.*;
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.*;
@@ -32,14 +33,13 @@ public class PlayerStatue {
     private final Vec3f pos;
     private final DirectionOption direction;
     public static short progress = 0;
-    public static short errors = 0;
     public static short nextDelayMillis = 0;
+    public static int partsLeft = 0;
 
     public PlayerStatue(BufferedImage playerSkin, String name, Vec3f pos, DirectionOption direction) {
         this.playerSkin = playerSkin;
         this.name = name;
         progress = 0;
-        errors = 0;
         nextDelayMillis = 0;
         this.statueList = new ArrayList<>();
         this.pos = pos;
@@ -49,10 +49,10 @@ public class PlayerStatue {
     public PlayerStatue generateStatues() {
         this.statueList.clear();
 
-        ((OptionWrapper) PlayerStatueScreen.status).setHide(false);
         if (MinecraftClient.getInstance().currentScreen instanceof PlayerStatueScreen playerStatueScreen)
             playerStatueScreen.reload();
-        updateStatus();
+        partsLeft = 27;
+        InfoUtils.showGuiOrInGameMessage(Message.MessageType.INFO, "fzmm.gui.playerStatue.status.start");
 
         HeadModelSkin empty = new HeadModelSkin();
         HeadModelSkin bottom = new HeadModelSkin(HeadFace.HEAD_FACE.BOTTOM_FACE);
@@ -100,7 +100,7 @@ public class PlayerStatue {
         this.fixGeneratingError();
         this.fixGeneratingError();
 
-        ((OptionWrapper) PlayerStatueScreen.status).setHide(true);
+        InfoUtils.showGuiOrInGameMessage(Message.MessageType.INFO, "fzmm.gui.playerStatue.status.end");
         return this;
     }
 
@@ -108,9 +108,11 @@ public class PlayerStatue {
         for (StatuePart statuePart : this.statueList) {
             if (!statuePart.isSkinGenerated()) {
                 statuePart.setStatueSkin(this.playerSkin);
+
                 if (statuePart.isSkinGenerated()) {
-                    errors--;
-                    updateStatus();
+                    showGenerated(statuePart.getName());
+                } else {
+                    showError(statuePart.getName());
                 }
             }
         }
@@ -189,8 +191,12 @@ public class PlayerStatue {
         return invUtils.get();
     }
 
-    protected static void updateStatus() {
-        ((OptionWrapper) PlayerStatueScreen.status).setTranslationValues(String.valueOf(progress), String.valueOf(errors), String.valueOf(nextDelayMillis / 1000f));
+    public static void showGenerated(String part) {
+        InfoUtils.showGuiOrInGameMessage(Message.MessageType.SUCCESS, "fzmm.gui.playerStatue.status.generated", part, nextDelayMillis / 1000f, --partsLeft);
+    }
+
+    public static void showError(String part) {
+        InfoUtils.showGuiOrInGameMessage(Message.MessageType.ERROR, "fzmm.gui.playerStatue.status.error", part, nextDelayMillis / 1000f, partsLeft);
     }
 
     public static ItemStack updateStatue(ItemStack container, Vec3f pos, DirectionOption direction, String name) {

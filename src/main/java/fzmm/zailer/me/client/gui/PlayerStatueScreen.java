@@ -23,9 +23,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.World;
@@ -41,7 +39,6 @@ public class PlayerStatueScreen extends GuiOptionsBase {
     private static PlayerStatue statue = null;
     private static PlayerStatue lastStatueGenerated;
     private static PlayerStatueGuiTab tab = PlayerStatueGuiTab.CREATE;
-    public static ConfigOptionWrapper status = new OptionWrapper("fzmm.gui.playerStatue.status");
     private final ConfigOptionList configDirectionOption;
     private final ConfigInteger configPosX;
     private final ConfigInteger configPosY;
@@ -72,7 +69,6 @@ public class PlayerStatueScreen extends GuiOptionsBase {
 
         executeButton = Buttons.EXECUTE.get(20, this.height - 40, ScreenConstants.NORMAL_BUTTON_WIDTH);
         executeButton.setEnabled(!CREATE_THREAD.isAlive());
-        ((OptionWrapper) status).setHide(CREATE_THREAD.isAlive());
 
         lastStatueButton = Buttons.PLAYER_STATUE_LAST_GENERATED.get(22 + executeButton.getWidth(), this.height - 40, -1);
         lastStatueButton.setEnabled(lastStatueGenerated != null);
@@ -97,9 +93,6 @@ public class PlayerStatueScreen extends GuiOptionsBase {
         List<ConfigOptionWrapper> optionsWrapper = OptionWrapper.createFor(options);
         this.addTabOptions(optionsWrapper);
 
-        if (!((OptionWrapper) status).isHide())
-            optionsWrapper.add(0,  new OptionWrapper(""));
-
         return optionsWrapper;
 
     }
@@ -119,14 +112,6 @@ public class PlayerStatueScreen extends GuiOptionsBase {
         }
 
         list.addAll(OptionWrapper.createFor(options));
-    }
-
-    @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-
-        if (!((OptionWrapper) status).isHide())
-            this.textRenderer.draw(matrixStack, new LiteralText(status.getLabel()), 12, 60, ScreenConstants.TEXT_COLOR);
     }
 
     private enum PlayerStatueGuiTab implements IScreenTab {

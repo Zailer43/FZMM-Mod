@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.gui.GuiConfigsBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fi.dy.masa.malilib.gui.interfaces.IMessageConsumer;
 import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.enums.Buttons;
@@ -12,7 +13,7 @@ import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
 import fzmm.zailer.me.client.gui.interfaces.ITabListener;
 import net.minecraft.client.gui.screen.Screen;
 
-public abstract class GuiOptionsBase extends GuiConfigsBase {
+public abstract class GuiOptionsBase extends GuiConfigsBase implements IMessageConsumer {
     protected final String commentBase;
     protected int configWidth = 204;
 

@@ -2,7 +2,6 @@ package fzmm.zailer.me.client.gui.wrapper;
 
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
-import fzmm.zailer.me.mixin.malilib.ConfigOptionWrapperAccessor;
 import net.minecraft.text.TranslatableText;
 
 import javax.annotation.Nullable;
@@ -12,18 +11,15 @@ import java.util.List;
 
 public class OptionWrapper extends ConfigOptionWrapper {
     @Nullable private String[] translationValues;
-    private boolean hide;
 
     private OptionWrapper(IConfigBase config) {
         super(config);
         this.translationValues = null;
-        this.hide = false;
     }
 
     public OptionWrapper(String label) {
         super(label);
         this.translationValues = new String[0];
-        this.hide = false;
     }
 
     @Override
@@ -40,18 +36,6 @@ public class OptionWrapper extends ConfigOptionWrapper {
 
     public void setTranslationValues(String... translationValues) {
         this.translationValues = translationValues;
-    }
-
-    public void setHide(boolean hide) {
-        this.hide = hide;
-    }
-
-    public boolean isHide() {
-        return this.hide;
-    }
-
-    public void setLabel(String label) {
-        ((ConfigOptionWrapperAccessor) this).setLabel(label);
     }
 
     public static List<ConfigOptionWrapper> createFor(Collection<? extends IConfigBase> configs) {
