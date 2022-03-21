@@ -3,11 +3,15 @@ package fzmm.zailer.me.config.hotkeys;
 import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
+import fzmm.zailer.me.client.guiLogic.ImagetextLine;
+import fzmm.zailer.me.client.guiLogic.ImagetextLogic;
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.DisplayUtils;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.InventoryUtils;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.Framebuffer;
+import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
@@ -17,6 +21,12 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +56,8 @@ public class GenericCallback implements IHotkeyCallback {
             returnValue = this.giveInItemFrame();
         else if (key == Hotkeys.PASTE_IN_SLOT.getKeybind())
             returnValue = this.pasteInSlot();
+        else if (key == Hotkeys.GENERATE_IMAGETEXT.getKeybind())
+            returnValue = this.generateScreenshot();
 
         return returnValue;
     }
@@ -135,6 +147,30 @@ public class GenericCallback implements IHotkeyCallback {
             }
         }
 
+        return true;
+    }
+
+    private boolean generateScreenshot() {
+        try {
+            Framebuffer framebuffer = MinecraftClient.getInstance().getFramebuffer();
+            byte[] byteArray = ScreenshotRecorder.takeScreenshot(framebuffer).getBytes();
+            BufferedImage screenshot = ImageIO.read(new ByteArrayInputStream(byteArray));
+            int width = screenshot.getWidth();
+            int height = screenshot.getHeight();
+            int smallerSide = Math.min(width, height);
+            int halfLongerSide = smallerSide / 2;
+            BufferedImage scaled = screenshot.getSubimage(width / 2 - halfLongerSide, height / 2 - halfLongerSide, smallerSide, smallerSide);
+
+            byte imagetextSize = 32;
+            String itemName = DateFormat.getInstance().format(new Date());
+            DisplayUtils displayUtils = new DisplayUtils(Configs.getConfigItem(Configs.Generic.DEFAULT_IMAGETEXT_ITEM))
+                    .setName(itemName, Configs.Colors.IMAGETEXT_MESSAGES.getColor());
+
+            new ImagetextLogic(scaled, ImagetextLine.DEFAULT_TEXT, imagetextSize, imagetextSize, true)
+                    .giveInLore(displayUtils.get(), false);
+
+        } catch (IOException ignored) {
+        }
         return true;
     }
 }

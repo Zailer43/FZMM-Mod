@@ -60,28 +60,20 @@ public class ImagetextLogic {
         return resizedImage;
     }
 
-    public void setToLore(ItemStack stack) {
+    public void giveInLore(ItemStack stack, boolean add) {
         if (stack.isEmpty())
-            stack = Items.PAPER.getDefaultStack();
+            stack = Configs.getConfigItem(Configs.Generic.DEFAULT_IMAGETEXT_ITEM).getDefaultStack();
 
         this.generateImagetext(true);
-        addResolution();
+        this.addResolution();
 
-        stack = new DisplayUtils(stack).setLore(this.imagetext).get();
+        DisplayUtils display = new DisplayUtils(stack);
+        if (add)
+            display.addLore(this.imagetext).get();
+        else
+            display.setLore(this.imagetext).get();
 
-        FzmmUtils.giveItem(stack);
-    }
-
-    public void addToLore(ItemStack stack) {
-        if (stack.isEmpty())
-            stack = Items.PAPER.getDefaultStack();
-
-        this.generateImagetext(true);
-        addResolution();
-
-        stack = new DisplayUtils(stack).addLore(this.imagetext).get();
-
-        FzmmUtils.giveItem(stack);
+        FzmmUtils.giveItem(display.get());
     }
 
     public void giveBookTooltip(String author, String bookText) {
@@ -129,7 +121,7 @@ public class ImagetextLogic {
 
     private void addResolution() {
         Text text = new LiteralText("Resolution: " + this.image.getWidth() + "x" + this.image.getHeight())
-                .setStyle(Style.EMPTY.withColor(7455391));
+                .setStyle(Style.EMPTY.withColor(Configs.Colors.IMAGETEXT_MESSAGES.getColor().intValue));
         this.imagetext.add(FzmmUtils.toNbtString(text, true));
     }
 

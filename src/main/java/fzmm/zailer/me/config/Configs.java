@@ -30,6 +30,7 @@ public class Configs implements IConfigHandler
         public static final ConfigString MINESKIN_API_KEY = new ConfigString("mineskinApiKey", "", "");
         public static final ConfigString DEFAULT_IMAGETEXT_BOOK_MESSAGE = new ConfigString("defaultImagetextBookMessage", "Hover over this message to see an image", "");
         public static final ConfigString DEFAULT_GRADIENT_ITEM = new ConfigString("defaultGradientItem", Items.PAPER.toString(), "");
+        public static final ConfigString DEFAULT_IMAGETEXT_ITEM = new ConfigString("defaultImagetextItem", Items.PAINTING.toString(), "");
         public static final ConfigString PLAYER_STATUE_DEFAULT_CONTAINER = new ConfigString("playerStatueDefaultContainer", Items.WHITE_SHULKER_BOX.toString(), "");
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
@@ -40,6 +41,7 @@ public class Configs implements IConfigHandler
                 MINESKIN_API_KEY,
                 DEFAULT_IMAGETEXT_BOOK_MESSAGE,
                 DEFAULT_GRADIENT_ITEM,
+                DEFAULT_IMAGETEXT_ITEM,
                 PLAYER_STATUE_DEFAULT_CONTAINER
         );
     }
@@ -48,6 +50,7 @@ public class Configs implements IConfigHandler
         public static final ConfigColor LORE_PICK_BLOCK = new ConfigColor("lorePickBlock", "#19B2FF", "");
         public static final ConfigColor USEFUL_BLOCK_STATES = new ConfigColor("usefulBlockStates", "#66F5B7", "");
         public static final ConfigColor PLAYER_STATUE = new ConfigColor("playerStatue", "#CB347D", "");
+        public static final ConfigColor IMAGETEXT_MESSAGES = new ConfigColor("imagetextMessages", "#71C29F", "");
         public static final ConfigColor IMAGETEXT_HOLOGRAM = new ConfigColor("imagetextHologram", "#796957", "");
         public static final ConfigColor ITEM_FRAME_HOTKEY = new ConfigColor("itemFrameHotkey", "#BB82B7", "");
 

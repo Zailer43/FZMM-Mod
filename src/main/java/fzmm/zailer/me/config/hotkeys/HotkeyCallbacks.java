@@ -20,5 +20,6 @@ public class HotkeyCallbacks {
         Hotkeys.COPY_ITEM_NAME_JSON.getKeybind().setCallback(genericCallback);
         Hotkeys.GIVE_IN_ITEM_FRAME.getKeybind().setCallback(genericCallback);
         Hotkeys.PASTE_IN_SLOT.getKeybind().setCallback(genericCallback);
+        Hotkeys.GENERATE_IMAGETEXT.getKeybind().setCallback(genericCallback);
     }
 }

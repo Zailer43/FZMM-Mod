@@ -222,12 +222,7 @@ public class ImagetextScreen extends GuiOptionsBase {
             int z = ImagetextScreen.this.configPosZ.getIntegerValue();
 
             switch (tab) {
-                case LORE -> {
-                    if (loreOption == LoreOption.ADD)
-                        imagetext.addToLore(stack);
-                    else
-                        imagetext.setToLore(stack);
-                }
+                case LORE -> imagetext.giveInLore(stack, loreOption == LoreOption.ADD);
                 case BOOK_PAGE -> {
                     if (bookOption == BookOption.ADD_PAGE)
                         imagetext.addBookPage();

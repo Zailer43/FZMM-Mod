@@ -23,6 +23,7 @@ public class Hotkeys {
     public static final ConfigHotkey COPY_ITEM_NAME_JSON = new ConfigHotkey("copyItemNameJson", "LEFT_ALT,C", KeybindSettings.MODIFIER_GUI, "");
     public static final ConfigHotkey GIVE_IN_ITEM_FRAME = new ConfigHotkey("giveInItemFrame", "LEFT_CONTROL,I", KeybindSettings.MODIFIER_GUI, "");
     public static final ConfigHotkey PASTE_IN_SLOT = new ConfigHotkey("pasteInSlot", "LEFT_CONTROL,V", KeybindSettings.MODIFIER_GUI, "");
+    public static final ConfigHotkey GENERATE_IMAGETEXT = new ConfigHotkey("generateImagetext", "LEFT_CONTROL,F2", KeybindSettings.PRESS_ALLOWEXTRA, "");
 
     public static final ImmutableList<IHotkey> HOTKEY_LIST = ImmutableList.of(
             FZMM_MAIN_GUI,
@@ -38,7 +39,8 @@ public class Hotkeys {
             COPY_ITEM_NAME,
             COPY_ITEM_NAME_JSON,
             GIVE_IN_ITEM_FRAME,
-            PASTE_IN_SLOT
+            PASTE_IN_SLOT,
+            GENERATE_IMAGETEXT
     );
 
 }
