@@ -68,14 +68,9 @@ public class FzmmUtils {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
 
-        if (stack.hasNbt()) {
-            NbtCompound tag = stack.getNbt();
-            assert tag != null;
-
-            if (getNbtLength(tag) > 1950000) {
-                mc.inGameHud.addChatMessage(MessageType.SYSTEM, new TranslatableText("giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)), mc.player.getUuid());
-                return;
-            }
+        if (getLength(stack) > 1950000) {
+            mc.inGameHud.addChatMessage(MessageType.SYSTEM, new TranslatableText("giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)), mc.player.getUuid());
+            return;
         }
 
         if (Configs.Generic.GIVE_CLIENT_SIDE.getBooleanValue()) {
@@ -160,12 +155,22 @@ public class FzmmUtils {
         return stack;
     }
 
-    public static String getNbtLengthInKB(NbtCompound nbt) {
-        return new DecimalFormat("#,##0.0").format(getNbtLength(nbt) / 1024f) + "KB";
+    public static String getLengthInKB(ItemStack stack) {
+        return new DecimalFormat("#,##0.0").format(getLength(stack) / 1024f) + "KB";
     }
 
-    public static int getNbtLength(NbtCompound nbt) {
-        return nbt.asString().length();
+    public static long getLength(ItemStack stack) {
+        ByteCountDataOutput byteCountDataOutput = ByteCountDataOutput.getInstance();
+
+        try {
+            stack.writeNbt(new NbtCompound()).write(byteCountDataOutput);
+        } catch (Exception ignored) {
+            return 0;
+        }
+
+        long count = byteCountDataOutput.getCount();
+        byteCountDataOutput.reset();
+        return count;
     }
 
     public static NbtString toNbtString(String string, boolean useDisableItalicConfig) {

@@ -26,6 +26,8 @@ public abstract class ItemStackMixin {
 
     @Shadow public abstract boolean hasNbt();
 
+    @Shadow public abstract ItemStack copy();
+
     @Inject(method = "getTooltip", at = @At("RETURN"), cancellable = true)
     public void getTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
         if (this.hasNbt() && context.isAdvanced()) {
@@ -50,7 +52,8 @@ public abstract class ItemStackMixin {
             if (!loreText.getString().isEmpty())
                 list.add(loreText.setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
 
-            MutableText lengthText = new LiteralText(FzmmUtils.getNbtLengthInKB(nbt));
+            ItemStack stack = this.copy();
+            MutableText lengthText = new LiteralText(FzmmUtils.getLengthInKB(stack));
             list.add(lengthText.setStyle(Style.EMPTY.withColor(Formatting.GRAY)));
 
             cir.setReturnValue(list);
