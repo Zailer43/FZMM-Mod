@@ -58,6 +58,7 @@ public class Configs implements IConfigHandler
                 LORE_PICK_BLOCK,
                 USEFUL_BLOCK_STATES,
                 PLAYER_STATUE,
+                IMAGETEXT_MESSAGES,
                 IMAGETEXT_HOLOGRAM,
                 ITEM_FRAME_HOTKEY
         );
