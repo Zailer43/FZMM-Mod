@@ -11,7 +11,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
@@ -35,16 +34,15 @@ public class ImagetextLogic {
 
     private void generateImagetext(boolean disableItalic) {
         NbtList tooltipList = new NbtList();
-        int height = image.getHeight(),
-                width = image.getWidth();
-        Style style = disableItalic ? Style.EMPTY.withItalic(false) : Style.EMPTY;
+        int height = image.getHeight();
+        int width = image.getWidth();
 
         for (int y = 0; y != height; y++) {
-            ImagetextLine line = new ImagetextLine(this.characters, style);
+            ImagetextLine line = new ImagetextLine(this.characters);
             for (int x = 0; x != width; x++) {
                 line.add(this.image.getRGB(x, y));
             }
-            tooltipList.add(NbtString.of(String.valueOf(line.getLine())));
+            tooltipList.add(FzmmUtils.toNbtString(line.getLine(disableItalic), false));
         }
         imagetext = tooltipList;
     }
