@@ -8,6 +8,7 @@ import fi.dy.masa.malilib.config.options.ConfigString;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
+import fi.dy.masa.malilib.interfaces.IValueChangeCallback;
 import fi.dy.masa.malilib.util.StringUtils;
 import fzmm.zailer.me.client.gui.enums.Buttons;
 import fzmm.zailer.me.client.gui.enums.options.BookOption;
@@ -24,6 +25,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.world.World;
 
 import java.awt.image.BufferedImage;
@@ -68,6 +70,9 @@ public class ImagetextScreen extends GuiOptionsBase {
         this.configPosX = new ConfigInteger("x", player.getBlockX(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "hologramCoordinates");
         this.configPosY = new ConfigInteger("y", player.getBlockY(), -0xffff, 0xffff, this.commentBase + "hologramCoordinates");
         this.configPosZ = new ConfigInteger("z", player.getBlockZ(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "hologramCoordinates");
+
+        this.configWidth.setValueChangeCallback(new ChangeSizeCallback(this, this.configHeight, true));
+        this.configHeight.setValueChangeCallback(new ChangeSizeCallback(this, this.configWidth, false));
 
         this.configWidth.toggleUseSlider();
         this.configHeight.toggleUseSlider();
@@ -211,7 +216,7 @@ public class ImagetextScreen extends GuiOptionsBase {
                 height = 15;
             }
 
-            ImagetextLogic imagetext = new ImagetextLogic(image, characters, (byte) width, (byte) height, smooth);
+            ImagetextLogic imagetext = new ImagetextLogic(image, characters, width, height, smooth);
 
             LoreOption loreOption = (LoreOption) ImagetextScreen.this.configLoreOption.getOptionListValue();
             BookOption bookOption = (BookOption) ImagetextScreen.this.configBookOption.getOptionListValue();
@@ -252,6 +257,26 @@ public class ImagetextScreen extends GuiOptionsBase {
             }
 
             return width;
+        }
+    }
+
+    private record ChangeSizeCallback(ImagetextScreen parent, ConfigInteger configToChange, boolean isWidth) implements IValueChangeCallback<ConfigInteger> {
+
+        @Override
+        public void onValueChanged(ConfigInteger config) {
+            if (this.parent.configImage.hasNoImage())
+                return;
+
+            BufferedImage image = this.parent.configImage.getImage();
+            assert image != null;
+            int configValue = config.getIntegerValue();
+            Vec2f rescaledSize = ImagetextLogic.changeResolutionKeepingAspectRatio(image.getWidth(), image.getHeight(), configValue, this.isWidth);
+
+            int newValue = (int) (this.isWidth ? rescaledSize.y : rescaledSize.x);
+
+            this.configToChange.setValueChangeCallback(null);
+            this.configToChange.setIntegerValue(newValue);
+            this.configToChange.setValueChangeCallback(new ChangeSizeCallback(this.parent, config, !this.isWidth));
         }
     }
 }

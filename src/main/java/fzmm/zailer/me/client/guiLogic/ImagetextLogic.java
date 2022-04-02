@@ -16,6 +16,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.Vec2f;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -26,7 +27,7 @@ public class ImagetextLogic {
     private final boolean smoothRescaling;
     private NbtList imagetext;
 
-    public ImagetextLogic(BufferedImage image, String characters, byte width, byte height, boolean smoothRescaling) {
+    public ImagetextLogic(BufferedImage image, String characters, int width, int height, boolean smoothRescaling) {
         this.smoothRescaling = smoothRescaling;
         this.image = this.resizeImage(image, width, height);
         this.characters = characters.isEmpty() ? ImagetextLine.DEFAULT_TEXT : characters;
@@ -47,8 +48,8 @@ public class ImagetextLogic {
         imagetext = tooltipList;
     }
 
-    private BufferedImage resizeImage(BufferedImage img, byte width, byte height) {
-        Image tmp = img.getScaledInstance(width, height, smoothRescaling ? Image.SCALE_SMOOTH : Image.SCALE_REPLICATE);
+    private BufferedImage resizeImage(BufferedImage image, int width, int height) {
+        Image tmp = image.getScaledInstance(width, height, smoothRescaling ? Image.SCALE_SMOOTH : Image.SCALE_REPLICATE);
         BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         Graphics2D g2d = resizedImage.createGraphics();
@@ -56,6 +57,24 @@ public class ImagetextLogic {
         g2d.dispose();
 
         return resizedImage;
+    }
+
+    /**
+     *
+     * @param width                     Width of which you want to preserve the aspect ratio.
+     * @param height                    Height of which you want to preserve the aspect ratio.
+     * @param unmodifiedSide            The unmodified side of the resized image.
+     * @param unmodifiedSideIsWidth     If the variable newSide is width (true) otherwise it is height (false).
+     * @return Vec2f.x = width, Vec2f.y = height
+     * <p>
+     */
+    public static Vec2f changeResolutionKeepingAspectRatio(int width, int height, int unmodifiedSide, boolean unmodifiedSideIsWidth) {
+        float modifiedSide = ((float) unmodifiedSide / (unmodifiedSideIsWidth ? width : height) * (unmodifiedSideIsWidth ? height : width));
+
+        if (unmodifiedSideIsWidth)
+            return new Vec2f(unmodifiedSide, modifiedSide);
+        else
+            return new Vec2f(modifiedSide, unmodifiedSide);
     }
 
     public void giveInLore(ItemStack stack, boolean add) {

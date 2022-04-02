@@ -25,8 +25,8 @@ public class Configs implements IConfigHandler
     public static class Generic {
         public static final ConfigBoolean FORCE_INVISIBLE_ITEM_FRAME = new ConfigBoolean("forceInvisibleItemFrame", false, "");
         public static final ConfigBoolean GIVE_CLIENT_SIDE = new ConfigBoolean("giveClientSide", false, "");
-        public static final ConfigBoolean REMOVE_FACING_STATE = new ConfigBoolean("removeFacingStateOnPick", false, "");
         public static final ConfigBoolean DISABLE_ITALIC = new ConfigBoolean("disableItalic", true, "");
+        public static final ConfigBoolean PRESERVE_IMAGE_ASPECT_RATIO_IN_IMAGETEXT = new ConfigBoolean("preserveImageAspectRatioInImagetext", true, "");
         public static final ConfigString MINESKIN_API_KEY = new ConfigString("mineskinApiKey", "", "");
         public static final ConfigString DEFAULT_IMAGETEXT_BOOK_MESSAGE = new ConfigString("defaultImagetextBookMessage", "Hover over this message to see an image", "");
         public static final ConfigString DEFAULT_GRADIENT_ITEM = new ConfigString("defaultGradientItem", Items.PAPER.toString(), "");
@@ -36,8 +36,8 @@ public class Configs implements IConfigHandler
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 FORCE_INVISIBLE_ITEM_FRAME,
                 GIVE_CLIENT_SIDE,
-                REMOVE_FACING_STATE,
                 DISABLE_ITALIC,
+                PRESERVE_IMAGE_ASPECT_RATIO_IN_IMAGETEXT,
                 MINESKIN_API_KEY,
                 DEFAULT_IMAGETEXT_BOOK_MESSAGE,
                 DEFAULT_GRADIENT_ITEM,
