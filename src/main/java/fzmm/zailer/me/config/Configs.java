@@ -141,6 +141,7 @@ public class Configs implements IConfigHandler
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void setComments() {
         setComments("generic", Generic.OPTIONS);
         setComments("colors", Colors.OPTIONS);

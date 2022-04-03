@@ -8,7 +8,8 @@ import fi.dy.masa.malilib.util.Color4f;
 import fzmm.zailer.me.config.Configs;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -16,7 +17,6 @@ import net.minecraft.item.Items;
 import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.*;
 import net.minecraft.network.MessageType;
-import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 import org.apache.http.HttpEntity;
@@ -43,21 +43,15 @@ import java.util.concurrent.CompletableFuture;
 public class FzmmUtils {
 
     public static final SuggestionProvider<FabricClientCommandSource> SUGGESTION_PLAYER = (context, builder) -> {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        assert mc.world != null;
+        ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
+        if (clientPlayer != null) {
+            List<String> playerNamesList = clientPlayer.networkHandler.getPlayerList().stream()
+                    .map(PlayerListEntry::getProfile)
+                    .map(GameProfile::getName)
+                    .toList();
 
-        IntegratedServer integratedServer = mc.getServer();
-        if (integratedServer != null) {
-            String[] players = integratedServer.getPlayerNames();
-            for (String player : players) {
-                builder.suggest(player);
-            }
-        } else {
-            List<AbstractClientPlayerEntity> players = mc.world.getPlayers();
-
-            for (AbstractClientPlayerEntity player : players) {
-                builder.suggest(player.getName().getString());
-            }
+            for (String playerName : playerNamesList)
+                builder.suggest(playerName);
         }
 
         return CompletableFuture.completedFuture(builder.build());
