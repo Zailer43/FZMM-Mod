@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class ImagetextLine {
     public static final String DEFAULT_TEXT = "█";
-    private final ArrayList<Pair<Integer, Byte>> line;
+    private final ArrayList<Pair<Integer, Byte>> line; // color, number of pixels of the same color
     private final String[] text;
     private final boolean isDefaultText;
 
@@ -25,10 +25,10 @@ public class ImagetextLine {
     public ImagetextLine add(int color) {
         int size = this.line.size();
         if (size > 0 && this.line.get(--size).getLeft() == color) {
-            Pair<Integer, Byte> previous = this.line.get(size);
-            byte previousAmount = previous.getRight();
-            previous.setRight(++previousAmount);
-            this.line.set(size, previous);
+            Pair<Integer, Byte> last = this.line.get(size);
+            byte lastAmount = last.getRight();
+            last.setRight(++lastAmount);
+            this.line.set(size, last);
         } else {
             this.line.add(new Pair<>(color, (byte) 1));
         }
@@ -41,12 +41,13 @@ public class ImagetextLine {
         short lineIndex = 0;
         for (int i = 0; i != this.line.size(); i++) {
             int color = this.line.get(i).getLeft();
+            int alpha = (color >> 24) & 0xFF;
             byte amount = this.line.get(i).getRight();
             Text line;
 
-            if (this.isDefaultText && color == 0xFF000000) { // 255 0 0 0 (ARGB)
-                String emptyString = " ".repeat(amount);
-                line = new LiteralText(emptyString + Formatting.BOLD + emptyString + Formatting.RESET );
+            if (this.isDefaultText && alpha == 0) {
+                String spaceString = " ".repeat(amount);
+                line = new LiteralText(spaceString + Formatting.BOLD + spaceString + Formatting.RESET );
                 lineIndex += amount;
             } else {
                 StringBuilder textStrBuilder = new StringBuilder();

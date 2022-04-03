@@ -50,7 +50,7 @@ public class ImagetextLogic {
 
     private BufferedImage resizeImage(BufferedImage image, int width, int height) {
         Image tmp = image.getScaledInstance(width, height, smoothRescaling ? Image.SCALE_SMOOTH : Image.SCALE_REPLICATE);
-        BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g2d = resizedImage.createGraphics();
         g2d.drawImage(tmp, 0, 0, null);
