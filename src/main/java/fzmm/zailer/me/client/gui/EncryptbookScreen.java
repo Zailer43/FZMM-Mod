@@ -9,7 +9,7 @@ import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fzmm.zailer.me.client.gui.enums.Buttons;
 import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
 import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
-import fzmm.zailer.me.client.guiLogic.EncryptbookLogic;
+import fzmm.zailer.me.client.logic.EncryptbookLogic;
 import fzmm.zailer.me.config.Configs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;

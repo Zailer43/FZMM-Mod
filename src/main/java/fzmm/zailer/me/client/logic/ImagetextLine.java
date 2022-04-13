@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.guiLogic;
+package fzmm.zailer.me.client.logic;
 
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;

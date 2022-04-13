@@ -18,7 +18,7 @@ import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
 import fzmm.zailer.me.client.gui.interfaces.ITabListener;
 import fzmm.zailer.me.client.gui.options.ImageOption;
 import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
-import fzmm.zailer.me.client.guiLogic.ImagetextLogic;
+import fzmm.zailer.me.client.logic.ImagetextLogic;
 import fzmm.zailer.me.config.Configs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;

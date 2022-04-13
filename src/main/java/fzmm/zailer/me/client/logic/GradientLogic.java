@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.guiLogic;
+package fzmm.zailer.me.client.logic;
 
 import fi.dy.masa.malilib.util.Color4f;
 import fzmm.zailer.me.client.gui.GradientScreen;

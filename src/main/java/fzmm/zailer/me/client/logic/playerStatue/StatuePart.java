@@ -1,13 +1,10 @@
-package fzmm.zailer.me.client.guiLogic.playerStatue;
+package fzmm.zailer.me.client.logic.playerStatue;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.gui.enums.options.DirectionOption;
-import fzmm.zailer.me.client.guiLogic.playerStatue.statueHeadSkin.AbstractStatueSkinManager;
-import fzmm.zailer.me.client.guiLogic.playerStatue.statueHeadSkin.HeadModelSkin;
-import fzmm.zailer.me.config.Configs;
+import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.AbstractStatueSkinManager;
+import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.HeadModelSkin;
 import fzmm.zailer.me.utils.ArmorStandUtils;
-import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import fzmm.zailer.me.utils.position.PosF;
 import net.minecraft.item.ItemStack;
@@ -15,24 +12,10 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3f;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
 
 public class StatuePart {
     private static final String DEFAULT_SKIN_VALUE = "Error!";
@@ -180,22 +163,25 @@ public class StatuePart {
         float z = pos.getZ() + this.basePos.getY();
 
         ItemStack statuePart = new ArmorStandUtils().setPos(x, y, z).setImmutableAndInvisible().setRightArmPose(new Vec3f(-45f, this.rotation, 0f))
-                .setRightHandItem(FzmmUtils.playerHeadFromSkin(this.skinValue)).getItem(this.name);
+                .setRightHandItem(HeadUtils.playerHeadFromSkin(this.skinValue)).getItem(this.name);
 
         statuePart.setSubNbt(TagsConstant.FZMM, this.writeFzmmTag());
         return statuePart;
     }
 
-    public void setStatueSkin(BufferedImage playerSkin) {
+    public void setStatueSkin(BufferedImage playerSkin) throws InterruptedException {
+        HeadUtils headUtils = new HeadUtils();
         try {
             this.draw(playerSkin, this.headSkin);
+            headUtils.uploadHead(this.headSkin, this.name);
 
-            this.apiRequest();
         } catch (Exception e) {
             PlayerStatue.LOGGER.error("The statue " + this.name + " had an error generating its skin");
-            e.printStackTrace();
-            this.errorGeneratingSkin();
         }
+        this.skinValue = headUtils.getSkinValue();
+        this.skinGenerated = headUtils.isSkinGenerated();
+        PlayerStatue.nextDelayMillis = (short) headUtils.getDelayForNextInMillis();
+        Thread.sleep(headUtils.getDelayForNextInMillis());
     }
 
     public boolean isSkinGenerated() {
@@ -236,62 +222,6 @@ public class StatuePart {
             }
         };
         this.basePos.add(newPos);
-    }
-
-    private void apiRequest() throws IOException {
-        String apiKey = Configs.Generic.MINESKIN_API_KEY.getStringValue();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(this.headSkin, "png", baos);
-        byte[] skin = baos.toByteArray();
-
-        try (CloseableHttpClient httpclient = HttpClients.custom().setUserAgent("FZMMPlayerStatue/1.0").build()) {
-            HttpPost httppost = new HttpPost(PlayerStatue.MINESKIN_API + "generate/upload");
-
-            HttpEntity reqEntity = MultipartEntityBuilder.create()
-                    .addPart("key", new StringBody(apiKey, ContentType.TEXT_PLAIN))
-                    .addPart("visibility", new StringBody("1", ContentType.TEXT_PLAIN))
-                    .addBinaryBody("file", skin, ContentType.APPLICATION_FORM_URLENCODED, "player_statue")
-                    .build();
-
-            httppost.setEntity(reqEntity);
-
-            try (CloseableHttpResponse response = httpclient.execute(httppost)) {
-                HttpEntity resEntity = response.getEntity();
-                int httpCode = response.getStatusLine().getStatusCode();
-                if (httpCode == HttpURLConnection.HTTP_OK) {
-                    this.useResponse(EntityUtils.toString(resEntity));
-                } else {
-                    PlayerStatue.LOGGER.warn("HTTP error " + httpCode + " generating skin in '" + this.name + "'");
-                    PlayerStatue.nextDelayMillis = 5000;
-                    this.errorGeneratingSkin();
-                }
-                EntityUtils.consume(resEntity);
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void useResponse(String reply) throws IOException, InterruptedException {
-        //https://rest.wiki/?https://api.mineskin.org/openapi.yml
-        JsonObject json = (JsonObject) JsonParser.parseString(reply);
-        this.skinValue = json.getAsJsonObject("data").getAsJsonObject("texture").get("value").getAsString();
-        this.skinGenerated = true;
-
-        PlayerStatue.progress++;
-        PlayerStatue.nextDelayMillis = (short) this.getDelay(json.getAsJsonObject("delayInfo").get("millis").getAsInt());
-        PlayerStatue.showGenerated(this.name);
-
-        Thread.sleep(PlayerStatue.nextDelayMillis);
-    }
-
-    private int getDelay(int delay) {
-        return MathHelper.clamp(delay, 1000, 5000);
-    }
-
-    private void errorGeneratingSkin() {
-        this.skinGenerated = false;
-        PlayerStatue.showError(this.name);
     }
 
     /**

@@ -1,6 +1,6 @@
 package fzmm.zailer.me.mixin;
 
-import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.HeadUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -45,7 +45,7 @@ public abstract class EntityMixin {
         NbtCompound tag = new NbtCompound();
 
         if (Screen.hasControlDown()) {
-            tag = FzmmUtils.getPlayerHead(player.getGameProfile()).getNbt();
+            tag = HeadUtils.getPlayerHead(player.getGameProfile()).getNbt();
         } else if (Screen.hasAltDown()) {
             new Thread(() -> {
                 BufferedImage skinBuffered;

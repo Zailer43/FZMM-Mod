@@ -1,10 +1,10 @@
-package fzmm.zailer.me.client.guiLogic.playerStatue;
+package fzmm.zailer.me.client.logic.playerStatue;
 
 import fi.dy.masa.malilib.gui.Message;
 import fi.dy.masa.malilib.util.InfoUtils;
 import fzmm.zailer.me.client.gui.PlayerStatueScreen;
 import fzmm.zailer.me.client.gui.enums.options.DirectionOption;
-import fzmm.zailer.me.client.guiLogic.playerStatue.statueHeadSkin.*;
+import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.*;
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.*;
 import net.minecraft.client.MinecraftClient;
@@ -26,7 +26,6 @@ import java.util.List;
 
 public class PlayerStatue {
     public static final Logger LOGGER = LogManager.getLogger("FZMM PlayerStatue");
-    protected static final String MINESKIN_API = "https://api.mineskin.org/";
     private final List<StatuePart> statueList;
     private final String name;
     private final BufferedImage playerSkin;
@@ -46,7 +45,7 @@ public class PlayerStatue {
         this.direction = direction;
     }
 
-    public PlayerStatue generateStatues() {
+    public PlayerStatue generateStatues() throws InterruptedException {
         this.statueList.clear();
 
         if (MinecraftClient.getInstance().currentScreen instanceof PlayerStatueScreen playerStatueScreen)
@@ -104,7 +103,7 @@ public class PlayerStatue {
         return this;
     }
 
-    public void fixGeneratingError() {
+    public void fixGeneratingError() throws InterruptedException {
         for (StatuePart statuePart : this.statueList) {
             if (!statuePart.isSkinGenerated()) {
                 statuePart.setStatueSkin(this.playerSkin);

@@ -14,7 +14,7 @@ import fzmm.zailer.me.client.gui.enums.Buttons;
 import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
 import fzmm.zailer.me.client.gui.interfaces.ITabListener;
 import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
-import fzmm.zailer.me.client.guiLogic.GradientLogic;
+import fzmm.zailer.me.client.logic.GradientLogic;
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.DisplayUtils;
 import fzmm.zailer.me.utils.FzmmUtils;

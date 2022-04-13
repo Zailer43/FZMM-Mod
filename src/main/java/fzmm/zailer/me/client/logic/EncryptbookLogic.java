@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.guiLogic;
+package fzmm.zailer.me.client.logic;
 
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.FzmmUtils;

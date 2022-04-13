@@ -10,48 +10,50 @@ import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.SkullItem;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.network.MessageType;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.lwjgl.BufferUtils;
 
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.Base64;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
 public class FzmmUtils {
 
     public static final SuggestionProvider<FabricClientCommandSource> SUGGESTION_PLAYER = (context, builder) -> {
         ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
+        String playerInput = builder.getRemainingLowerCase();
         if (clientPlayer != null) {
             List<String> playerNamesList = clientPlayer.networkHandler.getPlayerList().stream()
                     .map(PlayerListEntry::getProfile)
                     .map(GameProfile::getName)
                     .toList();
 
-            for (String playerName : playerNamesList)
-                builder.suggest(playerName);
+            for (String playerName : playerNamesList) {
+                if (playerName.toLowerCase().contains(playerInput))
+                    builder.suggest(playerName);
+            }
         }
 
         return CompletableFuture.completedFuture(builder.build());
@@ -126,29 +128,6 @@ public class FzmmUtils {
         return message;
     }
 
-    public static ItemStack playerHeadFromSkin(String skinValue) {
-        NbtList textures = new NbtList();
-        NbtCompound value = new NbtCompound(),
-                properties = new NbtCompound(),
-                skullOwner = new NbtCompound(),
-                tag = new NbtCompound();
-        Random random = new Random(new Date().getTime());
-        NbtIntArray id = new NbtIntArray(new int[]{random.nextInt(Integer.MAX_VALUE), random.nextInt(Integer.MAX_VALUE),
-                random.nextInt(Integer.MAX_VALUE), random.nextInt(Integer.MAX_VALUE)});
-
-        value.putString("Value", skinValue);
-        textures.add(value);
-        properties.put("textures", textures);
-        skullOwner.put("Properties", properties);
-        skullOwner.put("Id", id);
-
-        tag.put(SkullItem.SKULL_OWNER_KEY, skullOwner);
-
-        ItemStack stack = Items.PLAYER_HEAD.getDefaultStack();
-        stack.setNbt(tag);
-        return stack;
-    }
-
     public static String getLengthInKB(ItemStack stack) {
         return new DecimalFormat("#,##0.0").format(getLength(stack) / 1024f) + "KB";
     }
@@ -178,23 +157,6 @@ public class FzmmUtils {
         return NbtString.of(Text.Serializer.toJson(text));
     }
 
-    public static ItemStack getPlayerHead(String username) {
-        ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
-        head.setSubNbt(SkullItem.SKULL_OWNER_KEY, NbtString.of(username));
-
-        return head;
-    }
-
-    public static ItemStack getPlayerHead(GameProfile profile) {
-        ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
-        NbtCompound skullOwner = new NbtCompound();
-
-        NbtHelper.writeGameProfile(skullOwner, profile);
-        head.setSubNbt(SkullItem.SKULL_OWNER_KEY, skullOwner);
-
-        return head;
-    }
-
     public static void renameHandItem(Text text) {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
@@ -208,9 +170,12 @@ public class FzmmUtils {
         return new Color4f(color.r, color.g, color.b, 0);
     }
 
+    @Nullable
     public static BufferedImage getPlayerSkin(String name) throws IOException, NullPointerException {
         String uuid = FzmmUtils.getPlayerUuid(name);
         InputStream inputStream = FzmmUtils.httpGetRequest("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid, false);
+        if (inputStream == null)
+            return null;
 
         JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(inputStream));
         JsonObject properties = (JsonObject) obj.getAsJsonArray("properties").get(0);

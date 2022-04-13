@@ -16,7 +16,7 @@ import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
 import fzmm.zailer.me.client.gui.interfaces.ITabListener;
 import fzmm.zailer.me.client.gui.options.ImageOption;
 import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
-import fzmm.zailer.me.client.guiLogic.playerStatue.PlayerStatue;
+import fzmm.zailer.me.client.logic.playerStatue.PlayerStatue;
 import fzmm.zailer.me.utils.FzmmUtils;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.MinecraftClient;
@@ -222,15 +222,21 @@ public class PlayerStatueScreen extends GuiOptionsBase {
     }
 
     private static void createPlayerStatue() {
-        if (statue == null)
+        new Thread(() -> {
+            if (statue == null)
             return;
-        executeButton.setEnabled(false);
+            executeButton.setEnabled(false);
 
-        lastStatueGenerated = statue.generateStatues();
-        lastStatueButton.setEnabled(true);
-        FzmmUtils.giveItem(lastStatueGenerated.getStatueInContainer());
-        statue = null;
+                try {
+                    lastStatueGenerated = statue.generateStatues();
+                } catch (InterruptedException ignored) {
+                }
 
-        executeButton.setEnabled(true);
+            lastStatueButton.setEnabled(true);
+            FzmmUtils.giveItem(lastStatueGenerated.getStatueInContainer());
+            statue = null;
+
+            executeButton.setEnabled(true);
+        }).start();
     }
 }

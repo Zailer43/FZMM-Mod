@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.guiLogic.playerStatue.statueHeadSkin;
+package fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

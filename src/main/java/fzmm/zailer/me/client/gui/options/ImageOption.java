@@ -148,7 +148,10 @@ public class ImageOption extends ConfigBase<ImageOption> implements ICustomOptio
                     }
 
                     this.image = FzmmUtils.getPlayerSkin(this.value);
-                    this.status = ImageStatus.IMAGE_LOADED;
+                    if (this.image == null)
+                        this.status = ImageStatus.INVALID_USERNAME;
+                    else
+                        this.status = ImageStatus.IMAGE_LOADED;
                 } catch (Exception e) {
                     this.status = ImageStatus.UNEXPECTED_ERROR;
                 }

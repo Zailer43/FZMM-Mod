@@ -140,7 +140,7 @@ public class FzmmItemGroup {
                                 .toList();
 
                         for (GameProfile profile : profileList) {
-                            stacks.add(FzmmUtils.getPlayerHead(profile));
+                            stacks.add(HeadUtils.getPlayerHead(profile));
                         }
                     }
 

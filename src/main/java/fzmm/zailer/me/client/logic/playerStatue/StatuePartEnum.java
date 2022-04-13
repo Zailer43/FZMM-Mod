@@ -1,7 +1,7 @@
-package fzmm.zailer.me.client.guiLogic.playerStatue;
+package fzmm.zailer.me.client.logic.playerStatue;
 
-import fzmm.zailer.me.client.guiLogic.playerStatue.statueHeadSkin.HeadFace;
-import fzmm.zailer.me.client.guiLogic.playerStatue.statueHeadSkin.HeadModelSkin;
+import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.HeadFace;
+import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.HeadModelSkin;
 import fzmm.zailer.me.utils.position.PosF;
 
 public enum StatuePartEnum {

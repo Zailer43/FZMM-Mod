@@ -4,10 +4,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import fzmm.zailer.me.utils.DisplayUtils;
-import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.InventoryUtils;
-import fzmm.zailer.me.utils.TagsConstant;
+import fzmm.zailer.me.utils.*;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
@@ -268,7 +265,7 @@ public class FzmmCommand {
     }
 
     private static void getHead(String skullOwner) {
-        FzmmUtils.giveItem(FzmmUtils.getPlayerHead(skullOwner));
+        FzmmUtils.giveItem(HeadUtils.getPlayerHead(skullOwner));
     }
 
     private static void fullContainer(int slotsToFill, int firstSlots) {
