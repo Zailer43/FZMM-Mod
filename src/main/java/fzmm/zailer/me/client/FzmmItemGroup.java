@@ -92,6 +92,8 @@ public class FzmmItemGroup {
                     stacks.add(new BlockStateTagItem(Items.REPEATER, "Repeater (2 ticks)").add("delay", 2).get());
                     stacks.add(new BlockStateTagItem(Items.REPEATER, "Repeater (3 ticks)").add("delay", 3).get());
                     stacks.add(new BlockStateTagItem(Items.REPEATER, "Repeater (4 ticks)").add("delay", 4).get());
+                    stacks.add(new BlockStateTagItem(Items.REPEATER, "Locked Repeater").add("locked", true).get());
+                    stacks.add(new BlockStateTagItem(Items.HOPPER, "Disabled hopper").add("enabled", false).get());
                     stacks.add(new BlockStateTagItem(Items.BEE_NEST, "Bee nest filled with honey").add("honey_level", 5).get());
                     stacks.add(new BlockStateTagItem(Items.BEEHIVE, "Beehive filled with honey").add("honey_level", 5).get());
                     stacks.add(new BlockStateTagItem(Items.SEA_PICKLE, "Sea pickle (4)").add("pickles", 4).get());
@@ -103,6 +105,7 @@ public class FzmmItemGroup {
                     addLeaves(stacks);
                     addLitCandles(stacks);
                     addHalfBed(stacks);
+                    addLockedBed(stacks);
                 }).build();
 
         FabricItemGroupBuilder.create(new Identifier(FzmmClient.MOD_ID, "loot_chests"))
@@ -255,6 +258,13 @@ public class FzmmItemGroup {
         for (Item item : Registry.ITEM) {
             if (contains(item, ItemTags.BEDS))
                 stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (head part)").add("part", "head").get());
+        }
+    }
+
+    private static void addLockedBed(List<ItemStack> stacks) {
+        for (Item item : Registry.ITEM) {
+            if (contains(item, ItemTags.BEDS))
+                stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (locked)").add("occupied", true).get());
         }
     }
 
