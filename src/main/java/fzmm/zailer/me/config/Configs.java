@@ -47,7 +47,6 @@ public class Configs implements IConfigHandler
     }
 
     public static class Colors {
-        public static final ConfigColor LORE_PICK_BLOCK = new ConfigColor("lorePickBlock", "#19B2FF", "");
         public static final ConfigColor USEFUL_BLOCK_STATES = new ConfigColor("usefulBlockStates", "#66F5B7", "");
         public static final ConfigColor PLAYER_STATUE = new ConfigColor("playerStatue", "#CB347D", "");
         public static final ConfigColor IMAGETEXT_MESSAGES = new ConfigColor("imagetextMessages", "#71C29F", "");
@@ -55,7 +54,6 @@ public class Configs implements IConfigHandler
         public static final ConfigColor ITEM_FRAME_HOTKEY = new ConfigColor("itemFrameHotkey", "#BB82B7", "");
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
-                LORE_PICK_BLOCK,
                 USEFUL_BLOCK_STATES,
                 PLAYER_STATUE,
                 IMAGETEXT_MESSAGES,
