@@ -104,16 +104,18 @@ public class FzmmUtils {
     @Nullable
     public static InputStream httpGetRequest(String url, boolean isImage) throws IOException {
         InputStream inputResponse = null;
-        HttpClient httpclient = HttpClients.createDefault();
-        HttpGet httpGet = new HttpGet(url);
+        try (var httpClient = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet(url);
 
-        if (isImage)
-            httpGet.addHeader("content-type", "image/jpeg");
+            if (isImage)
+                httpGet.addHeader("content-type", "image/jpeg");
 
-        HttpResponse response = httpclient.execute(httpGet);
-        HttpEntity resEntity = response.getEntity();
-        if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK)
-            inputResponse = resEntity.getContent();
+            HttpResponse response = httpClient.execute(httpGet);
+            HttpEntity resEntity = response.getEntity();
+            if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK)
+                inputResponse = resEntity.getContent();
+
+        }
 
         return inputResponse;
     }
@@ -185,5 +187,19 @@ public class FzmmUtils {
         String skinUrl = obj.getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
 
         return FzmmUtils.getImageFromUrl(skinUrl);
+    }
+
+    public static void saveBufferedImageAsIdentifier(BufferedImage bufferedImage, Identifier identifier) throws IOException {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, "png", stream);
+        byte[] bytes = stream.toByteArray();
+
+        ByteBuffer data = BufferUtils.createByteBuffer(bytes.length).put(bytes);
+        data.flip();
+        NativeImage img = NativeImage.read(data);
+        NativeImageBackedTexture texture = new NativeImageBackedTexture(img);
+
+        MinecraftClient client = MinecraftClient.getInstance();
+        client.execute(() -> client.getTextureManager().registerTexture(identifier, texture));
     }
 }

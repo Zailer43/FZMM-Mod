@@ -104,6 +104,7 @@
   "fzmm.gui.main.imagetext": "Imagetext",
   "fzmm.gui.main.itemEditor": "Item editor (soon)",
   "fzmm.gui.main.playerStatue": "Player statue",
+  "fzmm.gui.main.headGenerator": "Head generator",
   "fzmm.gui.option.book.addPage": "Add page",
   "fzmm.gui.option.book.createBook": "Create book",
   "fzmm.gui.option.direction.east": "East",

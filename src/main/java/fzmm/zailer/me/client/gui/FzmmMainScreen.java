@@ -1,6 +1,5 @@
 package fzmm.zailer.me.client.gui;
 
-import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fzmm.zailer.me.client.gui.enums.Buttons;
@@ -28,6 +27,7 @@ public class FzmmMainScreen extends AbstractFzmmScreen {
 		this.createGenericButton(col1, LINE2, Buttons.MAIN_ENCRYPTBOOK);
 		this.createGenericButton(col2, LINE2, Buttons.MAIN_ITEMS_EDITOR).setEnabled(false);
 		this.createGenericButton(col3, LINE2, Buttons.MAIN_CONVERTERS);
+		this.createGenericButton(col1, LINE3, Buttons.MAIN_HEAD_GENERATOR);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class FzmmMainScreen extends AbstractFzmmScreen {
 		@Override
 		public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
 			Screen parent = FzmmMainScreen.this;
-			GuiBase guiBase = switch (this.button) {
+			Screen guiBase = switch (this.button) {
 				case MAIN_CONFIGURATION -> new ConfigScreen(parent);
 				case MAIN_CONVERTERS -> new ConvertersScreen(parent);
 				case MAIN_ENCRYPTBOOK -> new EncryptbookScreen(parent);
@@ -53,6 +53,7 @@ public class FzmmMainScreen extends AbstractFzmmScreen {
 				case MAIN_IMAGETEXT -> new ImagetextScreen(parent);
 //				case MAIN_ITEMS_EDITOR -> null;
 				case MAIN_PLAYER_STATUE -> new PlayerStatueScreen(parent);
+				case MAIN_HEAD_GENERATOR -> new HeadGeneratorScreen();
 				default -> null;
 			};
 

@@ -10,9 +10,9 @@ import javax.annotation.Nullable;
 public enum Buttons {
     BACK("button.back"),
     CONVERTERS_COPY_ARRAY("converters.copyArray"),
-    CONVERTERS_COPY_UUID("converters.copyUuid"),
     CONVERTERS_COPY_DECODED("converters.copyDecoded"),
     CONVERTERS_COPY_ENCODED("converters.copyEncoded"),
+    CONVERTERS_COPY_UUID("converters.copyUuid"),
     ENCRYPTBOOK_GET_DECODER("encryptbook.getDecoder"),
     EXECUTE("button.execute"),
     FAQ("button.faq"),
@@ -26,6 +26,7 @@ public enum Buttons {
     MAIN_CONVERTERS("main.converters"),
     MAIN_ENCRYPTBOOK("main.encryptbook"),
     MAIN_GRADIENT("main.gradient"),
+    MAIN_HEAD_GENERATOR("main.headGenerator"),
     MAIN_IMAGETEXT("main.imagetext"),
     MAIN_ITEMS_EDITOR("main.itemEditor"),
     MAIN_PLAYER_STATUE("main.playerStatue"),
