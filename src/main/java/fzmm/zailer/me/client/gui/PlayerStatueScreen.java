@@ -224,7 +224,7 @@ public class PlayerStatueScreen extends GuiOptionsBase {
     private static void createPlayerStatue() {
         new Thread(() -> {
             if (statue == null)
-            return;
+                return;
             executeButton.setEnabled(false);
 
                 try {

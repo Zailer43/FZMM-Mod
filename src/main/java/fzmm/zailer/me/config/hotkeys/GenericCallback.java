@@ -153,7 +153,10 @@ public class GenericCallback implements IHotkeyCallback {
     private boolean generateScreenshot() {
         try {
             Framebuffer framebuffer = MinecraftClient.getInstance().getFramebuffer();
-            byte[] byteArray = ScreenshotRecorder.takeScreenshot(framebuffer).getBytes();
+            byte[] byteArray;
+            try (var screenshot = ScreenshotRecorder.takeScreenshot(framebuffer)) {
+                byteArray = screenshot.getBytes();
+            }
             BufferedImage screenshot = ImageIO.read(new ByteArrayInputStream(byteArray));
             int width = screenshot.getWidth();
             int height = screenshot.getHeight();
