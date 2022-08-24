@@ -28,8 +28,8 @@
   ],
   "depends": {
     "fabricloader": ">=0.12.5",
-    "fabric": ">=0.41.3",
-    "minecraft": ">=1.18.2",
+    "fabric": "*",
+    "minecraft": ">=1.19.1",
     "malilib":">=0.12.0"
   }
 }

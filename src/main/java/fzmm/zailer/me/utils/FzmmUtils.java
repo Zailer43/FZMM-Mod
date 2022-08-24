@@ -6,7 +6,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fi.dy.masa.malilib.util.Color4f;
 import fzmm.zailer.me.config.Configs;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
@@ -17,13 +17,13 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.network.MessageType;
-import net.minecraft.text.*;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.lwjgl.BufferUtils;
@@ -33,6 +33,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.Base64;
@@ -65,7 +66,7 @@ public class FzmmUtils {
         assert mc.player != null;
 
         if (getLength(stack) > 1950000) {
-            mc.inGameHud.addChatMessage(MessageType.SYSTEM, new TranslatableText("giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)), mc.player.getUuid());
+            mc.inGameHud.getChatHud().addMessage(Text.translatable("giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)));
             return;
         }
 
@@ -147,7 +148,7 @@ public class FzmmUtils {
     }
 
     public static NbtString toNbtString(String string, boolean useDisableItalicConfig) {
-        Text text = new LiteralText(string);
+        Text text = Text.of(string);
         return toNbtString(text, useDisableItalicConfig);
     }
 

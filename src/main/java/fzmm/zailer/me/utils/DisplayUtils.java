@@ -8,7 +8,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
@@ -75,7 +74,7 @@ public class DisplayUtils {
     }
 
     public DisplayUtils setName(String name) {
-        return this.setName(new LiteralText(name));
+        return this.setName(Text.of(name));
     }
 
     public DisplayUtils setName(String name, Color4f color) {
@@ -83,7 +82,7 @@ public class DisplayUtils {
     }
 
     public DisplayUtils setName(String name, int color) {
-        return this.setName(new LiteralText(name).setStyle(Style.EMPTY.withColor(color)));
+        return this.setName(Text.literal(name).setStyle(Style.EMPTY.withColor(color)));
     }
 
     public DisplayUtils setName(Text name) {
@@ -120,7 +119,7 @@ public class DisplayUtils {
     }
 
     public DisplayUtils addLore(String message, int messageColor) {
-        return this.addLore(new LiteralText(message).setStyle(Style.EMPTY.withColor(messageColor)));
+        return this.addLore(Text.literal(message).setStyle(Style.EMPTY.withColor(messageColor)));
     }
 
 

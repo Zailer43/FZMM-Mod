@@ -16,8 +16,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.tag.ItemTags;
 import net.minecraft.tag.TagKey;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.village.raid.Raid;
@@ -125,7 +125,7 @@ public class FzmmItemGroup {
 
                         blockEntityTag.putString("LootTable", path);
 
-                        chest.setCustomName(new LiteralText("LootChest: " + path));
+                        chest.setCustomName(Text.literal("LootChest: " + path));
                         chest.setSubNbt(TagsConstant.BLOCK_ENTITY, blockEntityTag);
                         stacks.add(chest);
                     }
@@ -174,8 +174,8 @@ public class FzmmItemGroup {
         itemFrame.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
         glowItemFrame.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
 
-        itemFrame.setCustomName(new LiteralText("Invisible item frame").setStyle(Style.EMPTY.withItalic(false)));
-        glowItemFrame.setCustomName(new LiteralText("Invisible glow item frame").setStyle(Style.EMPTY.withItalic(false)));
+        itemFrame.setCustomName(Text.literal("Invisible item frame").setStyle(Style.EMPTY.withItalic(false)));
+        glowItemFrame.setCustomName(Text.literal("Invisible glow item frame").setStyle(Style.EMPTY.withItalic(false)));
 
         stacks.add(itemFrame);
         stacks.add(glowItemFrame);

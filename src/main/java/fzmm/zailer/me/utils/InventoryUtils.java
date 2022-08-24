@@ -12,7 +12,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -47,7 +46,7 @@ public class InventoryUtils {
             try {
                 nameText = Text.Serializer.fromJson(name);
                 if (nameText == null)
-                    nameText = new LiteralText(name);
+                    nameText = Text.literal(name);
 
                 nameText.setStyle(style);
                 stack.setCustomName(nameText);

@@ -1,15 +1,18 @@
 package fzmm.zailer.me.client;
 
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fzmm.zailer.me.utils.*;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.EnchantmentArgumentType;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
@@ -21,17 +24,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.network.MessageType;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
 public class FzmmCommand {
 
-    static final CommandException ERROR_WITHOUT_NBT = new CommandException(new TranslatableText("commands.fzmm.item.withoutNbt"));
+    static final CommandException ERROR_WITHOUT_NBT = new CommandException(Text.translatable("commands.fzmm.item.withoutNbt"));
 
     private static final MinecraftClient MC = MinecraftClient.getInstance();
 
-    public static void registerCommands() {
+    public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
         LiteralArgumentBuilder<FabricClientCommandSource> fzmmCommand = ClientCommandManager.literal("fzmm");
 
         fzmmCommand.then(ClientCommandManager.literal("name")
@@ -70,7 +72,7 @@ public class FzmmCommand {
 
 
         fzmmCommand.then(ClientCommandManager.literal("give")
-                .then(ClientCommandManager.argument("item", ItemStackArgumentType.itemStack()).executes((ctx) -> {
+                .then(ClientCommandManager.argument("item", ItemStackArgumentType.itemStack(registryAccess)).executes((ctx) -> {
 
                     giveItem(ItemStackArgumentType.getItemStackArgument(ctx, "item"), 1);
                     return 1;
@@ -177,9 +179,7 @@ public class FzmmCommand {
                 }))
         );
 
-        ClientCommandManager.DISPATCHER.register(
-                fzmmCommand
-        );
+        dispatcher.register(fzmmCommand);
     }
 
     private static void giveItem(ItemStackArgument item, int amount) throws CommandSyntaxException {
@@ -237,21 +237,21 @@ public class FzmmCommand {
         assert stack.getNbt() != null;
         String nbt = stack.getNbt().toString().replaceAll("§", "\u00a7");
 
-        MutableText message = new LiteralText(stack + ": " + nbt)
+        MutableText message = Text.literal(stack + ": " + nbt)
                 .setStyle(Style.EMPTY
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, nbt))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("Click to copy")))
                 );
 
-        MutableText length = new LiteralText(Formatting.BLUE + "Length: " + Formatting.DARK_AQUA + nbt.length())
+        MutableText length = Text.literal(Formatting.BLUE + "Length: " + Formatting.DARK_AQUA + nbt.length())
                 .setStyle(Style.EMPTY
                         .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, String.valueOf(nbt.length())))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("Click to copy")))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("Click to copy")))
                 );
 
-        MC.inGameHud.addChatMessage(MessageType.SYSTEM, message, MC.player.getUuid());
-
-        MC.inGameHud.addChatMessage(MessageType.SYSTEM, length, MC.player.getUuid());
+        ChatHud chatHud = MC.inGameHud.getChatHud();
+        chatHud.addMessage(message);
+        chatHud.addMessage(length);
     }
 
     private static void amount(int amount) {
@@ -329,7 +329,7 @@ public class FzmmCommand {
         }
 
         containerItemStack.setNbt(tag);
-        itemStack.setCustomName(new LiteralText(key));
+        itemStack.setCustomName(Text.literal(key));
 
         FzmmUtils.giveItem(containerItemStack);
         MC.player.equipStack(EquipmentSlot.OFFHAND, itemStack);

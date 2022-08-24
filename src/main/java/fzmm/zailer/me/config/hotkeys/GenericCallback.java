@@ -11,6 +11,7 @@ import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.InventoryUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
+import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -64,16 +65,17 @@ public class GenericCallback implements IHotkeyCallback {
 
     private boolean changeGuiScale(boolean increment) {
         MinecraftClient mc = MinecraftClient.getInstance();
-        int guiScale = mc.options.guiScale;
+        SimpleOption<Integer> guiScale = mc.options.getGuiScale();
+        int guiScaleValue = guiScale.getValue();
 
         if (increment)
-            guiScale++;
+            guiScaleValue++;
         else
-            guiScale--;
+            guiScaleValue--;
 
-        guiScale = MathHelper.clamp(guiScale, 1, 4);
+        guiScaleValue = MathHelper.clamp(guiScaleValue, 1, 4);
 
-        mc.options.guiScale = guiScale;
+        guiScale.setValue(guiScaleValue);
         mc.onResolutionChanged();
         return true;
     }

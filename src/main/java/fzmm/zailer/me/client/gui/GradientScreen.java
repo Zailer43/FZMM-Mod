@@ -24,7 +24,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -209,7 +208,7 @@ public class GradientScreen extends GuiOptionsBase {
 		String message = this.message.getStringValue();
 		if (message.length() < 2) {
 			this.toggleExecuteButtons(false);
-			return new TranslatableText("fzmm.gui.gradient.error.messageLength").setStyle(Style.EMPTY.withColor(ScreenConstants.TEXT_ERROR_COLOR));
+			return Text.translatable("fzmm.gui.gradient.error.messageLength").setStyle(Style.EMPTY.withColor(ScreenConstants.TEXT_ERROR_COLOR));
 		}
 		this.toggleExecuteButtons(true);
 

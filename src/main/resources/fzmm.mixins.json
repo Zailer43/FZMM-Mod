@@ -9,7 +9,6 @@
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
-    "MinecraftClientMixin",
     "malilib.ConfigOptionWrapperAccessor",
     "malilib.WidgetConfigOptionMixin"
   ],

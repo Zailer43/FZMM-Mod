@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui.enums.options;
 
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public enum SkinOption implements IConfigOptionListEntry {
     NAME("name"),
@@ -21,7 +21,7 @@ public enum SkinOption implements IConfigOptionListEntry {
 
     @Override
     public String getDisplayName() {
-        return new TranslatableText("fzmm.gui.option.skin." + this.name).getString();
+        return Text.translatable("fzmm.gui.option.skin." + this.name).getString();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.enums.options;
 
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public enum BookOption implements IConfigOptionListEntry {
     ADD_PAGE("addPage"),
@@ -20,7 +20,7 @@ public enum BookOption implements IConfigOptionListEntry {
 
     @Override
     public String getDisplayName() {
-        return new TranslatableText("fzmm.gui.option.book." + this.name).getString();
+        return Text.translatable("fzmm.gui.option.book." + this.name).getString();
     }
 
     @Override

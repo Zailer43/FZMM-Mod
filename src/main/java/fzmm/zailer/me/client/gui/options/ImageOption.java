@@ -14,7 +14,7 @@ import fzmm.zailer.me.client.gui.enums.options.ImageModeOption;
 import fzmm.zailer.me.client.gui.enums.options.SkinOption;
 import fzmm.zailer.me.client.gui.interfaces.ICustomOption;
 import fzmm.zailer.me.utils.FzmmUtils;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
@@ -211,7 +211,7 @@ public class ImageOption extends ConfigBase<ImageOption> implements ICustomOptio
         }
 
         public String getMessage() {
-            return new TranslatableText(BASE_KEY + message).getString();
+            return Text.translatable(BASE_KEY + message).getString();
         }
 
         public FzmmIcons getIcon() {

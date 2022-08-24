@@ -3,7 +3,7 @@ package fzmm.zailer.me.client.gui.enums;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fzmm.zailer.me.client.gui.ScreenConstants;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import javax.annotation.Nullable;
 
@@ -48,7 +48,7 @@ public enum Buttons {
     }
 
     public String getText() {
-        return new TranslatableText(INITIAL_TRANSLATION_KEY + this.key).getString();
+        return Text.translatable(INITIAL_TRANSLATION_KEY + this.key).getString();
     }
 
     @Nullable

@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui.wrapper;
 
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -27,9 +27,9 @@ public class OptionWrapper extends ConfigOptionWrapper {
         if (super.getLabel() == null)
             return "";
 
-        TranslatableText translate = this.translationValues == null ?
-                new TranslatableText(super.getLabel()) :
-                new TranslatableText(super.getLabel(), (Object[]) this.translationValues);
+        Text translate = this.translationValues == null ?
+                Text.translatable(super.getLabel()) :
+                Text.translatable(super.getLabel(), (Object[]) this.translationValues);
 
         return translate.getString();
     }

@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public final class HeadGenerator {
@@ -49,8 +50,8 @@ public final class HeadGenerator {
 
         Identifier textureIdentifier = getIdentifier(textureName);
         try {
-            Resource textureResource = MinecraftClient.getInstance().getResourceManager().getResource(textureIdentifier);
-            return ImageIO.read(textureResource.getInputStream());
+            Optional<Resource> textureResource = MinecraftClient.getInstance().getResourceManager().getResource(textureIdentifier);
+            return textureResource.isEmpty() ? null : ImageIO.read(textureResource.get().getInputStream());
         } catch (IOException e) {
             return null;
         }
@@ -60,16 +61,17 @@ public final class HeadGenerator {
         Set<String> texturesPath = new HashSet<>();
         ResourcePackManager resourcePackManager = MinecraftClient.getInstance().getResourcePackManager();
         for (var resourcePackProfile : resourcePackManager.getEnabledProfiles()) {
-            texturesPath.addAll(
-                    resourcePackProfile
-                            .createResourcePack()
-                            .findResources(ResourceType.CLIENT_RESOURCES, FzmmClient.MOD_ID, HEADS_FOLDER, Integer.MAX_VALUE, (path) -> path.endsWith(".png"))
-                            .stream().map(identifier -> {
-                                String path = identifier.getPath();
-                                return path.substring(HEADS_FOLDER.length() + 1, path.length() - 4);
-                            })
-                            .toList()
-            );
+            try (var resourcePack = resourcePackProfile.createResourcePack()) {
+                texturesPath.addAll(
+                        resourcePack
+                                .findResources(ResourceType.CLIENT_RESOURCES, FzmmClient.MOD_ID, HEADS_FOLDER, identifier -> identifier.getPath().endsWith(".png"))
+                                .stream().map(identifier -> {
+                                    String path = identifier.getPath();
+                                    return path.substring(HEADS_FOLDER.length() + 1, path.length() - 4);
+                                })
+                                .toList()
+                );
+            }
         }
         return texturesPath;
     }

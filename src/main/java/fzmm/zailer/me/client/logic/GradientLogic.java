@@ -2,7 +2,6 @@ package fzmm.zailer.me.client.logic;
 
 import fi.dy.masa.malilib.util.Color4f;
 import fzmm.zailer.me.client.gui.GradientScreen;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -77,11 +76,11 @@ public record GradientLogic(String message, boolean obfuscated, boolean bold, bo
     }
 
     private MutableText applyColors(int[] colors) {
-        MutableText text = LiteralText.EMPTY.copy().setStyle(this.getStyle());
+        MutableText text = Text.empty().setStyle(this.getStyle());
         List<String> messageList = splitMessage();
 
         for (int i = 0; i != this.message.length(); i++)
-            text.append(new LiteralText(messageList.get(i)).setStyle(Style.EMPTY.withColor(colors[i])));
+            text.append(Text.literal(messageList.get(i)).setStyle(Style.EMPTY.withColor(colors[i])));
 
         return text;
     }

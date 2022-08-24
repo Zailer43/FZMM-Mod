@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui.enums.options;
 
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
@@ -25,7 +25,7 @@ public enum DirectionOption implements IConfigOptionListEntry {
 
     @Override
     public String getDisplayName() {
-        return new TranslatableText("fzmm.gui.option.direction." + this.name).getString();
+        return Text.translatable("fzmm.gui.option.direction." + this.name).getString();
     }
 
     @Override

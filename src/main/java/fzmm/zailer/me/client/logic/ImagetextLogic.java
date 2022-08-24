@@ -12,7 +12,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.HoverEvent;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -99,7 +98,7 @@ public class ImagetextLogic {
         BookUtils bookUtils = new BookUtils("Imagebook", author);
         JsonArray json = getImagetextJSON();
 
-        bookUtils.addPage(new LiteralText(Formatting.BLUE + bookText)
+        bookUtils.addPage(Text.literal(Formatting.BLUE + bookText)
                 .setStyle(Style.EMPTY
                         .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(json)))
         );
@@ -117,7 +116,7 @@ public class ImagetextLogic {
     public void giveBookPage() {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
-        BookUtils bookUtils = new BookUtils("Imagebook", mc.player.getName().asString());
+        BookUtils bookUtils = new BookUtils("Imagebook", mc.player.getName().getString());
         bookUtils.addPage(Text.Serializer.fromJson(getImagetextJSON()));
 
         FzmmUtils.giveItem(bookUtils.get());
@@ -128,7 +127,7 @@ public class ImagetextLogic {
         assert mc.player != null;
         BookUtils bookUtils = BookUtils.of(mc.player.getMainHandStack());
         if (bookUtils == null) {
-            bookUtils = new BookUtils("Imagebook", mc.player.getName().asString());
+            bookUtils = new BookUtils("Imagebook", mc.player.getName().getString());
         }
 
         bookUtils.addPage(Text.Serializer.fromJson(getImagetextJSON()));
@@ -137,7 +136,7 @@ public class ImagetextLogic {
     }
 
     private void addResolution() {
-        Text text = new LiteralText("Resolution: " + this.image.getWidth() + "x" + this.image.getHeight())
+        Text text = Text.literal("Resolution: " + this.image.getWidth() + "x" + this.image.getHeight())
                 .setStyle(Style.EMPTY.withColor(Configs.Colors.IMAGETEXT_MESSAGES.getColor().intValue));
         this.imagetext.add(FzmmUtils.toNbtString(text, true));
     }

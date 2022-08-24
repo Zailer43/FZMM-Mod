@@ -5,7 +5,6 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -35,7 +34,7 @@ public abstract class ItemStackMixin {
             assert nbt != null;
             List<String> tags = nbt.getKeys().stream().toList();
             int tagsSize = tags.size();
-            MutableText loreText = new LiteralText("Tags: ");
+            MutableText loreText = Text.literal("Tags: ");
             List<Text> list = cir.getReturnValue();
 
 
@@ -45,7 +44,7 @@ public abstract class ItemStackMixin {
                 loreText.append(tags.get(i) + (i == tagsSize - 1 ? "" : ", "));
                 if (i % 3 == 2) {
                     list.add(loreText.setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
-                    loreText = new LiteralText("");
+                    loreText = Text.empty();
                 }
             }
 
@@ -53,7 +52,7 @@ public abstract class ItemStackMixin {
                 list.add(loreText.setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
 
             ItemStack stack = this.copy();
-            MutableText lengthText = new LiteralText(FzmmUtils.getLengthInKB(stack));
+            MutableText lengthText = Text.literal(FzmmUtils.getLengthInKB(stack));
             list.add(lengthText.setStyle(Style.EMPTY.withColor(Formatting.GRAY)));
 
             cir.setReturnValue(list);

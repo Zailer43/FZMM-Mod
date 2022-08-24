@@ -17,7 +17,6 @@ import fzmm.zailer.me.client.gui.enums.FzmmIcons;
 import fzmm.zailer.me.client.gui.interfaces.ICustomOption;
 import fzmm.zailer.me.client.gui.options.ImageOption;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -58,7 +57,7 @@ public class WidgetConfigOptionMixin extends WidgetConfigOptionBase<GuiConfigsBa
 
             if (config.getConfigType() == CustomConfigType.IMAGE) {
                 ImageOption imageConfig = (ImageOption) config;
-                Text text = new LiteralText(imageConfig.getStatusMessage());
+                Text text = Text.of(imageConfig.getStatusMessage());
                 FzmmIcons icon = imageConfig.getStatusIcon();
                 icon.renderAt(this.imageStatusPosX, y + 2, this.zLevel);
                 this.textRenderer.draw(matrixStack, text, this.imageStatusPosX + 18, y + 6, 0xFFFFFFFF);

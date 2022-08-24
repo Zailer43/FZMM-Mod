@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -128,7 +127,7 @@ public class PlayerStatue {
             } catch (Exception e) {
                 if (name.length() > 100)
                     name = name.substring(0, 99);
-                name = Text.Serializer.toJson(new LiteralText(name));
+                name = Text.Serializer.toJson(Text.of(name));
             }
         }
 
@@ -178,7 +177,7 @@ public class PlayerStatue {
         int color = FzmmUtils.RGBAtoRGB(Configs.Colors.PLAYER_STATUE.getColor()).intValue;
 
         DisplayUtils displayUtils = new DisplayUtils(Configs.getConfigItem(Configs.Generic.PLAYER_STATUE_DEFAULT_CONTAINER))
-                .setName(new LiteralText("Player Statue").setStyle(Style.EMPTY.withColor(color).withBold(true)))
+                .setName(Text.literal("Player Statue").setStyle(Style.EMPTY.withColor(color).withBold(true)))
                 .addLore("Pos: " + x + " " + y + " " + z, color);
 
         InventoryUtils invUtils = new InventoryUtils(displayUtils.get())

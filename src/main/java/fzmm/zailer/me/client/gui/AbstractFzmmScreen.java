@@ -6,14 +6,14 @@ import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fzmm.zailer.me.client.gui.enums.Buttons;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public abstract class AbstractFzmmScreen extends GuiBase {
 
     public AbstractFzmmScreen(String titleKey, Screen parent) {
         super();
         this.setParent(parent);
-        this.setTitle(new TranslatableText(titleKey).getString());
+        this.setTitle(Text.translatable(titleKey).getString());
     }
 
     @Override

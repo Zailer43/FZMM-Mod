@@ -20,7 +20,7 @@ import fzmm.zailer.me.client.logic.playerStatue.PlayerStatue;
 import fzmm.zailer.me.utils.FzmmUtils;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ConfirmChatLinkScreen;
+import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -208,7 +208,7 @@ public class PlayerStatueScreen extends GuiOptionsBase {
 
         @Override
         public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-            GuiBase.openGui(new ConfirmChatLinkScreen(this, FAQ_URL, true));
+            GuiBase.openGui(new ConfirmLinkScreen(this, FAQ_URL, true));
         }
 
         @Override

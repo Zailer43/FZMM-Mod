@@ -9,6 +9,7 @@ import fzmm.zailer.me.client.FzmmItemGroup;
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.config.hotkeys.HotkeyCallbacks;
 import fzmm.zailer.me.config.hotkeys.InputHandler;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 
 public class FzmmInitializer implements IInitializationHandler {
 
@@ -23,7 +24,7 @@ public class FzmmInitializer implements IInitializationHandler {
 
         HotkeyCallbacks.init();
 
-        FzmmCommand.registerCommands();
+        ClientCommandRegistrationCallback.EVENT.register(FzmmCommand::registerCommands);
         FzmmItemGroup.register();
     }
 }

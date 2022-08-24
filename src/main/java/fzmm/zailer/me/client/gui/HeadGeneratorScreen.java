@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class HeadGeneratorScreen extends Screen {
     private Set<String> headNames;
 
     protected HeadGeneratorScreen() {
-        super(new LiteralText("headGenerator"));
+        super(Text.of("headGenerator"));
         this.initialized = false;
     }
 
@@ -36,13 +36,13 @@ public class HeadGeneratorScreen extends Screen {
         }
 
         String previousUsername = this.playerNameField != null ? this.playerNameField.getText() : "";
-        this.playerNameField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 50, 115, 20, new LiteralText("Player name"));
+        this.playerNameField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 50, 115, 20, Text.of("Player name"));
         this.playerNameField.setText(previousUsername);
 
-        this.loadSkinButton = new ButtonWidget(this.width / 2 + 20, 50, 80, ScreenConstants.NORMAL_BUTTON_HEIGHT, new LiteralText("Load skin"), new LoadPlayerSkinPressAction(this));
+        this.loadSkinButton = new ButtonWidget(this.width / 2 + 20, 50, 80, ScreenConstants.NORMAL_BUTTON_HEIGHT, Text.of("Load skin"), new LoadPlayerSkinPressAction(this));
 
         String previousSearch = this.searchBox != null ? this.searchBox.getText() : "";
-        this.searchBox = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 72, 200, 16, new LiteralText("Search..."));
+        this.searchBox = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 72, 200, 16, Text.of("Search..."));
         this.searchBox.setText(previousSearch);
         this.searchBox.setChangedListener(this::onSearchChange);
 

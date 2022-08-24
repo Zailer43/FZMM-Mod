@@ -1,6 +1,5 @@
 package fzmm.zailer.me.client.logic;
 
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -37,7 +36,7 @@ public class ImagetextLine {
     }
 
     public MutableText getLine(boolean disableItalic) {
-        MutableText lineList = LiteralText.EMPTY.copy().setStyle(disableItalic ? Style.EMPTY.withItalic(false) : Style.EMPTY);
+        MutableText lineList = Text.empty().setStyle(disableItalic ? Style.EMPTY.withItalic(false) : Style.EMPTY);
         short lineIndex = 0;
         for (int i = 0; i != this.line.size(); i++) {
             int color = this.line.get(i).getLeft();
@@ -47,7 +46,7 @@ public class ImagetextLine {
 
             if (this.isDefaultText && alpha == 0) {
                 String spaceString = " ".repeat(amount);
-                line = new LiteralText(spaceString + Formatting.BOLD + spaceString + Formatting.RESET );
+                line = Text.literal(spaceString + Formatting.BOLD + spaceString + Formatting.RESET );
                 lineIndex += amount;
             } else {
                 StringBuilder textStrBuilder = new StringBuilder();
@@ -57,7 +56,7 @@ public class ImagetextLine {
                 for (int x = 0; x != amount; x++)
                     textStrBuilder.append(this.getCharacter(lineIndex++));
 
-                line = new LiteralText(textStrBuilder.toString()).setStyle(Style.EMPTY.withColor(color));
+                line = Text.literal(textStrBuilder.toString()).setStyle(Style.EMPTY.withColor(color));
             }
             lineList.append(line);
         }

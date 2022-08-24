@@ -15,7 +15,6 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -42,7 +41,7 @@ public class HeadGeneratorListEntry extends ElementListWidget.Entry<HeadGenerato
         this.name = name;
         this.headBufferedImage = headBufferedImage;
         this.headIdentifier = this.getHeadIdentifier(headBufferedImage);
-        this.giveButton = new ButtonWidget(0, 0, 60, ScreenConstants.NORMAL_BUTTON_HEIGHT, new LiteralText(Buttons.GIVE.getText()), new GiveButtonListener(this));
+        this.giveButton = new ButtonWidget(0, 0, 60, ScreenConstants.NORMAL_BUTTON_HEIGHT, Text.of(Buttons.GIVE.getText()), new GiveButtonListener(this));
     }
 
     public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {

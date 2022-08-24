@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.enums.options;
 
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 public enum LoreOption implements IConfigOptionListEntry {
     ADD("add"),
@@ -20,7 +20,7 @@ public enum LoreOption implements IConfigOptionListEntry {
 
     @Override
     public String getDisplayName() {
-        return new TranslatableText("fzmm.gui.option.lore." + this.name).getString();
+        return Text.translatable("fzmm.gui.option.lore." + this.name).getString();
     }
 
     @Override

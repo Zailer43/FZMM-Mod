@@ -65,7 +65,7 @@ public class ImagetextScreen extends GuiOptionsBase {
         this.configSmoothImage = new ConfigBoolean("smoothImage", true, this.commentBase + "smoothImage");
         this.configLoreOption = new ConfigOptionList("loreMode", LoreOption.ADD, this.commentBase + "loreMode");
         this.configBookOption = new ConfigOptionList("bookMode", BookOption.ADD_PAGE, this.commentBase + "bookMode");
-        this.configBookAuthor = new ConfigString("author", player.getName().asString(), this.commentBase + "bookAuthor");
+        this.configBookAuthor = new ConfigString("author", player.getName().getString(), this.commentBase + "bookAuthor");
         this.configBookMessage = new ConfigString("message", Configs.Generic.DEFAULT_IMAGETEXT_BOOK_MESSAGE.getStringValue(), this.commentBase + "bookMessage");
         this.configPosX = new ConfigInteger("x", player.getBlockX(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "hologramCoordinates");
         this.configPosY = new ConfigInteger("y", player.getBlockY(), -0xffff, 0xffff, this.commentBase + "hologramCoordinates");
