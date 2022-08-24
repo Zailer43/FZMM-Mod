@@ -95,10 +95,8 @@ public class FzmmUtils {
 
     @Nullable
     public static BufferedImage getImageFromUrl(String urlLocation) throws IOException {
-        InputStream response = httpGetRequest(urlLocation, true);
-        if (response == null)
-            return null;
-        return ImageIO.read(response);
+        URL url = new URL(urlLocation);
+        return ImageIO.read(url);
     }
 
     @Nullable
