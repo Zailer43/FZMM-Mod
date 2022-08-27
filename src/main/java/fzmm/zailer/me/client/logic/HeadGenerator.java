@@ -1,19 +1,16 @@
 package fzmm.zailer.me.client.logic;
 
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
 import javax.annotation.Nullable;
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 public final class HeadGenerator {
@@ -49,12 +46,7 @@ public final class HeadGenerator {
             return null;
 
         Identifier textureIdentifier = getIdentifier(textureName);
-        try {
-            Optional<Resource> textureResource = MinecraftClient.getInstance().getResourceManager().getResource(textureIdentifier);
-            return textureResource.isEmpty() ? null : ImageIO.read(textureResource.get().getInputStream());
-        } catch (IOException e) {
-            return null;
-        }
+        return FzmmUtils.getImageFromIdentifier(textureIdentifier);
     }
 
     public static Set<String> getHeadsNames() {

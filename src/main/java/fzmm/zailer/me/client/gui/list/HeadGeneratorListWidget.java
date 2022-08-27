@@ -35,6 +35,8 @@ public class HeadGeneratorListWidget extends ElementListWidget<HeadGeneratorList
 
     public void updatePreview(BufferedImage skinBase) {
         this.headTextures.clear();
+        if (skinBase == null)
+            return;
 
         for (var headName : this.parent.getHeadNames()) {
             BufferedImage customHeadTexture = HeadGenerator.getTexture(headName);
@@ -73,8 +75,8 @@ public class HeadGeneratorListWidget extends ElementListWidget<HeadGeneratorList
         return this.parent.getPlayerName();
     }
 
-    public void setDelay() {
-        for (int i = 5; i != 0; i--) {
+    public void setDelay(int delay) {
+        for (int i = delay; i > 0; i--) {
             this.updateList(false, "Wait... " + i);
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
         }
@@ -88,5 +90,9 @@ public class HeadGeneratorListWidget extends ElementListWidget<HeadGeneratorList
             entry.setEnabled(enabled);
             entry.setButtonName(message);
         }
+    }
+
+    public int size() {
+        return this.children().size();
     }
 }

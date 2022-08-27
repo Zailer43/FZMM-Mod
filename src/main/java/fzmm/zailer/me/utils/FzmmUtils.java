@@ -1,22 +1,27 @@
 package fzmm.zailer.me.utils;
 
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fi.dy.masa.malilib.util.Color4f;
 import fzmm.zailer.me.config.Configs;
+import fzmm.zailer.me.mixin.PlayerSkinTextureAccessor;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.resource.Resource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -38,6 +43,8 @@ import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class FzmmUtils {
@@ -79,14 +86,6 @@ public class FzmmUtils {
             playerInventory.addPickBlock(stack);
             mc.interactionManager.clickCreativeStack(stack, 36 + playerInventory.selectedSlot);
         }
-    }
-
-    public static String getPlayerUuid(String name) throws IOException {
-        InputStream response = httpGetRequest("https://api.mojang.com/users/profiles/minecraft/" + name, false);
-        if (response == null)
-            return "";
-        JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(response));
-        return obj.get("id").getAsString();
     }
 
     public static BufferedImage getImageFromPath(String path) throws IOException {
@@ -172,9 +171,16 @@ public class FzmmUtils {
     }
 
     @Nullable
-    public static BufferedImage getPlayerSkin(String name) throws IOException, NullPointerException {
-        String uuid = FzmmUtils.getPlayerUuid(name);
-        InputStream inputStream = FzmmUtils.httpGetRequest("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid, false);
+    public static BufferedImage getPlayerSkin(String name) throws IOException, NullPointerException, JsonIOException {
+        BufferedImage skin = getPlayerSkinFromCache(name);
+
+        return skin == null ? getPlayerSkinFromMojang(name) : skin;
+    }
+
+    @Nullable
+    public static BufferedImage getPlayerSkinFromMojang(String name) throws IOException {
+        String stringUuid = getPlayerUuid(name);
+        InputStream inputStream = httpGetRequest("https://sessionserver.mojang.com/session/minecraft/profile/" + stringUuid, false);
         if (inputStream == null)
             return null;
 
@@ -185,7 +191,33 @@ public class FzmmUtils {
         obj = (JsonObject) JsonParser.parseString(valueJsonStr);
         String skinUrl = obj.getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
 
-        return FzmmUtils.getImageFromUrl(skinUrl);
+        return getImageFromUrl(skinUrl);
+    }
+
+    @Nullable
+    public static BufferedImage getPlayerSkinFromCache(String name) throws IOException {
+        MinecraftClient client = MinecraftClient.getInstance();
+        UUID uuid = client.getSocialInteractionsManager().getUuid(name);
+        assert client.world != null;
+        AbstractClientPlayerEntity player = (AbstractClientPlayerEntity) client.world.getPlayerByUuid(uuid);
+        if (player == null)
+            return null;
+
+        Identifier skinIdentifier = player.getSkinTexture();
+        PlayerSkinTexture skinTexture = (PlayerSkinTexture) client.getTextureManager().getTexture(skinIdentifier);
+
+        File skinFile = ((PlayerSkinTextureAccessor) skinTexture).getCacheFile();
+
+        return ImageIO.read(skinFile);
+    }
+
+    public static String getPlayerUuid(String name) throws IOException, JsonIOException {
+        InputStream response = httpGetRequest("https://api.mojang.com/users/profiles/minecraft/" + name, false);
+        if (response == null)
+            return "";
+
+        JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(response));
+        return obj.get("id").getAsString();
     }
 
     public static void saveBufferedImageAsIdentifier(BufferedImage bufferedImage, Identifier identifier) throws IOException {
@@ -200,5 +232,15 @@ public class FzmmUtils {
 
         MinecraftClient client = MinecraftClient.getInstance();
         client.execute(() -> client.getTextureManager().registerTexture(identifier, texture));
+    }
+
+    @Nullable
+    public static BufferedImage getImageFromIdentifier(Identifier identifier) {
+        try {
+            Optional<Resource> imageResource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
+            return imageResource.isEmpty() ? null : ImageIO.read(imageResource.get().getInputStream());
+        } catch (IOException ignored) {
+            return null;
+        }
     }
 }

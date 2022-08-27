@@ -1,8 +1,10 @@
 package fzmm.zailer.me.client.gui;
 
+import com.google.gson.JsonIOException;
 import fzmm.zailer.me.client.gui.list.HeadGeneratorListWidget;
 import fzmm.zailer.me.client.logic.HeadGenerator;
 import fzmm.zailer.me.utils.FzmmUtils;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -30,7 +32,7 @@ public class HeadGeneratorScreen extends Screen {
     @Override
     protected void init() {
         if (this.initialized) {
-            this.headListWidget.updateSize(this.width, this.height, 88, this.height - 100);
+            this.headListWidget.updateSize(this.width, this.height, 88, this.height - 80);
         } else {
             this.headListWidget = new HeadGeneratorListWidget(this, this.client, this.width, this.height, 88, this.height - 80, 36);
         }
@@ -70,6 +72,10 @@ public class HeadGeneratorScreen extends Screen {
 
         if (this.searchBox.getText().isEmpty() && !this.searchBox.isFocused())
             this.textRenderer.drawWithShadow(matrices, this.searchBox.getMessage(), this.searchBox.x + 2, this.searchBox.y + 4, 0xDDDDDD);
+
+        Text amountMessage = Text.of("There are " + this.headListWidget.size() + " results");
+        int x = this.width / 2 - this.textRenderer.getWidth(amountMessage) / 2;
+        this.textRenderer.drawWithShadow(matrices, amountMessage, x, 32, ScreenConstants.TEXT_COLOR);
     }
 
     @Override
@@ -96,7 +102,8 @@ public class HeadGeneratorScreen extends Screen {
 
                 this.parent.headListWidget.updatePreview(playerSkin);
                 this.parent.headListWidget.filter(this.parent.searchBox.getText());
-            } catch (IOException ignored) {
+            } catch (IOException | JsonIOException e) {
+                e.printStackTrace();
             }
         }
     }

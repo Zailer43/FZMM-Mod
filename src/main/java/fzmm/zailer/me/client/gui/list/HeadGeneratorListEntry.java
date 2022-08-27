@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry.GRAY_COLOR;
 import static net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry.WHITE_COLOR;
@@ -99,10 +100,13 @@ public class HeadGeneratorListEntry extends ElementListWidget.Entry<HeadGenerato
             new Thread(() -> {
                 try {
                     this.parent.parent.updateList(false, "Wait...");
-                    ItemStack head = new HeadUtils().uploadHead(this.parent.headBufferedImage, this.parent.name).getHead(this.parent.getPlayerName());
+
+                    HeadUtils headUtils = new HeadUtils().uploadHead(this.parent.headBufferedImage, this.parent.name);
+                    int delay = (int) TimeUnit.MILLISECONDS.toSeconds(headUtils.getDelayForNextInMillis());
+                    ItemStack head = headUtils.getHead(this.parent.getPlayerName());
 
                     FzmmUtils.giveItem(head);
-                    this.parent.parent.setDelay();
+                    this.parent.parent.setDelay(delay);
                 } catch (IOException ignored) {
                 }
             }).start();
