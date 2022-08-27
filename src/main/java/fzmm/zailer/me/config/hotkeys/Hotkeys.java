@@ -14,6 +14,7 @@ public class Hotkeys {
     public static final ConfigHotkey CONVERTERS_GUI = new ConfigHotkey("convertersGui", "", "");
     public static final ConfigHotkey ENCODEBOOK_GUI = new ConfigHotkey("encryptbook", "", "");
     public static final ConfigHotkey GRADIENT_GUI = new ConfigHotkey("gradientGui", "Z,G", "");
+    public static final ConfigHotkey HEAD_GENERATOR_GUI = new ConfigHotkey("headGeneratorGui", "Z,H", "");
     public static final ConfigHotkey IMAGETEXT_GUI = new ConfigHotkey("imagetextGui", "Z,I", "");
     public static final ConfigHotkey PLAYER_STATUE_GUI = new ConfigHotkey("playerStatueGui", "Z,P", "");
 
@@ -31,6 +32,7 @@ public class Hotkeys {
             CONVERTERS_GUI,
             ENCODEBOOK_GUI,
             GRADIENT_GUI,
+            HEAD_GENERATOR_GUI,
             IMAGETEXT_GUI,
             PLAYER_STATUE_GUI,
 

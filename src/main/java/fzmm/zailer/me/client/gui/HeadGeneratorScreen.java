@@ -4,7 +4,6 @@ import com.google.gson.JsonIOException;
 import fzmm.zailer.me.client.gui.list.HeadGeneratorListWidget;
 import fzmm.zailer.me.client.logic.HeadGenerator;
 import fzmm.zailer.me.utils.FzmmUtils;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -24,8 +23,8 @@ public class HeadGeneratorScreen extends Screen {
     private String currentSearch;
     private Set<String> headNames;
 
-    protected HeadGeneratorScreen() {
-        super(Text.of("headGenerator"));
+    public HeadGeneratorScreen() {
+        super(Text.translatable("headGenerator"));
         this.initialized = false;
     }
 
@@ -38,13 +37,13 @@ public class HeadGeneratorScreen extends Screen {
         }
 
         String previousUsername = this.playerNameField != null ? this.playerNameField.getText() : "";
-        this.playerNameField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 50, 115, 20, Text.of("Player name"));
+        this.playerNameField = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 50, 115, 20, Text.translatable("fzmm.gui.headGenerator.playerName"));
         this.playerNameField.setText(previousUsername);
 
-        this.loadSkinButton = new ButtonWidget(this.width / 2 + 20, 50, 80, ScreenConstants.NORMAL_BUTTON_HEIGHT, Text.of("Load skin"), new LoadPlayerSkinPressAction(this));
+        this.loadSkinButton = new ButtonWidget(this.width / 2 + 20, 50, 80, ScreenConstants.NORMAL_BUTTON_HEIGHT, Text.translatable("fzmm.gui.headGenerator.loadSkin"), new LoadPlayerSkinPressAction(this));
 
         String previousSearch = this.searchBox != null ? this.searchBox.getText() : "";
-        this.searchBox = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 72, 200, 16, Text.of("Search..."));
+        this.searchBox = new TextFieldWidget(this.textRenderer, this.width / 2 - 100, 72, 200, 16, Text.translatable("gui.socialInteractions.search_hint"));
         this.searchBox.setText(previousSearch);
         this.searchBox.setChangedListener(this::onSearchChange);
 
@@ -73,9 +72,9 @@ public class HeadGeneratorScreen extends Screen {
         if (this.searchBox.getText().isEmpty() && !this.searchBox.isFocused())
             this.textRenderer.drawWithShadow(matrices, this.searchBox.getMessage(), this.searchBox.x + 2, this.searchBox.y + 4, 0xDDDDDD);
 
-        Text amountMessage = Text.of("There are " + this.headListWidget.size() + " results");
-        int x = this.width / 2 - this.textRenderer.getWidth(amountMessage) / 2;
-        this.textRenderer.drawWithShadow(matrices, amountMessage, x, 32, ScreenConstants.TEXT_COLOR);
+        Text numberOfResults = Text.translatable("fzmm.gui.headGenerator.numberOfResults", this.headListWidget.size());
+        int x = this.width / 2 - this.textRenderer.getWidth(numberOfResults) / 2;
+        this.textRenderer.drawWithShadow(matrices, numberOfResults, x, 32, ScreenConstants.TEXT_COLOR);
     }
 
     @Override

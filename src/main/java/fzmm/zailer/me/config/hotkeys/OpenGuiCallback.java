@@ -31,6 +31,8 @@ public class OpenGuiCallback implements IHotkeyCallback {
             screen = new EncryptbookScreen(null);
         else if (key == Hotkeys.GRADIENT_GUI.getKeybind())
             screen = new GradientScreen(null);
+        else if (key == Hotkeys.HEAD_GENERATOR_GUI.getKeybind())
+            screen = new HeadGeneratorScreen();
         else if (key == Hotkeys.IMAGETEXT_GUI.getKeybind())
             screen = new ImagetextScreen(null);
         else if (key == Hotkeys.PLAYER_STATUE_GUI.getKeybind())

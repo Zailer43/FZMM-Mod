@@ -11,6 +11,7 @@ public class HotkeyCallbacks {
         Hotkeys.CONVERTERS_GUI.getKeybind().setCallback(openGuiCallback);
         Hotkeys.ENCODEBOOK_GUI.getKeybind().setCallback(openGuiCallback);
         Hotkeys.GRADIENT_GUI.getKeybind().setCallback(openGuiCallback);
+        Hotkeys.HEAD_GENERATOR_GUI.getKeybind().setCallback(openGuiCallback);
         Hotkeys.IMAGETEXT_GUI.getKeybind().setCallback(openGuiCallback);
         Hotkeys.PLAYER_STATUE_GUI.getKeybind().setCallback(openGuiCallback);
 

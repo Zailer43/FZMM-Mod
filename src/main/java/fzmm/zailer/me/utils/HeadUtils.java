@@ -3,11 +3,13 @@ package fzmm.zailer.me.utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.Configs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.*;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -22,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,6 +34,7 @@ import java.util.Random;
 
 public class HeadUtils {
     public static final String MINESKIN_API = "https://api.mineskin.org/";
+    private static final Identifier HEADS_WATER_MARK = new Identifier(FzmmClient.MOD_ID, "textures/watermark/heads_watermark.png");
     private static final Logger LOGGER = LogManager.getLogger("FZMM HeadUtils");
     private String skinValue;
     private boolean skinGenerated;
@@ -73,17 +77,19 @@ public class HeadUtils {
     }
 
     public HeadUtils uploadHead(BufferedImage headSkin, String skinName) throws IOException {
-        String apiKey = Configs.Generic.MINESKIN_API_KEY.getStringValue();
+        this.applyWatermark(headSkin);
+        String apiKey = Configs.Generic.MINESKIN_PUBLIC_SKINS.getStringValue();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(headSkin, "png", baos);
         byte[] skin = baos.toByteArray();
 
         try (CloseableHttpClient httpclient = HttpClients.custom().setUserAgent("FZMM/1.0").build()) {
             HttpPost httppost = new HttpPost(MINESKIN_API + "generate/upload");
+            boolean isPublic = Configs.Generic.MINESKIN_PUBLIC_SKINS.getBooleanValue();
 
             HttpEntity reqEntity = MultipartEntityBuilder.create()
                     .addPart("key", new StringBody(apiKey, ContentType.TEXT_PLAIN))
-                    .addPart("visibility", new StringBody("1", ContentType.TEXT_PLAIN))
+                    .addPart("visibility", new StringBody(isPublic ? "0" : "1", ContentType.TEXT_PLAIN))
                     .addBinaryBody("file", skin, ContentType.APPLICATION_FORM_URLENCODED, "head")
                     .build();
 
@@ -156,5 +162,13 @@ public class HeadUtils {
         ItemStack stack = Items.PLAYER_HEAD.getDefaultStack();
         stack.setNbt(tag);
         return stack;
+    }
+
+    private void applyWatermark(BufferedImage headSkin) {
+        BufferedImage watermark = FzmmUtils.getImageFromIdentifier(HEADS_WATER_MARK);
+
+        Graphics2D g2d = headSkin.createGraphics();
+        g2d.drawImage(watermark, 0, 16, 64, 64, 0, 16, 64, 64, null);
+        g2d.dispose();
     }
 }

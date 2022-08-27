@@ -10,6 +10,7 @@ import fzmm.zailer.me.utils.HeadUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.PlayerSkinDrawer;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
@@ -54,16 +55,13 @@ public class HeadGeneratorListEntry extends ElementListWidget.Entry<HeadGenerato
         int yText = y + (entryHeight - 9) / 2;
 
         RenderSystem.setShaderTexture(0, this.headIdentifier);
-        DrawableHelper.drawTexture(matrices, xWithPadding, lineHeight, 24, 24, 8.0F, 8.0F, 8, 8, 64, 64);
-        RenderSystem.enableBlend();
-        DrawableHelper.drawTexture(matrices, xWithPadding, lineHeight, 24, 24, 40.0F, 8.0F, 8, 8, 64, 64);
-        RenderSystem.disableBlend();
+        PlayerSkinDrawer.draw(matrices, xWithPadding, lineHeight, 24);
+
         this.client.textRenderer.draw(matrices, this.name, (float) xText, (float) yText, WHITE_COLOR);
 
         this.giveButton.x = x + (entryWidth - this.giveButton.getWidth() - 4);
         this.giveButton.y = y + (entryHeight - this.giveButton.getHeight()) / 2;
         this.giveButton.render(matrices, mouseX, mouseY, tickDelta);
-
     }
 
     public String getName() {
