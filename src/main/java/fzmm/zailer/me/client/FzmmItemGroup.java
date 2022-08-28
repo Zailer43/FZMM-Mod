@@ -7,19 +7,23 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.tag.ItemTags;
+import net.minecraft.tag.PaintingVariantTags;
 import net.minecraft.tag.TagKey;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.village.raid.Raid;
 
 import java.util.List;
@@ -45,6 +49,7 @@ public class FzmmItemGroup {
                     addItemFrames(stacks);
                     addNameTags(stacks);
                     addCrossbows(stacks);
+                    addUnobtainablePaintings(stacks);
                     stacks.add(Raid.getOminousBanner());
 
                     ItemStack elytra = new ItemStack(Items.ELYTRA);
@@ -79,6 +84,9 @@ public class FzmmItemGroup {
                     stacks.add(new BlockStateTagItem(Items.LANTERN, "Lantern on the floor").add("hanging", false).get());
                     stacks.add(new BlockStateTagItem(Items.SOUL_LANTERN, "Hanging soul lantern").add("hanging", true).get());
                     stacks.add(new BlockStateTagItem(Items.SOUL_LANTERN, "Soul lantern on the floor").add("hanging", false).get());
+                    stacks.add(new BlockStateTagItem(Items.MANGROVE_PROPAGULE, "Hanging mangrove propagule").add("hanging", true).get());
+                    // it is not possible to place it on faces of blocks other than the bottom one, it is useless
+//                    stacks.add(new BlockStateTagItem(Items.MANGROVE_PROPAGULE, "Mangrove propagule on the floor").add("hanging", false).get());
                     stacks.add(new BlockStateTagItem(Items.COMPOSTER, "Full composter").add("level", 8).get());
                     stacks.add(new BlockStateTagItem(Items.RESPAWN_ANCHOR, "Full respawn anchor").add("charges", 4).get());
                     stacks.add(new BlockStateTagItem(Items.BAMBOO, "Bamboo with leaves").add("leaves", "large").get());
@@ -100,6 +108,11 @@ public class FzmmItemGroup {
                     stacks.add(new BlockStateTagItem(Items.TURTLE_EGG, "Turtle egg (4)").add("eggs", 4).get());
                     stacks.add(new BlockStateTagItem(Items.CAKE, "A slice of cake").add("bites", 6).get());
                     stacks.add(new BlockStateTagItem(Items.REDSTONE, "Powered redstone").add("power", 15).get());
+                    stacks.add(new BlockStateTagItem(Items.SCULK_CATALYST, "Sculk catalyst (bloom: true)").add("bloom", true).get());
+                    stacks.add(new BlockStateTagItem(Items.SCULK_SHRIEKER, "Can summon warden: true").add("can_summon", true).get());
+                    stacks.add(new BlockStateTagItem(Items.SCULK_SHRIEKER, "Sculk shrieker (locked)").add("shrieking", true).get());
+                    stacks.add(new BlockStateTagItem(Items.GLOW_LICHEN, "Glow lichen block").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
+                    stacks.add(new BlockStateTagItem(Items.SCULK_VEIN, "Sculk vein block").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
                     addHalfDoors(stacks);
                     addTallFlowers(stacks);
                     addLeaves(stacks);
@@ -219,14 +232,14 @@ public class FzmmItemGroup {
     }
 
     private static void addLeaves(List<ItemStack> stacks) {
-        for (Item item : Registry.ITEM) {
+        for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.LEAVES))
                 stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (persistent: false)").add("persistent", false).get());
         }
     }
 
     private static void addHalfDoors(List<ItemStack> stacks) {
-        for (Item item : Registry.ITEM) {
+        for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.DOORS))
                 addHalfUpper(stacks, item, " (upper half)");
         }
@@ -234,7 +247,7 @@ public class FzmmItemGroup {
 
     private static void addTallFlowers(List<ItemStack> stacks) {
         String suffix = " (self-destructs)";
-        for (Item item : Registry.ITEM) {
+        for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.TALL_FLOWERS))
                 addHalfUpper(stacks, item, suffix);
         }
@@ -248,24 +261,47 @@ public class FzmmItemGroup {
     }
 
     private static void addLitCandles(List<ItemStack> stacks) {
-        for (Item item : Registry.ITEM) {
+        for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.CANDLES))
                 stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (lit)").add("lit", true).get());
         }
     }
 
     private static void addHalfBed(List<ItemStack> stacks) {
-        for (Item item : Registry.ITEM) {
+        for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.BEDS))
                 stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (head part)").add("part", "head").get());
         }
     }
 
     private static void addLockedBed(List<ItemStack> stacks) {
-        for (Item item : Registry.ITEM) {
+        for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.BEDS))
                 stacks.add(new BlockStateTagItem(item, item.getName().getString() + " (locked)").add("occupied", true).get());
         }
+    }
+
+    private static void addUnobtainablePaintings(List<ItemStack> stacks) {
+        for (var painting : Registry.PAINTING_VARIANT) {
+            if (!contains(painting)) {
+                String variantName = Registry.PAINTING_VARIANT.getId(painting).getPath();
+
+                ItemStack paintingStack = new DisplayUtils(Items.PAINTING).setName(variantName).get();
+                NbtCompound entityTag = new NbtCompound();
+                entityTag.put("variant", NbtString.of(variantName));
+                paintingStack.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
+
+                stacks.add(paintingStack);
+            }
+        }
+    }
+
+    private static boolean contains(PaintingVariant paintingVariant) {
+        for (RegistryEntry<PaintingVariant> paintingVariantEntry : Registry.PAINTING_VARIANT.iterateEntries(PaintingVariantTags.PLACEABLE)) {
+            if (paintingVariantEntry.value().equals(paintingVariant))
+                return true;
+        }
+        return false;
     }
 
     private static boolean contains(Item item, TagKey<Item> tag) {
