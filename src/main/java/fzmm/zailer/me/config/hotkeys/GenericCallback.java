@@ -121,7 +121,8 @@ public class GenericCallback implements IHotkeyCallback {
         String clipboard = MinecraftClient.getInstance().keyboard.getClipboard();
 
         if (slot.hasStack()) {
-            DisplayUtils display = new DisplayUtils(slotStack).addLore(clipboard.split("\r\n"));
+            String lineSeparator = System.getProperty("line.separator");
+            DisplayUtils display = new DisplayUtils(slotStack).addLore(clipboard.split(lineSeparator));
 
             FzmmUtils.giveItem(display.get());
         } else {
