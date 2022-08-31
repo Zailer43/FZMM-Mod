@@ -24,6 +24,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.world.World;
@@ -43,6 +44,7 @@ public class ImagetextScreen extends GuiOptionsBase {
     private final ConfigInteger configHeight;
     private final ConfigString configCharacters;
     private final ConfigBoolean configSmoothImage;
+    private final ConfigBoolean configShowResolution;
     private final ConfigOptionList configLoreOption;
     private final ConfigOptionList configBookOption;
     private final ConfigString configBookAuthor;
@@ -50,6 +52,8 @@ public class ImagetextScreen extends GuiOptionsBase {
     private final ConfigInteger configPosX;
     private final ConfigInteger configPosY;
     private final ConfigInteger configPosZ;
+    private final ImagetextLogic imagetextLogic;
+    private ButtonGeneric previewButton;
 
     public ImagetextScreen(Screen parent) {
         super("imagetext", parent);
@@ -63,6 +67,7 @@ public class ImagetextScreen extends GuiOptionsBase {
         this.configHeight = new ConfigInteger("height", DEFAULT_SIZE_VALUE, MIN_SIZE_VALUE, MAX_SIZE_VALUE, this.commentBase + "resolution");
         this.configCharacters = new ConfigString("characters", DEFAULT_CHARACTER, this.commentBase + "characters");
         this.configSmoothImage = new ConfigBoolean("smoothImage", true, this.commentBase + "smoothImage");
+        this.configShowResolution = new ConfigBoolean("showResolution", false, this.commentBase + "showResolution");
         this.configLoreOption = new ConfigOptionList("loreMode", LoreOption.ADD, this.commentBase + "loreMode");
         this.configBookOption = new ConfigOptionList("bookMode", BookOption.ADD_PAGE, this.commentBase + "bookMode");
         this.configBookAuthor = new ConfigString("author", player.getName().getString(), this.commentBase + "bookAuthor");
@@ -76,6 +81,7 @@ public class ImagetextScreen extends GuiOptionsBase {
 
         this.configWidth.toggleUseSlider();
         this.configHeight.toggleUseSlider();
+        this.imagetextLogic = new ImagetextLogic();
     }
 
     @Override
@@ -85,8 +91,11 @@ public class ImagetextScreen extends GuiOptionsBase {
         this.createTabs(ImagetextGuiTab.values(), new TabButtonListener(this));
 
         ButtonGeneric executeButton = Buttons.EXECUTE.get(20, this.height - 40, ScreenConstants.NORMAL_BUTTON_WIDTH);
+        // Malilib does not support text hover with Text class
+        this.previewButton = Buttons.PREVIEW.get(24 + ScreenConstants.NORMAL_BUTTON_WIDTH, this.height - 40, ScreenConstants.NORMAL_BUTTON_WIDTH);
 
         this.addButton(executeButton, new ExecuteButtonListener());
+        this.addButton(this.previewButton, new PreviewButtonListener());
     }
 
     @Override
@@ -98,6 +107,7 @@ public class ImagetextScreen extends GuiOptionsBase {
         options.add(this.configHeight);
         options.add(this.configCharacters);
         options.add(this.configSmoothImage);
+        options.add(this.configShowResolution);
 
         List<ConfigOptionWrapper> optionsWrapper = OptionWrapper.createFor(options);
         this.addTabOptions(optionsWrapper);
@@ -134,6 +144,14 @@ public class ImagetextScreen extends GuiOptionsBase {
         }
 
         list.addAll(OptionWrapper.createFor(options));
+    }
+
+    @Override
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+
+        if (this.previewButton.isMouseOver() && !this.imagetextLogic.isEmpty())
+            this.renderTooltip(matrixStack, this.imagetextLogic.getTextList(), mouseX, mouseY);
     }
 
     private static class TabButtonListener implements ITabListener {
@@ -202,21 +220,8 @@ public class ImagetextScreen extends GuiOptionsBase {
             assert client != null;
             assert client.player != null;
             ItemStack stack = client.player.getMainHandStack();
-            BufferedImage image = ImagetextScreen.this.configImage.getImage();
-            int width = ImagetextScreen.this.configWidth.getIntegerValue();
-            int height = ImagetextScreen.this.configHeight.getIntegerValue();
-            String characters = ImagetextScreen.this.configCharacters.getStringValue();
-            boolean smooth = ImagetextScreen.this.configSmoothImage.getBooleanValue();
 
-            if (characters.isEmpty())
-                characters = DEFAULT_CHARACTER;
-
-            if (tab == ImagetextGuiTab.BOOK_PAGE) {
-                width = this.getMaxImageWidthForBookPage(characters);
-                height = 15;
-            }
-
-            ImagetextLogic imagetext = new ImagetextLogic(image, characters, width, height, smooth);
+            ImagetextScreen.this.updateImagetext();
 
             LoreOption loreOption = (LoreOption) ImagetextScreen.this.configLoreOption.getOptionListValue();
             BookOption bookOption = (BookOption) ImagetextScreen.this.configBookOption.getOptionListValue();
@@ -226,41 +231,73 @@ public class ImagetextScreen extends GuiOptionsBase {
             int y = ImagetextScreen.this.configPosY.getIntegerValue();
             int z = ImagetextScreen.this.configPosZ.getIntegerValue();
 
+
             switch (tab) {
-                case LORE -> imagetext.giveInLore(stack, loreOption == LoreOption.ADD);
+                case LORE -> ImagetextScreen.this.imagetextLogic.giveInLore(stack, loreOption == LoreOption.ADD);
                 case BOOK_PAGE -> {
                     if (bookOption == BookOption.ADD_PAGE)
-                        imagetext.addBookPage();
+                        ImagetextScreen.this.imagetextLogic.addBookPage();
                     else
-                        imagetext.giveBookPage();
+                        ImagetextScreen.this.imagetextLogic.giveBookPage();
                 }
-                case BOOK_TOOLTIP -> imagetext.giveBookTooltip(author, bookMessage);
-                case HOLOGRAM -> imagetext.giveAsHologram(x, y, z);
-                case JSON -> client.keyboard.setClipboard(imagetext.getImagetextString());
+                case BOOK_TOOLTIP -> ImagetextScreen.this.imagetextLogic.giveBookTooltip(author, bookMessage);
+                case HOLOGRAM -> ImagetextScreen.this.imagetextLogic.giveAsHologram(x, y, z);
+                case JSON -> client.keyboard.setClipboard(ImagetextScreen.this.imagetextLogic.getImagetextString());
             }
-        }
-
-        private int getMaxImageWidthForBookPage(String characters) {
-            int maxTextWidth = 113; //BookScreen.MAX_TEXT_WIDTH = 114;
-            int width = 0;
-            TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-
-            if (characters.length() == 1)
-                width = maxTextWidth / textRenderer.getWidth(characters);
-            else {
-                String message = "";
-                int length = characters.length();
-                do {
-                    message += characters.charAt(width % length);
-                    width++;
-                } while (textRenderer.getWidth(message) < maxTextWidth);
-            }
-
-            return width;
         }
     }
 
-    private record ChangeSizeCallback(ImagetextScreen parent, ConfigInteger configToChange, boolean isWidth) implements IValueChangeCallback<ConfigInteger> {
+    private class PreviewButtonListener implements IButtonActionListener {
+
+        @Override
+        public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
+            ImagetextScreen.this.updateImagetext();
+        }
+    }
+
+    public void updateImagetext() {
+        if (this.configImage.hasNoImage())
+            return;
+
+        BufferedImage image = this.configImage.getImage();
+        String characters = this.configCharacters.getStringValue();
+        int width = this.configWidth.getIntegerValue();
+        int height = this.configHeight.getIntegerValue();
+        boolean smoothScaling = this.configSmoothImage.getBooleanValue();
+        boolean showResolution = this.configShowResolution.getBooleanValue();
+
+        if (tab == ImagetextGuiTab.BOOK_PAGE) {
+            width = this.getMaxImageWidthForBookPage(characters);
+            height = 15;
+        }
+
+        this.imagetextLogic.generateImagetext(image, characters, width, height, smoothScaling);
+
+        if (showResolution)
+            this.imagetextLogic.addResolution();
+    }
+
+    private int getMaxImageWidthForBookPage(String characters) {
+        int maxTextWidth = 113; //BookScreen.MAX_TEXT_WIDTH = 114;
+        int width = 0;
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+
+        if (characters.length() == 1)
+            width = maxTextWidth / textRenderer.getWidth(characters);
+        else {
+            String message = "";
+            int length = characters.length();
+            do {
+                message += characters.charAt(width % length);
+                width++;
+            } while (textRenderer.getWidth(message) < maxTextWidth);
+        }
+
+        return width;
+    }
+
+    private record ChangeSizeCallback(ImagetextScreen parent, ConfigInteger configToChange,
+                                      boolean isWidth) implements IValueChangeCallback<ConfigInteger> {
 
         @Override
         public void onValueChanged(ConfigInteger config) {

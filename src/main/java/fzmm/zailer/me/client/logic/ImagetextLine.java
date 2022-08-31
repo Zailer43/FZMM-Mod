@@ -35,8 +35,8 @@ public class ImagetextLine {
         return this;
     }
 
-    public MutableText getLine(boolean disableItalic) {
-        MutableText lineList = Text.empty().setStyle(disableItalic ? Style.EMPTY.withItalic(false) : Style.EMPTY);
+    public MutableText getLine() {
+        MutableText lineList = Text.empty().setStyle(Style.EMPTY.withItalic(false));
         short lineIndex = 0;
         for (int i = 0; i != this.line.size(); i++) {
             int color = this.line.get(i).getLeft();

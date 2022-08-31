@@ -12,42 +12,49 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.HoverEvent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec2f;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImagetextLogic {
-    private final BufferedImage image;
-    private final String characters;
-    private final boolean smoothRescaling;
     private NbtList imagetext;
+    private int width;
+    private int height;
 
-    public ImagetextLogic(BufferedImage image, String characters, int width, int height, boolean smoothRescaling) {
-        this.smoothRescaling = smoothRescaling;
-        this.image = this.resizeImage(image, width, height);
-        this.characters = characters.isEmpty() ? ImagetextLine.DEFAULT_TEXT : characters;
+    public ImagetextLogic() {
+        this.imagetext = new NbtList();
+        this.width = 0;
+        this.height = 0;
     }
 
-    private void generateImagetext(boolean disableItalic) {
+    public ImagetextLogic generateImagetext(BufferedImage image, @Nullable String characters, int width, int height, boolean smoothRescaling) {
+        image = this.resizeImage(image, width, height, smoothRescaling);
+        this.width = width;
+        this.height = height;
+        if (characters == null || characters.isEmpty())
+            characters = ImagetextLine.DEFAULT_TEXT;
         NbtList tooltipList = new NbtList();
-        int height = image.getHeight();
-        int width = image.getWidth();
 
         for (int y = 0; y != height; y++) {
-            ImagetextLine line = new ImagetextLine(this.characters);
+            ImagetextLine line = new ImagetextLine(characters);
             for (int x = 0; x != width; x++) {
-                line.add(this.image.getRGB(x, y));
+                line.add(image.getRGB(x, y));
             }
-            tooltipList.add(FzmmUtils.toNbtString(line.getLine(disableItalic), false));
+            tooltipList.add(FzmmUtils.toNbtString(line.getLine(), false));
         }
-        imagetext = tooltipList;
+        this.imagetext = tooltipList;
+        return this;
     }
 
-    private BufferedImage resizeImage(BufferedImage image, int width, int height) {
+    private BufferedImage resizeImage(BufferedImage image, int width, int height, boolean smoothRescaling) {
         Image tmp = image.getScaledInstance(width, height, smoothRescaling ? Image.SCALE_SMOOTH : Image.SCALE_REPLICATE);
         BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
@@ -80,9 +87,6 @@ public class ImagetextLogic {
         if (stack.isEmpty())
             stack = Configs.getConfigItem(Configs.Generic.DEFAULT_IMAGETEXT_ITEM).getDefaultStack();
 
-        this.generateImagetext(true);
-        this.addResolution();
-
         DisplayUtils display = new DisplayUtils(stack);
         if (add)
             display.addLore(this.imagetext).get();
@@ -96,11 +100,10 @@ public class ImagetextLogic {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
         BookUtils bookUtils = new BookUtils("Imagebook", author);
-        JsonArray json = getImagetextJSON();
 
         bookUtils.addPage(Text.literal(Formatting.BLUE + bookText)
                 .setStyle(Style.EMPTY
-                        .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(json)))
+                        .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(this.getText())))
         );
 
         FzmmUtils.giveItem(bookUtils.get());
@@ -117,7 +120,7 @@ public class ImagetextLogic {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
         BookUtils bookUtils = new BookUtils("Imagebook", mc.player.getName().getString());
-        bookUtils.addPage(Text.Serializer.fromJson(getImagetextJSON()));
+        bookUtils.addPage(this.getText());
 
         FzmmUtils.giveItem(bookUtils.get());
     }
@@ -126,17 +129,17 @@ public class ImagetextLogic {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
         BookUtils bookUtils = BookUtils.of(mc.player.getMainHandStack());
-        if (bookUtils == null) {
+        if (bookUtils == null)
             bookUtils = new BookUtils("Imagebook", mc.player.getName().getString());
-        }
 
-        bookUtils.addPage(Text.Serializer.fromJson(getImagetextJSON()));
+        bookUtils.addPage(this.getText());
 
         FzmmUtils.giveItem(bookUtils.get());
     }
 
-    private void addResolution() {
-        Text text = Text.literal("Resolution: " + this.image.getWidth() + "x" + this.image.getHeight())
+    public void addResolution() {
+        String message = Text.translatable("imagetext.resolution", this.width, this.height).getString();
+        Text text = Text.translatable(message)
                 .setStyle(Style.EMPTY.withColor(Configs.Colors.IMAGETEXT_MESSAGES.getColor().intValue));
         this.imagetext.add(FzmmUtils.toNbtString(text, true));
     }
@@ -149,7 +152,6 @@ public class ImagetextLogic {
         NbtList shulkerItems = new NbtList();
         Color4f color = Configs.Colors.IMAGETEXT_HOLOGRAM.getColor();
 
-        this.generateImagetext(false);
         byte size = (byte) this.imagetext.size(),
             hopperIndex = 0;
 
@@ -165,9 +167,9 @@ public class ImagetextLogic {
                 hopperIndex++;
             }
         }
-        if (shulkerItems.size() != 0) {
+
+        if (shulkerItems.size() != 0)
             addShulker(shulkerItems, hopperItems, hopperIndex);
-        }
 
         hopperBlockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, hopperItems);
         hopper.setSubNbt(TagsConstant.BLOCK_ENTITY, hopperBlockEntityTag);
@@ -185,32 +187,34 @@ public class ImagetextLogic {
         InventoryUtils.addSlot(hopperItems, shulker, hopperIndex);
     }
 
-    public JsonArray getImagetextJSON() {
-        this.generateImagetext(false);
-
-        JsonArray json = new JsonArray();
-
-        for (NbtElement lineTag : this.imagetext) {
-            String line = lineTag.asString().replaceAll(String.valueOf(Formatting.FORMATTING_CODE_PREFIX), "\\\\\\u00a7");
-            JsonElement jsonLine = JsonParser.parseString(line);
-            if (jsonLine instanceof JsonArray jsonArray) {
-                int size = jsonArray.size() - 1;
-                JsonElement lastElement = jsonArray.get(size);
-                if (lastElement instanceof  JsonPrimitive jsonPrimitive && jsonPrimitive.isString()) {
-                    jsonArray.set(size, new JsonPrimitive(jsonPrimitive.getAsString() + "\n"));
-                } else if (lastElement instanceof JsonObject jsonObject && jsonObject.has("text")) {
-                    jsonObject.addProperty("text", jsonObject.get("text").getAsString() + "\n");
-                    jsonArray.set(size, jsonObject);
-                }
-                for (JsonElement element : jsonArray)
-                    json.add(element);
-            }
-        }
-
-        return json;
+    public String getImagetextString() {
+        return Text.Serializer.toJson(this.getText());
     }
 
-    public String getImagetextString() {
-        return this.getImagetextJSON().toString();
+    public NbtList get() {
+        return this.imagetext;
+    }
+
+    public Text getText() {
+        MutableText text = Text.empty();
+
+        for (var line : this.getTextList())
+            text.append(line).append("\n");
+
+        return text;
+    }
+
+    public List<Text> getTextList() {
+        List<Text> textList = new ArrayList<>();
+
+        for (var line : this.imagetext) {
+            textList.add(Text.Serializer.fromJson(line.asString()));
+        }
+
+        return textList;
+    }
+
+    public boolean isEmpty() {
+        return this.imagetext.isEmpty();
     }
 }

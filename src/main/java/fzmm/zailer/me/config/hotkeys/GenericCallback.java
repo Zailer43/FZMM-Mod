@@ -172,7 +172,8 @@ public class GenericCallback implements IHotkeyCallback {
             DisplayUtils displayUtils = new DisplayUtils(Configs.getConfigItem(Configs.Generic.DEFAULT_IMAGETEXT_ITEM))
                     .setName(itemName, Configs.Colors.IMAGETEXT_MESSAGES.getColor());
 
-            new ImagetextLogic(scaled, ImagetextLine.DEFAULT_TEXT, imagetextSize, imagetextSize, true)
+            new ImagetextLogic()
+                    .generateImagetext(scaled, ImagetextLine.DEFAULT_TEXT, imagetextSize, imagetextSize, true)
                     .giveInLore(displayUtils.get(), false);
 
         } catch (IOException ignored) {

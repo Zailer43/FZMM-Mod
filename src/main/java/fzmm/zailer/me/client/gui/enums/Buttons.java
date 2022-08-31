@@ -31,6 +31,7 @@ public enum Buttons {
     MAIN_ITEMS_EDITOR("main.itemEditor"),
     MAIN_PLAYER_STATUE("main.playerStatue"),
     PLAYER_STATUE_LAST_GENERATED("playerStatue.lastGenerated"),
+    PREVIEW("button.preview"),
     RANDOM("button.random");
 
     private final String key;
