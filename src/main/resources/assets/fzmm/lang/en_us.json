@@ -165,5 +165,7 @@
   "itemGroup.fzmm.loot_chests": "Loot chests",
   "itemGroup.fzmm.player_heads": "Player heads",
   "itemGroup.fzmm.unobtainable_items": "Unobtainable items",
-  "itemGroup.fzmm.useful_block_states": "Useful block states"
+  "itemGroup.fzmm.useful_block_states": "Useful block states",
+  "fzmm.playerStatue.item.lore.1": "Player statue part, put in a dispenser that",
+  "fzmm.playerStatue.item.lore.2": "is §nFACING UP§r and activate the dispenser"
 }

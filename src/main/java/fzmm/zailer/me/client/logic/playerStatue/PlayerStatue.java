@@ -14,7 +14,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.math.Vec3f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -181,8 +180,8 @@ public class PlayerStatue {
         InventoryUtils invUtils = new InventoryUtils(displayUtils.get())
                 .addItem(statueList)
                 .setNameStyleToItems(Style.EMPTY.withColor(color))
-                .addLoreToItems(Items.ARMOR_STAND,"Player statue part, put in a dispenser that " , color)
-                .addLoreToItems(Items.ARMOR_STAND,"is " + Formatting.UNDERLINE + "FACING UP" + Formatting.RESET + " and activate the dispenser", color);
+                .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.playerStatue.item.lore.1").getString(), color)
+                .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.playerStatue.item.lore.2").getString(), color);
 
         return invUtils.get();
     }
