@@ -79,9 +79,10 @@ public class ImagetextScreen extends GuiOptionsBase {
         this.configPosY = new ConfigInteger("y", player.getBlockY(), -0xffff, 0xffff, this.commentBase + "hologramCoordinates");
         this.configPosZ = new ConfigInteger("z", player.getBlockZ(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "hologramCoordinates");
 
-        this.configWidth.setValueChangeCallback(new ChangeSizeCallback(this, this.configHeight, true));
-        this.configHeight.setValueChangeCallback(new ChangeSizeCallback(this, this.configWidth, false));
-
+        if (Configs.Generic.PRESERVE_IMAGE_ASPECT_RATIO_IN_IMAGETEXT.getBooleanValue()) {
+            this.configWidth.setValueChangeCallback(new ChangeSizeCallback(this, this.configHeight, true));
+            this.configHeight.setValueChangeCallback(new ChangeSizeCallback(this, this.configWidth, false));
+        }
         this.configWidth.toggleUseSlider();
         this.configHeight.toggleUseSlider();
         this.imagetextLogic = new ImagetextLogic();
