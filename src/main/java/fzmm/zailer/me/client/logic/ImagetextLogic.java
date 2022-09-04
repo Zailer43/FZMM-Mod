@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.logic;
 
 import fi.dy.masa.malilib.util.Color4f;
 import fzmm.zailer.me.config.Configs;
+import fzmm.zailer.me.exceptions.BookNbtOverflow;
 import fzmm.zailer.me.utils.*;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -94,7 +95,7 @@ public class ImagetextLogic {
         FzmmUtils.giveItem(display.get());
     }
 
-    public void giveBookTooltip(String author, String bookText) {
+    public void giveBookTooltip(String author, String bookText) throws BookNbtOverflow {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
         BookUtils bookUtils = new BookUtils("Imagebook", author);
@@ -104,14 +105,13 @@ public class ImagetextLogic {
                         .withHoverEvent(HoverEvent.Action.SHOW_TEXT.buildHoverEvent(this.getText())))
         );
 
-        FzmmUtils.giveItem(bookUtils.get());
-//        assert book.getNbt() != null;
+        ItemStack book = bookUtils.get();
+        assert book.getNbt() != null;
 
-//        if (FzmmUtils.getNbtLength(book.getNbt()) > 32500) {
-//			throw new Exception();
-//		} else {
-//        FzmmUtils.giveItem(book);
-//		}
+        if (FzmmUtils.getLength(book) > 16000)
+			throw new BookNbtOverflow();
+		else
+            FzmmUtils.giveItem(book);
     }
 
     public void giveBookPage() {

@@ -94,6 +94,7 @@
   "fzmm.gui.headGenerator.wait_seconds": "Wait... %s",
   "fzmm.gui.imagetext.bookPage": "Book page",
   "fzmm.gui.imagetext.bookTooltip": "Book tooltip",
+  "fzmm.gui.imagetext.bookTooltip.overflow": "Size limit of a book exceeded, try lowering the resolution",
   "fzmm.gui.imagetext.comment.bookAuthor": "Author of the book",
   "fzmm.gui.imagetext.comment.bookMessage": "The text you hover over to see the imagetext",
   "fzmm.gui.imagetext.comment.bookMode": "Choose how the imagetext will be added to the book\n\nAdd page: add a page at the end with the imagetext\nCreate book: create a book with only the imagetext",

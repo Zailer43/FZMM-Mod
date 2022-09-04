@@ -5,10 +5,12 @@ import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
 import fi.dy.masa.malilib.config.options.ConfigOptionList;
 import fi.dy.masa.malilib.config.options.ConfigString;
+import fi.dy.masa.malilib.gui.Message;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.interfaces.IValueChangeCallback;
+import fi.dy.masa.malilib.util.InfoUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import fzmm.zailer.me.client.gui.enums.Buttons;
 import fzmm.zailer.me.client.gui.enums.options.BookOption;
@@ -20,6 +22,7 @@ import fzmm.zailer.me.client.gui.options.ImageOption;
 import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
 import fzmm.zailer.me.client.logic.ImagetextLogic;
 import fzmm.zailer.me.config.Configs;
+import fzmm.zailer.me.exceptions.BookNbtOverflow;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -94,7 +97,7 @@ public class ImagetextScreen extends GuiOptionsBase {
         // Malilib does not support text hover with Text class
         this.previewButton = Buttons.PREVIEW.get(24 + ScreenConstants.NORMAL_BUTTON_WIDTH, this.height - 40, ScreenConstants.NORMAL_BUTTON_WIDTH);
 
-        this.addButton(executeButton, new ExecuteButtonListener());
+        this.addButton(executeButton, this::execute);
         this.addButton(this.previewButton, new PreviewButtonListener());
     }
 
@@ -209,41 +212,43 @@ public class ImagetextScreen extends GuiOptionsBase {
         }
     }
 
-    private class ExecuteButtonListener implements IButtonActionListener {
+    public void execute(ButtonBase button, int mouseButton) {
+        if (ImagetextScreen.this.configImage.hasNoImage())
+            return;
 
-        @Override
-        public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-            if (ImagetextScreen.this.configImage.hasNoImage())
-                return;
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client != null;
+        assert client.player != null;
+        ItemStack stack = client.player.getMainHandStack();
 
-            MinecraftClient client = MinecraftClient.getInstance();
-            assert client != null;
-            assert client.player != null;
-            ItemStack stack = client.player.getMainHandStack();
+        ImagetextScreen.this.updateImagetext();
 
-            ImagetextScreen.this.updateImagetext();
-
-            LoreOption loreOption = (LoreOption) ImagetextScreen.this.configLoreOption.getOptionListValue();
-            BookOption bookOption = (BookOption) ImagetextScreen.this.configBookOption.getOptionListValue();
-            String author = ImagetextScreen.this.configBookAuthor.getStringValue();
-            String bookMessage = ImagetextScreen.this.configBookMessage.getStringValue();
-            int x = ImagetextScreen.this.configPosX.getIntegerValue();
-            int y = ImagetextScreen.this.configPosY.getIntegerValue();
-            int z = ImagetextScreen.this.configPosZ.getIntegerValue();
+        LoreOption loreOption = (LoreOption) ImagetextScreen.this.configLoreOption.getOptionListValue();
+        BookOption bookOption = (BookOption) ImagetextScreen.this.configBookOption.getOptionListValue();
+        String author = ImagetextScreen.this.configBookAuthor.getStringValue();
+        String bookMessage = ImagetextScreen.this.configBookMessage.getStringValue();
+        int x = ImagetextScreen.this.configPosX.getIntegerValue();
+        int y = ImagetextScreen.this.configPosY.getIntegerValue();
+        int z = ImagetextScreen.this.configPosZ.getIntegerValue();
 
 
-            switch (tab) {
-                case LORE -> ImagetextScreen.this.imagetextLogic.giveInLore(stack, loreOption == LoreOption.ADD);
-                case BOOK_PAGE -> {
-                    if (bookOption == BookOption.ADD_PAGE)
-                        ImagetextScreen.this.imagetextLogic.addBookPage();
-                    else
-                        ImagetextScreen.this.imagetextLogic.giveBookPage();
-                }
-                case BOOK_TOOLTIP -> ImagetextScreen.this.imagetextLogic.giveBookTooltip(author, bookMessage);
-                case HOLOGRAM -> ImagetextScreen.this.imagetextLogic.giveAsHologram(x, y, z);
-                case JSON -> client.keyboard.setClipboard(ImagetextScreen.this.imagetextLogic.getImagetextString());
+        switch (tab) {
+            case LORE -> ImagetextScreen.this.imagetextLogic.giveInLore(stack, loreOption == LoreOption.ADD);
+            case BOOK_PAGE -> {
+                if (bookOption == BookOption.ADD_PAGE)
+                    ImagetextScreen.this.imagetextLogic.addBookPage();
+                else
+                    ImagetextScreen.this.imagetextLogic.giveBookPage();
             }
+            case BOOK_TOOLTIP -> {
+                try {
+                    ImagetextScreen.this.imagetextLogic.giveBookTooltip(author, bookMessage);
+                } catch (BookNbtOverflow ignored) {
+                    InfoUtils.showGuiOrInGameMessage(Message.MessageType.ERROR, "fzmm.gui.imagetext.bookTooltip.overflow");
+                }
+            }
+            case HOLOGRAM -> ImagetextScreen.this.imagetextLogic.giveAsHologram(x, y, z);
+            case JSON -> client.keyboard.setClipboard(ImagetextScreen.this.imagetextLogic.getImagetextString());
         }
     }
 
