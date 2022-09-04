@@ -13,6 +13,13 @@ A fabric mod that is mainly for editing or creating NBT of items in creative, bu
 
 </div>
 
+## How to use?
+The default key to use the mod is `Z`, there are also some client-side commands with `/fzmm`
+
+## Dependencies
+* [Malilib](https://www.curseforge.com/minecraft/mc-mods/malilib)
+* [Fabric API](https://modrinth.com/mod/fabric-api)
+
 ## Imagetext
 A generator of colored characters that make an image.
 
