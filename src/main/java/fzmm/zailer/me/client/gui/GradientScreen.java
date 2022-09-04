@@ -63,13 +63,13 @@ public class GradientScreen extends GuiOptionsBase {
 		this.initialColor = new ConfigColor("initialColor", "0xFFFF0000", this.commentBase + "initialColor");
 		this.finalColor = new ConfigColor("finalColor", "0xFF0000FF", this.commentBase + "finalColor");
 
-		this.hue = new ConfigDouble("hue", 1f, 0f, 1f, this.commentBase + "hue");
+		this.hue = new ConfigDouble("hue", 1d, 0d, 1d, this.commentBase + "hue");
 		this.hue.toggleUseSlider();
-		this.saturation = new ConfigDouble("saturation", 1f, 0f, 1f, this.commentBase + "saturation");
+		this.saturation = new ConfigDouble("saturation", 1d, 0d, 1d, this.commentBase + "saturation");
 		this.saturation.toggleUseSlider();
-		this.brightness = new ConfigDouble("brightness", 0.8d, 0f, 1f, this.commentBase + "brightness");
+		this.brightness = new ConfigDouble("brightness", 0.8d, 0d, 1d, this.commentBase + "brightness");
 		this.brightness.toggleUseSlider();
-		this.hueStep = new ConfigDouble("hueStep", 0.05d, 0.005f, 0.15f, this.commentBase + "hueStep");
+		this.hueStep = new ConfigDouble("hueStep", 0.05d, 0.005d, 0.15d, this.commentBase + "hueStep");
 		this.hueStep.toggleUseSlider();
 	}
 
