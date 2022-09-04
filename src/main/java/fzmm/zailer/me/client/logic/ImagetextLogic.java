@@ -196,8 +196,13 @@ public class ImagetextLogic {
     public Text getText() {
         MutableText text = Text.empty();
 
-        for (var line : this.getTextList())
-            text.append(line).append("\n");
+        List<Text> textList = this.getTextList();
+        int size = textList.size();
+        for (int i = 0; i != size; i++) {
+            text.append(textList.get(i));
+            if (i != size - 1)
+                text.append("\n");
+        }
 
         return text;
     }
