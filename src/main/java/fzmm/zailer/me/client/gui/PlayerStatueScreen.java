@@ -75,8 +75,8 @@ public class PlayerStatueScreen extends GuiOptionsBase {
 
         ButtonGeneric faqButton = Buttons.FAQ.getToLeft(this.width - 20, 20);
 
-        this.addButton(executeButton, new ExecuteButtonListener());
-        this.addButton(lastStatueButton, new LastStatueButtonListener());
+        this.addButton(executeButton, this::executeButtonListener);
+        this.addButton(lastStatueButton, (button, mouseButton) -> FzmmUtils.giveItem(lastStatueGenerated.getStatueInContainer()));
         this.addButton(faqButton, new FaqButtonListener());
     }
 
@@ -165,41 +165,29 @@ public class PlayerStatueScreen extends GuiOptionsBase {
         }
     }
 
-    private class ExecuteButtonListener implements IButtonActionListener {
+    public void executeButtonListener(ButtonBase button, int mouseButton) {
+        DirectionOption direction = (DirectionOption) PlayerStatueScreen.this.configDirectionOption.getOptionListValue();
+        int x = PlayerStatueScreen.this.configPosX.getIntegerValue();
+        int y = PlayerStatueScreen.this.configPosY.getIntegerValue();
+        int z = PlayerStatueScreen.this.configPosZ.getIntegerValue();
+        String name = PlayerStatueScreen.this.configName.getStringValue();
+        Vec3f pos = new Vec3f(x, y, z);
 
-        @Override
-        public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-            DirectionOption direction = (DirectionOption) PlayerStatueScreen.this.configDirectionOption.getOptionListValue();
-            int x = PlayerStatueScreen.this.configPosX.getIntegerValue();
-            int y = PlayerStatueScreen.this.configPosY.getIntegerValue();
-            int z = PlayerStatueScreen.this.configPosZ.getIntegerValue();
-            String name = PlayerStatueScreen.this.configName.getStringValue();
-            Vec3f pos = new Vec3f(x, y, z);
+        if (tab == PlayerStatueGuiTab.CREATE) {
+            if (PlayerStatueScreen.this.configSkin.hasNoImage())
+                return;
 
-            if (tab == PlayerStatueGuiTab.CREATE) {
-                if (PlayerStatueScreen.this.configSkin.hasNoImage())
-                    return;
+            BufferedImage skin = PlayerStatueScreen.this.configSkin.getImage();
+            statue = new PlayerStatue(skin, name, pos, direction);
 
-                BufferedImage skin = PlayerStatueScreen.this.configSkin.getImage();
-                statue = new PlayerStatue(skin, name, pos, direction);
+            CREATE_THREAD = new Thread(null, PlayerStatueScreen::createPlayerStatue, "Fzmm: Player Statue");
+            CREATE_THREAD.start();
+        } else {
+            MinecraftClient client = MinecraftClient.getInstance();
+            assert client.player != null;
 
-                CREATE_THREAD = new Thread(null, PlayerStatueScreen::createPlayerStatue, "Fzmm: Player Statue");
-                CREATE_THREAD.start();
-            } else {
-                MinecraftClient client = MinecraftClient.getInstance();
-                assert client.player != null;
-
-                ItemStack statue = PlayerStatue.updateStatue(client.player.getMainHandStack(), pos, direction, name);
-                FzmmUtils.giveItem(statue);
-            }
-        }
-    }
-
-    private static class LastStatueButtonListener implements IButtonActionListener {
-
-        @Override
-        public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-            FzmmUtils.giveItem(lastStatueGenerated.getStatueInContainer());
+            ItemStack statue = PlayerStatue.updateStatue(client.player.getMainHandStack(), pos, direction, name);
+            FzmmUtils.giveItem(statue);
         }
     }
 
@@ -227,10 +215,7 @@ public class PlayerStatueScreen extends GuiOptionsBase {
                 return;
             executeButton.setEnabled(false);
 
-                try {
-                    lastStatueGenerated = statue.generateStatues();
-                } catch (InterruptedException ignored) {
-                }
+            lastStatueGenerated = statue.generateStatues();
 
             lastStatueButton.setEnabled(true);
             FzmmUtils.giveItem(lastStatueGenerated.getStatueInContainer());

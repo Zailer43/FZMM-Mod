@@ -16,6 +16,7 @@ import net.minecraft.util.math.Vec3f;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.TimeUnit;
 
 public class StatuePart {
     private static final String DEFAULT_SKIN_VALUE = "Error!";
@@ -169,7 +170,10 @@ public class StatuePart {
         return statuePart;
     }
 
-    public void setStatueSkin(BufferedImage playerSkin) throws InterruptedException {
+    /**
+     * @return seconds left to generate another skin
+     */
+    public int setStatueSkin(BufferedImage playerSkin) {
         HeadUtils headUtils = new HeadUtils();
         try {
             this.draw(playerSkin, this.headSkin);
@@ -180,8 +184,9 @@ public class StatuePart {
         }
         this.skinValue = headUtils.getSkinValue();
         this.skinGenerated = headUtils.isSkinGenerated();
-        PlayerStatue.nextDelayMillis = (short) headUtils.getDelayForNextInMillis();
-        Thread.sleep(headUtils.getDelayForNextInMillis());
+        if (this.skinGenerated)
+            PlayerStatue.partsLeft--;
+        return (int) TimeUnit.MILLISECONDS.toSeconds(headUtils.getDelayForNextInMillis());
     }
 
     public boolean isSkinGenerated() {
@@ -238,7 +243,6 @@ public class StatuePart {
      *  direction: int,
      *  skinValue: string
      * }
-     *
      * Statue name tag:
      * {
      *  nameTag: 1b

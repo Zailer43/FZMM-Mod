@@ -22,6 +22,8 @@ import org.apache.logging.log4j.Logger;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 public class PlayerStatue {
     public static final Logger LOGGER = LogManager.getLogger("FZMM PlayerStatue");
@@ -31,20 +33,18 @@ public class PlayerStatue {
     private final Vec3f pos;
     private final DirectionOption direction;
     public static short progress = 0;
-    public static short nextDelayMillis = 0;
     public static int partsLeft = 0;
 
     public PlayerStatue(BufferedImage playerSkin, String name, Vec3f pos, DirectionOption direction) {
         this.playerSkin = playerSkin;
         this.name = name;
         progress = 0;
-        nextDelayMillis = 0;
         this.statueList = new ArrayList<>();
         this.pos = pos;
         this.direction = direction;
     }
 
-    public PlayerStatue generateStatues() throws InterruptedException {
+    public PlayerStatue generateStatues() {
         this.statueList.clear();
 
         if (MinecraftClient.getInstance().currentScreen instanceof PlayerStatueScreen playerStatueScreen)
@@ -92,26 +92,24 @@ public class PlayerStatue {
         this.statueList.add(new StatuePart(StatuePartEnum.RIGHT_HEAD_BACK, "Right bottom back head", 6, bottom, 1, 0, -2, new HeadSkinManager(true, true, true)));
         this.statueList.add(new StatuePart(StatuePartEnum.RIGHT_HEAD_BACK, "Right top back head", 7, top, -2, 0, 1, new HeadSkinManager(true, false, true)));
 
-        for (StatuePart statuePart : this.statueList)
-            statuePart.setStatueSkin(this.playerSkin);
+        int delay = 0;
+        for (StatuePart statuePart : this.statueList) {
+            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(delay));
+            delay = statuePart.setStatueSkin(this.playerSkin);
+            this.notifyStatus(statuePart, delay);
+        }
 
-        this.fixGeneratingError();
         this.fixGeneratingError();
 
         InfoUtils.showGuiOrInGameMessage(Message.MessageType.INFO, "fzmm.gui.playerStatue.status.end");
         return this;
     }
 
-    public void fixGeneratingError() throws InterruptedException {
+    public void fixGeneratingError() {
         for (StatuePart statuePart : this.statueList) {
             if (!statuePart.isSkinGenerated()) {
-                statuePart.setStatueSkin(this.playerSkin);
-
-                if (statuePart.isSkinGenerated()) {
-                    showGenerated(statuePart.getName());
-                } else {
-                    showError(statuePart.getName());
-                }
+                int delay = statuePart.setStatueSkin(this.playerSkin);
+                this.notifyStatus(statuePart, delay);
             }
         }
     }
@@ -189,12 +187,10 @@ public class PlayerStatue {
         return invUtils.get();
     }
 
-    public static void showGenerated(String part) {
-        InfoUtils.showGuiOrInGameMessage(Message.MessageType.SUCCESS, "fzmm.gui.playerStatue.status.generated", part, nextDelayMillis / 1000f, --partsLeft);
-    }
-
-    public static void showError(String part) {
-        InfoUtils.showGuiOrInGameMessage(Message.MessageType.ERROR, "fzmm.gui.playerStatue.status.error", part, nextDelayMillis / 1000f, partsLeft);
+    public void notifyStatus(StatuePart part, int delayInSeconds) {
+        Message.MessageType status = part.isSkinGenerated() ? Message.MessageType.SUCCESS : Message.MessageType.ERROR;
+        String translation = part.isSkinGenerated() ? "fzmm.gui.playerStatue.status.generated" : "fzmm.gui.playerStatue.status.error";
+        InfoUtils.showGuiOrInGameMessage(status, translation, part.getName(), delayInSeconds, partsLeft);
     }
 
     public static ItemStack updateStatue(ItemStack container, Vec3f pos, DirectionOption direction, String name) {
