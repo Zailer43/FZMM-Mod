@@ -1,20 +1,24 @@
 package fzmm.zailer.me.client.gui;
 
+import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fzmm.zailer.me.client.gui.enums.Buttons;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.text.Text;
 
 import java.util.List;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;
 
-public class FzmmMainScreen extends AbstractFzmmScreen {
+public class FzmmMainScreen extends GuiBase {
 
 	public FzmmMainScreen(Screen parent) {
-		super("fzmm.gui.title.main", parent);
+		super();
+		this.setParent(parent);
+		this.setTitle(Text.translatable("fzmm.gui.title.main").getString());
 	}
 
 	@Override
@@ -39,6 +43,9 @@ public class FzmmMainScreen extends AbstractFzmmScreen {
 		this.addColumn(buttonColumn1, col1, column1Width);
 		this.addColumn(buttonColumn2, col2, column2Width);
 		this.addColumn(buttonColumn3, col3, column3Width);
+
+		this.addButton(Buttons.BACK.getToLeft(this.width - 30, this.height - 40),
+				(button, mouseButton) -> GuiBase.openGui(this.getParent()));
 	}
 
 	private void addColumn(List<Buttons> buttons, int x, int width) {
@@ -63,7 +70,6 @@ public class FzmmMainScreen extends AbstractFzmmScreen {
 		return max + 8;
 	}
 
-	@Override
 	protected IButtonActionListener getActionListener(Buttons button) {
 		return new ButtonActionListener(button);
 	}

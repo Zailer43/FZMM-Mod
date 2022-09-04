@@ -2,9 +2,7 @@ package fzmm.zailer.me.client.gui;
 
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase;
-import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
-import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.IMessageConsumer;
 import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 import fzmm.zailer.me.client.FzmmClient;
@@ -18,7 +16,8 @@ public abstract class GuiOptionsBase extends GuiConfigsBase implements IMessageC
     protected int configWidth = 204;
 
     protected GuiOptionsBase(String titleKey, Screen parent) {
-        super(10, 50, FzmmClient.MOD_ID, parent, FzmmClient.MOD_ID + ".gui.title." + titleKey);
+        super(10, 50, FzmmClient.MOD_ID, null, FzmmClient.MOD_ID + ".gui.title." + titleKey);
+        this.setParent(parent);
         this.commentBase =  FzmmClient.MOD_ID + ".gui." + titleKey + ".comment.";
     }
 
@@ -45,20 +44,12 @@ public abstract class GuiOptionsBase extends GuiConfigsBase implements IMessageC
 
 
         ButtonGeneric backButton = Buttons.BACK.getToLeft(this.width - 30, this.height - 40);
-        this.addButton(backButton, new BackButtonActionListener());
+        this.addButton(backButton, (button, mouseButton) -> GuiBase.openGui(this.getParent()));
     }
 
     @Override
     protected WidgetListConfigOptions createListWidget(int listX, int listY) {
         return new WidgetListConfigOptions(listX, listY, this.getBrowserWidth(), this.getBrowserHeight(), this.getConfigWidth(), this.getZOffset(), false, this);
-    }
-
-    public class BackButtonActionListener implements IButtonActionListener {
-
-        @Override
-        public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-            GuiBase.openGui(GuiOptionsBase.this.getParent());
-        }
     }
 
     public abstract boolean isTab(IScreenTab tab);
