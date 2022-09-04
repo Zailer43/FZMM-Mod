@@ -120,6 +120,7 @@ public class ImageOption extends ConfigBase<ImageOption> implements ICustomOptio
                     else
                         this.status = ImageStatus.IMAGE_LOADED;
                 } catch (Exception e) {
+                    e.printStackTrace();
                     this.status = ImageStatus.MALFORMED_URL;
                 }
             } else if (ImageModeOption.PATH == mode || SkinOption.PATH == mode) {
@@ -138,6 +139,7 @@ public class ImageOption extends ConfigBase<ImageOption> implements ICustomOptio
                     this.image = FzmmUtils.getImageFromPath(this.value);
                     this.status = ImageStatus.IMAGE_LOADED;
                 } catch (Exception e) {
+                    e.printStackTrace();
                     this.status = ImageStatus.UNEXPECTED_ERROR;
                 }
             } else if (SkinOption.NAME == mode) {
@@ -153,6 +155,7 @@ public class ImageOption extends ConfigBase<ImageOption> implements ICustomOptio
                     else
                         this.status = ImageStatus.IMAGE_LOADED;
                 } catch (Exception e) {
+                    e.printStackTrace();
                     this.status = ImageStatus.UNEXPECTED_ERROR;
                 }
             } else {
