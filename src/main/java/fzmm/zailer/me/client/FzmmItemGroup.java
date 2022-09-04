@@ -26,6 +26,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.village.raid.Raid;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class FzmmItemGroup {
@@ -153,6 +154,7 @@ public class FzmmItemGroup {
                     if (clientPlayer != null) {
                         List<GameProfile> profileList = clientPlayer.networkHandler.getPlayerList().stream()
                                 .map(PlayerListEntry::getProfile)
+                                .sorted(Comparator.comparing(GameProfile::getName))
                                 .toList();
 
                         for (GameProfile profile : profileList) {
