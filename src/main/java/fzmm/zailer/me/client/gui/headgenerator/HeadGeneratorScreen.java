@@ -85,6 +85,7 @@ public class HeadGeneratorScreen extends Screen {
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        this.renderBackground(matrices);
         if (!this.headListWidget.isEmpty()) {
             this.headListWidget.render(matrices, mouseX, mouseY, delta);
             this.headLayersWidget.render(matrices, mouseX, mouseY, delta);
