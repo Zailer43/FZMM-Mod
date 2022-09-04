@@ -11,32 +11,41 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class HeadGenerator {
     public static final String HEADS_FOLDER = "textures/heads";
-    private final BufferedImage playerSkin;
-    private BufferedImage headTexture;
+    private final BufferedImage image;
 
-    public HeadGenerator(BufferedImage playerSkin) {
-        this.playerSkin = playerSkin;
-        this.headTexture = null;
+    public HeadGenerator(BufferedImage image) {
+        this.image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+        this.addTexture(image, false);
     }
 
     public HeadGenerator addTexture(BufferedImage texture) {
-        if (this.playerSkin == null || texture == null)
+        return this.addTexture(texture, true);
+    }
+    public HeadGenerator addTexture(BufferedImage texture, boolean hatLayer) {
+        if (texture == null)
             return this;
 
-        this.headTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = this.headTexture.createGraphics();
-        this.setLayer(g2d, this.playerSkin, 32);
-        this.setLayer(g2d, texture, 64);
+        Graphics2D g2d = this.image.createGraphics();
+        this.addLayer(g2d, texture, hatLayer);
         g2d.dispose();
         return this;
     }
 
+    public HeadGenerator merge(List<BufferedImage> imageList) {
+        for (var image : imageList)
+            this.addTexture(image);
 
-    private void setLayer(Graphics2D finalImageGraphics, BufferedImage newLayer, int width) {
+        return this;
+    }
+
+
+    private void addLayer(Graphics2D finalImageGraphics, BufferedImage newLayer, boolean hatLayer) {
+        int width = hatLayer ? 64 : 32;
         finalImageGraphics.drawImage(newLayer, 0, 0, width, 16, 0, 0, width, 16, null);
     }
 
@@ -74,6 +83,6 @@ public final class HeadGenerator {
 
     @Nullable
     public BufferedImage getHeadTexture() {
-        return this.headTexture;
+        return this.image;
     }
 }

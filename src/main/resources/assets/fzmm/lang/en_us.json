@@ -1,5 +1,6 @@
 {
   "commands.fzmm.item.withoutNbt": "That item does not have NBT",
+  "fzmm.gui.button.add": "+",
   "fzmm.gui.button.back": "Back",
   "fzmm.gui.button.execute": "Execute",
   "fzmm.gui.button.faq": "FAQ",
@@ -7,6 +8,7 @@
   "fzmm.gui.button.loadImage": "Load image",
   "fzmm.gui.button.preview": "Preview",
   "fzmm.gui.button.random": "Random",
+  "fzmm.gui.button.remove": "-",
   "fzmm.gui.configGui.colors": "Colors",
   "fzmm.gui.configGui.colors.comment.imagetextHologram": "Color used in the description of Imagetext hologram",
   "fzmm.gui.configGui.colors.comment.imagetextMessages": "Color of the resolution message of the Imagetext\nand of the name when using the hotkey to generate it",
@@ -88,6 +90,8 @@
   "fzmm.gui.headGenerator.loadSkin": "Load skin",
   "fzmm.gui.headGenerator.numberOfResults": "There are %s results",
   "fzmm.gui.headGenerator.playerName": "Player name",
+  "fzmm.gui.headGenerator.wait": "Wait...",
+  "fzmm.gui.headGenerator.wait_seconds": "Wait... %s",
   "fzmm.gui.imagetext.bookPage": "Book page",
   "fzmm.gui.imagetext.bookTooltip": "Book tooltip",
   "fzmm.gui.imagetext.comment.bookAuthor": "Author of the book",

@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fi.dy.masa.malilib.util.Color4f;
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.mixin.PlayerSkinTextureAccessor;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -232,6 +233,15 @@ public class FzmmUtils {
 
         MinecraftClient client = MinecraftClient.getInstance();
         client.execute(() -> client.getTextureManager().registerTexture(identifier, texture));
+    }
+
+    public static Identifier saveBufferedImageAsIdentifier(BufferedImage bufferedImage) {
+        Identifier textureIdentifier = new Identifier(FzmmClient.MOD_ID, UUID.randomUUID().toString());
+        try {
+            FzmmUtils.saveBufferedImageAsIdentifier(bufferedImage, textureIdentifier);
+        } catch (IOException ignored) {
+        }
+        return textureIdentifier;
     }
 
     @Nullable

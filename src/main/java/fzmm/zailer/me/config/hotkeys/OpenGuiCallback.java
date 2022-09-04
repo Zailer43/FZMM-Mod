@@ -5,6 +5,7 @@ import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
 import fi.dy.masa.malilib.hotkeys.IKeybind;
 import fi.dy.masa.malilib.hotkeys.KeyAction;
 import fzmm.zailer.me.client.gui.*;
+import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
 import net.minecraft.client.gui.screen.Screen;
 
 public class OpenGuiCallback implements IHotkeyCallback {

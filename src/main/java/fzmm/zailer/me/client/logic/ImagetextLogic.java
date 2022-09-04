@@ -1,6 +1,5 @@
 package fzmm.zailer.me.client.logic;
 
-import com.google.gson.*;
 import fi.dy.masa.malilib.util.Color4f;
 import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.utils.*;
@@ -9,7 +8,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;

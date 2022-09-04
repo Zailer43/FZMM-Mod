@@ -1,25 +1,22 @@
-package fzmm.zailer.me.client.gui.list;
+package fzmm.zailer.me.client.gui.headgenerator;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import fzmm.zailer.me.client.gui.HeadGeneratorScreen;
 import fzmm.zailer.me.client.logic.HeadGenerator;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
 
-public class HeadGeneratorListWidget extends ElementListWidget<HeadGeneratorListEntry> {
+public class HeadListWidget extends ElementListWidget<HeadEntry> {
     private final HeadGeneratorScreen parent;
-    private final List<HeadGeneratorListEntry> headTextures = Lists.newArrayList();
+    private final List<HeadEntry> headTextures = Lists.newArrayList();
 
-    public HeadGeneratorListWidget(HeadGeneratorScreen parent, MinecraftClient client, int width, int height, int top, int bottom, int itemHeight) {
+    public HeadListWidget(HeadGeneratorScreen parent, MinecraftClient client, int width, int height, int top, int bottom, int itemHeight) {
         super(client, width, height, top, bottom, itemHeight);
         this.parent = parent;
         this.setRenderBackground(false);
@@ -42,7 +39,7 @@ public class HeadGeneratorListWidget extends ElementListWidget<HeadGeneratorList
             BufferedImage customHeadTexture = HeadGenerator.getTexture(headName);
             BufferedImage headTexture = new HeadGenerator(skinBase).addTexture(customHeadTexture).getHeadTexture();
             if (headTexture != null)
-                this.headTextures.add(new HeadGeneratorListEntry(this, this.client, headName, headTexture));
+                this.headTextures.add(new HeadEntry(this, this.client, headName, headTexture, customHeadTexture));
         }
 
         this.headTextures.sort((player1, player2) -> player1.getName().compareToIgnoreCase(player2.getName()));
@@ -51,7 +48,7 @@ public class HeadGeneratorListWidget extends ElementListWidget<HeadGeneratorList
     }
 
     public void filter(String search) {
-        List<HeadGeneratorListEntry> entries = new ArrayList<>(this.headTextures);
+        List<HeadEntry> entries = new ArrayList<>(this.headTextures);
 
         this.filterHeads(entries, search);
         entries.sort((player1, player2) -> player1.getName().compareToIgnoreCase(player2.getName()));
@@ -64,35 +61,31 @@ public class HeadGeneratorListWidget extends ElementListWidget<HeadGeneratorList
         return this.headTextures.isEmpty();
     }
 
-    private void filterHeads(List<HeadGeneratorListEntry> entries, String search) {
+    private void filterHeads(List<HeadEntry> entries, String search) {
         if (!search.isEmpty()) {
             entries.removeIf((texture) -> !texture.getName().toLowerCase().contains(search));
             this.replaceEntries(entries);
         }
     }
 
-    public String getPlayerName() {
-        return this.parent.getPlayerName();
-    }
-
-    public void setDelay(int delay) {
-        for (int i = delay; i > 0; i--) {
-            this.updateList(false, "Wait... " + i);
-            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
-        }
-
-        this.updateList(true, "Give");
-    }
-
-    public void updateList(boolean enabled, String buttonName) {
-        Text message = Text.of(buttonName);
-        for (var entry : this.headTextures) {
-            entry.setEnabled(enabled);
-            entry.setButtonName(message);
-        }
+    public List<ButtonWidget> getGiveButtons() {
+        return this.headTextures.stream().map(HeadEntry::getGiveButton).toList();
     }
 
     public int size() {
         return this.children().size();
+    }
+
+    public void addLayer(HeadEntry headEntry) {
+        this.parent.addLayer(headEntry);
+    }
+
+    @Override
+    protected int getScrollbarPositionX() {
+        return this.getRowLeft() + this.getRowWidth();
+    }
+
+    public void execute(BufferedImage image) {
+        this.parent.execute(image);
     }
 }

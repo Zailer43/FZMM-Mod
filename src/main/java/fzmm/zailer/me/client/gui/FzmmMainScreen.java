@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fzmm.zailer.me.client.gui.enums.Buttons;
+import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
 import net.minecraft.client.gui.screen.Screen;
 
 import static fzmm.zailer.me.client.gui.ScreenConstants.*;

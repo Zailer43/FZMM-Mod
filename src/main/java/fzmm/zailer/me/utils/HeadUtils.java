@@ -78,7 +78,7 @@ public class HeadUtils {
 
     public HeadUtils uploadHead(BufferedImage headSkin, String skinName) throws IOException {
         this.applyWatermark(headSkin);
-        String apiKey = Configs.Generic.MINESKIN_PUBLIC_SKINS.getStringValue();
+        String apiKey = Configs.Generic.MINESKIN_API_KEY.getStringValue();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(headSkin, "png", baos);
         byte[] skin = baos.toByteArray();

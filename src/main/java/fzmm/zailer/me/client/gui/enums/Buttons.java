@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 import javax.annotation.Nullable;
 
 public enum Buttons {
+    ADD("button.add"),
     BACK("button.back"),
     CONVERTERS_COPY_ARRAY("converters.copyArray"),
     CONVERTERS_COPY_DECODED("converters.copyDecoded"),
@@ -32,7 +33,8 @@ public enum Buttons {
     MAIN_PLAYER_STATUE("main.playerStatue"),
     PLAYER_STATUE_LAST_GENERATED("playerStatue.lastGenerated"),
     PREVIEW("button.preview"),
-    RANDOM("button.random");
+    RANDOM("button.random"),
+    REMOVE("button.remove");
 
     private final String key;
     @Nullable
@@ -49,7 +51,11 @@ public enum Buttons {
     }
 
     public String getText() {
-        return Text.translatable(INITIAL_TRANSLATION_KEY + this.key).getString();
+        return this.getTranslation().getString();
+    }
+
+    public Text getTranslation() {
+        return Text.translatable(INITIAL_TRANSLATION_KEY + this.key);
     }
 
     @Nullable
