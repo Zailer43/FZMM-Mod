@@ -67,9 +67,9 @@ public class GradientScreen extends GuiOptionsBase {
 		this.hue.toggleUseSlider();
 		this.saturation = new ConfigDouble("saturation", 1f, 0f, 1f, this.commentBase + "saturation");
 		this.saturation.toggleUseSlider();
-		this.brightness = new ConfigDouble("brightness", 0.8f, 0f, 1f, this.commentBase + "brightness");
+		this.brightness = new ConfigDouble("brightness", 0.8d, 0f, 1f, this.commentBase + "brightness");
 		this.brightness.toggleUseSlider();
-		this.hueStep = new ConfigDouble("hueStep", 0.05f, 0.005f, 0.15f, this.commentBase + "hueStep");
+		this.hueStep = new ConfigDouble("hueStep", 0.05d, 0.005f, 0.15f, this.commentBase + "hueStep");
 		this.hueStep.toggleUseSlider();
 	}
 
