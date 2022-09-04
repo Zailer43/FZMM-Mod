@@ -14,6 +14,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.PlayerSkinTexture;
@@ -205,7 +206,10 @@ public class FzmmUtils {
             return null;
 
         Identifier skinIdentifier = player.getSkinTexture();
-        PlayerSkinTexture skinTexture = (PlayerSkinTexture) client.getTextureManager().getTexture(skinIdentifier);
+        AbstractTexture texture = client.getTextureManager().getTexture(skinIdentifier);
+        // if the player is invisible the texture is not an instance of PlayerSkinTexture
+        if (!(texture instanceof PlayerSkinTexture skinTexture))
+            return null;
 
         File skinFile = ((PlayerSkinTextureAccessor) skinTexture).getCacheFile();
 
