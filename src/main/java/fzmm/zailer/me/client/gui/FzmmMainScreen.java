@@ -32,17 +32,17 @@ public class FzmmMainScreen extends GuiBase {
 		int column1Width = this.getMaxWidth(buttonColumn1);
 		int column2Width = this.getMaxWidth(buttonColumn2);
 		int column3Width = this.getMaxWidth(buttonColumn3);
-		int halfColumn2Width = column2Width / 2;
-		int halfWidth = this.width / 2;
+		int screenCenter = this.width / 2;
 
-		int col1 = halfWidth - halfColumn2Width - column1Width - 4;
-		int col2 = halfWidth - halfColumn2Width;
-		int col3 = halfWidth + halfColumn2Width + 4;
+		int columnsWidth = column1Width + column2Width + column3Width + 8;
+		int xCol1 = screenCenter - columnsWidth / 2;
+		int xCol2 = xCol1 + column1Width + 4;
+		int xCol3 = xCol2 + column2Width + 4;
 
 		this.createGenericButton(this.width - this.textRenderer.getWidth(Buttons.MAIN_CONFIGURATION.getText()) - 20, 20, Buttons.MAIN_CONFIGURATION, -1);
-		this.addColumn(buttonColumn1, col1, column1Width);
-		this.addColumn(buttonColumn2, col2, column2Width);
-		this.addColumn(buttonColumn3, col3, column3Width);
+		this.addColumn(buttonColumn1, xCol1, column1Width);
+		this.addColumn(buttonColumn2, xCol2, column2Width);
+		this.addColumn(buttonColumn3, xCol3, column3Width);
 
 		this.addButton(Buttons.BACK.getToLeft(this.width - 30, this.height - 40),
 				(button, mouseButton) -> GuiBase.openGui(this.getParent()));
