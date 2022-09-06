@@ -14,6 +14,7 @@ import fzmm.zailer.me.client.gui.ScreenConstants;
 import fzmm.zailer.me.client.gui.enums.Buttons;
 import fzmm.zailer.me.client.gui.enums.CustomConfigType;
 import fzmm.zailer.me.client.gui.enums.FzmmIcons;
+import fzmm.zailer.me.client.gui.enums.options.SkinOption;
 import fzmm.zailer.me.client.gui.interfaces.ICustomOption;
 import fzmm.zailer.me.client.gui.options.ImageOption;
 import net.minecraft.client.util.math.MatrixStack;
@@ -74,7 +75,8 @@ public class WidgetConfigOptionMixin extends WidgetConfigOptionBase<GuiConfigsBa
         field.setMaxLength(this.maxTextfieldTextLength);
         field.setText(config.getStringValue());
 
-        ButtonGeneric loadButton = Buttons.LOAD_IMAGE.get(xButtons, y);
+        Buttons loadButtonType = config.mode.getOptionListValue() instanceof SkinOption ? Buttons.LOAD_SKIN : Buttons.LOAD_IMAGE;
+        ButtonGeneric loadButton = loadButtonType.get(xButtons, y);
         loadButton.setEnabled(config.isModified());
 
         this.imageStatusPosX = xButtons + loadButton.getWidth() + 2;
