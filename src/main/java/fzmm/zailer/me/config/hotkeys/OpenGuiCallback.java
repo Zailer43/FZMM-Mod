@@ -33,7 +33,7 @@ public class OpenGuiCallback implements IHotkeyCallback {
         else if (key == Hotkeys.GRADIENT_GUI.getKeybind())
             screen = new GradientScreen(null);
         else if (key == Hotkeys.HEAD_GENERATOR_GUI.getKeybind())
-            screen = new HeadGeneratorScreen();
+            screen = new HeadGeneratorScreen(null);
         else if (key == Hotkeys.IMAGETEXT_GUI.getKeybind())
             screen = new ImagetextScreen(null);
         else if (key == Hotkeys.PLAYER_STATUE_GUI.getKeybind())

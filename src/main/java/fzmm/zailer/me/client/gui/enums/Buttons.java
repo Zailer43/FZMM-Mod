@@ -23,6 +23,7 @@ public enum Buttons {
     GRADIENT_RANDOM_COLOR("gradient.randomColors"),
     GRADIENT_SET_NAME("gradient.setName"),
     LOAD_IMAGE("button.loadImage"),
+    LOAD_SKIN("button.loadSkin"),
     MAIN_CONFIGURATION("main.configs"),
     MAIN_CONVERTERS("main.converters"),
     MAIN_ENCRYPTBOOK("main.encryptbook"),
@@ -80,5 +81,9 @@ public enum Buttons {
         ButtonGeneric button = new ButtonGeneric(x, y, width, height, this.getText(), this.getIcon());
         button.setTextCentered(true);
         return button;
+    }
+
+    public int getWidth() {
+        return MinecraftClient.getInstance().textRenderer.getWidth(this.getText()) + 8;
     }
 }

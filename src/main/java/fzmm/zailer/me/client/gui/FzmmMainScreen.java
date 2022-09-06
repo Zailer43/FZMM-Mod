@@ -92,7 +92,7 @@ public class FzmmMainScreen extends GuiBase {
 				case MAIN_IMAGETEXT -> new ImagetextScreen(parent);
 //				case MAIN_ITEMS_EDITOR -> null;
 				case MAIN_PLAYER_STATUE -> new PlayerStatueScreen(parent);
-				case MAIN_HEAD_GENERATOR -> new HeadGeneratorScreen();
+				case MAIN_HEAD_GENERATOR -> new HeadGeneratorScreen(parent);
 				default -> null;
 			};
 

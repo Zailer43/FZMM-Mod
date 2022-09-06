@@ -1,19 +1,16 @@
 package fzmm.zailer.me.client.gui.headgenerator;
 
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
 import fzmm.zailer.me.client.logic.HeadGenerator;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ElementListWidget;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-public class HeadLayersListWidget extends ElementListWidget<HeadLayerEntry> {
+public class HeadLayersListWidget extends AbstractHeadList<HeadLayerEntry> {
     private HeadLayerEntry baseSkin;
     private final List<HeadLayerEntry> layers = Lists.newArrayList();
     private Identifier mergedHeadIdentifier;
@@ -21,17 +18,8 @@ public class HeadLayersListWidget extends ElementListWidget<HeadLayerEntry> {
 
     public HeadLayersListWidget(MinecraftClient client, int width, int height, int top, int bottom, int itemHeight) {
         super(client, width, height, top, bottom, itemHeight);
-        this.setRenderBackground(false);
-        this.setRenderHorizontalShadows(false);
         this.mergedHeadIdentifier = null;
         this.mergedHeadImage = null;
-    }
-
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        double d = this.client.getWindow().getScaleFactor();
-        RenderSystem.enableScissor((int) ((double) this.getRowLeft() * d), (int) ((double) (this.height - this.bottom) * d), (int) ((double) (this.getScrollbarPositionX() + 6) * d), (int) ((double) (this.height - (this.height - this.bottom) - this.top - 4) * d));
-        super.render(matrices, mouseX, mouseY, delta);
-        RenderSystem.disableScissor();
     }
 
     public boolean isEmpty() {
@@ -67,11 +55,6 @@ public class HeadLayersListWidget extends ElementListWidget<HeadLayerEntry> {
         this.updateMergedHead();
     }
 
-    @Override
-    protected int getScrollbarPositionX() {
-        return this.getRowLeft() + this.getRowWidth();
-    }
-
     private List<BufferedImage> getHeadTextures() {
         return this.layers.stream().map(AbstractHeadListEntry::getHeadTexture).toList();
     }
@@ -93,4 +76,13 @@ public class HeadLayersListWidget extends ElementListWidget<HeadLayerEntry> {
         this.mergedHeadImage = mergedHead;
         this.mergedHeadIdentifier = FzmmUtils.saveBufferedImageAsIdentifier(mergedHead);
     }
+
+    public int getTop() {
+        return this.top;
+    }
+
+    public int getBottom() {
+        return this.bottom;
+    }
+
 }

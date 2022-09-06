@@ -21,7 +21,7 @@ public class HeadEntry extends AbstractHeadListEntry<HeadEntry> {
     public HeadEntry(HeadListWidget parent, MinecraftClient client, String name, BufferedImage previewImage, BufferedImage headTexture) {
         super(client, name, previewImage, headTexture);
         this.parent = parent;
-        this.giveButton = new ButtonWidget(0, 0, 60, ScreenConstants.NORMAL_BUTTON_HEIGHT, Text.of(Buttons.GIVE.getText()), this::giveButtonExecute);
+        this.giveButton = new ButtonWidget(0, 0, Buttons.GIVE.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Text.of(Buttons.GIVE.getText()), this::giveButtonExecute);
         this.addLayerButton = new ButtonWidget(0, 0, 20, ScreenConstants.NORMAL_BUTTON_HEIGHT, Text.of(Buttons.ADD.getText()), this::addLayerButtonExecute);
     }
 

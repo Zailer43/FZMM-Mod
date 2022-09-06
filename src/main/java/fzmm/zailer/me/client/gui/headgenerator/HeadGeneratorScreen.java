@@ -2,12 +2,13 @@ package fzmm.zailer.me.client.gui.headgenerator;
 
 import com.google.gson.JsonIOException;
 import com.mojang.blaze3d.systems.RenderSystem;
+import fi.dy.masa.malilib.gui.GuiBase;
 import fzmm.zailer.me.client.gui.ScreenConstants;
 import fzmm.zailer.me.client.gui.enums.Buttons;
 import fzmm.zailer.me.client.logic.HeadGenerator;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
-import net.minecraft.client.gui.PlayerSkinDrawer;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -24,7 +25,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class HeadGeneratorScreen extends Screen {
+public class HeadGeneratorScreen extends GuiBase {
     private HeadListWidget headListWidget;
     private HeadLayersListWidget headLayersWidget;
     private boolean initialized;
@@ -36,13 +37,16 @@ public class HeadGeneratorScreen extends Screen {
     private String playerName;
     private Set<String> headNames;
 
-    public HeadGeneratorScreen() {
-        super(Text.translatable("headGenerator"));
+    public HeadGeneratorScreen(Screen parent) {
+        super();
         this.initialized = false;
+        this.setTitle(Text.translatable("fzmm.gui.title.headGenerator").getString());
+        this.setParent(parent);
     }
 
     @Override
-    protected void init() {
+    public void initGui() {
+        super.initGui();
         int halfWidth = this.width / 2;
         if (this.initialized) {
             this.headListWidget.updateSize(halfWidth, this.height, 88, this.height - 80);
@@ -53,20 +57,22 @@ public class HeadGeneratorScreen extends Screen {
         }
         this.headListWidget.setLeftPos(halfWidth);
         this.headLayersWidget.setLeftPos(0);
-        int halfRowWidth = this.headLayersWidget.getRowWidth() / 2;
+        int halfRowWidth = this.headListWidget.getRowWidth() / 2;
+        int headListLeft = this.headListWidget.getLeft() + 1;
+        int headListRowWidth = this.headListWidget.getRowWidth();
 
         String previousUsername = this.playerNameField != null ? this.playerNameField.getText() : "";
-        this.playerNameField = new TextFieldWidget(this.textRenderer, halfRowWidth + halfWidth - 100, 50, 115, 20, Text.translatable("fzmm.gui.headGenerator.playerName"));
+        this.playerNameField = new TextFieldWidget(this.textRenderer, headListLeft, 45, halfRowWidth, 20, Text.translatable("fzmm.gui.headGenerator.playerName"));
         this.playerNameField.setText(previousUsername);
 
-        this.loadSkinButton = new ButtonWidget(halfRowWidth + halfWidth + 20, 50, 80, ScreenConstants.NORMAL_BUTTON_HEIGHT, Text.translatable("fzmm.gui.headGenerator.loadSkin"), this::loadPlayerSkinExecute);
+        this.loadSkinButton = new ButtonWidget(headListLeft + halfRowWidth + 4, 45, Buttons.LOAD_SKIN.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.LOAD_SKIN.getTranslation(), this::loadPlayerSkinExecute);
 
         String previousSearch = this.searchBox != null ? this.searchBox.getText() : "";
-        this.searchBox = new TextFieldWidget(this.textRenderer, halfRowWidth + halfWidth - 100, 72, 200, 16, Text.translatable("gui.socialInteractions.search_hint"));
+        this.searchBox = new TextFieldWidget(this.textRenderer, headListLeft, 68, headListRowWidth, 20, Text.translatable("gui.socialInteractions.search_hint"));
         this.searchBox.setText(previousSearch);
         this.searchBox.setChangedListener(this::onSearchChange);
 
-        this.giveMergedHeadButton = new ButtonWidget(halfWidth + 72 - this.headLayersWidget.getRowWidth(), 50, 80, ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.GIVE.getTranslation(), this::giveMergedHeadExecute);
+        this.giveMergedHeadButton = new ButtonWidget(this.headLayersWidget.getLeft(), this.headLayersWidget.getBottom() + 4, Buttons.GIVE.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.GIVE.getTranslation(), this::giveMergedHeadExecute);
 
         this.addSelectableChild(this.giveMergedHeadButton);
         this.addSelectableChild(this.playerNameField);
@@ -80,12 +86,16 @@ public class HeadGeneratorScreen extends Screen {
 
         this.headNames = HeadGenerator.getHeadsNames();
         this.currentSearch = this.searchBox.getText();
+
+        this.addButton(Buttons.BACK.getToLeft(this.width - 30, this.height - 40),
+                (button, mouseButton) -> GuiBase.openGui(this.getParent()));
+
         this.initialized = true;
     }
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderBackground(matrices);
+        super.render(matrices, mouseX, mouseY, delta);
         if (!this.headListWidget.isEmpty()) {
             this.headListWidget.render(matrices, mouseX, mouseY, delta);
             this.headLayersWidget.render(matrices, mouseX, mouseY, delta);
@@ -111,7 +121,10 @@ public class HeadGeneratorScreen extends Screen {
         Identifier mergedHead = this.headLayersWidget.getMergedHeadIdentifier();
         if (mergedHead != null) {
             RenderSystem.setShaderTexture(0, mergedHead);
-            PlayerSkinDrawer.draw(matrices, halfWidth + 32 - this.headLayersWidget.getRowWidth(), 42, 32);
+            DrawableHelper.drawTexture(matrices, halfWidth - this.headLayersWidget.getRowWidth(), this.headLayersWidget.getTop() - 36, 128, 32, 0, 0, 32, 16, 64, 64);
+            RenderSystem.enableBlend();
+            DrawableHelper.drawTexture(matrices, halfWidth - this.headLayersWidget.getRowWidth(), this.headLayersWidget.getTop() - 36, 128, 32, 32, 0,  32, 16, 64, 64);
+            RenderSystem.disableBlend();
         }
     }
 
