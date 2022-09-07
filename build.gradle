@@ -73,3 +73,7 @@ publishing {
 
     }
 }
+
+loom {
+    accessWidenerPath = file("src/main/resources/fzmm.accesswidener")
+}

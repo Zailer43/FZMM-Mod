@@ -85,4 +85,8 @@ public class HeadLayersListWidget extends AbstractHeadList<HeadLayerEntry> {
         return this.bottom;
     }
 
+    public BufferedImage getBaseSkin() {
+        return this.baseSkin.getHeadTexture();
+    }
+
 }

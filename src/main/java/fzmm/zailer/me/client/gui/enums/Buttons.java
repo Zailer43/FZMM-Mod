@@ -22,6 +22,8 @@ public enum Buttons {
     GRADIENT_COPY("gradient.copy"),
     GRADIENT_RANDOM_COLOR("gradient.randomColors"),
     GRADIENT_SET_NAME("gradient.setName"),
+    HEAD_GENERATOR_OPEN_HEADS_FOLDER("button.openHeadsFolder"),
+    HEAD_GENERATOR_SAVE_SKIN("button.saveSkin"),
     LOAD_IMAGE("button.loadImage"),
     LOAD_SKIN("button.loadSkin"),
     MAIN_CONFIGURATION("main.configs"),

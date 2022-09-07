@@ -3,29 +3,40 @@ package fzmm.zailer.me.client.gui.headgenerator;
 import com.google.gson.JsonIOException;
 import com.mojang.blaze3d.systems.RenderSystem;
 import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.gui.Message;
+import fi.dy.masa.malilib.util.InfoUtils;
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.ScreenConstants;
 import fzmm.zailer.me.client.gui.enums.Buttons;
 import fzmm.zailer.me.client.logic.HeadGenerator;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import org.apache.commons.compress.utils.Lists;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class HeadGeneratorScreen extends GuiBase {
+    private static final Path HEAD_SAVE_FOLDER_PATH = Path.of(FabricLoader.getInstance().getGameDir().toString(), "fzmm", "heads");
     private HeadListWidget headListWidget;
     private HeadLayersListWidget headLayersWidget;
     private boolean initialized;
@@ -33,6 +44,8 @@ public class HeadGeneratorScreen extends GuiBase {
     private TextFieldWidget playerNameField;
     private ButtonWidget loadSkinButton;
     private ButtonWidget giveMergedHeadButton;
+    private ButtonWidget saveSkinButton;
+    private ButtonWidget openFolderButton;
     private String currentSearch;
     private String playerName;
     private Set<String> headNames;
@@ -72,14 +85,19 @@ public class HeadGeneratorScreen extends GuiBase {
         this.searchBox.setText(previousSearch);
         this.searchBox.setChangedListener(this::onSearchChange);
 
-        this.giveMergedHeadButton = new ButtonWidget(this.headLayersWidget.getLeft(), this.headLayersWidget.getBottom() + 4, Buttons.GIVE.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.GIVE.getTranslation(), this::giveMergedHeadExecute);
+        int buttonsY = this.headLayersWidget.getBottom() + 4;
+        this.giveMergedHeadButton = new ButtonWidget(this.headLayersWidget.getLeft(), buttonsY, Buttons.GIVE.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.GIVE.getTranslation(), this::giveMergedHeadExecute);
+        this.saveSkinButton = new ButtonWidget(this.giveMergedHeadButton.x + this.giveMergedHeadButton.getWidth() + 4, buttonsY, Buttons.HEAD_GENERATOR_SAVE_SKIN.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.HEAD_GENERATOR_SAVE_SKIN.getTranslation(), this::saveSkinExecute);
+        this.openFolderButton = new ButtonWidget(this.saveSkinButton.x + this.saveSkinButton.getWidth() + 4, buttonsY, Buttons.HEAD_GENERATOR_OPEN_HEADS_FOLDER.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.HEAD_GENERATOR_OPEN_HEADS_FOLDER.getTranslation(), this::openFolderExecute);
 
-        this.addSelectableChild(this.giveMergedHeadButton);
         this.addSelectableChild(this.playerNameField);
         this.addSelectableChild(this.loadSkinButton);
         this.addSelectableChild(this.searchBox);
-        this.addSelectableChild(this.headListWidget);
         this.addSelectableChild(this.headLayersWidget);
+        this.addSelectableChild(this.headListWidget);
+        this.addSelectableChild(this.giveMergedHeadButton);
+        this.addSelectableChild(this.saveSkinButton);
+        this.addSelectableChild(this.openFolderButton);
 
         if (this.playerName == null)
             this.playerName = "";
@@ -100,6 +118,8 @@ public class HeadGeneratorScreen extends GuiBase {
             this.headListWidget.render(matrices, mouseX, mouseY, delta);
             this.headLayersWidget.render(matrices, mouseX, mouseY, delta);
             this.giveMergedHeadButton.render(matrices, mouseX, mouseY, delta);
+            this.saveSkinButton.render(matrices, mouseX, mouseY, delta);
+            this.openFolderButton.render(matrices, mouseX, mouseY, delta);
         }
         int halfWidth = this.width / 2;
         int halfRowWidth = this.headLayersWidget.getRowWidth() / 2;
@@ -126,6 +146,8 @@ public class HeadGeneratorScreen extends GuiBase {
             DrawableHelper.drawTexture(matrices, halfWidth - this.headLayersWidget.getRowWidth(), this.headLayersWidget.getTop() - 36, 128, 32, 32, 0,  32, 16, 64, 64);
             RenderSystem.disableBlend();
         }
+
+        this.drawGuiMessages(matrices);
     }
 
     @Override
@@ -231,5 +253,36 @@ public class HeadGeneratorScreen extends GuiBase {
     public void addLayer(HeadEntry headEntry) {
         HeadLayerEntry entry = new HeadLayerEntry(this.headLayersWidget, this.client, headEntry.getName(), headEntry.getPreviewImage(), headEntry.getHeadTexture());
         this.headLayersWidget.add(entry);
+    }
+
+    public void saveSkinExecute(ButtonWidget button) {
+        BufferedImage skin = this.headLayersWidget.getMergedHeadImage();
+        if (skin == null) {
+            InfoUtils.showGuiMessage(Message.MessageType.ERROR, "fzmm.gui.headGenerator.saveSkin.thereIsNoSkin");
+            return;
+        }
+        this.addBody(skin);
+        File file = HEAD_SAVE_FOLDER_PATH.toFile();
+        if (file.mkdirs())
+            FzmmClient.LOGGER.info("Head save folder created");
+
+        file = ScreenshotRecorder.getScreenshotFilename(HEAD_SAVE_FOLDER_PATH.toFile());
+        try {
+            ImageIO.write(skin, "png", file);
+            InfoUtils.showGuiMessage(Message.MessageType.SUCCESS, "fzmm.gui.headGenerator.saveSkin.saved");
+        } catch (IOException e) {
+            e.printStackTrace();
+            InfoUtils.showGuiMessage(Message.MessageType.ERROR, "fzmm.gui.headGenerator.saveSkin.saveError");
+        }
+    }
+
+    private void addBody(BufferedImage head) {
+        Graphics2D g2d = head.createGraphics();
+        g2d.drawImage(this.headLayersWidget.getBaseSkin(), 0, 16, 64, 64, 0, 16, 64, 64, null);
+        g2d.dispose();
+    }
+
+    public void openFolderExecute(ButtonWidget button) {
+        Util.getOperatingSystem().open(HEAD_SAVE_FOLDER_PATH.toFile());
     }
 }
