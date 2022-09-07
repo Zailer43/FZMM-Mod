@@ -113,6 +113,14 @@ public class DisplayUtils {
         return this;
     }
 
+    public DisplayUtils addLore(Text lore, int messageColor) {
+        return this.addLore(lore.copy().setStyle(Style.EMPTY.withColor(messageColor)));
+    }
+
+    public DisplayUtils addLore(Text lore, Color4f color) {
+        return this.addLore(lore.copy(), FzmmUtils.RGBAtoRGB(color).intValue);
+    }
+
     public DisplayUtils addLore(String message, Color4f color) {
         this.addLore(message, FzmmUtils.RGBAtoRGB(color).intValue);
         return this;

@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.*;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3f;
 
 import javax.annotation.Nullable;
@@ -16,12 +17,12 @@ public class ArmorStandUtils {
         this.entityTag = new NbtCompound();
     }
 
-    public NbtCompound getItemNbt(@Nullable String itemName) {
+    public NbtCompound getItemNbt(@Nullable Text itemName) {
         NbtCompound tag = new NbtCompound();
 
         if (itemName != null) {
             NbtCompound display = new NbtCompound();
-            display.put(ItemStack.NAME_KEY, FzmmUtils.toNbtString(itemName, true));
+            display.put(ItemStack.NAME_KEY, FzmmUtils.toNbtString(itemName.getString(), true));
             tag.put(ItemStack.DISPLAY_KEY, display);
         }
 
@@ -30,6 +31,10 @@ public class ArmorStandUtils {
     }
 
     public ItemStack getItem(@Nullable String itemName) {
+        return this.getItem(itemName == null ? null : Text.of(itemName));
+    }
+
+    public ItemStack getItem(@Nullable Text itemName) {
         ItemStack armorStand = new ItemStack(Items.ARMOR_STAND);
         armorStand.setNbt(this.getItemNbt(itemName));
         return armorStand;
