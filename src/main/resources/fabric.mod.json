@@ -26,6 +26,7 @@
   "mixins": [
     "fzmm.mixins.json"
   ],
+  "accessWidener": "fzmm.accesswidener",
   "depends": {
     "fabricloader": ">=0.12.5",
     "fabric": "*",
