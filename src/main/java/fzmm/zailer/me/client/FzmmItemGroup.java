@@ -303,6 +303,10 @@ public class FzmmItemGroup {
     }
 
     private static void addUnobtainablePaintings(List<ItemStack> stacks) {
+        // the server is lower than 1.18, the tag does not exist
+        if (!Registry.PAINTING_VARIANT.iterateEntries(PaintingVariantTags.PLACEABLE).iterator().hasNext())
+            return;
+
         for (var painting : Registry.PAINTING_VARIANT) {
             if (!contains(painting)) {
                 String variantName = Registry.PAINTING_VARIANT.getId(painting).getPath();
