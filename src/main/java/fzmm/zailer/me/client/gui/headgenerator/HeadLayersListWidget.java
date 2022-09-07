@@ -34,7 +34,8 @@ public class HeadLayersListWidget extends AbstractHeadList<HeadLayerEntry> {
 
     public void setBaseSkin(BufferedImage baseSkin) {
         this.layers.clear();
-        HeadLayerEntry entry = new HeadLayerEntry(this, this.client, "Base skin", baseSkin, baseSkin);
+        BufferedImage baseSkinPreview = new HeadGenerator(baseSkin).getHeadTexture();
+        HeadLayerEntry entry = new HeadLayerEntry(this, this.client, "Base skin", baseSkinPreview, baseSkin);
         entry.setEnabled(false);
         this.baseSkin = entry;
         this.updateEntries();
