@@ -225,11 +225,11 @@ public class FzmmItemGroup {
                 .addLore(getNameTagTranslation("johnny", 3), LORE_COLOR).get());
     }
 
-    private static Text getNameTagTranslation(String value, int line) {
+    private static String getNameTagTranslation(String value, int line) {
         String baseTranslation = "nameTag.";
         String commentTranslation = ".comment.";
 
-        return Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + baseTranslation + value + commentTranslation + line);
+        return Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + baseTranslation + value + commentTranslation + line).getString();
     }
 
     private static void addCrossbows(List<ItemStack> stacks) {

@@ -181,6 +181,7 @@
   "itemGroup.fzmm.unobtainable_items.nameTag.empty.comment.1": "Empty name tag",
   "itemGroup.fzmm.unobtainable_items.nameTag.grumm.comment.1": "Any mob to receive this name is rendered upside down.",
   "itemGroup.fzmm.unobtainable_items.nameTag.jeb_.comment.1": "Naming a sheep \"jeb_\" causes its wool to fade between",
+  "itemGroup.fzmm.unobtainable_items.nameTag.jeb_.comment.2": "the dye colors, producing a rainbow effect",
   "itemGroup.fzmm.unobtainable_items.nameTag.johnny.comment.1": "Naming a vindicator \"Johnny\" causes it to be",
   "itemGroup.fzmm.unobtainable_items.nameTag.johnny.comment.2": "aggressive and attack all mobs including the wither",
   "itemGroup.fzmm.unobtainable_items.nameTag.johnny.comment.3": "(except ghasts and other illagers)",
