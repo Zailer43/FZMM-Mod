@@ -11,7 +11,7 @@ import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.mixin.PlayerSkinTextureAccessor;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.texture.AbstractTexture;
@@ -199,13 +199,13 @@ public class FzmmUtils {
     @Nullable
     public static BufferedImage getPlayerSkinFromCache(String name) throws IOException {
         MinecraftClient client = MinecraftClient.getInstance();
-        UUID uuid = client.getSocialInteractionsManager().getUuid(name);
-        assert client.world != null;
-        AbstractClientPlayerEntity player = (AbstractClientPlayerEntity) client.world.getPlayerByUuid(uuid);
-        if (player == null)
+        assert client.player != null;
+        ClientPlayNetworkHandler clientPlayNetworkHandler = client.player.networkHandler;
+        PlayerListEntry playerListEntry = clientPlayNetworkHandler.getPlayerListEntry(name);
+        if (playerListEntry == null)
             return null;
 
-        Identifier skinIdentifier = player.getSkinTexture();
+        Identifier skinIdentifier = playerListEntry.getSkinTexture();
         AbstractTexture texture = client.getTextureManager().getTexture(skinIdentifier);
         // if the player is invisible the texture is not an instance of PlayerSkinTexture
         if (!(texture instanceof PlayerSkinTexture skinTexture))
