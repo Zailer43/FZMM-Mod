@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
 import fi.dy.masa.malilib.config.options.ConfigString;
+import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
@@ -11,8 +12,11 @@ import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
 import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
 import fzmm.zailer.me.client.logic.EncryptbookLogic;
 import fzmm.zailer.me.config.Configs;
+import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +52,9 @@ public class EncryptbookScreen extends GuiOptionsBase {
 
 		x += this.createButton(x, y, Buttons.GIVE);
 		this.createButton(x, y, Buttons.ENCRYPTBOOK_GET_DECODER);
+
+		ButtonGeneric faqButton = Buttons.FAQ.getToLeft(this.width - 20, 20);
+		this.addButton(faqButton, new FaqButtonListener());
 	}
 
 	private int createButton(int x, int y, Buttons button) {
@@ -101,6 +108,24 @@ public class EncryptbookScreen extends GuiOptionsBase {
 				}
 				case ENCRYPTBOOK_GET_DECODER -> EncryptbookLogic.showDecryptorInChat(seed, maxMsgLength);
 			}
+		}
+	}
+
+	private class FaqButtonListener implements IButtonActionListener, BooleanConsumer {
+		private static final String FAQ_URL = "https://github.com/Zailer43/FZMM-Mod/wiki/FAQ-Encryptbook";
+
+		@Override
+		public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
+			GuiBase.openGui(new ConfirmLinkScreen(this, FAQ_URL, true));
+		}
+
+		@Override
+		public void accept(boolean bl) {
+			if (bl) {
+				Util.getOperatingSystem().open(FAQ_URL);
+			}
+
+			GuiBase.openGui(EncryptbookScreen.this);
 		}
 	}
 }
