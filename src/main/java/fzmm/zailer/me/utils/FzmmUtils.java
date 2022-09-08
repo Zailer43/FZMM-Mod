@@ -86,7 +86,7 @@ public class FzmmUtils {
             PlayerInventory playerInventory = mc.player.getInventory();
 
             playerInventory.addPickBlock(stack);
-            mc.interactionManager.clickCreativeStack(stack, 36 + playerInventory.selectedSlot);
+            mc.interactionManager.clickCreativeStack(stack, PlayerInventory.MAIN_SIZE + playerInventory.selectedSlot);
         }
     }
 

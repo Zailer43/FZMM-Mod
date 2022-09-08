@@ -21,7 +21,7 @@ import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -368,7 +368,8 @@ public class FzmmCommand {
         itemStack.setCustomName(Text.literal(key));
 
         FzmmUtils.giveItem(containerItemStack);
-        MC.player.equipStack(EquipmentSlot.OFFHAND, itemStack);
+        assert MC.interactionManager != null;
+        MC.interactionManager.clickCreativeStack(itemStack, PlayerInventory.OFF_HAND_SLOT + PlayerInventory.getHotbarSize());
     }
 
     private static void removeLore() {
