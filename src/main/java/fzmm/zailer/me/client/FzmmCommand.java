@@ -5,12 +5,14 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.tree.CommandNode;
 import fzmm.zailer.me.utils.*;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.EnchantmentArgumentType;
@@ -29,14 +31,16 @@ import net.minecraft.util.Formatting;
 
 public class FzmmCommand {
 
-    static final CommandException ERROR_WITHOUT_NBT = new CommandException(Text.translatable("commands.fzmm.item.withoutNbt"));
-
+    private static final CommandException ERROR_WITHOUT_NBT = new CommandException(Text.translatable("commands.fzmm.item.withoutNbt"));
+    private static final String BASE_COMMAND_ALIAS = "fzmm";
+    private static final String BASE_COMMAND = "/" + BASE_COMMAND_ALIAS;
     private static final MinecraftClient MC = MinecraftClient.getInstance();
 
     public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
-        LiteralArgumentBuilder<FabricClientCommandSource> fzmmCommand = ClientCommandManager.literal("fzmm");
+        LiteralArgumentBuilder<FabricClientCommandSource> fzmmCommand = ClientCommandManager.literal(BASE_COMMAND_ALIAS);
 
         fzmmCommand.then(ClientCommandManager.literal("name")
+                .executes(ctx -> sendHelpMessage("commands.fzmm.name.help", BASE_COMMAND + " name <item name>"))
                 .then(ClientCommandManager.argument("name", TextArgumentType.text()).executes(ctx -> {
 
                     Text name = ctx.getArgument("name", Text.class);
@@ -47,7 +51,9 @@ public class FzmmCommand {
         );
 
         fzmmCommand.then(ClientCommandManager.literal("lore")
+                .executes(ctx -> sendHelpMessage("commands.fzmm.lore.help", BASE_COMMAND + " lore add/remove"))
                 .then(ClientCommandManager.literal("add")
+                        .executes(ctx -> sendHelpMessage("commands.fzmm.lore.add.help", BASE_COMMAND + " lore add <message>"))
                         .then(ClientCommandManager.argument("message", TextArgumentType.text()).executes(ctx -> {
 
                             Text message = ctx.getArgument("message", Text.class);
@@ -72,6 +78,7 @@ public class FzmmCommand {
 
 
         fzmmCommand.then(ClientCommandManager.literal("give")
+                .executes(ctx -> sendHelpMessage("commands.fzmm.give.help", BASE_COMMAND + " give <item> <amount>"))
                 .then(ClientCommandManager.argument("item", ItemStackArgumentType.itemStack(registryAccess)).executes((ctx) -> {
 
                     giveItem(ItemStackArgumentType.getItemStackArgument(ctx, "item"), 1);
@@ -89,6 +96,7 @@ public class FzmmCommand {
         );
 
         fzmmCommand.then(ClientCommandManager.literal("enchant")
+                .executes(ctx -> sendHelpMessage("commands.fzmm.enchant.help", BASE_COMMAND + " enchant <enchantment> <level>"))
                 .then(ClientCommandManager.argument("enchantment", EnchantmentArgumentType.enchantment()).executes(ctx -> {
 
                     Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
@@ -107,6 +115,7 @@ public class FzmmCommand {
         );
 
         fzmmCommand.then(ClientCommandManager.literal("fakeenchant")
+                .executes(ctx -> sendHelpMessage("commands.fzmm.fakeenchant.help", BASE_COMMAND + " fakeenchant <enchantment> <level>"))
                 .then(ClientCommandManager.argument("enchantment", EnchantmentArgumentType.enchantment()).executes(ctx -> {
 
                     Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
@@ -132,9 +141,10 @@ public class FzmmCommand {
         );
 
         fzmmCommand.then(ClientCommandManager.literal("amount")
-                .then(ClientCommandManager.argument("amount", IntegerArgumentType.integer(1, 64)).executes(ctx -> {
+                .executes(ctx -> sendHelpMessage("commands.fzmm.amount.help", BASE_COMMAND + " amount <value>"))
+                .then(ClientCommandManager.argument("value", IntegerArgumentType.integer(1, 64)).executes(ctx -> {
 
-                    int amount = ctx.getArgument("amount", int.class);
+                    int amount = ctx.getArgument("value", int.class);
                     amount(amount);
                     return 1;
 
@@ -142,6 +152,7 @@ public class FzmmCommand {
         );
 
         fzmmCommand.then(ClientCommandManager.literal("skull")
+                .executes(ctx -> sendHelpMessage("commands.fzmm.skull.help", BASE_COMMAND + " skull <skull owner>"))
                 .then(ClientCommandManager.argument("skull owner", StringArgumentType.greedyString()).suggests(FzmmUtils.SUGGESTION_PLAYER)
                         .executes(ctx -> {
 
@@ -153,6 +164,7 @@ public class FzmmCommand {
         );
 
         fzmmCommand.then(ClientCommandManager.literal("fullcontainer")
+                .executes(ctx -> sendHelpMessage("commands.fzmm.fullcontainer.help", BASE_COMMAND + " fullcontainer <slots to fill> <first slot>"))
                 .then(ClientCommandManager.argument("slots to fill", IntegerArgumentType.integer(1, 27)).executes(ctx -> {
 
                     fullContainer(ctx.getArgument("slots to fill", int.class), 0);
@@ -170,6 +182,7 @@ public class FzmmCommand {
         );
 
         fzmmCommand.then(ClientCommandManager.literal("lock")
+                .executes(ctx -> sendHelpMessage("commands.fzmm.lock.help", BASE_COMMAND + " lock <key>"))
                 .then(ClientCommandManager.argument("key", StringArgumentType.greedyString()).executes(ctx -> {
 
                     String key = ctx.getArgument("key", String.class);
@@ -179,7 +192,30 @@ public class FzmmCommand {
                 }))
         );
 
+        fzmmCommand.executes(ctx -> {
+            String subcommands = String.join("/", fzmmCommand.getArguments().stream().map(CommandNode::getName).toList());
+            return sendHelpMessage("commands.fzmm.help", BASE_COMMAND + " " + subcommands);
+        });
+
         dispatcher.register(fzmmCommand);
+    }
+
+    private static int sendHelpMessage(String infoTranslationKey, String syntax) {
+        int whiteColor = 0xb7b7b7;
+        int fzmmColor = 0x478e47;
+        Text infoTranslation = Text.translatable(infoTranslationKey)
+                .setStyle(Style.EMPTY.withColor(whiteColor));
+
+        Text syntaxText = Text.literal(syntax)
+                .setStyle(Style.EMPTY.withColor(whiteColor));
+
+        Text translation = Text.translatable("commands.fzmm.help.format", infoTranslation, syntaxText)
+                .setStyle(Style.EMPTY.withColor(fzmmColor));
+
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        assert player != null;
+        player.sendMessage(translation);
+        return 1;
     }
 
     private static void giveItem(ItemStackArgument item, int amount) throws CommandSyntaxException {
