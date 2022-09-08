@@ -32,7 +32,7 @@
   "fzmm.gui.configGui.colors.comment.playerStatue": "Color used in Player Statue item names and descriptions",
   "fzmm.gui.configGui.colors.comment.usefulBlockStates": "Color used in the name and description in the creative\nitem group Useful block states",
   "fzmm.gui.configGui.encryptbook": "Encryptbook",
-  "fzmm.gui.configGui.encryptbook.comment.asymmetricEncryptKey": "Asymmetric encryption key, it changes the value with which\nit is encrypted and decryptedbut unlike the seed this is not shown in the translation key,\nif you are going to communicate with someone it is likely that you should have the same value",
+  "fzmm.gui.configGui.encryptbook.comment.asymmetricEncryptKey": "Asymmetric encryption key, it changes the value with which\nit is encrypted and decrypted but unlike the seed this is not shown in the translation key,\nif you are going to communicate with someone it is likely that you should have the same value",
   "fzmm.gui.configGui.encryptbook.comment.bookTitle": "The default name of the book, the placeholder %s is replaced\nby the translation key used in the book",
   "fzmm.gui.configGui.encryptbook.comment.defaultBookMessage": "Book default message",
   "fzmm.gui.configGui.encryptbook.comment.messageMaxLength": "Default maximum number of characters\n\nBy default 255 characters is usually the maximum that can fit in a book,\nthe result can be higher if you have a resource pack that changes the length of the letters\n\nChanging this modifies the result when encrypting and decrypting",
