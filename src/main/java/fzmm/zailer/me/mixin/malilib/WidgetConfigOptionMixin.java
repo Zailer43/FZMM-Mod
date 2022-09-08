@@ -82,11 +82,10 @@ public class WidgetConfigOptionMixin extends WidgetConfigOptionBase<GuiConfigsBa
         this.imageStatusPosX = xButtons + loadButton.getWidth() + 2;
 
         ConfigOptionChangeListenerTextField listenerChange = new ConfigOptionChangeListenerTextField(config, field, loadButton);
-        ImageOption.LoadImageListener listenerLoad = new ImageOption.LoadImageListener(config);
 
         this.addTextField(field, listenerChange);
         this.addButton(changeModeButton, null);
-        this.addButton(loadButton, listenerLoad);
+        this.addButton(loadButton, (button, mouseButton) -> config.loadImageButtonExecute());
 
     }
 

@@ -6,8 +6,6 @@ import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigOptionList;
-import fi.dy.masa.malilib.gui.button.ButtonBase;
-import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fzmm.zailer.me.client.gui.enums.CustomConfigType;
 import fzmm.zailer.me.client.gui.enums.FzmmIcons;
 import fzmm.zailer.me.client.gui.enums.options.ImageModeOption;
@@ -161,6 +159,7 @@ public class ImageOption extends ConfigBase<ImageOption> implements ICustomOptio
             } else {
                 this.status = ImageStatus.UNEXPECTED_ERROR;
             }
+            this.onValueChanged();
         }).start();
     }
 
@@ -185,12 +184,8 @@ public class ImageOption extends ConfigBase<ImageOption> implements ICustomOptio
         return this.status.getIcon();
     }
 
-    public record LoadImageListener(ImageOption option) implements IButtonActionListener {
-
-        @Override
-        public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-            this.option.loadImage();
-        }
+    public void loadImageButtonExecute() {
+            this.loadImage();
     }
 
     public enum ImageStatus {
