@@ -142,6 +142,7 @@
   "fzmm.gui.option.direction.west": "West",
   "fzmm.gui.option.image.fileDoesNotExist": "The file does not exist",
   "fzmm.gui.option.image.imageLoaded": "Image loaded",
+  "fzmm.gui.option.image.playerStatue.oldSkinFormatNotSupported": "Skin must be 64x64 or 128x128",
   "fzmm.gui.option.image.invalidUsername": "Invalid username",
   "fzmm.gui.option.image.loading": "Loading...",
   "fzmm.gui.option.image.malformedUrl": "Malformed URL",

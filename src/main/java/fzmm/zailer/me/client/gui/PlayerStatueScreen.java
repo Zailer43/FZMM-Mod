@@ -10,6 +10,7 @@ import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.util.StringUtils;
 import fzmm.zailer.me.client.gui.enums.Buttons;
+import fzmm.zailer.me.client.gui.enums.FzmmIcons;
 import fzmm.zailer.me.client.gui.enums.options.DirectionOption;
 import fzmm.zailer.me.client.gui.enums.options.SkinOption;
 import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
@@ -34,6 +35,7 @@ import java.util.List;
 
 public class PlayerStatueScreen extends GuiOptionsBase {
     private static Thread CREATE_THREAD = new Thread(null, PlayerStatueScreen::createPlayerStatue, "Fzmm: Player Statue");
+    private static final ImageOption.ImageStatus OLD_SKIN_FORMAT_NOT_SUPPORTED = new ImageOption.ImageStatus("playerStatue.oldSkinFormatNotSupported", FzmmIcons.ERROR);
     private static ButtonGeneric executeButton;
     private static ButtonGeneric lastStatueButton;
     private static PlayerStatue statue = null;
@@ -59,6 +61,8 @@ public class PlayerStatueScreen extends GuiOptionsBase {
         this.configPosZ = new ConfigInteger("z", player.getBlockZ(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "coordinates");
         this.configSkin = new ImageOption("skin", "", SkinOption.NAME, this.commentBase + "skin");
         this.configName = new ConfigString("statueName", "", this.commentBase + "statueName");
+
+        this.configSkin.setValueChangeCallback(this::skinLoadCallback);
     }
 
     @Override
@@ -167,17 +171,17 @@ public class PlayerStatueScreen extends GuiOptionsBase {
 
     public void executeButtonListener(ButtonBase button, int mouseButton) {
         DirectionOption direction = (DirectionOption) PlayerStatueScreen.this.configDirectionOption.getOptionListValue();
-        int x = PlayerStatueScreen.this.configPosX.getIntegerValue();
-        int y = PlayerStatueScreen.this.configPosY.getIntegerValue();
-        int z = PlayerStatueScreen.this.configPosZ.getIntegerValue();
-        String name = PlayerStatueScreen.this.configName.getStringValue();
+        int x = this.configPosX.getIntegerValue();
+        int y = this.configPosY.getIntegerValue();
+        int z = this.configPosZ.getIntegerValue();
+        String name = this.configName.getStringValue();
         Vec3f pos = new Vec3f(x, y, z);
 
         if (tab == PlayerStatueGuiTab.CREATE) {
             if (PlayerStatueScreen.this.configSkin.hasNoImage())
                 return;
 
-            BufferedImage skin = PlayerStatueScreen.this.configSkin.getImage();
+            BufferedImage skin = this.configSkin.getImage();
             statue = new PlayerStatue(skin, name, pos, direction);
 
             CREATE_THREAD = new Thread(null, PlayerStatueScreen::createPlayerStatue, "Fzmm: Player Statue");
@@ -223,5 +227,17 @@ public class PlayerStatueScreen extends GuiOptionsBase {
 
             executeButton.setEnabled(true);
         }).start();
+    }
+
+    private void skinLoadCallback(ImageOption option) {
+        if (option.hasNoImage())
+            return;
+
+        BufferedImage image = option.getImage();
+        assert image != null;
+        if (image.getHeight() != 64 || image.getWidth() != 64) {
+            option.setStatus(OLD_SKIN_FORMAT_NOT_SUPPORTED);
+            option.setImage(null);
+        }
     }
 }

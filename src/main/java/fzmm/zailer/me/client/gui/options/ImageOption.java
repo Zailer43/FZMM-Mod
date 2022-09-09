@@ -177,43 +177,40 @@ public class ImageOption extends ConfigBase<ImageOption> implements ICustomOptio
     }
 
     public String getStatusMessage() {
-        return this.status.getMessage();
+        return this.status.message();
     }
 
     public FzmmIcons getStatusIcon() {
-        return this.status.getIcon();
+        return this.status.icon();
     }
+
+    public void setStatus(ImageStatus status) {
+        this.status = status;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+
 
     public void loadImageButtonExecute() {
             this.loadImage();
     }
 
-    public enum ImageStatus {
-        FILE_DOES_NOT_EXIST("fileDoesNotExist", FzmmIcons.ERROR),
-        IMAGE_LOADED("imageLoaded", FzmmIcons.SUCCESSFUL),
-        INVALID_USERNAME("invalidUsername", FzmmIcons.ERROR),
-        LOADING("loading", FzmmIcons.LOADING),
-        MALFORMED_URL("malformedUrl", FzmmIcons.ERROR),
-        NO_IMAGE_LOADED("noImageLoaded", FzmmIcons.ERROR),
-        PATH_DOES_NOT_HAVE_A_FILE("pathDoesNotHaveAFile", FzmmIcons.ERROR),
-        UNEXPECTED_ERROR("unexpectedError", FzmmIcons.ERROR),
-        URL_HAS_NO_IMAGE("urlHasNoImage", FzmmIcons.ERROR);
+    public record ImageStatus(String message, FzmmIcons icon) {
+        private static final ImageStatus FILE_DOES_NOT_EXIST = new ImageStatus("fileDoesNotExist", FzmmIcons.ERROR);
+        private static final ImageStatus IMAGE_LOADED= new ImageStatus("imageLoaded", FzmmIcons.SUCCESSFUL);
+        private static final ImageStatus INVALID_USERNAME = new ImageStatus("invalidUsername", FzmmIcons.ERROR);
+        private static final ImageStatus LOADING = new ImageStatus("loading", FzmmIcons.LOADING);
+        private static final ImageStatus MALFORMED_URL = new ImageStatus("malformedUrl", FzmmIcons.ERROR);
+        private static final ImageStatus NO_IMAGE_LOADED = new ImageStatus("noImageLoaded", FzmmIcons.ERROR);
+        private static final ImageStatus PATH_DOES_NOT_HAVE_A_FILE = new ImageStatus("pathDoesNotHaveAFile", FzmmIcons.ERROR);
+        private static final ImageStatus UNEXPECTED_ERROR = new ImageStatus("unexpectedError", FzmmIcons.ERROR);
+        private static final ImageStatus URL_HAS_NO_IMAGE = new ImageStatus("urlHasNoImage", FzmmIcons.ERROR);
 
-        private static final String BASE_KEY = "fzmm.gui.option.image.";
-        private final String message;
-        private final FzmmIcons icon;
-
-        ImageStatus(String message, FzmmIcons icon) {
-            this.message = message;
-            this.icon = icon;
-        }
-
-        public String getMessage() {
-            return Text.translatable(BASE_KEY + message).getString();
-        }
-
-        public FzmmIcons getIcon() {
-            return this.icon;
+        @Override
+        public String message() {
+            return Text.translatable("fzmm.gui.option.image." + this.message).getString();
         }
     }
 }
