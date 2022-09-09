@@ -163,7 +163,9 @@ public class StatuePart {
         float y = pos.getY() + this.headHeight * 0.25f - 0.9f;
         float z = pos.getZ() + this.basePos.getY();
 
-        ItemStack statuePart = new ArmorStandUtils().setPos(x, y, z).setImmutableAndInvisible().setRightArmPose(new Vec3f(-45f, this.rotation, 0f))
+        ItemStack statuePart = new ArmorStandUtils().setPos(x, y, z)
+                .setImmutableAndInvisible()
+                .setRightArmPose(new Vec3f(-45f, this.rotation, 0f))
                 .setRightHandItem(HeadUtils.playerHeadFromSkin(this.skinValue)).getItem(this.name);
 
         statuePart.setSubNbt(TagsConstant.FZMM, this.writeFzmmTag());

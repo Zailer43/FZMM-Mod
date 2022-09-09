@@ -11,6 +11,7 @@ import net.minecraft.item.SkullItem;
 import net.minecraft.nbt.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -29,8 +30,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.Date;
-import java.util.Random;
 
 public class HeadUtils {
     public static final String MINESKIN_API = "https://api.mineskin.org/";
@@ -147,7 +146,7 @@ public class HeadUtils {
         NbtCompound properties = new NbtCompound();
         NbtCompound skullOwner = new NbtCompound();
         NbtCompound tag = new NbtCompound();
-        Random random = new Random(new Date().getTime());
+        Random random = Random.create();
         NbtIntArray id = new NbtIntArray(new int[]{random.nextInt(Integer.MAX_VALUE), random.nextInt(Integer.MAX_VALUE),
                 random.nextInt(Integer.MAX_VALUE), random.nextInt(Integer.MAX_VALUE)});
 
