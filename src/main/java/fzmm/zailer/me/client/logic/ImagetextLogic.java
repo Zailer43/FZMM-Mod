@@ -74,7 +74,7 @@ public class ImagetextLogic {
      * <p>
      */
     public static Vec2f changeResolutionKeepingAspectRatio(int width, int height, int unmodifiedSide, boolean unmodifiedSideIsWidth) {
-        float modifiedSide = ((float) unmodifiedSide / (unmodifiedSideIsWidth ? width : height) * (unmodifiedSideIsWidth ? height : width));
+        int modifiedSide = (int) ((double) unmodifiedSide / (unmodifiedSideIsWidth ? width : height) * (unmodifiedSideIsWidth ? height : width));
 
         if (unmodifiedSideIsWidth)
             return new Vec2f(unmodifiedSide, modifiedSide);
