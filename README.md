@@ -142,3 +142,7 @@ All types of loot chest, or in other words: a list of chests which each time you
 ### Player heads
 
 A list of heads of all connected players.
+
+### Disclaimer
+
+The purpose of this mod is not to hack servers or anything related to exploits or bugs, it is simply a free tool to generate items, I am not responsible for what people do with those tools, nor will they be added features that can't be used creatively without damaging a server or players.
