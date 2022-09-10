@@ -287,5 +287,6 @@
   "itemGroup.fzmm.useful_block_states.item.tallFlowerSelfDestructs": "%s (self-destructs)",
   "itemGroup.fzmm.useful_block_states.item.turtleEgg4": "Turtle egg x4",
   "itemGroup.fzmm.useful_block_states.item.waterloggedBlock": "Waterlogged block of %s",
+  "itemGroup.fzmm.useful_block_states.item.waterloggedMangroveRoots": "Waterlogged mangrove roots",
   "itemGroup.fzmm.useful_block_states.place": "Place me!"
 }

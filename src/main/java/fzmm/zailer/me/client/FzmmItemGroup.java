@@ -122,6 +122,7 @@ public class FzmmItemGroup {
                     addLitCandles(stacks);
                     addHalfBed(stacks);
                     addLockedBed(stacks);
+                    stacks.add(new BlockStateTagItem(Items.MANGROVE_ROOTS, "waterloggedMangroveRoots").add("waterlogged", true).get());
                     addWaterloggedBlocks(stacks);
                 }).build();
 
