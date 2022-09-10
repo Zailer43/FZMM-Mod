@@ -257,7 +257,7 @@ public class FzmmItemGroup {
     private static void addLeaves(List<ItemStack> stacks) {
         for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.LEAVES))
-                stacks.add(new BlockStateTagItem(item, "leavesPersistent", item).add("persistent", false).get());
+                stacks.add(new BlockStateTagItem(item, "nonPersistentLeaves", item).add("persistent", false).get());
         }
     }
 
