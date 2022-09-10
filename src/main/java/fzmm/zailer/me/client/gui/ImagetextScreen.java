@@ -48,6 +48,7 @@ public class ImagetextScreen extends GuiOptionsBase {
     private final ConfigString configCharacters;
     private final ConfigBoolean configSmoothImage;
     private final ConfigBoolean configShowResolution;
+    private final ConfigBoolean preserveImageAspectRatio;
     private final ConfigOptionList configLoreOption;
     private final ConfigOptionList configBookOption;
     private final ConfigString configBookAuthor;
@@ -71,6 +72,7 @@ public class ImagetextScreen extends GuiOptionsBase {
         this.configCharacters = new ConfigString("characters", DEFAULT_CHARACTER, this.commentBase + "characters");
         this.configSmoothImage = new ConfigBoolean("smoothImage", true, this.commentBase + "smoothImage");
         this.configShowResolution = new ConfigBoolean("showResolution", false, this.commentBase + "showResolution");
+        this.preserveImageAspectRatio = new ConfigBoolean("preserveImageAspectRatio", Configs.Generic.DEFAULT_IMAGETEXT_PRESERVE_IMAGE_ASPECT_RATIO.getBooleanValue(), this.commentBase + "preserveImageAspectRatio");
         this.configLoreOption = new ConfigOptionList("loreMode", LoreOption.ADD, this.commentBase + "loreMode");
         this.configBookOption = new ConfigOptionList("bookMode", BookOption.ADD_PAGE, this.commentBase + "bookMode");
         this.configBookAuthor = new ConfigString("author", player.getName().getString(), this.commentBase + "bookAuthor");
@@ -79,12 +81,10 @@ public class ImagetextScreen extends GuiOptionsBase {
         this.configPosY = new ConfigInteger("y", player.getBlockY(), -0xffff, 0xffff, this.commentBase + "hologramCoordinates");
         this.configPosZ = new ConfigInteger("z", player.getBlockZ(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "hologramCoordinates");
 
-        if (Configs.Generic.PRESERVE_IMAGE_ASPECT_RATIO_IN_IMAGETEXT.getBooleanValue()) {
-            ChangeSizeCallback onChangeWidth = new ChangeSizeCallback(this, this.configHeight, true);
-            this.configWidth.setValueChangeCallback(onChangeWidth);
-            this.configHeight.setValueChangeCallback(new ChangeSizeCallback(this, this.configWidth, false));
-            this.configImage.setValueChangeCallback(config -> onChangeWidth.onValueChanged(this.configWidth));
-        }
+        ChangeSizeCallback onChangeWidth = new ChangeSizeCallback(this, this.configHeight, true);
+        this.configWidth.setValueChangeCallback(onChangeWidth);
+        this.configHeight.setValueChangeCallback(new ChangeSizeCallback(this, this.configWidth, false));
+        this.configImage.setValueChangeCallback(config -> onChangeWidth.onValueChanged(this.configWidth));
         this.configWidth.toggleUseSlider();
         this.configHeight.toggleUseSlider();
         this.imagetextLogic = new ImagetextLogic();
@@ -114,6 +114,7 @@ public class ImagetextScreen extends GuiOptionsBase {
         options.add(this.configCharacters);
         options.add(this.configSmoothImage);
         options.add(this.configShowResolution);
+        options.add(this.preserveImageAspectRatio);
 
         List<ConfigOptionWrapper> optionsWrapper = OptionWrapper.createFor(options);
         this.addTabOptions(optionsWrapper);
@@ -309,7 +310,7 @@ public class ImagetextScreen extends GuiOptionsBase {
 
         @Override
         public void onValueChanged(ConfigInteger config) {
-            if (this.parent.configImage.hasNoImage())
+            if (this.parent.configImage.hasNoImage() || !this.parent.preserveImageAspectRatio.getBooleanValue())
                 return;
 
             BufferedImage image = this.parent.configImage.getImage();
