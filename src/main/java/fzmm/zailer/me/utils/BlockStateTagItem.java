@@ -38,7 +38,7 @@ public class BlockStateTagItem {
         if (this.itemName != null) {
             Color4f color = Configs.Colors.USEFUL_BLOCK_STATES.getColor();
             displayUtils.setName(this.itemName, color)
-                    .addLore(Text.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + "place"), color);
+                    .addLore(Text.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + "place").getString(), color);
         }
         ItemStack stack = displayUtils.get();
 
