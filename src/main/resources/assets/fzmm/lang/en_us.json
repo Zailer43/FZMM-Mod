@@ -232,6 +232,7 @@
   "itemGroup.fzmm.unobtainable_items.nameTag.toast.comment.1": "Naming a rabbit \"Toast\" causes it to have a special memorial",
   "itemGroup.fzmm.unobtainable_items.nameTag.toast.comment.2": "skin of user xyzen420's girlfriend's missing rabbit.",
   "itemGroup.fzmm.useful_block_states": "Useful block states",
+  "itemGroup.fzmm.useful_block_states.item.waterloggedBlock": "Waterlogged block",
   "itemGroup.fzmm.useful_block_states.item.bambooWithLeaves": "Bamboo with leaves",
   "itemGroup.fzmm.useful_block_states.item.bedHeadPart": "%s (head part)",
   "itemGroup.fzmm.useful_block_states.item.beeNestFilledWithHoney": "Bee nest filled with honey",

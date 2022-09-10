@@ -122,6 +122,7 @@ public class FzmmItemGroup {
                     addLitCandles(stacks);
                     addHalfBed(stacks);
                     addLockedBed(stacks);
+                    addWaterloggedBlocks(stacks);
                 }).build();
 
         FabricItemGroupBuilder.create(new Identifier(FzmmClient.MOD_ID, "loot_chests"))
@@ -299,6 +300,13 @@ public class FzmmItemGroup {
         for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.BEDS))
                 stacks.add(new BlockStateTagItem(item, "lockedBed", item).add("occupied", true).get());
+        }
+    }
+
+    private static void addWaterloggedBlocks(List<ItemStack> stacks) {
+        for (var item : Registry.ITEM) {
+            if (contains(item, ItemTags.SLABS))
+                stacks.add(new BlockStateTagItem(item, "waterloggedBlock", item).add("type", "double").add("waterlogged", true).get());
         }
     }
 
