@@ -70,6 +70,7 @@
   "fzmm.gui.configGui.encryptbook.comment.separatorMessage": "Message that separates the encrypted message from the padding",
   "fzmm.gui.configGui.encryptbook.comment.translationKeyPrefix": "The translation key prefix, just aesthetic,\nalthough when you change it you will need to change or re-add the translations to decrypt",
   "fzmm.gui.configGui.generic": "Generic",
+  "fzmm.gui.configGui.generic.comment.convertSkinsWithAlexModelInSteveInPlayerStatue": "Convert skins with alex model (3 pixel arms) to steve model (4 pixel arms) in player statue\n\nNote: player statue only supports steve model and it is not possible to support alex model",
   "fzmm.gui.configGui.generic.comment.defaultGradientItem": "Item obtained when using Gradient and having no item in hand",
   "fzmm.gui.configGui.generic.comment.defaultImagetextBookMessage": "The default text when using Imagetext book tooltip",
   "fzmm.gui.configGui.generic.comment.defaultImagetextItem": "Item obtained when using Imagetext Lore and having no item in hand",

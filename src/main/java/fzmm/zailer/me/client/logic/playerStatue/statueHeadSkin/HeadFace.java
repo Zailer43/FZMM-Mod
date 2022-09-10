@@ -9,20 +9,14 @@ public record HeadFace(int x, int y) {
     private static final short HEAD_SIZE = 8;
     private static final short HAT_LAYER_X_DISTANCE = 32;
 
-    public void draw(Graphics2D graphics, BufferedImage playerSkin, PosI source, boolean hatLayer) {
-        int source2Distance = 4;
-        int sourceX = source.getX();
-        int sourceY = source.getY();
+    public void draw(Graphics2D graphics, BufferedImage playerSkin, PosI source, boolean hatLayer, int scale) {
+        int source2Distance = 4 * scale;
+        int sourceX = source.getX() * scale;
+        int sourceY = source.getY() * scale;
         int destinationX = this.x;
 
         if (hatLayer)
-            destinationX += HAT_LAYER_X_DISTANCE;
-
-        if (playerSkin.getWidth() == 128 && playerSkin.getHeight() == 128) {
-            source2Distance *= 2;
-            sourceX *= 2;
-            sourceY *= 2;
-        }
+            destinationX += HAT_LAYER_X_DISTANCE * scale;
 
         graphics.drawImage(playerSkin, destinationX, this.y, destinationX + HEAD_SIZE, this.y + HEAD_SIZE, sourceX, sourceY, sourceX + source2Distance, sourceY + source2Distance, null);
     }

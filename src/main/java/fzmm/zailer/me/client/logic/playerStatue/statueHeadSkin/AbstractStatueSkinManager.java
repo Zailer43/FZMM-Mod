@@ -12,14 +12,14 @@ public abstract class AbstractStatueSkinManager {
         this.skinPart = skinPart;
     }
 
-    protected void draw(HeadFace.HEAD_FACE headFace, Graphics2D graphics, BufferedImage playerSkin) {
+    protected void draw(HeadFace.HEAD_FACE headFace, Graphics2D graphics, BufferedImage playerSkin, int scale) {
         PosI pos = this.skinPart.getNormalLayer();
         PosI hatPos = this.skinPart.getHatLayer();
 
         this.setPos(headFace, pos);
-        headFace.get().draw(graphics, playerSkin, pos, false);
+        headFace.get().draw(graphics, playerSkin, pos, false, scale);
         this.setPos(headFace, hatPos);
-        headFace.get().draw(graphics, playerSkin, hatPos, true);
+        headFace.get().draw(graphics, playerSkin, hatPos, true, scale);
     }
 
     private void setPos(HeadFace.HEAD_FACE headFace, PosI pos) {

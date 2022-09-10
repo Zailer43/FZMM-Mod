@@ -27,6 +27,7 @@ public class Configs implements IConfigHandler
         public static final ConfigBoolean GIVE_CLIENT_SIDE = new ConfigBoolean("giveClientSide", false, "");
         public static final ConfigBoolean DISABLE_ITALIC = new ConfigBoolean("disableItalic", true, "");
         public static final ConfigBoolean PRESERVE_IMAGE_ASPECT_RATIO_IN_IMAGETEXT = new ConfigBoolean("preserveImageAspectRatioInImagetext", true, "");
+        public static final ConfigBoolean CONVERT_SKINS_WITH_ALEX_MODEL_IN_STEVE_MODEL_IN_PLAYER_STATUE = new ConfigBoolean("convertSkinsWithAlexModelInSteveInPlayerStatue", true, "");
         public static final ConfigBoolean MINESKIN_PUBLIC_SKINS = new ConfigBoolean("mineskinPublicSkins", false, "");
         public static final ConfigString MINESKIN_API_KEY = new ConfigString("mineskinApiKey", "", "");
         public static final ConfigString DEFAULT_IMAGETEXT_BOOK_MESSAGE = new ConfigString("defaultImagetextBookMessage", "Hover over this message to see an image", "");
@@ -39,6 +40,7 @@ public class Configs implements IConfigHandler
                 GIVE_CLIENT_SIDE,
                 DISABLE_ITALIC,
                 PRESERVE_IMAGE_ASPECT_RATIO_IN_IMAGETEXT,
+                CONVERT_SKINS_WITH_ALEX_MODEL_IN_STEVE_MODEL_IN_PLAYER_STATUE,
                 MINESKIN_PUBLIC_SKINS,
                 MINESKIN_API_KEY,
                 DEFAULT_IMAGETEXT_BOOK_MESSAGE,

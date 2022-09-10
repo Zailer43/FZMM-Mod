@@ -24,35 +24,11 @@ public class HeadModelSkin {
         this.add(headFaces);
     }
 
-    public HeadModelSkin(boolean right, boolean left, boolean front, boolean back, boolean up, boolean bottom) {
-        this.headFaces = new ArrayList<>();
-
-        this.add(right, left, front, back, up, bottom);
-    }
-
     public static HeadModelSkin of(HeadModelSkin headModelSkin, HeadModelSkin headModelSkin2) {
         List<HeadFace.HEAD_FACE> headFaces = new ArrayList<>(headModelSkin.headFaces);
         headFaces.addAll(headModelSkin2.headFaces);
 
         return new HeadModelSkin(headFaces);
-    }
-
-    private void add(boolean right, boolean left, boolean front, boolean back, boolean up, boolean bottom) {
-        if (right)
-            this.headFaces.add(HeadFace.HEAD_FACE.RIGHT_FACE);
-        if (left)
-            this.headFaces.add(HeadFace.HEAD_FACE.LEFT_FACE);
-        if (front)
-            this.headFaces.add(HeadFace.HEAD_FACE.FRONT_FACE);
-        if (back)
-            this.headFaces.add(HeadFace.HEAD_FACE.BACK_FACE);
-        if (up)
-            this.headFaces.add(HeadFace.HEAD_FACE.UP_FACE);
-        if (bottom)
-            this.headFaces.add(HeadFace.HEAD_FACE.BOTTOM_FACE);
-
-        this.distinct();
-
     }
 
     public void add(HeadFace.HEAD_FACE... headFaces) {
@@ -67,9 +43,9 @@ public class HeadModelSkin {
                 .collect(Collectors.toList());
     }
 
-    public void draw(AbstractStatueSkinManager skinManager,Graphics2D graphics, BufferedImage playerSkin) {
+    public void draw(AbstractStatueSkinManager skinManager, Graphics2D graphics, BufferedImage playerSkin, int scale) {
         for (HeadFace.HEAD_FACE headFace : this.headFaces) {
-            skinManager.draw(headFace, graphics, playerSkin);
+            skinManager.draw(headFace, graphics, playerSkin, scale);
         }
     }
 

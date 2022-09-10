@@ -175,10 +175,10 @@ public class StatuePart {
     /**
      * @return seconds left to generate another skin
      */
-    public int setStatueSkin(BufferedImage playerSkin) {
+    public int setStatueSkin(BufferedImage playerSkin, int scale) {
         HeadUtils headUtils = new HeadUtils();
         try {
-            this.draw(playerSkin, this.headSkin);
+            this.draw(playerSkin, this.headSkin, scale);
             headUtils.uploadHead(this.headSkin, this.name);
 
         } catch (Exception e) {
@@ -195,9 +195,9 @@ public class StatuePart {
         return this.skinGenerated;
     }
 
-    private void draw(BufferedImage playerSkin, BufferedImage destinationSkin) {
+    private void draw(BufferedImage playerSkin, BufferedImage destinationSkin, int scale) {
         Graphics2D graphics = destinationSkin.createGraphics();
-        this.headModelSkin.draw(this.skinManager, graphics, playerSkin);
+        this.headModelSkin.draw(this.skinManager, graphics, playerSkin, scale);
 
     }
 

@@ -18,6 +18,7 @@ import net.minecraft.util.math.Vec3f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class PlayerStatue {
     public static final Logger LOGGER = LogManager.getLogger("FZMM PlayerStatue");
     private final List<StatuePart> statueList;
     private final String name;
-    private final BufferedImage playerSkin;
+    private BufferedImage playerSkin;
     private final Vec3f pos;
     private final DirectionOption direction;
     public static short progress = 0;
@@ -45,6 +46,9 @@ public class PlayerStatue {
 
     public PlayerStatue generateStatues() {
         this.statueList.clear();
+
+        if (Configs.Generic.CONVERT_SKINS_WITH_ALEX_MODEL_IN_STEVE_MODEL_IN_PLAYER_STATUE.getBooleanValue() && this.isAlexModel())
+            this.convertInSteveModel();
 
         if (MinecraftClient.getInstance().currentScreen instanceof PlayerStatueScreen playerStatueScreen)
             playerStatueScreen.reload();
@@ -94,7 +98,7 @@ public class PlayerStatue {
         int delay = 0;
         for (StatuePart statuePart : this.statueList) {
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(delay));
-            delay = statuePart.setStatueSkin(this.playerSkin);
+            delay = statuePart.setStatueSkin(this.playerSkin, this.getSkinScale());
             this.notifyStatus(statuePart, delay);
         }
 
@@ -107,7 +111,7 @@ public class PlayerStatue {
     public void fixGeneratingError() {
         for (StatuePart statuePart : this.statueList) {
             if (!statuePart.isSkinGenerated()) {
-                int delay = statuePart.setStatueSkin(this.playerSkin);
+                int delay = statuePart.setStatueSkin(this.playerSkin, this.getSkinScale());
                 this.notifyStatus(statuePart, delay);
             }
         }
@@ -204,5 +208,61 @@ public class PlayerStatue {
         }
 
         return getStatueInContainer(statueList, pos);
+    }
+
+    public boolean isAlexModel() {
+        int scale = this.getSkinScale();
+        int color = this.playerSkin.getRGB((SkinPart.LEFT_ARM.x() + 15) * scale, (SkinPart.LEFT_ARM.y() + 15) * scale);
+        int alpha = new Color(color, true).getAlpha();
+        return alpha == 0;
+    }
+
+    public void convertInSteveModel() {
+        int scale = this.getSkinScale();
+        this.convertInSteveModel(SkinPart.LEFT_ARM, scale);
+        this.convertInSteveModel(SkinPart.RIGHT_ARM, scale);
+    }
+
+    private void convertInSteveModel(SkinPart skinPart, int scale) {
+        this.convertInSteveModel(skinPart.x(), skinPart.y(), scale);
+        this.convertInSteveModel(skinPart.hatX(), skinPart.hatY(), scale);
+    }
+
+    private void convertInSteveModel(int x, int y, int scale) {
+        x *= scale;
+        y *= scale;
+        int imageSize = 64 * scale;
+        int space = 4 * scale;
+        int steveArmWidth = 4 * scale;
+        int alexArmWidth = 3 * scale;
+        int skinPartSize = 16 * scale;
+        BufferedImage bufferedImage = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = bufferedImage.createGraphics();
+
+        // copy skin
+        g2d.drawImage(this.playerSkin, 0, 0, imageSize, imageSize, 0, 0, imageSize, imageSize, null);
+        // clear skin part
+        g2d.setColor(new Color(0, 0, 0, 0));
+        g2d.fillRect(x, y, skinPartSize, skinPartSize);
+        // copy side 1
+        g2d.drawImage(this.playerSkin, x, y + space, x + steveArmWidth, y + skinPartSize, x, y + space, x + steveArmWidth, y + skinPartSize, null);
+        // stretching face 2
+        g2d.drawImage(this.playerSkin, x + steveArmWidth, y + space, x + steveArmWidth * 2, y + skinPartSize, x + steveArmWidth, y + space, x + steveArmWidth + alexArmWidth, y + skinPartSize, null);
+        // moving face 3
+        g2d.drawImage(this.playerSkin, x + steveArmWidth * 2, y + space, x + steveArmWidth * 3, y + skinPartSize, x + steveArmWidth + alexArmWidth, y + space, x + steveArmWidth * 2 + alexArmWidth, y + skinPartSize, null);
+        // stretching and moving face 4
+        g2d.drawImage(this.playerSkin, x + steveArmWidth * 3, y + space, x + steveArmWidth * 4, y + skinPartSize, x + steveArmWidth * 2 + alexArmWidth, y + space, x + steveArmWidth * 2 + alexArmWidth * 2, y + skinPartSize, null);
+        // stretching top/down face 1
+        g2d.drawImage(this.playerSkin, x + space, y, x + steveArmWidth, y + space, x + space, y, x + alexArmWidth, y + space, null);
+        // stretching and moving top/down face 2
+        g2d.drawImage(this.playerSkin, x + space + steveArmWidth, y, x + steveArmWidth * 2, y + space, x + space + alexArmWidth, y, x + alexArmWidth * 2, y + space, null);
+
+        g2d.dispose();
+        this.playerSkin = bufferedImage;
+    }
+
+    private int getSkinScale() {
+        return this.playerSkin.getHeight() == 128 && this.playerSkin.getWidth() == 128 ? 2 : 1;
     }
 }
