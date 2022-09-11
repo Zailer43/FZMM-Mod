@@ -235,7 +235,9 @@ public class PlayerStatueScreen extends GuiOptionsBase {
 
         BufferedImage image = option.getImage();
         assert image != null;
-        if (image.getHeight() != 64 || image.getWidth() != 64) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        if (!(width == 64 && height == 64) && !(width == 128 && height == 128)) {
             option.setStatus(OLD_SKIN_FORMAT_NOT_SUPPORTED);
             option.setImage(null);
         }

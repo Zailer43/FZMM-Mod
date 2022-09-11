@@ -13,10 +13,14 @@ public record HeadFace(int x, int y) {
         int source2Distance = 4 * scale;
         int sourceX = source.getX() * scale;
         int sourceY = source.getY() * scale;
+
+        // the destination is the same even if the scale changes,
+        // since the resolution of the minecraft skin does not change,
+        // so it is not multiplied by the scale
         int destinationX = this.x;
 
         if (hatLayer)
-            destinationX += HAT_LAYER_X_DISTANCE * scale;
+            destinationX += HAT_LAYER_X_DISTANCE;
 
         graphics.drawImage(playerSkin, destinationX, this.y, destinationX + HEAD_SIZE, this.y + HEAD_SIZE, sourceX, sourceY, sourceX + source2Distance, sourceY + source2Distance, null);
     }
