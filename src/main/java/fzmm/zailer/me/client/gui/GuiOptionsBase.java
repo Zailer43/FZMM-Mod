@@ -16,7 +16,7 @@ public abstract class GuiOptionsBase extends GuiConfigsBase implements IMessageC
     protected int configWidth = 204;
 
     protected GuiOptionsBase(String titleKey, Screen parent) {
-        super(10, 50, FzmmClient.MOD_ID, null, FzmmClient.MOD_ID + ".gui.title." + titleKey);
+        super(10, 50, FzmmClient.MOD_ID, parent, FzmmClient.MOD_ID + ".gui.title." + titleKey);
         this.setParent(parent);
         this.commentBase =  FzmmClient.MOD_ID + ".gui." + titleKey + ".comment.";
     }

@@ -19,7 +19,7 @@ public class ConfigScreen extends GuiConfigsBase {
     private static ConfigGuiTab tab = ConfigGuiTab.GENERIC;
 
     public ConfigScreen(Screen parent) {
-        super(10, 50, FzmmClient.MOD_ID, null, "fzmm.gui.title.configs");
+        super(10, 50, FzmmClient.MOD_ID, parent, "fzmm.gui.title.configs");
         this.setParent(parent);
     }
 
