@@ -100,6 +100,7 @@ public class FzmmItemGroup {
                     stacks.add(new BlockStateTagItem(Items.POTATO, "fullGrownPotatoes").add("age", 7).get());
                     stacks.add(new BlockStateTagItem(Items.BEETROOT_SEEDS, "fullGrownBeetroots").add("age", 3).get());
                     stacks.add(new BlockStateTagItem(Items.COCOA_BEANS, "fullGrownCocoa").add("age", 2).get());
+                    stacks.add(new BlockStateTagItem(Items.GLOW_BERRIES, "glowBerries").add("berries", true).get());
                     stacks.add(new BlockStateTagItem(Items.REPEATER, "repeaterTicks.2").add("delay", 2).get());
                     stacks.add(new BlockStateTagItem(Items.REPEATER, "repeaterTicks.3").add("delay", 3).get());
                     stacks.add(new BlockStateTagItem(Items.REPEATER, "repeaterTicks.4").add("delay", 4).get());
@@ -110,12 +111,17 @@ public class FzmmItemGroup {
                     stacks.add(new BlockStateTagItem(Items.SEA_PICKLE, "seaPickle4").add("pickles", 4).get());
                     stacks.add(new BlockStateTagItem(Items.TURTLE_EGG, "turtleEgg4").add("eggs", 4).get());
                     stacks.add(new BlockStateTagItem(Items.CAKE, "sliceOfCake").add("bites", 6).get());
+                    stacks.add(new BlockStateTagItem(Items.TNT, "unstableTnt").add("unstable", true).get());
                     stacks.add(new BlockStateTagItem(Items.REDSTONE, "poweredRedstone").add("power", 15).get());
                     stacks.add(new BlockStateTagItem(Items.SCULK_CATALYST, "sculkCatalystBloom").add("bloom", true).get());
                     stacks.add(new BlockStateTagItem(Items.SCULK_SHRIEKER, "sculkShriekerCanSummon").add("can_summon", true).get());
                     stacks.add(new BlockStateTagItem(Items.SCULK_SHRIEKER, "sculkShriekerLocked").add("shrieking", true).get());
                     stacks.add(new BlockStateTagItem(Items.GLOW_LICHEN, "glowLichenBlock").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
                     stacks.add(new BlockStateTagItem(Items.SCULK_VEIN, "sculkVeinBlock").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
+                    stacks.add(new BlockStateTagItem(Items.CHEST, "leftChest").add("type", "left").get());
+                    stacks.add(new BlockStateTagItem(Items.CHEST, "rightChest").add("type", "right").get());
+                    stacks.add(new BlockStateTagItem(Items.TRAPPED_CHEST, "leftTrappedChest").add("type", "left").get());
+                    stacks.add(new BlockStateTagItem(Items.TRAPPED_CHEST, "rightTrappedChest").add("type", "right").get());
                     addHalfDoors(stacks);
                     addTallFlowers(stacks);
                     addLeaves(stacks);
