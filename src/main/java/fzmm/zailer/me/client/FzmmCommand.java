@@ -297,7 +297,7 @@ public class FzmmCommand {
 
         stack.setCount(amount);
 
-        FzmmUtils.giveItem(stack);
+        FzmmUtils.updateHand(stack);
     }
 
     private static void getHead(String skullOwner) {

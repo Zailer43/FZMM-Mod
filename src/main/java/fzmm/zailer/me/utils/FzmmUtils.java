@@ -86,8 +86,17 @@ public class FzmmUtils {
             PlayerInventory playerInventory = mc.player.getInventory();
 
             playerInventory.addPickBlock(stack);
-            mc.interactionManager.clickCreativeStack(stack, PlayerInventory.MAIN_SIZE + playerInventory.selectedSlot);
+            updateHand(stack);
         }
+    }
+
+    public static void updateHand(ItemStack stack) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client.interactionManager != null;
+        assert client.player != null;
+
+        PlayerInventory playerInventory = client.player.getInventory();
+        client.interactionManager.clickCreativeStack(stack, PlayerInventory.MAIN_SIZE + playerInventory.selectedSlot);
     }
 
     public static BufferedImage getImageFromPath(String path) throws IOException {
