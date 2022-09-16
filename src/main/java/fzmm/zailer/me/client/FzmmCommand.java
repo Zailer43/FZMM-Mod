@@ -247,10 +247,14 @@ public class FzmmCommand {
     private static void addFakeEnchant(Enchantment enchant, int level) {
         assert MC.player != null;
         ItemStack stack = MC.player.getInventory().getMainHandStack();
-        Text enchantMessage = enchant.getName(level);
+        MutableText enchantMessage = (MutableText) enchant.getName(level);
 
-        Style style = enchantMessage.getStyle();
-        ((MutableText) enchantMessage).setStyle(style.withItalic(false));
+        Style style = enchantMessage.getStyle().withItalic(false);
+        enchantMessage.getSiblings().forEach(text -> {
+            if (!text.getString().isBlank())
+                ((MutableText) text).setStyle(style);
+        });
+
         stack = new DisplayUtils(stack).addLore(enchantMessage).get();
 
         NbtCompound tag = stack.getOrCreateNbt();
