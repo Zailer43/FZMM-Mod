@@ -254,9 +254,9 @@ public class PlayerStatue {
         // stretching and moving face 4
         g2d.drawImage(this.playerSkin, x + steveArmWidth * 3, y + space, x + steveArmWidth * 4, y + skinPartSize, x + steveArmWidth * 2 + alexArmWidth, y + space, x + steveArmWidth * 2 + alexArmWidth * 2, y + skinPartSize, null);
         // stretching top/down face 1
-        g2d.drawImage(this.playerSkin, x + space, y, x + steveArmWidth, y + space, x + space, y, x + alexArmWidth, y + space, null);
+        g2d.drawImage(this.playerSkin, x + space, y, x + steveArmWidth + space, y + space, x + space, y, x + alexArmWidth + space, y + space, null);
         // stretching and moving top/down face 2
-        g2d.drawImage(this.playerSkin, x + space + steveArmWidth, y, x + steveArmWidth * 2, y + space, x + space + alexArmWidth, y, x + alexArmWidth * 2, y + space, null);
+        g2d.drawImage(this.playerSkin, x + space + steveArmWidth, y, x + steveArmWidth * 2 + space, y + space, x + space + alexArmWidth, y, x + alexArmWidth * 2 + space, y + space, null);
 
         g2d.dispose();
         this.playerSkin = bufferedImage;
