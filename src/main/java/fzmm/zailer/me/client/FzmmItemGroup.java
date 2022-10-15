@@ -1,7 +1,12 @@
 package fzmm.zailer.me.client;
 
 import com.mojang.authlib.GameProfile;
-import fzmm.zailer.me.utils.*;
+import fzmm.zailer.me.builders.ArmorStandBuilder;
+import fzmm.zailer.me.builders.BlockStateItemBuilder;
+import fzmm.zailer.me.builders.CrossbowBuilder;
+import fzmm.zailer.me.builders.DisplayBuilder;
+import fzmm.zailer.me.utils.HeadUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -67,68 +72,68 @@ public class FzmmItemGroup {
                 .icon(() -> new ItemStack(Items.REDSTONE_LAMP))
                 .appendItems((stacks, itemGroup) -> {
 
-                    stacks.add(new BlockStateTagItem(Items.REDSTONE_LAMP, "litRedstoneLamp").add("lit", true).get());
-                    stacks.add(new BlockStateTagItem(Items.FURNACE, "litFurnace").add("lit", true).get());
-                    stacks.add(new BlockStateTagItem(Items.SMOKER, "litSmoker").add("lit", true).get());
-                    stacks.add(new BlockStateTagItem(Items.BLAST_FURNACE, "litBlastFurnace").add("lit", true).get());
-                    stacks.add(new BlockStateTagItem(Items.CAMPFIRE, "offCampfire").add("lit", false).get());
-                    stacks.add(new BlockStateTagItem(Items.CAMPFIRE, "signalFireOfCampfire").add("signal_fire", true).get());
-                    stacks.add(new BlockStateTagItem(Items.SOUL_CAMPFIRE, "offSoulCampfire").add("lit", false).get());
-                    stacks.add(new BlockStateTagItem(Items.SOUL_CAMPFIRE, "signalFireOfSoulCampfire").add("signal_fire", true).get());
-                    stacks.add(new BlockStateTagItem(Items.GRASS_BLOCK, "snowyGrassBlock").add("snowy", true).get());
-                    stacks.add(new BlockStateTagItem(Items.MYCELIUM, "snowyMycelium").add("snowy", true).get());
-                    stacks.add(new BlockStateTagItem(Items.PODZOL, "snowyPodzol").add("snowy", true).get());
-                    stacks.add(new BlockStateTagItem(Items.SNOW, "snowBlock").add("layers", 8).get());
-                    stacks.add(new BlockStateTagItem(Items.BARREL, "openBarrel").add("open", true).get());
-                    stacks.add(new BlockStateTagItem(Items.IRON_TRAPDOOR, "openIronTrapdoor").add("open", true).get());
-                    stacks.add(new BlockStateTagItem(Items.IRON_DOOR, "openIronDoor").add("open", true).get());
-                    stacks.add(new BlockStateTagItem(Items.END_PORTAL_FRAME, "endPortalFrameWithEye").add("eye", true).get());
-                    stacks.add(new BlockStateTagItem(Items.LANTERN, "hangingLantern").add("hanging", true).get());
-                    stacks.add(new BlockStateTagItem(Items.LANTERN, "lanternOnTheFloor").add("hanging", false).get());
-                    stacks.add(new BlockStateTagItem(Items.SOUL_LANTERN, "hangingSoulLantern").add("hanging", true).get());
-                    stacks.add(new BlockStateTagItem(Items.SOUL_LANTERN, "soulLanternOnTheFloor").add("hanging", false).get());
-                    stacks.add(new BlockStateTagItem(Items.MANGROVE_PROPAGULE, "hangingMangrovePropagule").add("hanging", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.REDSTONE_LAMP, "litRedstoneLamp").add("lit", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.FURNACE, "litFurnace").add("lit", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SMOKER, "litSmoker").add("lit", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.BLAST_FURNACE, "litBlastFurnace").add("lit", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.CAMPFIRE, "offCampfire").add("lit", false).get());
+                    stacks.add(new BlockStateItemBuilder(Items.CAMPFIRE, "signalFireOfCampfire").add("signal_fire", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SOUL_CAMPFIRE, "offSoulCampfire").add("lit", false).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SOUL_CAMPFIRE, "signalFireOfSoulCampfire").add("signal_fire", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.GRASS_BLOCK, "snowyGrassBlock").add("snowy", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.MYCELIUM, "snowyMycelium").add("snowy", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.PODZOL, "snowyPodzol").add("snowy", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SNOW, "snowBlock").add("layers", 8).get());
+                    stacks.add(new BlockStateItemBuilder(Items.BARREL, "openBarrel").add("open", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.IRON_TRAPDOOR, "openIronTrapdoor").add("open", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.IRON_DOOR, "openIronDoor").add("open", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.END_PORTAL_FRAME, "endPortalFrameWithEye").add("eye", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.LANTERN, "hangingLantern").add("hanging", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.LANTERN, "lanternOnTheFloor").add("hanging", false).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SOUL_LANTERN, "hangingSoulLantern").add("hanging", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SOUL_LANTERN, "soulLanternOnTheFloor").add("hanging", false).get());
+                    stacks.add(new BlockStateItemBuilder(Items.MANGROVE_PROPAGULE, "hangingMangrovePropagule").add("hanging", true).get());
                     // it is not possible to place it on faces of blocks other than the bottom one, it is useless
 //                    stacks.add(new BlockStateTagItem(Items.MANGROVE_PROPAGULE, "Mangrove propagule on the floor").add("hanging", false).get());
-                    stacks.add(new BlockStateTagItem(Items.COMPOSTER, "fullComposter").add("level", 8).get());
-                    stacks.add(new BlockStateTagItem(Items.RESPAWN_ANCHOR, "fullRespawnAnchor").add("charges", 4).get());
-                    stacks.add(new BlockStateTagItem(Items.BAMBOO, "bambooWithLeaves").add("leaves", "large").get());
-                    stacks.add(new BlockStateTagItem(Items.WHEAT_SEEDS, "fullGrownWheat").add("age", 7).get());
-                    stacks.add(new BlockStateTagItem(Items.PUMPKIN_SEEDS, "fullGrownPumpkin").add("age", 7).get());
-                    stacks.add(new BlockStateTagItem(Items.MELON_SEEDS, "fullGrownMelon").add("age", 7).get());
-                    stacks.add(new BlockStateTagItem(Items.CARROT, "fullGrownCarrot").add("age", 7).get());
-                    stacks.add(new BlockStateTagItem(Items.POTATO, "fullGrownPotatoes").add("age", 7).get());
-                    stacks.add(new BlockStateTagItem(Items.BEETROOT_SEEDS, "fullGrownBeetroots").add("age", 3).get());
-                    stacks.add(new BlockStateTagItem(Items.COCOA_BEANS, "fullGrownCocoa").add("age", 2).get());
-                    stacks.add(new BlockStateTagItem(Items.GLOW_BERRIES, "glowBerries").add("berries", true).get());
-                    stacks.add(new BlockStateTagItem(Items.REPEATER, "repeaterTicks.2").add("delay", 2).get());
-                    stacks.add(new BlockStateTagItem(Items.REPEATER, "repeaterTicks.3").add("delay", 3).get());
-                    stacks.add(new BlockStateTagItem(Items.REPEATER, "repeaterTicks.4").add("delay", 4).get());
-                    stacks.add(new BlockStateTagItem(Items.REPEATER, "lockedRepeater").add("locked", true).get());
-                    stacks.add(new BlockStateTagItem(Items.HOPPER, "disabledHopper").add("enabled", false).get());
-                    stacks.add(new BlockStateTagItem(Items.BEE_NEST, "beeNestFilledWithHoney").add("honey_level", 5).get());
-                    stacks.add(new BlockStateTagItem(Items.BEEHIVE, "beehiveFilledWithHoney").add("honey_level", 5).get());
-                    stacks.add(new BlockStateTagItem(Items.SEA_PICKLE, "seaPickle4").add("pickles", 4).get());
-                    stacks.add(new BlockStateTagItem(Items.TURTLE_EGG, "turtleEgg4").add("eggs", 4).get());
-                    stacks.add(new BlockStateTagItem(Items.CAKE, "sliceOfCake").add("bites", 6).get());
-                    stacks.add(new BlockStateTagItem(Items.TNT, "unstableTnt").add("unstable", true).get());
-                    stacks.add(new BlockStateTagItem(Items.REDSTONE, "poweredRedstone").add("power", 15).get());
-                    stacks.add(new BlockStateTagItem(Items.SCULK_CATALYST, "sculkCatalystBloom").add("bloom", true).get());
-                    stacks.add(new BlockStateTagItem(Items.SCULK_SHRIEKER, "sculkShriekerCanSummon").add("can_summon", true).get());
-                    stacks.add(new BlockStateTagItem(Items.SCULK_SHRIEKER, "sculkShriekerLocked").add("shrieking", true).get());
-                    stacks.add(new BlockStateTagItem(Items.GLOW_LICHEN, "glowLichenBlock").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
-                    stacks.add(new BlockStateTagItem(Items.SCULK_VEIN, "sculkVeinBlock").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
-                    stacks.add(new BlockStateTagItem(Items.CHEST, "leftChest").add("type", "left").get());
-                    stacks.add(new BlockStateTagItem(Items.CHEST, "rightChest").add("type", "right").get());
-                    stacks.add(new BlockStateTagItem(Items.TRAPPED_CHEST, "leftTrappedChest").add("type", "left").get());
-                    stacks.add(new BlockStateTagItem(Items.TRAPPED_CHEST, "rightTrappedChest").add("type", "right").get());
+                    stacks.add(new BlockStateItemBuilder(Items.COMPOSTER, "fullComposter").add("level", 8).get());
+                    stacks.add(new BlockStateItemBuilder(Items.RESPAWN_ANCHOR, "fullRespawnAnchor").add("charges", 4).get());
+                    stacks.add(new BlockStateItemBuilder(Items.BAMBOO, "bambooWithLeaves").add("leaves", "large").get());
+                    stacks.add(new BlockStateItemBuilder(Items.WHEAT_SEEDS, "fullGrownWheat").add("age", 7).get());
+                    stacks.add(new BlockStateItemBuilder(Items.PUMPKIN_SEEDS, "fullGrownPumpkin").add("age", 7).get());
+                    stacks.add(new BlockStateItemBuilder(Items.MELON_SEEDS, "fullGrownMelon").add("age", 7).get());
+                    stacks.add(new BlockStateItemBuilder(Items.CARROT, "fullGrownCarrot").add("age", 7).get());
+                    stacks.add(new BlockStateItemBuilder(Items.POTATO, "fullGrownPotatoes").add("age", 7).get());
+                    stacks.add(new BlockStateItemBuilder(Items.BEETROOT_SEEDS, "fullGrownBeetroots").add("age", 3).get());
+                    stacks.add(new BlockStateItemBuilder(Items.COCOA_BEANS, "fullGrownCocoa").add("age", 2).get());
+                    stacks.add(new BlockStateItemBuilder(Items.GLOW_BERRIES, "glowBerries").add("berries", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.REPEATER, "repeaterTicks.2").add("delay", 2).get());
+                    stacks.add(new BlockStateItemBuilder(Items.REPEATER, "repeaterTicks.3").add("delay", 3).get());
+                    stacks.add(new BlockStateItemBuilder(Items.REPEATER, "repeaterTicks.4").add("delay", 4).get());
+                    stacks.add(new BlockStateItemBuilder(Items.REPEATER, "lockedRepeater").add("locked", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.HOPPER, "disabledHopper").add("enabled", false).get());
+                    stacks.add(new BlockStateItemBuilder(Items.BEE_NEST, "beeNestFilledWithHoney").add("honey_level", 5).get());
+                    stacks.add(new BlockStateItemBuilder(Items.BEEHIVE, "beehiveFilledWithHoney").add("honey_level", 5).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SEA_PICKLE, "seaPickle4").add("pickles", 4).get());
+                    stacks.add(new BlockStateItemBuilder(Items.TURTLE_EGG, "turtleEgg4").add("eggs", 4).get());
+                    stacks.add(new BlockStateItemBuilder(Items.CAKE, "sliceOfCake").add("bites", 6).get());
+                    stacks.add(new BlockStateItemBuilder(Items.TNT, "unstableTnt").add("unstable", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.REDSTONE, "poweredRedstone").add("power", 15).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SCULK_CATALYST, "sculkCatalystBloom").add("bloom", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SCULK_SHRIEKER, "sculkShriekerCanSummon").add("can_summon", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SCULK_SHRIEKER, "sculkShriekerLocked").add("shrieking", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.GLOW_LICHEN, "glowLichenBlock").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.SCULK_VEIN, "sculkVeinBlock").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.CHEST, "leftChest").add("type", "left").get());
+                    stacks.add(new BlockStateItemBuilder(Items.CHEST, "rightChest").add("type", "right").get());
+                    stacks.add(new BlockStateItemBuilder(Items.TRAPPED_CHEST, "leftTrappedChest").add("type", "left").get());
+                    stacks.add(new BlockStateItemBuilder(Items.TRAPPED_CHEST, "rightTrappedChest").add("type", "right").get());
                     addHalfDoors(stacks);
                     addTallFlowers(stacks);
                     addLeaves(stacks);
                     addLitCandles(stacks);
                     addHalfBed(stacks);
                     addLockedBed(stacks);
-                    stacks.add(new BlockStateTagItem(Items.MANGROVE_ROOTS, "waterloggedMangroveRoots").add("waterlogged", true).get());
+                    stacks.add(new BlockStateItemBuilder(Items.MANGROVE_ROOTS, "waterloggedMangroveRoots").add("waterlogged", true).get());
                     addWaterloggedBlocks(stacks);
                 }).build();
 
@@ -178,15 +183,19 @@ public class FzmmItemGroup {
 
     private static void addArmorStand(List<ItemStack> stacks) {
         String baseTranslation = "armorStand.";
-        ItemStack armorStandWithArms = new ArmorStandUtils().setShowArms()
+        ItemStack armorStandWithArms = ArmorStandBuilder.builder()
+                .setShowArms()
                 .getItem(Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + baseTranslation + "arms"));
         stacks.add(armorStandWithArms);
 
-        ItemStack smallArmorStand = new ArmorStandUtils().setSmall()
+        ItemStack smallArmorStand = ArmorStandBuilder.builder()
+                .setSmall()
                 .getItem(Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + baseTranslation + "small"));
         stacks.add(smallArmorStand);
 
-        ItemStack smallArmorStandWithArms = new ArmorStandUtils().setSmall().setShowArms()
+        ItemStack smallArmorStandWithArms = ArmorStandBuilder.builder()
+                .setSmall()
+                .setShowArms()
                 .getItem(Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + baseTranslation + "smallWithArms"));
         stacks.add(smallArmorStandWithArms);
     }
@@ -210,24 +219,24 @@ public class FzmmItemGroup {
     private static void addNameTags(List<ItemStack> stacks) {
         final int LORE_COLOR = 0x1ecbe1;
 
-        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("")
+        stacks.add(DisplayBuilder.builder().item(Items.NAME_TAG).setName("")
                 .addLore(getNameTagTranslation("empty", 1), LORE_COLOR).get());
 
-        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("Dinnerbone")
+        stacks.add(DisplayBuilder.builder().item(Items.NAME_TAG).setName("Dinnerbone")
                 .addLore(getNameTagTranslation("dinnerbone", 1), LORE_COLOR).get());
 
-        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("Grumm")
+        stacks.add(DisplayBuilder.builder().item(Items.NAME_TAG).setName("Grumm")
                 .addLore(getNameTagTranslation("grumm", 1), LORE_COLOR).get());
 
-        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("Toast")
+        stacks.add(DisplayBuilder.builder().item(Items.NAME_TAG).setName("Toast")
                 .addLore(getNameTagTranslation("toast", 1), LORE_COLOR)
                 .addLore(getNameTagTranslation("toast", 2), LORE_COLOR).get());
 
-        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("jeb_")
+        stacks.add(DisplayBuilder.builder().item(Items.NAME_TAG).setName("jeb_")
                 .addLore(getNameTagTranslation("jeb_", 1), LORE_COLOR)
                 .addLore(getNameTagTranslation("jeb_", 2), LORE_COLOR).get());
 
-        stacks.add(new DisplayUtils(Items.NAME_TAG).setName("Johnny")
+        stacks.add(DisplayBuilder.builder().item(Items.NAME_TAG).setName("Johnny")
                 .addLore(getNameTagTranslation("johnny", 1), LORE_COLOR)
                 .addLore(getNameTagTranslation("johnny", 2), LORE_COLOR)
                 .addLore(getNameTagTranslation("johnny", 3), LORE_COLOR).get());
@@ -241,29 +250,35 @@ public class FzmmItemGroup {
     }
 
     private static void addCrossbows(List<ItemStack> stacks) {
-        CrossbowUtils crossbowArrow = new CrossbowUtils();
-        CrossbowUtils crossbowFirework = new CrossbowUtils();
+        CrossbowBuilder crossbowArrow = CrossbowBuilder.builder()
+                .setCharged(true)
+                .putProjectile(new ItemStack(Items.ARROW));
+
+        stacks.add(crossbowArrow.get());
+
         ItemStack firework = new ItemStack(Items.FIREWORK_ROCKET);
+
         NbtCompound fireworkTag = new NbtCompound();
-
-        stacks.add(crossbowArrow.setCharged(true).putProjectile(new ItemStack(Items.ARROW)).get());
-
         fireworkTag.putInt(FireworkRocketItem.FLIGHT_KEY, 2);
         firework.setSubNbt(FireworkRocketItem.FIREWORKS_KEY, fireworkTag);
-        stacks.add(crossbowFirework.setCharged(true).putProjectile(firework).get());
 
+        CrossbowBuilder crossbowFirework = CrossbowBuilder.builder()
+                .setCharged(true)
+                .putProjectile(firework);
+
+        stacks.add(crossbowFirework.get());
     }
 
     private static void addLightBlock(List<ItemStack> stacks) {
         for (int i = 0; i != 16; i++) {
-            stacks.add(new BlockStateTagItem(Items.LIGHT).add("level", i).get());
+            stacks.add(new BlockStateItemBuilder(Items.LIGHT).add("level", i).get());
         }
     }
 
     private static void addLeaves(List<ItemStack> stacks) {
         for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.LEAVES))
-                stacks.add(new BlockStateTagItem(item, "nonPersistentLeaves", item).add("persistent", false).get());
+                stacks.add(new BlockStateItemBuilder(item, "nonPersistentLeaves", item).add("persistent", false).get());
         }
     }
 
@@ -286,34 +301,34 @@ public class FzmmItemGroup {
     }
 
     private static void addHalfUpper(List<ItemStack> stacks, Item item, String translation) {
-        stacks.add(new BlockStateTagItem(item, translation, item).add("half", "upper").get());
+        stacks.add(new BlockStateItemBuilder(item, translation, item).add("half", "upper").get());
     }
 
     private static void addLitCandles(List<ItemStack> stacks) {
         for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.CANDLES))
-                stacks.add(new BlockStateTagItem(item, "litCandle", item).add("lit", true).get());
+                stacks.add(new BlockStateItemBuilder(item, "litCandle", item).add("lit", true).get());
         }
     }
 
     private static void addHalfBed(List<ItemStack> stacks) {
         for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.BEDS))
-                stacks.add(new BlockStateTagItem(item, "bedHeadPart", item).add("part", "head").get());
+                stacks.add(new BlockStateItemBuilder(item, "bedHeadPart", item).add("part", "head").get());
         }
     }
 
     private static void addLockedBed(List<ItemStack> stacks) {
         for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.BEDS))
-                stacks.add(new BlockStateTagItem(item, "lockedBed", item).add("occupied", true).get());
+                stacks.add(new BlockStateItemBuilder(item, "lockedBed", item).add("occupied", true).get());
         }
     }
 
     private static void addWaterloggedBlocks(List<ItemStack> stacks) {
         for (var item : Registry.ITEM) {
             if (contains(item, ItemTags.SLABS))
-                stacks.add(new BlockStateTagItem(item, "waterloggedBlock", item).add("type", "double").add("waterlogged", true).get());
+                stacks.add(new BlockStateItemBuilder(item, "waterloggedBlock", item).add("type", "double").add("waterlogged", true).get());
         }
     }
 
@@ -324,7 +339,7 @@ public class FzmmItemGroup {
 
         for (var painting : Registry.PAINTING_VARIANT) {
             if (!contains(painting)) {
-                // if there is no translation in the mod of that painting, the id of the variant is used,
+                // if there is no translation in the mod of that painting, the detailsId of the variant is used,
                 // to prevent a translation key from appearing if a mod that adds non-placeable paintings is used
                 String variantName = Registry.PAINTING_VARIANT.getId(painting).getPath();
                 String translationKey = "entity.minecraft.painting." + variantName;
@@ -333,7 +348,7 @@ public class FzmmItemGroup {
                 if (!translation.equals(translationKey))
                     name = translation;
 
-                ItemStack paintingStack = new DisplayUtils(Items.PAINTING).setName(name).get();
+                ItemStack paintingStack = DisplayBuilder.builder().item(Items.PAINTING).setName(name).get();
                 NbtCompound entityTag = new NbtCompound();
                 entityTag.put("variant", NbtString.of(variantName));
                 paintingStack.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);

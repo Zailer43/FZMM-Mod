@@ -5,9 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import fi.dy.masa.malilib.util.Color4f;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.config.Configs;
 import fzmm.zailer.me.mixin.PlayerSkinTextureAccessor;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
@@ -20,7 +18,9 @@ import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.PlayerSkinTexture;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.resource.Resource;
@@ -29,6 +29,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -79,7 +80,7 @@ public class FzmmUtils {
             return;
         }
 
-        if (Configs.Generic.GIVE_CLIENT_SIDE.getBooleanValue()) {
+        if (FzmmClient.CONFIG.general.giveClientSide()) {
             mc.player.equipStack(EquipmentSlot.MAINHAND, stack);
         } else {
             assert mc.interactionManager != null;
@@ -117,7 +118,7 @@ public class FzmmUtils {
             HttpGet httpGet = new HttpGet(url);
 
             if (isImage)
-                httpGet.addHeader("content-type", "image/jpeg");
+                httpGet.addHeader("content-statusType", "image/jpeg");
 
             HttpResponse response = httpClient.execute(httpGet);
             HttpEntity resEntity = response.getEntity();
@@ -132,7 +133,7 @@ public class FzmmUtils {
     public static Text disableItalicConfig(Text message) {
         Style style = message.getStyle();
 
-        if (Configs.Generic.DISABLE_ITALIC.getBooleanValue() && !style.isItalic()) {
+        if (FzmmClient.CONFIG.general.disableItalic() && !style.isItalic()) {
             ((MutableText) message).setStyle(style.withItalic(false));
         }
 
@@ -175,10 +176,6 @@ public class FzmmUtils {
         ItemStack stack = mc.player.getInventory().getMainHandStack();
         stack.setCustomName(FzmmUtils.disableItalicConfig(text));
         FzmmUtils.giveItem(stack);
-    }
-
-    public static Color4f RGBAtoRGB(Color4f color) {
-        return new Color4f(color.r, color.g, color.b, 0);
     }
 
     @Nullable
@@ -265,5 +262,9 @@ public class FzmmUtils {
         } catch (IOException ignored) {
             return null;
         }
+    }
+
+    public static Item getItem(String value) {
+        return Registry.ITEM.getOrEmpty(new Identifier(value)).orElse(Items.STONE);
     }
 }

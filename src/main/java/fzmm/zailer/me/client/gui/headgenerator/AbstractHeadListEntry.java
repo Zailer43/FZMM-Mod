@@ -1,60 +1,57 @@
 package fzmm.zailer.me.client.gui.headgenerator;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import fzmm.zailer.me.client.logic.headGenerator.HeadData;
+import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
 import fzmm.zailer.me.utils.FzmmUtils;
+import io.wispforest.owo.ui.base.BaseComponent;
+import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.PlayerSkinDrawer;
-import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 import java.awt.image.BufferedImage;
 import java.util.Objects;
 
-import static net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry.GRAY_COLOR;
 import static net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry.WHITE_COLOR;
 
-public abstract class AbstractHeadListEntry<T extends AbstractHeadListEntry<T>> extends ElementListWidget.Entry<T> {
-    private final MinecraftClient client;
-    private final String name;
-    private final BufferedImage previewImage;
+public abstract class AbstractHeadListEntry extends BaseComponent {
     private final Identifier previewIdentifier;
-    private final BufferedImage headTexture;
+    private final HeadData headData;
 
-    public AbstractHeadListEntry(MinecraftClient client, String name, BufferedImage previewImage, BufferedImage headTexture) {
-        this.client = client;
-        this.name = name;
-        this.previewImage = previewImage;
-        this.previewIdentifier = FzmmUtils.saveBufferedImageAsIdentifier(this.previewImage);
-        this.headTexture = headTexture;
+    public AbstractHeadListEntry(HeadData headData, Sizing horizontalSizing, Sizing verticalSizing) {
+        this.previewIdentifier = FzmmUtils.saveBufferedImageAsIdentifier(headData.skin());
+        this.headData = headData;
+        this.sizing(horizontalSizing, verticalSizing);
     }
 
-    public void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        int xWithPadding = x + 4;
-        int lineHeight = y + (entryHeight - 24) / 2;
+    @Override
+    public void draw(MatrixStack matrices, int mouseX, int mouseY, float partialTicks, float delta) {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        int xWithPadding = this.x + 4;
+        int centerY = this.y + (this.height / 2);
         int xText = xWithPadding + 24 + 4;
-        DrawableHelper.fill(matrices, x, y, x + entryWidth, y + entryHeight, GRAY_COLOR);
-        Objects.requireNonNull(this.client.textRenderer);
-        int yText = y + (entryHeight - 9) / 2;
+        Objects.requireNonNull(textRenderer);
+        int yText = centerY - textRenderer.fontHeight / 2;
 
         RenderSystem.setShaderTexture(0, this.previewIdentifier);
-        PlayerSkinDrawer.draw(matrices, xWithPadding, lineHeight, 24);
+        PlayerSkinDrawer.draw(matrices, xWithPadding, this.y, 24);
 
-        this.client.textRenderer.draw(matrices, this.name, (float) xText, (float) yText, WHITE_COLOR);
+        textRenderer.draw(matrices, this.getName(), (float) xText, (float) yText, WHITE_COLOR);
     }
-
     public String getName() {
-        return this.name;
+        return this.headData.name();
     }
 
     public abstract void setEnabled(boolean value);
 
     public BufferedImage getPreviewImage() {
-        return this.previewImage;
+        return this.headData.skin();
     }
 
     public BufferedImage getHeadTexture() {
-        return this.headTexture;
+        return HeadGeneratorResources.getTexture(this.getName());
     }
 }

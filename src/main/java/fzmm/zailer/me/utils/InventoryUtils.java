@@ -1,5 +1,6 @@
 package fzmm.zailer.me.utils;
 
+import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.mixin.HandledScreenAccessor;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -39,7 +40,7 @@ public class InventoryUtils {
 
     public InventoryUtils setNameStyleToItems(Style style) {
         for (ItemStack stack : this.items) {
-            String name = new DisplayUtils(stack).getName();
+            String name = DisplayBuilder.of(stack).getName();
             if (name == null)
                 continue;
             MutableText nameText;
@@ -59,7 +60,7 @@ public class InventoryUtils {
     public InventoryUtils addLoreToItems(Item itemToApply, String lore, int color) {
         for (ItemStack stack : this.items) {
             if (stack.getItem() == itemToApply) {
-                NbtCompound tag = new DisplayUtils(stack).addLore(lore, color).getNbt();
+                NbtCompound tag = DisplayBuilder.of(stack).addLore(lore, color).getNbt();
                 stack.setNbt(tag);
             }
         }

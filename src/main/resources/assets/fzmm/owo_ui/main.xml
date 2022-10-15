@@ -1,0 +1,107 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <label id="title">
+                    <positioning type="absolute">20,20</positioning>
+                    <text translate="true">fzmm.gui.title.main</text>
+                </label>
+
+                <grid-layout rows="2" columns="3">
+                    <children>
+                        <template name="main-button" row="0" column="0">
+                            <name>imagetext</name>
+                        </template>
+                        <template name="main-button" row="0" column="1">
+                            <name>gradient</name>
+                        </template>
+                        <template name="main-button" row="0" column="2">
+                            <name>playerStatue</name>
+                        </template>
+                        <template name="main-button" row="1" column="0">
+                            <name>encryptbook</name>
+                        </template>
+                        <template name="main-button" row="1" column="1">
+                            <name>headGenerator</name>
+                        </template>
+                        <template name="main-button" row="1" column="2">
+                            <name>converters</name>
+                        </template>
+                    </children>
+
+                    <horizontal-alignment>center</horizontal-alignment>
+
+                    <sizing>
+                        <horizontal method="content">9</horizontal>
+                        <vertical method="content">20</vertical>
+                    </sizing>
+                </grid-layout>
+
+                <flow-layout direction="vertical">
+                    <children>
+
+                        <button id="config-button">
+                            <text translate="true">fzmm.gui.main.configs</text>
+
+                            <margins>
+                                <right>20</right>
+                                <top>20</top>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,0</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+
+                <flow-layout direction="vertical">
+                    <children>
+
+                        <button id="back-button">
+                            <text translate="true">fzmm.gui.button.back</text>
+
+                            <margins>
+                                <right>20</right>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+
+            </children>
+
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+
+    <templates>
+        <main-button>
+            <button id="{{name}}-button">
+                <text translate="true">fzmm.gui.main.{{name}}</text>
+                <margins>
+                    <all>5</all>
+                </margins>
+
+                <sizing>
+                    <horizontal method="fill">25</horizontal>
+                </sizing>
+            </button>
+        </main-button>
+    </templates>
+</owo-ui>

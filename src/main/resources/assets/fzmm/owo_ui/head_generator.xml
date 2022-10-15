@@ -1,0 +1,161 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <label id="title">
+                    <positioning type="absolute">20,20</positioning>
+                    <text translate="true">fzmm.gui.title.headGenerator</text>
+                </label>
+
+                <flow-layout direction="vertical" id="head-list-image-option">
+                    <children>
+                    </children>
+                    <margins>
+                        <top>48</top>
+                    </margins>
+                </flow-layout>
+
+                <flow-layout direction="vertical" id="head-list-image-mode">
+                    <children>
+                    </children>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <flow-layout direction="vertical" id="layer-list-side">
+                            <children>
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fill">49</horizontal>
+                                <vertical method="fill">80</vertical>
+                            </sizing>
+
+                            <vertical-alignment>top</vertical-alignment>
+
+                            <margins>
+                                <left>20</left>
+                                <right>10</right>
+                            </margins>
+                        </flow-layout>
+
+                        <flow-layout direction="vertical" id="head-list-side">
+                            <children>
+                                <flow-layout direction="horizontal">
+                                    <children>
+                                        <label id="search-label">
+                                            <text translate="true">gui.socialInteractions.search_hint</text>
+                                            <margins>
+                                                <right>8</right>
+                                            </margins>
+                                        </label>
+
+                                        <text-box id="search-text-box">
+                                            <sizing>
+                                                <horizontal method="fill">70</horizontal>
+                                            </sizing>
+
+                                            <positioning type="relative">100,0</positioning>
+                                        </text-box>
+                                    </children>
+
+                                    <vertical-alignment>center</vertical-alignment>
+                                    <sizing>
+                                        <horizontal method="fill">100</horizontal>
+                                        <vertical method="fixed">22</vertical>
+                                    </sizing>
+                                </flow-layout>
+
+                                <scroll direction="vertical">
+                                    <flow-layout direction="vertical" id="head-list">
+                                        <children>
+
+                                        </children>
+                                    </flow-layout>
+
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                    </sizing>
+
+                                    <scrollbar-color>#FFFFFF</scrollbar-color>
+                                </scroll>
+
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fill">49</horizontal>
+                                <vertical method="fill">80</vertical>
+                            </sizing>
+
+                            <vertical-alignment>top</vertical-alignment>
+
+                            <margins>
+                                <left>10</left>
+                                <right>20</right>
+                            </margins>
+                        </flow-layout>
+                    </children>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="execute-button">
+                            <text translate="true">fzmm.gui.button.execute</text>
+
+                            <margins>
+                                <left>20</left>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                        <button id="preview-button">
+                            <text translate="true">fzmm.gui.button.preview</text>
+
+                            <margins>
+                                <left>4</left>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">0,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="back-button">
+                            <text translate="true">fzmm.gui.button.back</text>
+
+                            <margins>
+                                <right>20</right>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+            </children>
+
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+</owo-ui>

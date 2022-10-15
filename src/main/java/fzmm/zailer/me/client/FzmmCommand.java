@@ -6,7 +6,11 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
-import fzmm.zailer.me.utils.*;
+import fzmm.zailer.me.builders.DisplayBuilder;
+import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.HeadUtils;
+import fzmm.zailer.me.utils.InventoryUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
@@ -53,12 +57,12 @@ public class FzmmCommand {
         fzmmCommand.then(ClientCommandManager.literal("lore")
                 .executes(ctx -> sendHelpMessage("commands.fzmm.lore.help", BASE_COMMAND + " lore add/remove"))
                 .then(ClientCommandManager.literal("add")
-                        .executes(ctx -> sendHelpMessage("commands.fzmm.lore.add.help", BASE_COMMAND + " lore add <message>"))
-                        .then(ClientCommandManager.argument("message", TextArgumentType.text()).executes(ctx -> {
+                        .executes(ctx -> sendHelpMessage("commands.fzmm.lore.add.help", BASE_COMMAND + " lore add <detailsId>"))
+                        .then(ClientCommandManager.argument("id", TextArgumentType.text()).executes(ctx -> {
 
-                            Text message = ctx.getArgument("message", Text.class);
+                            Text message = ctx.getArgument("id", Text.class);
 
-                            DisplayUtils.addLoreToHandItem(message);
+                            DisplayBuilder.addLoreToHandItem(message);
                             return 1;
                         }))
                 ).then(ClientCommandManager.literal("remove")
@@ -228,7 +232,7 @@ public class FzmmCommand {
     private static void addEnchant(Enchantment enchant, short level) {
         assert MC.player != null;
 
-        //{Enchantments:[{id:"minecraft:aqua_affinity",lvl:1s}]}
+        //{Enchantments:[{detailsId:"minecraft:aqua_affinity",lvl:1s}]}
 
         ItemStack stack = MC.player.getInventory().getMainHandStack();
         NbtCompound tag = stack.getOrCreateNbt();
@@ -255,7 +259,7 @@ public class FzmmCommand {
                 ((MutableText) text).setStyle(style);
         });
 
-        stack = new DisplayUtils(stack).addLore(enchantMessage).get();
+        stack = DisplayBuilder.of(stack).addLore(enchantMessage).get();
 
         NbtCompound tag = stack.getOrCreateNbt();
         if (!tag.contains(ItemStack.ENCHANTMENTS_KEY, NbtElement.LIST_TYPE)) {
@@ -311,7 +315,7 @@ public class FzmmCommand {
     private static void fullContainer(int slotsToFill, int firstSlots) {
         assert MC.player != null;
 
-        //{BlockEntityTag:{Items:[{Slot:0b,id:"minecraft:stone",Count:1b}],id:"minecraft:dispenser"}}
+        //{BlockEntityTag:{Items:[{Slot:0b,detailsId:"minecraft:stone",Count:1b}],detailsId:"minecraft:dispenser"}}
 
         ItemStack containerItemStack = MC.player.getInventory().getMainHandStack();
         ItemStack itemStack = MC.player.getOffHandStack();

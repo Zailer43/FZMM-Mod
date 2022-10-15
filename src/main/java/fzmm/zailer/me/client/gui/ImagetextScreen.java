@@ -1,198 +1,146 @@
 package fzmm.zailer.me.client.gui;
 
-import fi.dy.masa.malilib.config.IConfigBase;
-import fi.dy.masa.malilib.config.options.ConfigBoolean;
-import fi.dy.masa.malilib.config.options.ConfigInteger;
-import fi.dy.masa.malilib.config.options.ConfigOptionList;
-import fi.dy.masa.malilib.config.options.ConfigString;
-import fi.dy.masa.malilib.gui.Message;
-import fi.dy.masa.malilib.gui.button.ButtonBase;
-import fi.dy.masa.malilib.gui.button.ButtonGeneric;
-import fi.dy.masa.malilib.gui.button.IButtonActionListener;
-import fi.dy.masa.malilib.interfaces.IValueChangeCallback;
-import fi.dy.masa.malilib.util.InfoUtils;
-import fi.dy.masa.malilib.util.StringUtils;
-import fzmm.zailer.me.client.gui.enums.Buttons;
-import fzmm.zailer.me.client.gui.enums.options.BookOption;
-import fzmm.zailer.me.client.gui.enums.options.ImageModeOption;
+import blue.endless.jankson.annotation.Nullable;
+import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.enums.options.ImagetextBookOption;
 import fzmm.zailer.me.client.gui.enums.options.LoreOption;
 import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
-import fzmm.zailer.me.client.gui.interfaces.ITabListener;
-import fzmm.zailer.me.client.gui.options.ImageOption;
-import fzmm.zailer.me.client.gui.wrapper.OptionWrapper;
-import fzmm.zailer.me.client.logic.ImagetextLogic;
-import fzmm.zailer.me.config.Configs;
+import fzmm.zailer.me.client.gui.widgets.EnumWidget;
+import fzmm.zailer.me.client.gui.widgets.SliderWidget;
+import fzmm.zailer.me.client.gui.widgets.image.ImageButtonWidget;
+import fzmm.zailer.me.client.gui.widgets.image.mode.ImageMode;
+import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
+import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
+import fzmm.zailer.me.client.toast.BookNbtOverflowToast;
 import fzmm.zailer.me.exceptions.BookNbtOverflow;
+import io.wispforest.owo.config.ui.component.ConfigTextBox;
+import io.wispforest.owo.config.ui.component.ConfigToggleButton;
+import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec2f;
-import net.minecraft.world.World;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
-public class ImagetextScreen extends GuiOptionsBase {
-    private static final String DEFAULT_CHARACTER = "█";
-    private static final int DEFAULT_SIZE_VALUE = 32;
-    private static final int MAX_SIZE_VALUE = 127;
-    private static final int MIN_SIZE_VALUE = 2;
-    private static ImagetextGuiTab tab = ImagetextGuiTab.LORE;
-    private final ImageOption configImage;
-    private final ConfigInteger configWidth;
-    private final ConfigInteger configHeight;
-    private final ConfigString configCharacters;
-    private final ConfigBoolean configSmoothImage;
-    private final ConfigBoolean configShowResolution;
-    private final ConfigBoolean preserveImageAspectRatio;
-    private final ConfigOptionList configLoreOption;
-    private final ConfigOptionList configBookOption;
-    private final ConfigString configBookAuthor;
-    private final ConfigString configBookMessage;
-    private final ConfigInteger configPosX;
-    private final ConfigInteger configPosY;
-    private final ConfigInteger configPosZ;
+public class ImagetextScreen extends BaseFzmmScreen {
+
+    private static final double DEFAULT_SIZE_VALUE = 32;
+    private static final double MAX_SIZE_VALUE = 127;
+    private static final String IMAGE_ID = "image";
+    private static final String IMAGE_SOURCE_TYPE_ID = "imageSourceType";
+    private static final String WIDTH_ID = "width";
+    private static final String HEIGHT_ID = "height";
+    private static final String CHARACTERS_ID = "characters";
+    private static final String PRESERVE_IMAGE_ASPECT_RATIO_ID = "preserveImageAspectRatio";
+    private static final String SHOW_RESOLUTION_ID = "showResolution";
+    private static final String SMOOTH_IMAGE_ID = "smoothImage";
+    private static final String LORE_MODE_ID = "loreMode";
+    private static final String BOOK_PAGE_MODE_ID = "bookPageMode";
+    private static final String BOOK_TOOLTIP_MODE_ID = "bookTooltipMode";
+    private static final String BOOK_TOOLTIP_AUTHOR_ID = "bookTooltipAuthor";
+    private static final String BOOK_TOOLTIP_MESSAGE_ID = "bookTooltipMessage";
+    private static final String HOLOGRAM_POS_X_ID = "hologramPosX";
+    private static final String HOLOGRAM_POS_Y_ID = "hologramPosY";
+    private static final String HOLOGRAM_POS_Z_ID = "hologramPosZ";
+    private static ImagetextGuiTab selectedTab = ImagetextGuiTab.LORE;
     private final ImagetextLogic imagetextLogic;
-    private ButtonGeneric previewButton;
 
-    public ImagetextScreen(Screen parent) {
-        super("imagetext", parent);
-
-        MinecraftClient mc = MinecraftClient.getInstance();
-        ClientPlayerEntity player = mc.player;
-        assert player != null;
-
-        this.configImage = new ImageOption("image", "", ImageModeOption.URL, this.commentBase + "image");
-        this.configWidth = new ConfigInteger("width", DEFAULT_SIZE_VALUE, MIN_SIZE_VALUE, MAX_SIZE_VALUE, this.commentBase + "resolution");
-        this.configHeight = new ConfigInteger("height", DEFAULT_SIZE_VALUE, MIN_SIZE_VALUE, MAX_SIZE_VALUE, this.commentBase + "resolution");
-        this.configCharacters = new ConfigString("characters", DEFAULT_CHARACTER, this.commentBase + "characters");
-        this.configSmoothImage = new ConfigBoolean("smoothImage", true, this.commentBase + "smoothImage");
-        this.configShowResolution = new ConfigBoolean("showResolution", false, this.commentBase + "showResolution");
-        this.preserveImageAspectRatio = new ConfigBoolean("preserveImageAspectRatio", Configs.Generic.DEFAULT_IMAGETEXT_PRESERVE_IMAGE_ASPECT_RATIO.getBooleanValue(), this.commentBase + "preserveImageAspectRatio");
-        this.configLoreOption = new ConfigOptionList("loreMode", LoreOption.ADD, this.commentBase + "loreMode");
-        this.configBookOption = new ConfigOptionList("bookMode", BookOption.ADD_PAGE, this.commentBase + "bookMode");
-        this.configBookAuthor = new ConfigString("author", player.getName().getString(), this.commentBase + "bookAuthor");
-        this.configBookMessage = new ConfigString("message", Configs.Generic.DEFAULT_IMAGETEXT_BOOK_MESSAGE.getStringValue(), this.commentBase + "bookMessage");
-        this.configPosX = new ConfigInteger("x", player.getBlockX(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "hologramCoordinates");
-        this.configPosY = new ConfigInteger("y", player.getBlockY(), -0xffff, 0xffff, this.commentBase + "hologramCoordinates");
-        this.configPosZ = new ConfigInteger("z", player.getBlockZ(), -World.HORIZONTAL_LIMIT, World.HORIZONTAL_LIMIT, this.commentBase + "hologramCoordinates");
-
-        ChangeSizeCallback onChangeWidth = new ChangeSizeCallback(this, this.configHeight, true);
-        this.configWidth.setValueChangeCallback(onChangeWidth);
-        this.configHeight.setValueChangeCallback(new ChangeSizeCallback(this, this.configWidth, false));
-        this.configImage.setValueChangeCallback(config -> onChangeWidth.onValueChanged(this.configWidth));
-        this.configWidth.toggleUseSlider();
-        this.configHeight.toggleUseSlider();
+    public ImagetextScreen(@Nullable Screen parent) {
+        super("imagetext", "imagetext", parent);
         this.imagetextLogic = new ImagetextLogic();
     }
 
+
     @Override
-    public void initGui() {
-        super.initGui();
-
-        this.createTabs(ImagetextGuiTab.values(), new TabButtonListener(this));
-
-        ButtonGeneric executeButton = Buttons.EXECUTE.get(20, this.height - 40, ScreenConstants.NORMAL_BUTTON_WIDTH);
-        // Malilib does not support text hover with Text class
-        this.previewButton = Buttons.PREVIEW.get(24 + ScreenConstants.NORMAL_BUTTON_WIDTH, this.height - 40, ScreenConstants.NORMAL_BUTTON_WIDTH);
-
-        this.addButton(executeButton, this::execute);
-        this.addButton(this.previewButton, new PreviewButtonListener());
+    protected void tryAddComponentList(FlowLayout rootComponent) {
+        this.tryAddComponentList(rootComponent, "imagetext-options-list",
+                this.getImageRow(IMAGE_ID),
+                this.getEnumRow(IMAGE_SOURCE_TYPE_ID),
+                this.getSliderRow(WIDTH_ID, "resolution"),
+                this.getSliderRow(HEIGHT_ID, "resolution"),
+                this.getTextFieldRow(CHARACTERS_ID),
+                this.getBooleanRow(PRESERVE_IMAGE_ASPECT_RATIO_ID),
+                this.getBooleanRow(SHOW_RESOLUTION_ID),
+                this.getBooleanRow(SMOOTH_IMAGE_ID),
+                this.getScreenTabRow(selectedTab),
+                this.getScreenTab(ImagetextGuiTab.LORE.getId(),
+                        this.getEnumRow(LORE_MODE_ID)
+                ),
+                this.getScreenTab(ImagetextGuiTab.BOOK_PAGE.getId(),
+                        this.getEnumRow(BOOK_PAGE_MODE_ID)
+                ),
+                this.getScreenTab(ImagetextGuiTab.BOOK_TOOLTIP.getId(),
+                        this.getEnumRow(BOOK_TOOLTIP_MODE_ID),
+                        this.getTextFieldRow(BOOK_TOOLTIP_AUTHOR_ID),
+                        this.getTextFieldRow(BOOK_TOOLTIP_MESSAGE_ID)
+                ),
+                this.getScreenTab(ImagetextGuiTab.HOLOGRAM.getId(),
+                        this.getNumberRow(HOLOGRAM_POS_X_ID, Integer.class),
+                        this.getNumberRow(HOLOGRAM_POS_Y_ID, Integer.class),
+                        this.getNumberRow(HOLOGRAM_POS_Z_ID, Integer.class)
+                )
+        );
     }
 
     @Override
-    public List<ConfigOptionWrapper> getConfigs() {
-        List<IConfigBase> options = new ArrayList<>();
+    @SuppressWarnings({"ConstantConditions", "UnstableApiUsage"})
+    protected void setupButtonsCallbacks(FlowLayout rootComponent) {
+        //general
+        this.setupImage(rootComponent, IMAGE_ID, IMAGE_SOURCE_TYPE_ID, ImageMode.URL);
+        ImageButtonWidget imageWidget = rootComponent.childById(ImageButtonWidget.class, this.getImageButtonId(IMAGE_ID));
+        ConfigToggleButton preserveImageAspectRatioWidget = rootComponent.childById(ConfigToggleButton.class, this.getToggleButtonId(PRESERVE_IMAGE_ASPECT_RATIO_ID));
+        SliderWidget widthSlider = rootComponent.childById(SliderWidget.class, this.getSliderId(WIDTH_ID));
+        SliderWidget heightSlider = rootComponent.childById(SliderWidget.class, this.getSliderId(HEIGHT_ID));
+        ButtonWidget.PressAction onWidthChange = button -> this.onResolutionChanged(imageWidget, preserveImageAspectRatioWidget, widthSlider, heightSlider, true);
+        this.setupSlider(rootComponent, WIDTH_ID, DEFAULT_SIZE_VALUE, 2, MAX_SIZE_VALUE, Integer.class,
+                aDouble -> onWidthChange.onPress(null)
+        );
+        this.setupSlider(rootComponent, HEIGHT_ID, DEFAULT_SIZE_VALUE, 2, MAX_SIZE_VALUE, Integer.class,
+                aDouble -> this.onResolutionChanged(imageWidget, preserveImageAspectRatioWidget, heightSlider, widthSlider, false)
+        );
 
-        options.add(this.configImage);
-        options.add(this.configWidth);
-        options.add(this.configHeight);
-        options.add(this.configCharacters);
-        options.add(this.configSmoothImage);
-        options.add(this.configShowResolution);
-        options.add(this.preserveImageAspectRatio);
+        this.setupTextField(rootComponent, CHARACTERS_ID, ImagetextLine.DEFAULT_TEXT);
+        this.setupBooleanButton(rootComponent, SHOW_RESOLUTION_ID, false);
+        this.setupBooleanButton(rootComponent, SMOOTH_IMAGE_ID, true);
+        //lore
+        this.setupEnum(rootComponent, LORE_MODE_ID, LoreOption.ADD, null);
+        //book page
+        this.setupEnum(rootComponent, BOOK_PAGE_MODE_ID, ImagetextBookOption.ADD_PAGE, null);
+        //book tooltip
+        this.setupEnum(rootComponent, BOOK_TOOLTIP_MODE_ID, ImagetextBookOption.ADD_PAGE, null);
+        this.setupTextField(rootComponent, BOOK_TOOLTIP_AUTHOR_ID, this.client.player.getName().getString());
+        this.setupTextField(rootComponent, BOOK_TOOLTIP_MESSAGE_ID, FzmmClient.CONFIG.imagetext.defaultBookMessage());
+        //hologram
+        this.setupNumberField(rootComponent, HOLOGRAM_POS_X_ID, String.valueOf(this.client.player.getBlockX()));
+        this.setupNumberField(rootComponent, HOLOGRAM_POS_Y_ID, String.valueOf(this.client.player.getBlockY()));
+        this.setupNumberField(rootComponent, HOLOGRAM_POS_Z_ID, String.valueOf(this.client.player.getBlockZ()));
+        //tabs
+        this.selectScreenTab(rootComponent, selectedTab);
+        for (var tab : ImagetextGuiTab.values()) {
+            this.setupButton(rootComponent, this.getScreenTabButtonId(tab), tab != selectedTab, button -> {
+                this.selectScreenTab(rootComponent, tab);
+                button.active = false;
+                selectedTab = tab;
+            });
+        }
 
-        List<ConfigOptionWrapper> optionsWrapper = OptionWrapper.createFor(options);
-        this.addTabOptions(optionsWrapper);
-
-        return optionsWrapper;
-    }
-
-    @Override
-    public boolean isTab(IScreenTab tab) {
-        return ImagetextScreen.tab == tab;
-    }
-
-    private void addTabOptions(List<ConfigOptionWrapper> list) {
-        List<IConfigBase> options = new ArrayList<>();
-
-        switch (tab) {
-            case LORE -> options.add(this.configLoreOption);
-            case BOOK_PAGE -> options.add(this.configBookOption);
-            case BOOK_TOOLTIP -> {
-                options.add(this.configBookOption);
-                options.add(this.configBookAuthor);
-                options.add(this.configBookMessage);
+        this.setupButton(rootComponent, this.getButtonId("execute"), false, button -> this.execute(rootComponent));
+        this.setupButton(rootComponent, this.getButtonId("preview"), false, button -> {
+            if (!imageWidget.hasNoImage()) {
+                this.updateImagetext(rootComponent);
+                button.tooltip(this.imagetextLogic.getText());
             }
-            case HOLOGRAM -> {
-                options.add(this.configPosX);
-                options.add(this.configPosY);
-                options.add(this.configPosZ);
+        });
+        imageWidget.setOnValueChanged(button -> {
+            onWidthChange.onPress(null);
+            if (!imageWidget.hasNoImage()) {
+                rootComponent.childById(ButtonWidget.class, this.getButtonId("execute")).active = true;
+                rootComponent.childById(ButtonWidget.class, this.getButtonId("preview")).active = true;
             }
-        }
-
-        if (tab != ImagetextGuiTab.JSON) {
-            list.add(new OptionWrapper(""));
-            list.add(new OptionWrapper(tab.translationKey));
-        }
-
-        list.addAll(OptionWrapper.createFor(options));
-    }
-
-    @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-
-        if (this.previewButton.isMouseOver() && !this.imagetextLogic.isEmpty())
-            this.renderTooltip(matrixStack, this.imagetextLogic.getTextList(), mouseX, mouseY);
-    }
-
-    private static class TabButtonListener implements ITabListener {
-        private final IScreenTab tab;
-        private final ImagetextScreen parent;
-
-        private TabButtonListener(IScreenTab tab, ImagetextScreen parent) {
-            this.tab = tab;
-            this.parent = parent;
-        }
-
-        private TabButtonListener(ImagetextScreen gui) {
-            this(null, gui);
-        }
-
-        @Override
-        public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-            if (this.tab == null)
-                return;
-
-            ImagetextScreen.tab = (ImagetextGuiTab) this.tab;
-
-            this.parent.reload();
-        }
-
-        @Override
-        public ITabListener of(IScreenTab tab) {
-            return new TabButtonListener(tab, this.parent);
-        }
-
-        @Override
-        public GuiOptionsBase getParent() {
-            return this.parent;
-        }
+        });
     }
 
     private enum ImagetextGuiTab implements IScreenTab {
@@ -203,21 +151,43 @@ public class ImagetextScreen extends GuiOptionsBase {
         //SIGN("sign"),
         JSON("json");
 
-        static final String BASE_KEY = "fzmm.gui.imagetext.";
+        private final String id;
 
-        private final String translationKey;
-
-        ImagetextGuiTab(String translationKey) {
-            this.translationKey = BASE_KEY + translationKey;
+        ImagetextGuiTab(String id) {
+            this.id = id;
         }
 
-        public String getDisplayName() {
-            return StringUtils.translate(this.translationKey);
+        public String getId() {
+            return this.id;
         }
     }
 
-    public void execute(ButtonBase button, int mouseButton) {
-        if (ImagetextScreen.this.configImage.hasNoImage())
+    @SuppressWarnings("UnstableApiUsage")
+    private void onResolutionChanged(ImageButtonWidget imageWidget, ConfigToggleButton preserveImageAspectRatioButton,
+                                     SliderWidget config, SliderWidget configToChange, boolean isWidth) {
+        if (imageWidget.hasNoImage() || !((boolean) preserveImageAspectRatioButton.parsedValue()))
+            return;
+
+        BufferedImage image = imageWidget.getImage();
+        assert image != null;
+        int configValue = (int) config.parsedValue();
+        Vec2f rescaledSize = ImagetextLogic.changeResolutionKeepingAspectRatio(image.getWidth(), image.getHeight(), configValue, isWidth);
+
+        int newValue = (int) (isWidth ? rescaledSize.y : rescaledSize.x);
+
+        if (newValue > configToChange.max())
+            newValue = (int) configToChange.max();
+        else if (newValue < configToChange.min())
+            newValue = (int) configToChange.min();
+
+        configToChange.setDiscreteValueWithoutCallback(newValue);
+    }
+
+    @SuppressWarnings({"ConstantConditions", "UnstableApiUsage"})
+    public void execute(FlowLayout rootComponent) {
+        ImageButtonWidget imageWidget = rootComponent.childById(ImageButtonWidget.class, this.getImageButtonId(IMAGE_ID));
+        assert imageWidget != null;
+        if (imageWidget.hasNoImage())
             return;
 
         MinecraftClient client = MinecraftClient.getInstance();
@@ -225,58 +195,54 @@ public class ImagetextScreen extends GuiOptionsBase {
         assert client.player != null;
         ItemStack stack = client.player.getMainHandStack();
 
-        ImagetextScreen.this.updateImagetext();
-
-        LoreOption loreOption = (LoreOption) ImagetextScreen.this.configLoreOption.getOptionListValue();
-        BookOption bookOption = (BookOption) ImagetextScreen.this.configBookOption.getOptionListValue();
-        String author = ImagetextScreen.this.configBookAuthor.getStringValue();
-        String bookMessage = ImagetextScreen.this.configBookMessage.getStringValue();
-        int x = ImagetextScreen.this.configPosX.getIntegerValue();
-        int y = ImagetextScreen.this.configPosY.getIntegerValue();
-        int z = ImagetextScreen.this.configPosZ.getIntegerValue();
+        this.updateImagetext(rootComponent);
 
 
-        switch (tab) {
-            case LORE -> ImagetextScreen.this.imagetextLogic.giveInLore(stack, loreOption == LoreOption.ADD);
+        switch (selectedTab) {
+            case LORE -> {
+                LoreOption loreOption = (LoreOption) rootComponent.childById(EnumWidget.class, this.getEnumId(LORE_MODE_ID)).getValue();
+                ImagetextScreen.this.imagetextLogic.giveInLore(stack, loreOption == LoreOption.ADD);
+            }
             case BOOK_PAGE -> {
-                if (bookOption == BookOption.ADD_PAGE)
-                    ImagetextScreen.this.imagetextLogic.addBookPage();
-                else
-                    ImagetextScreen.this.imagetextLogic.giveBookPage();
+                ImagetextBookOption bookOption = (ImagetextBookOption) rootComponent.childById(EnumWidget.class, this.getEnumId(BOOK_PAGE_MODE_ID)).getValue();
+                ImagetextScreen.this.imagetextLogic.giveBookPage(bookOption);
             }
             case BOOK_TOOLTIP -> {
+                ImagetextBookOption bookOption = (ImagetextBookOption) rootComponent.childById(EnumWidget.class, this.getEnumId(BOOK_TOOLTIP_MODE_ID)).getValue();
+                String author = rootComponent.childById(TextFieldWidget.class, this.getTextFieldId(BOOK_TOOLTIP_AUTHOR_ID)).getText();
+                String bookMessage = rootComponent.childById(TextFieldWidget.class, this.getTextFieldId(BOOK_TOOLTIP_MESSAGE_ID)).getText();
                 try {
-                    ImagetextScreen.this.imagetextLogic.giveBookTooltip(author, bookMessage);
-                } catch (BookNbtOverflow ignored) {
-                    InfoUtils.showGuiOrInGameMessage(Message.MessageType.ERROR, "fzmm.gui.imagetext.bookTooltip.overflow");
+                    this.imagetextLogic.giveBookTooltip(author, bookMessage, bookOption);
+                } catch (BookNbtOverflow e) {
+                    this.client.getToastManager().add(new BookNbtOverflowToast(e));
                 }
             }
-            case HOLOGRAM -> ImagetextScreen.this.imagetextLogic.giveAsHologram(x, y, z);
+            case HOLOGRAM -> {
+                int x = Integer.parseInt(rootComponent.childById(ConfigTextBox.class, this.getNumberFieldId(HOLOGRAM_POS_X_ID)).getText());
+                int y = Integer.parseInt(rootComponent.childById(ConfigTextBox.class, this.getNumberFieldId(HOLOGRAM_POS_Y_ID)).getText());
+                int z = Integer.parseInt(rootComponent.childById(ConfigTextBox.class, this.getNumberFieldId(HOLOGRAM_POS_Z_ID)).getText());
+
+                ImagetextScreen.this.imagetextLogic.giveAsHologram(x, y, z);
+            }
             case JSON -> client.keyboard.setClipboard(ImagetextScreen.this.imagetextLogic.getImagetextString());
         }
     }
 
-    private class PreviewButtonListener implements IButtonActionListener {
-
-        @Override
-        public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-            ImagetextScreen.this.updateImagetext();
-        }
-    }
-
-    public void updateImagetext() {
-        if (this.configImage.hasNoImage())
+    @SuppressWarnings({"ConstantConditions", "UnstableApiUsage"})
+    public void updateImagetext(FlowLayout rootComponent) {
+        ImageButtonWidget imageWidget = rootComponent.childById(ImageButtonWidget.class, this.getImageButtonId(IMAGE_ID));
+        if (imageWidget.hasNoImage())
             return;
 
-        BufferedImage image = this.configImage.getImage();
-        String characters = this.configCharacters.getStringValue();
-        int width = this.configWidth.getIntegerValue();
-        int height = this.configHeight.getIntegerValue();
-        boolean smoothScaling = this.configSmoothImage.getBooleanValue();
-        boolean showResolution = this.configShowResolution.getBooleanValue();
+        BufferedImage image = imageWidget.getImage();
+        String characters = rootComponent.childById(TextFieldWidget.class, this.getTextFieldId(CHARACTERS_ID)).getText();
+        int width = (int) rootComponent.childById(SliderWidget.class, this.getSliderId(WIDTH_ID)).parsedValue();
+        int height = (int) rootComponent.childById(SliderWidget.class, this.getSliderId(HEIGHT_ID)).parsedValue();
+        boolean smoothScaling = (boolean) rootComponent.childById(ConfigToggleButton.class, this.getToggleButtonId(SMOOTH_IMAGE_ID)).parsedValue();
+        boolean showResolution = (boolean) rootComponent.childById(ConfigToggleButton.class, this.getToggleButtonId(SHOW_RESOLUTION_ID)).parsedValue();
 
-        if (tab == ImagetextGuiTab.BOOK_PAGE) {
-            width = this.getMaxImageWidthForBookPage(characters);
+        if (selectedTab == ImagetextGuiTab.BOOK_PAGE) {
+            width = this.imagetextLogic.getMaxImageWidthForBookPage(characters);
             height = 15;
         }
 
@@ -286,43 +252,4 @@ public class ImagetextScreen extends GuiOptionsBase {
             this.imagetextLogic.addResolution();
     }
 
-    private int getMaxImageWidthForBookPage(String characters) {
-        int maxTextWidth = 113; //BookScreen.MAX_TEXT_WIDTH = 114;
-        int width = 0;
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-
-        if (characters.length() == 1)
-            width = maxTextWidth / textRenderer.getWidth(characters);
-        else {
-            String message = "";
-            int length = characters.length();
-            do {
-                message += characters.charAt(width % length);
-                width++;
-            } while (textRenderer.getWidth(message) < maxTextWidth);
-        }
-
-        return width;
-    }
-
-    private record ChangeSizeCallback(ImagetextScreen parent, ConfigInteger configToChange,
-                                      boolean isWidth) implements IValueChangeCallback<ConfigInteger> {
-
-        @Override
-        public void onValueChanged(ConfigInteger config) {
-            if (this.parent.configImage.hasNoImage() || !this.parent.preserveImageAspectRatio.getBooleanValue())
-                return;
-
-            BufferedImage image = this.parent.configImage.getImage();
-            assert image != null;
-            int configValue = config.getIntegerValue();
-            Vec2f rescaledSize = ImagetextLogic.changeResolutionKeepingAspectRatio(image.getWidth(), image.getHeight(), configValue, this.isWidth);
-
-            int newValue = (int) (this.isWidth ? rescaledSize.y : rescaledSize.x);
-
-            this.configToChange.setValueChangeCallback(null);
-            this.configToChange.setIntegerValue(newValue);
-            this.configToChange.setValueChangeCallback(new ChangeSizeCallback(this.parent, config, !this.isWidth));
-        }
-    }
 }

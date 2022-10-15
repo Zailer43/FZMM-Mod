@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.config.Configs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SkullItem;
@@ -77,14 +76,14 @@ public class HeadUtils {
 
     public HeadUtils uploadHead(BufferedImage headSkin, String skinName) throws IOException {
         this.applyWatermark(headSkin);
-        String apiKey = Configs.Generic.MINESKIN_API_KEY.getStringValue();
+        String apiKey = FzmmClient.CONFIG.mineskin.apiKey();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(headSkin, "png", baos);
         byte[] skin = baos.toByteArray();
 
         try (CloseableHttpClient httpclient = HttpClients.custom().setUserAgent("FZMM/1.0").build()) {
             HttpPost httppost = new HttpPost(MINESKIN_API + "generate/upload");
-            boolean isPublic = Configs.Generic.MINESKIN_PUBLIC_SKINS.getBooleanValue();
+            boolean isPublic = FzmmClient.CONFIG.mineskin.publicSkins();
 
             HttpEntity reqEntity = MultipartEntityBuilder.create()
                     .addPart("key", new StringBody(apiKey, ContentType.TEXT_PLAIN))

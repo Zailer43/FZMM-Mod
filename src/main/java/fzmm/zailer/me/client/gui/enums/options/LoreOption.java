@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.gui.enums.options;
 
-import fi.dy.masa.malilib.config.IConfigOptionListEntry;
+import fzmm.zailer.me.client.gui.widgets.IMode;
 import net.minecraft.text.Text;
 
-public enum LoreOption implements IConfigOptionListEntry {
+public enum LoreOption implements IMode {
     ADD("add"),
     SET("set");
 
@@ -14,28 +14,7 @@ public enum LoreOption implements IConfigOptionListEntry {
     }
 
     @Override
-    public String getStringValue() {
-        return this.name;
-    }
-
-    @Override
-    public String getDisplayName() {
-        return Text.translatable("fzmm.gui.option.lore." + this.name).getString();
-    }
-
-    @Override
-    public IConfigOptionListEntry cycle(boolean forward) {
-        return this == ADD ? SET : ADD;
-    }
-
-    @Override
-    public IConfigOptionListEntry fromString(String value) {
-        for (fzmm.zailer.me.client.gui.enums.options.BookOption option : fzmm.zailer.me.client.gui.enums.options.BookOption.values()) {
-            if (option.getStringValue().equalsIgnoreCase(value)) {
-                return option;
-            }
-        }
-
-        return ADD;
+    public Text getTranslation() {
+        return Text.translatable("fzmm.gui.option.lore." + this.name);
     }
 }
