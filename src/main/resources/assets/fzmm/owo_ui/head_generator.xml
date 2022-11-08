@@ -8,7 +8,7 @@
                     <text translate="true">fzmm.gui.title.headGenerator</text>
                 </label>
 
-                <flow-layout direction="vertical" id="head-list-image-option">
+                <flow-layout direction="vertical" id="head-generator-option-list">
                     <children>
                     </children>
                     <margins>
@@ -16,51 +16,30 @@
                     </margins>
                 </flow-layout>
 
-                <flow-layout direction="vertical" id="head-list-image-mode">
-                    <children>
-                    </children>
-                </flow-layout>
 
-                <flow-layout direction="horizontal">
+                <grid-layout rows="1" columns="2">
                     <children>
-
-                        <flow-layout direction="vertical" id="layer-list-side">
+                        <flow-layout direction="vertical" id="layer-list-side" row="0" column="0">
                             <children>
+                                <template name="list">
+                                    <label-id>layerList</label-id>
+                                    <list-id>layer-list</list-id>
+                                </template>
                             </children>
 
                             <sizing>
-                                <horizontal method="fill">49</horizontal>
-                                <vertical method="fill">80</vertical>
+                                <horizontal method="fill">50</horizontal>
+                                <vertical method="fill">100</vertical>
                             </sizing>
 
                             <vertical-alignment>top</vertical-alignment>
-
-                            <margins>
-                                <left>20</left>
-                                <right>10</right>
-                            </margins>
                         </flow-layout>
 
-                        <flow-layout direction="vertical" id="head-list-side">
+                        <flow-layout direction="vertical" id="head-list-side" row="0" column="1">
                             <children>
                                 <flow-layout direction="horizontal">
                                     <children>
-                                        <label id="search-label">
-                                            <text translate="true">gui.socialInteractions.search_hint</text>
-                                            <margins>
-                                                <right>8</right>
-                                            </margins>
-                                        </label>
-
-                                        <text-box id="search-text-box">
-                                            <sizing>
-                                                <horizontal method="fill">70</horizontal>
-                                            </sizing>
-
-                                            <positioning type="relative">100,0</positioning>
-                                        </text-box>
                                     </children>
-
                                     <vertical-alignment>center</vertical-alignment>
                                     <sizing>
                                         <horizontal method="fill">100</horizontal>
@@ -68,42 +47,44 @@
                                     </sizing>
                                 </flow-layout>
 
-                                <scroll direction="vertical">
-                                    <flow-layout direction="vertical" id="head-list">
-                                        <children>
-
-                                        </children>
-                                    </flow-layout>
-
-                                    <sizing>
-                                        <vertical method="fill">100</vertical>
-                                    </sizing>
-
-                                    <scrollbar-color>#FFFFFF</scrollbar-color>
-                                </scroll>
+                                <template name="list">
+                                    <label-id>headList</label-id>
+                                    <list-id>head-list</list-id>
+                                </template>
 
                             </children>
 
                             <sizing>
-                                <horizontal method="fill">49</horizontal>
-                                <vertical method="fill">80</vertical>
+                                <horizontal method="fill">50</horizontal>
+                                <vertical method="fill">100</vertical>
                             </sizing>
 
                             <vertical-alignment>top</vertical-alignment>
-
-                            <margins>
-                                <left>10</left>
-                                <right>20</right>
-                            </margins>
                         </flow-layout>
                     </children>
-                </flow-layout>
+
+                    <sizing>
+                        <horizontal method="fill">100</horizontal>
+                        <vertical method="fill">100</vertical>
+                    </sizing>
+
+                    <!-- FIXME help I didn't find a nice way to do this -->
+                    <margins>
+                        <horizontal>20</horizontal>
+                        <bottom>50</bottom>
+                        <top>154</top>
+                    </margins>
+
+                    <horizontal-alignment>center</horizontal-alignment>
+
+                    <positioning type="absolute">0,0</positioning>
+                </grid-layout>
 
                 <flow-layout direction="horizontal">
                     <children>
 
-                        <button id="execute-button">
-                            <text translate="true">fzmm.gui.button.execute</text>
+                        <button id="give-button">
+                            <text translate="true">fzmm.gui.headGenerator.button.giveHead</text>
 
                             <margins>
                                 <left>20</left>
@@ -111,8 +92,17 @@
                             </margins>
                         </button>
 
-                        <button id="preview-button">
-                            <text translate="true">fzmm.gui.button.preview</text>
+                        <button id="save-skin-button">
+                            <text translate="true">fzmm.gui.headGenerator.button.saveSkin</text>
+
+                            <margins>
+                                <left>4</left>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                        <button id="open-folder-button">
+                            <text translate="true">fzmm.gui.headGenerator.button.openFolder</text>
 
                             <margins>
                                 <left>4</left>
@@ -149,13 +139,58 @@
                 </flow-layout>
             </children>
 
-
-            <vertical-alignment>center</vertical-alignment>
+            <vertical-alignment>top</vertical-alignment>
             <horizontal-alignment>center</horizontal-alignment>
+
+            <sizing>
+                <vertical method="content">100</vertical>
+            </sizing>
 
             <surface>
                 <vanilla-translucent/>
             </surface>
         </flow-layout>
     </components>
+
+    <templates>
+        <list>
+            <scroll direction="vertical">
+                <flow-layout direction="vertical">
+                    <children>
+                        <label>
+                            <text translate="true">fzmm.gui.headGenerator.label.{{label-id}}</text>
+                            <tooltip-text translate="true">fzmm.gui.headGenerator.label.{{label-id}}.tooltip</tooltip-text>
+                            <margins>
+                                <all>4</all>
+                            </margins>
+                        </label>
+
+                        <flow-layout direction="vertical" id="{{list-id}}">
+                            <children>
+                            </children>
+                        </flow-layout>
+                    </children>
+                </flow-layout>
+
+                <sizing>
+                    <vertical method="fill">100</vertical>
+                    <horizontal method="fill">100</horizontal>
+                </sizing>
+
+                <scrollbar>
+                    <flat>#FFFFFF</flat>
+                </scrollbar>
+
+                <surface>
+                    <outline>#FFFFFF</outline>
+                </surface>
+
+                <padding>
+                    <all>1</all>
+                </padding>
+
+                <positioning type="relative">0,0</positioning>
+            </scroll>
+        </list>
+    </templates>
 </owo-ui>

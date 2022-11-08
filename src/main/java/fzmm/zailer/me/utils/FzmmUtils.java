@@ -40,7 +40,6 @@ import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
@@ -76,7 +75,7 @@ public class FzmmUtils {
         assert mc.player != null;
 
         if (getLength(stack) > 1950000) {
-            mc.inGameHud.getChatHud().addMessage(Text.translatable("giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+            mc.inGameHud.getChatHud().addMessage(Text.translatable("fzmm.giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)));
             return;
         }
 
@@ -109,25 +108,6 @@ public class FzmmUtils {
     public static BufferedImage getImageFromUrl(String urlLocation) throws IOException {
         URL url = new URL(urlLocation);
         return ImageIO.read(url);
-    }
-
-    @Nullable
-    public static InputStream httpGetRequest(String url, boolean isImage) throws IOException {
-        InputStream inputResponse = null;
-        try (var httpClient = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet(url);
-
-            if (isImage)
-                httpGet.addHeader("content-statusType", "image/jpeg");
-
-            HttpResponse response = httpClient.execute(httpGet);
-            HttpEntity resEntity = response.getEntity();
-            if (response.getStatusLine().getStatusCode() == HttpURLConnection.HTTP_OK)
-                inputResponse = resEntity.getContent();
-
-        }
-
-        return inputResponse;
     }
 
     public static Text disableItalicConfig(Text message) {
@@ -169,15 +149,6 @@ public class FzmmUtils {
         return NbtString.of(Text.Serializer.toJson(text));
     }
 
-    public static void renameHandItem(Text text) {
-        MinecraftClient mc = MinecraftClient.getInstance();
-        assert mc.player != null;
-
-        ItemStack stack = mc.player.getInventory().getMainHandStack();
-        stack.setCustomName(FzmmUtils.disableItalicConfig(text));
-        FzmmUtils.giveItem(stack);
-    }
-
     @Nullable
     public static BufferedImage getPlayerSkin(String name) throws IOException, NullPointerException, JsonIOException {
         BufferedImage skin = getPlayerSkinFromCache(name);
@@ -188,18 +159,26 @@ public class FzmmUtils {
     @Nullable
     public static BufferedImage getPlayerSkinFromMojang(String name) throws IOException {
         String stringUuid = getPlayerUuid(name);
-        InputStream inputStream = httpGetRequest("https://sessionserver.mojang.com/session/minecraft/profile/" + stringUuid, false);
-        if (inputStream == null)
-            return null;
+        try (var httpClient = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet("https://sessionserver.mojang.com/session/minecraft/profile/" + stringUuid);
 
-        JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(inputStream));
-        JsonObject properties = (JsonObject) obj.getAsJsonArray("properties").get(0);
+            httpGet.addHeader("content-statusType", "image/jpeg");
 
-        String valueJsonStr = new String(Base64.getDecoder().decode(properties.get("value").getAsString()));
-        obj = (JsonObject) JsonParser.parseString(valueJsonStr);
-        String skinUrl = obj.getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+            HttpResponse response = httpClient.execute(httpGet);
+            HttpEntity resEntity = response.getEntity();
+            if ((response.getStatusLine().getStatusCode() / 100) != 2)
+                return null;
 
-        return getImageFromUrl(skinUrl);
+            InputStream inputStream = resEntity.getContent();
+            JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(inputStream));
+            JsonObject properties = (JsonObject) obj.getAsJsonArray("properties").get(0);
+
+            String valueJsonStr = new String(Base64.getDecoder().decode(properties.get("value").getAsString()));
+            obj = (JsonObject) JsonParser.parseString(valueJsonStr);
+            String skinUrl = obj.getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+
+            return getImageFromUrl(skinUrl);
+        }
     }
 
     @Nullable
@@ -223,12 +202,18 @@ public class FzmmUtils {
     }
 
     public static String getPlayerUuid(String name) throws IOException, JsonIOException {
-        InputStream response = httpGetRequest("https://api.mojang.com/users/profiles/minecraft/" + name, false);
-        if (response == null)
-            return "";
+        try (var httpClient = HttpClients.createDefault()) {
+            HttpGet httpGet = new HttpGet("https://api.mojang.com/users/profiles/minecraft/" + name);
 
-        JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(response));
-        return obj.get("id").getAsString();
+            HttpResponse response = httpClient.execute(httpGet);
+            HttpEntity resEntity = response.getEntity();
+            if (((response.getStatusLine().getStatusCode() / 100) != 2) || resEntity == null)
+                return "";
+
+            InputStream inputStream = resEntity.getContent();
+            JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(inputStream));
+            return obj.get("id").getAsString();
+        }
     }
 
     public static void saveBufferedImageAsIdentifier(BufferedImage bufferedImage, Identifier identifier) throws IOException {

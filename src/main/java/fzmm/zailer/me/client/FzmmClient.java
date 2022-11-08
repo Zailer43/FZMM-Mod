@@ -22,6 +22,8 @@ public class FzmmClient implements ClientModInitializer {
     public final static Logger LOGGER = LogManager.getLogger("FZMM");
     public static final FzmmConfig CONFIG = FzmmConfig.createAndLoad();
     public static final KeyBinding OPEN_MAIN_GUI_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("text.config.fzmm.option.hotkeys.fzmmMainGui", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_Z, "key.category.fzmm"));
+    public static final int CHAT_BASE_COLOR = 0x478e47;
+    public static final int CHAT_WHITE_COLOR = 0xb7b7b7;
 
 
     @Override

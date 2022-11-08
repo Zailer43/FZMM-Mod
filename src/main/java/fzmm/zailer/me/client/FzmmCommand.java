@@ -49,7 +49,7 @@ public class FzmmCommand {
 
                     Text name = ctx.getArgument("name", Text.class);
 
-                    FzmmUtils.renameHandItem(name);
+                    DisplayBuilder.renameHandItem(name);
                     return 1;
                 }))
         );
@@ -57,7 +57,7 @@ public class FzmmCommand {
         fzmmCommand.then(ClientCommandManager.literal("lore")
                 .executes(ctx -> sendHelpMessage("commands.fzmm.lore.help", BASE_COMMAND + " lore add/remove"))
                 .then(ClientCommandManager.literal("add")
-                        .executes(ctx -> sendHelpMessage("commands.fzmm.lore.add.help", BASE_COMMAND + " lore add <detailsId>"))
+                        .executes(ctx -> sendHelpMessage("commands.fzmm.lore.add.help", BASE_COMMAND + " lore add <message>"))
                         .then(ClientCommandManager.argument("id", TextArgumentType.text()).executes(ctx -> {
 
                             Text message = ctx.getArgument("id", Text.class);
@@ -205,16 +205,14 @@ public class FzmmCommand {
     }
 
     private static int sendHelpMessage(String infoTranslationKey, String syntax) {
-        int whiteColor = 0xb7b7b7;
-        int fzmmColor = 0x478e47;
         Text infoTranslation = Text.translatable(infoTranslationKey)
-                .setStyle(Style.EMPTY.withColor(whiteColor));
+                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
 
         Text syntaxText = Text.literal(syntax)
-                .setStyle(Style.EMPTY.withColor(whiteColor));
+                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
 
         Text translation = Text.translatable("commands.fzmm.help.format", infoTranslation, syntaxText)
-                .setStyle(Style.EMPTY.withColor(fzmmColor));
+                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
 
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         assert player != null;
@@ -232,7 +230,7 @@ public class FzmmCommand {
     private static void addEnchant(Enchantment enchant, short level) {
         assert MC.player != null;
 
-        //{Enchantments:[{detailsId:"minecraft:aqua_affinity",lvl:1s}]}
+        //{Enchantments:[{message:"minecraft:aqua_affinity",lvl:1s}]}
 
         ItemStack stack = MC.player.getInventory().getMainHandStack();
         NbtCompound tag = stack.getOrCreateNbt();
@@ -315,7 +313,7 @@ public class FzmmCommand {
     private static void fullContainer(int slotsToFill, int firstSlots) {
         assert MC.player != null;
 
-        //{BlockEntityTag:{Items:[{Slot:0b,detailsId:"minecraft:stone",Count:1b}],detailsId:"minecraft:dispenser"}}
+        //{BlockEntityTag:{Items:[{Slot:0b,id:"minecraft:stone",Count:1b}]}}
 
         ItemStack containerItemStack = MC.player.getInventory().getMainHandStack();
         ItemStack itemStack = MC.player.getOffHandStack();

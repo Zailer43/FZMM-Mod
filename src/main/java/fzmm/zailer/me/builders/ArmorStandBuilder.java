@@ -1,7 +1,6 @@
 package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.InventoryUtils;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -76,7 +75,7 @@ public class ArmorStandBuilder {
 
     public ArmorStandBuilder setRightHandItem(ItemStack stack) {
         NbtList handItem = new NbtList();
-        NbtCompound itemTag = InventoryUtils.stackToTag(stack);
+        NbtCompound itemTag = stack.writeNbt(new NbtCompound());
         handItem.add(itemTag);
 
         this.entityTag.put("HandItems", handItem);

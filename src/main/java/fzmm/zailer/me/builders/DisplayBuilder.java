@@ -44,6 +44,15 @@ public class DisplayBuilder {
         FzmmUtils.giveItem(stack);
     }
 
+    public static void renameHandItem(Text text) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        assert mc.player != null;
+
+        ItemStack stack = mc.player.getInventory().getMainHandStack();
+        stack.setCustomName(FzmmUtils.disableItalicConfig(text));
+        FzmmUtils.giveItem(stack);
+    }
+
     public DisplayBuilder nbt(NbtCompound nbt) {
         this.nbt = nbt;
         return this;
@@ -104,6 +113,10 @@ public class DisplayBuilder {
 
     public DisplayBuilder setName(String name) {
         return this.setName(Text.of(name));
+    }
+
+    public DisplayBuilder setName(Text name, int color) {
+        return this.setName(name.getString(), color);
     }
 
     public DisplayBuilder setName(String name, int color) {

@@ -339,7 +339,7 @@ public class FzmmItemGroup {
 
         for (var painting : Registry.PAINTING_VARIANT) {
             if (!contains(painting)) {
-                // if there is no translation in the mod of that painting, the detailsId of the variant is used,
+                // if there is no translation in the mod of that painting, the id of the variant is used,
                 // to prevent a translation key from appearing if a mod that adds non-placeable paintings is used
                 String variantName = Registry.PAINTING_VARIANT.getId(painting).getPath();
                 String translationKey = "entity.minecraft.painting." + variantName;

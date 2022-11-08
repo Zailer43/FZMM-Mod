@@ -14,7 +14,7 @@
                             <name>imagetext</name>
                         </template>
                         <template name="main-button" row="0" column="1">
-                            <name>gradient</name>
+                            <name>textFormat</name>
                         </template>
                         <template name="main-button" row="0" column="2">
                             <name>playerStatue</name>

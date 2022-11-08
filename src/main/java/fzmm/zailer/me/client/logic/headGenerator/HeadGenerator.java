@@ -1,14 +1,14 @@
 package fzmm.zailer.me.client.logic.headGenerator;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
 public final class HeadGenerator {
     private final BufferedImage image;
 
-    public HeadGenerator(BufferedImage image) {
+    public HeadGenerator(@NotNull BufferedImage image) {
         this.image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
         this.addTexture(image, false);
     }
@@ -26,19 +26,11 @@ public final class HeadGenerator {
         return this;
     }
 
-    public HeadGenerator merge(List<BufferedImage> imageList) {
-        for (var image : imageList)
-            this.addTexture(image);
-
-        return this;
-    }
-
     private void addLayer(Graphics2D finalImageGraphics, BufferedImage newLayer, boolean hatLayer) {
         int width = hatLayer ? 64 : 32;
         finalImageGraphics.drawImage(newLayer, 0, 0, width, 16, 0, 0, width, 16, null);
     }
 
-    @Nullable
     public BufferedImage getHeadTexture() {
         return this.image;
     }

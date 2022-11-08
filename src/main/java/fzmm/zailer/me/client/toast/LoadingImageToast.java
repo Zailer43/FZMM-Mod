@@ -1,8 +1,10 @@
 package fzmm.zailer.me.client.toast;
 
-import fzmm.zailer.me.client.gui.widgets.image.ImageStatus;
+import fzmm.zailer.me.client.toast.status.IStatus;
+import fzmm.zailer.me.client.toast.status.ImageStatus;
 import net.minecraft.client.toast.ToastManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 
 public class LoadingImageToast extends AbstractStatusToast {
     private IStatus status;
@@ -28,6 +30,11 @@ public class LoadingImageToast extends AbstractStatusToast {
     @Override
     public IStatus getStatus() {
         return this.status;
+    }
+
+    @Override
+    public Text getDetails() {
+        return this.status.getDetailsTranslation();
     }
 
     public void setResponse(ImageStatus status) {

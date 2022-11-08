@@ -23,7 +23,9 @@
                         <vertical>30</vertical>
                     </margins>
 
-                    <scrollbar-color>#FFFFFF</scrollbar-color>
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
                 </scroll>
 
                 <flow-layout direction="horizontal">

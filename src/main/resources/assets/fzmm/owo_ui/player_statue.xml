@@ -1,0 +1,91 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <label id="title">
+                    <positioning type="absolute">20,20</positioning>
+                    <text translate="true">fzmm.gui.title.playerStatue</text>
+                </label>
+
+                <scroll direction="vertical">
+
+                    <flow-layout direction="vertical" id="player-statue-options-list">
+                        <children>
+                        </children>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">90</vertical>
+                    </sizing>
+
+                    <margins>
+                        <vertical>30</vertical>
+                    </margins>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="execute-button">
+                            <text translate="true">fzmm.gui.button.execute</text>
+
+                            <margins>
+                                <left>20</left>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+                    </children>
+
+                    <positioning type="relative">0,100</positioning>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="back-button">
+                            <text translate="true">fzmm.gui.button.back</text>
+
+                            <margins>
+                                <right>20</right>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,100</positioning>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="faq-button">
+                            <text translate="true">fzmm.gui.button.faq</text>
+
+                            <margins>
+                                <right>20</right>
+                                <top>20</top>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,0</positioning>
+                </flow-layout>
+            </children>
+
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+</owo-ui>

@@ -1,6 +1,5 @@
 package fzmm.zailer.me.builders;
 
-import fzmm.zailer.me.utils.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -26,7 +25,7 @@ public class CrossbowBuilder {
     }
 
     public CrossbowBuilder putProjectile(ItemStack projectile) {
-        this.chargedProjectiles.add(InventoryUtils.stackToTag(projectile));
+        this.chargedProjectiles.add(projectile.writeNbt(new NbtCompound()));
         return this;
     }
 

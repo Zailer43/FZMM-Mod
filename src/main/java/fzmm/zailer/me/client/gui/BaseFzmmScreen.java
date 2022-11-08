@@ -1,14 +1,13 @@
 package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.interfaces.IScreenTab;
-import fzmm.zailer.me.client.gui.widgets.EnumWidget;
-import fzmm.zailer.me.client.gui.widgets.IMode;
-import fzmm.zailer.me.client.gui.widgets.ScreenTabContainer;
-import fzmm.zailer.me.client.gui.widgets.SliderWidget;
-import fzmm.zailer.me.client.gui.widgets.image.ImageButtonWidget;
-import fzmm.zailer.me.client.gui.widgets.image.mode.IImageMode;
-import fzmm.zailer.me.client.gui.widgets.image.source.IImageSource;
+import fzmm.zailer.me.client.gui.components.EnumWidget;
+import fzmm.zailer.me.client.gui.components.IMode;
+import fzmm.zailer.me.client.gui.components.ScreenTabContainer;
+import fzmm.zailer.me.client.gui.components.SliderWidget;
+import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
+import fzmm.zailer.me.client.gui.components.image.mode.IImageMode;
+import fzmm.zailer.me.client.gui.components.image.source.IImageSource;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.config.ui.component.ConfigToggleButton;
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
@@ -18,20 +17,31 @@ import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIParsing;
+import io.wispforest.owo.util.NumberReflection;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Contract;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
+//TODO: refactor since this class is becoming unmaintainable
+// and making hovering over a row change the background color,
+// it's hard to tell which row is selected when the gui is very small
+@SuppressWarnings("UnstableApiUsage")
 public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
-    private static final int COMPONENT_DISTANCE = 8;
+    private static final int NORMAL_WIDTH = 200;
+    private static final int TEXT_FIELD_WIDTH = NORMAL_WIDTH - 2;
+    public static final int COMPONENT_DISTANCE = 8;
+    public static final int BUTTON_TEXT_PADDING = 8;
     @Nullable
     protected Screen parent;
     protected final String baseTranslationKey;
@@ -54,7 +64,8 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     }
 
     protected void tryAddComponentList(FlowLayout rootComponent) {
-    };
+
+    }
 
     protected abstract void setupButtonsCallbacks(FlowLayout rootComponent);
 
@@ -64,8 +75,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         this.client.setScreen(this.parent);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    public void setupEnum(FlowLayout rootComponent, String id, Enum<? extends IMode> defaultValue, @Nullable ButtonWidget.PressAction callback) {
+    public EnumWidget setupEnum(FlowLayout rootComponent, String id, Enum<? extends IMode> defaultValue, @Nullable ButtonWidget.PressAction callback) {
         EnumWidget enumButton = rootComponent.childById(EnumWidget.class, this.getEnumId(id));
         ButtonWidget resetButton = rootComponent.childById(ButtonWidget.class, this.getResetId(id));
 
@@ -84,9 +94,9 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
             resetButton.active = false;
         });
         resetButton.onPress();
+        return enumButton;
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     public void setupImageButton(FlowLayout rootComponent, String id, IImageSource defaultMode) {
         ImageButtonWidget imageButtonWidget = rootComponent.childById(ImageButtonWidget.class, this.getImageButtonId(id));
         ConfigTextBox imageValueField = rootComponent.childById(ConfigTextBox.class, this.getImageValueFieldId(id));
@@ -98,12 +108,11 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         imageButtonWidget.onPress(button -> imageButtonWidget.loadImage(imageValueField.getText()));
         imageButtonWidget.setSourceType(defaultMode);
         assert this.client != null;
-        imageButtonWidget.horizontalSizing(Sizing.fixed(this.client.textRenderer.getWidth(imageButtonWidget.getMessage()) + 8));
+        imageButtonWidget.horizontalSizing(Sizing.fixed(this.client.textRenderer.getWidth(imageButtonWidget.getMessage()) + BUTTON_TEXT_PADDING));
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    public void setupSlider(FlowLayout rootComponent, String id, double defaultValue, double min,
-                            double max, Class<? extends Number> numberType, @Nullable Consumer<Double> callback) {
+    public SliderWidget setupSlider(FlowLayout rootComponent, String id, double defaultValue, double min,
+                                    double max, Class<? extends Number> numberType, @Nullable Consumer<Double> callback) {
         SliderWidget numberSlider = rootComponent.childById(SliderWidget.class, this.getSliderId(id));
         ButtonWidget resetButton = rootComponent.childById(ButtonWidget.class, this.getResetId(id));
 
@@ -112,51 +121,96 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 
         numberSlider.valueType(numberType);
         numberSlider.onChanged(aDouble -> {
-            resetButton.active = numberSlider.value() != defaultValue;
+            double discreteValue = numberSlider.discreteValue();
+            resetButton.active = discreteValue != defaultValue;
             if (callback != null)
-                callback.accept(aDouble);
+                callback.accept(discreteValue);
         });
         numberSlider.min(min);
         numberSlider.max(max);
         numberSlider.setFromDiscreteValue(defaultValue);
 
         resetButton.onPress(button -> numberSlider.setFromDiscreteValue(defaultValue));
+        return numberSlider;
     }
 
-    public void setupTextField(FlowLayout rootComponent, String id, String defaultValue) {
+    public TextFieldWidget setupTextField(FlowLayout rootComponent, String id, String defaultValue) {
+        return this.setupTextField(rootComponent, id, defaultValue, null);
+    }
+
+    public TextFieldWidget setupTextField(FlowLayout rootComponent, String id, String defaultValue, @Nullable Consumer<String> changedListener) {
         TextFieldWidget textField = rootComponent.childById(TextFieldWidget.class, this.getTextFieldId(id));
         ButtonWidget resetButton = rootComponent.childById(ButtonWidget.class, this.getResetId(id));
 
         this.checkNull(textField, "text-box", this.getTextFieldId(id));
 
-        textField.setChangedListener(button -> {
+        textField.setChangedListener(text -> {
             if (resetButton != null)
                 resetButton.active = !textField.getText().equals(defaultValue);
+            if (changedListener != null)
+                changedListener.accept(text);
         });
+        if (defaultValue.length() > 32)
+            textField.setMaxLength(defaultValue.length());
         textField.setText(defaultValue);
         textField.setCursor(0);
 
         if (resetButton != null)
             resetButton.onPress(button -> textField.setText(defaultValue));
+        return textField;
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    public void setupNumberField(FlowLayout rootComponent, String id, String defaultValue) {
-        ConfigTextBox numberField = rootComponent.childById(ConfigTextBox.class, this.getNumberFieldId(id));
+    public ConfigTextBox setupColorField(FlowLayout rootComponent, String id, String defaultValue, @Nullable Consumer<String> changedListener) {
+        ConfigTextBox colorField = this.setupTextBox(rootComponent, this.getColorFieldId(id), id, defaultValue, changedListener);
+        colorField.inputPredicate(input -> input.matches("[0-9a-fA-F]{0,6}"));
+        return colorField;
+    }
+
+    public ConfigTextBox setupNumberField(FlowLayout rootComponent, String id, double defaultValue, Class<? extends Number> numberType) {
+        return this.setupNumberField(rootComponent, id, defaultValue, numberType, null);
+    }
+
+    public ConfigTextBox setupNumberField(FlowLayout rootComponent, String id, double defaultValue, Class<? extends Number> numberType, @Nullable Consumer<String> changedListener) {
+        String defaultValueString = NumberReflection.isFloatingPointType(numberType) ? String.valueOf(defaultValue) : String.valueOf((int) defaultValue);
+        ConfigTextBox numberBox = this.setupTextBox(rootComponent, this.getNumberFieldId(id), id, defaultValueString, changedListener, s -> {
+            try {
+                return !s.isBlank() && defaultValue == Double.parseDouble(s);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        });
+        numberBox.configureForNumber(numberType);
+        return numberBox;
+    }
+
+    private ConfigTextBox setupTextBox(FlowLayout rootComponent, String textBoxId, String id, String defaultValue, @Nullable Consumer<String> changedListener) {
+        return this.setupTextBox(rootComponent, textBoxId, id, defaultValue, changedListener, defaultValue::equals);
+    }
+
+    private ConfigTextBox setupTextBox(FlowLayout rootComponent, String textBoxId, String id, String defaultValue, @Nullable Consumer<String> changedListener, Predicate<String> defaultPredicate) {
+        ConfigTextBox textBox = rootComponent.childById(ConfigTextBox.class, textBoxId);
         ButtonWidget resetButton = rootComponent.childById(ButtonWidget.class, this.getResetId(id));
 
-        this.checkNull(numberField, "text-option", this.getNumberFieldId(id));
+        this.checkNull(textBox, "text-option", textBoxId);
         this.checkNull(resetButton, "button", this.getResetId(id));
 
-        numberField.setChangedListener(button -> resetButton.active = !numberField.getText().equals(defaultValue));
-        numberField.setText(defaultValue);
-        numberField.setCursor(0);
+        textBox.setChangedListener(s -> {
+            resetButton.active = !defaultPredicate.test(s);
+            if (changedListener != null)
+                changedListener.accept(s);
+        });
+        textBox.setText(defaultValue);
+        textBox.setCursor(0);
 
-        resetButton.onPress(button -> numberField.setText(defaultValue));
+        resetButton.onPress(button -> textBox.setText(defaultValue));
+        return textBox;
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    public void setupBooleanButton(FlowLayout rootComponent, String id, boolean defaultValue) {
+    public ConfigToggleButton setupBooleanButton(FlowLayout rootComponent, String id, boolean defaultValue) {
+        return this.setupBooleanButton(rootComponent, id, defaultValue, null);
+    }
+
+    public ConfigToggleButton setupBooleanButton(FlowLayout rootComponent, String id, boolean defaultValue, @Nullable ButtonWidget.PressAction toggledListener) {
         ConfigToggleButton toggleButton = rootComponent.childById(ConfigToggleButton.class, this.getToggleButtonId(id));
         ButtonWidget resetButton = rootComponent.childById(ButtonWidget.class, this.getResetId(id));
 
@@ -164,39 +218,46 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         this.checkNull(resetButton, "button", this.getResetId(id));
 
         toggleButton.enabled(defaultValue);
-        toggleButton.onPress(button -> resetButton.active = ((boolean) toggleButton.parsedValue()) != defaultValue);
+        toggleButton.onPress(button -> {
+            resetButton.active = ((boolean) toggleButton.parsedValue()) != defaultValue;
+            if (toggledListener != null)
+                toggledListener.onPress(button);
+        });
         assert this.client != null;
         int maxWidth = Math.max(
                 this.client.textRenderer.getWidth(Text.translatable("text.owo.config.boolean_toggle.enabled")),
                 this.client.textRenderer.getWidth(Text.translatable("text.owo.config.boolean_toggle.disabled"))
         );
-        toggleButton.horizontalSizing(Sizing.fixed(maxWidth + 8));
+        toggleButton.horizontalSizing(Sizing.fixed(maxWidth + BUTTON_TEXT_PADDING));
 
-        resetButton.onPress(button -> toggleButton.enabled(defaultValue));
+        resetButton.onPress(button -> toggleButton.onPress());
         resetButton.active = ((boolean) toggleButton.parsedValue()) != defaultValue;
+        return toggleButton;
     }
 
-    public void setupButton(FlowLayout rootComponent, String id, boolean enabled, ButtonWidget.PressAction callback) {
-        ButtonWidget button = rootComponent.childById(ButtonWidget.class, id);
+    public ButtonWidget setupButton(FlowLayout rootComponent, String rawId, boolean enabled, ButtonWidget.PressAction callback) {
+        ButtonWidget button = rootComponent.childById(ButtonWidget.class, rawId);
 
-        this.checkNull(button, "button", id);
+        this.checkNull(button, "button", rawId);
 
         button.active = enabled;
         button.onPress(callback);
+        return button;
     }
 
     @SuppressWarnings("ConstantConditions")
-    public void setupImage(FlowLayout rootComponent, String imageButtonId, String imageEnumId, Enum<? extends IImageMode> defaultValue) {
+    public ImageButtonWidget setupImage(FlowLayout rootComponent, String imageButtonId, String imageEnumId, Enum<? extends IImageMode> defaultValue) {
         this.setupImageButton(rootComponent, imageButtonId, ((IImageMode) defaultValue).getSourceType());
         ImageButtonWidget imageWidget = rootComponent.childById(ImageButtonWidget.class, this.getImageButtonId(imageButtonId));
         this.setupEnum(rootComponent, imageEnumId, defaultValue, button -> {
             IImageMode mode = (IImageMode) ((EnumWidget) button).getValue();
             IImageSource sourceType = mode.getSourceType();
             imageWidget.setSourceType(sourceType);
-            //noinspection UnstableApiUsage
             rootComponent.childById(ConfigTextBox.class, this.getImageValueFieldId(imageButtonId))
                     .applyPredicate(sourceType::predicate);
         });
+
+        return imageWidget;
     }
 
     public void tryAddComponentList(FlowLayout rootComponent, String containerId, Component... components) {
@@ -205,78 +266,116 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
             container.children(new ArrayList<>(Arrays.stream(components).toList()));
     }
 
-    public Component getLabel(String id, String tooltipId) {
+    public Component newLabel(String id, String tooltipId, boolean isOption) {
+        String baseTranslationKey = isOption ? this.getOptionBaseTranslationKey() : this.getTabTranslationKey();
         return Components
-                .label(Text.translatable(this.getBaseTranslationKey() + ".option." + id))
-                .tooltip(Text.translatable(this.getBaseTranslationKey() + ".option." + tooltipId + ".tooltip"))
+                .label(Text.translatable(baseTranslationKey + id))
+                .tooltip(Text.translatable(baseTranslationKey + tooltipId + ".tooltip"))
                 .margins(Insets.left(20))
                 .id(this.getLabelId(id));
     }
 
-    public Component getResetButton(String id) {
+    public Component newResetButton(String id) {
         return Components
-                .button(Text.translatable("fzmm.gui.button.reset"), (Consumer<ButtonComponent>) buttonComponent -> {})
-                .id(this.getResetId(id))
-                .margins(Insets.right(20).withLeft(COMPONENT_DISTANCE));
+                .button(Text.translatable("fzmm.gui.button.reset"), (Consumer<ButtonComponent>) buttonComponent -> {
+                })
+                .id(this.getResetId(id));
     }
 
-    public Component getTextFieldRow(String id) {
-        return this.getTextFieldRow(id, false);
+    public Component newTextFieldRow(String id) {
+        return this.newTextFieldRow(id, true);
     }
 
-    public Component getTextFieldRow(String id, boolean hasResetButton) {
+    public Component newTextFieldRow(String id, boolean hasResetButton) {
         Component textField = Components
-                .textBox(Sizing.fixed(200))
+                .textBox(Sizing.fixed(TEXT_FIELD_WIDTH))
                 .id(this.getTextFieldId(id));
-        return this.getRow(id, id, hasResetButton, textField);
+        return this.newRow(id, id, hasResetButton, textField);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    public Component getNumberRow(String id, Class<? extends Number> numberType) {
+    public Component newTextBoxRow(String id) {
         Component textField = new ConfigTextBox()
-                .configureForNumber(numberType)
-                .horizontalSizing(Sizing.fixed(200))
+                .horizontalSizing(Sizing.fixed(TEXT_FIELD_WIDTH))
+                .id(this.getTextFieldId(id));
+
+        return this.newRow(id, id, true, textField);
+    }
+
+    public Component newNumberRow(String id) {
+        return this.newNumberRow(id, id);
+    }
+
+    public Component newNumberRow(String id, String tooltipId) {
+        Component textField = new ConfigTextBox()
+                .horizontalSizing(Sizing.fixed(TEXT_FIELD_WIDTH))
                 .id(this.getNumberFieldId(id));
 
-        return this.getRow(id, id, true, textField);
+        return this.newRow(id, tooltipId, true, textField);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    public Component getBooleanRow(String id) {
+    public Component newColorRow(String id) {
+        Component textField = new ConfigTextBox()
+                .horizontalSizing(Sizing.fixed(TEXT_FIELD_WIDTH))
+                .id(this.getColorFieldId(id));
+
+        return this.newRow(id, id, true, textField);
+    }
+
+    public Component newBooleanRow(String id) {
         Component textField = new ConfigToggleButton()
                 .id(this.getToggleButtonId(id));
-        return this.getRow(id, id, true, textField);
+        return this.newRow(id, id, true, textField);
     }
 
-    public Component getSliderRow(String id, String tooltipId) {
+    public Component newSliderRow(String id, int decimalPlaces) {
+        return this.newSliderRow(id, id, decimalPlaces);
+    }
+
+    public Component newSliderRow(String id, String tooltipId, int decimalPlaces) {
         Component slider = new SliderWidget()
-                .horizontalSizing(Sizing.fixed(200))
+                .decimalPlaces(decimalPlaces)
+                .horizontalSizing(Sizing.fixed(NORMAL_WIDTH))
                 .id(this.getSliderId(id));
-        return this.getRow(id, tooltipId, true, slider);
+        return this.newRow(id, tooltipId, true, slider);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    public Component getImageRow(String id) {
+    public Component newImageRow(String id) {
         Component textField = new ConfigTextBox()
-                .horizontalSizing(Sizing.fixed(200))
                 .id(this.getImageValueFieldId(id));
+        Text loadImageButtonText = Text.translatable("fzmm.gui.button.loadImage");
 
         ImageButtonWidget imageButton = new ImageButtonWidget();
-        imageButton.setMessage(Text.translatable("fzmm.gui.button.loadImage"));
-        imageButton.margins(Insets.right(20).withLeft(COMPONENT_DISTANCE));
+        imageButton.setMessage(loadImageButtonText);
         imageButton.id(this.getImageButtonId(id));
-        return this.getRow(id, id, false, textField, imageButton);
+
+        ButtonWidget resetButton = (ButtonWidget) this.newResetButton("");
+        // so that it aligns with the other options
+        textField.horizontalSizing(Sizing.fixed(TEXT_FIELD_WIDTH -
+                this.textRenderer.getWidth(loadImageButtonText) +
+                this.textRenderer.getWidth(resetButton.getMessage())
+        ));
+        return this.newRow(id, id, false, textField, imageButton);
     }
 
-    public Component getEnumRow(String id) {
+    public Component newEnumRow(String id) {
         Component enumWidget = new EnumWidget()
-                .horizontalSizing(Sizing.fixed(200))
+                .horizontalSizing(Sizing.fixed(NORMAL_WIDTH))
                 .id(this.getEnumId(id));
 
-        return this.getRow(id, id, true, enumWidget);
+        return this.newRow(id, id, true, enumWidget);
     }
 
-    public Component getScreenTabRow(Enum<? extends IScreenTab> defaultTab) {
+    public Component newButtonRow(String id) {
+        ButtonWidget resetButton = (ButtonWidget) this.newResetButton("");
+        Component button = Components.button(Text.translatable(this.getOptionBaseTranslationKey() + id + ".button"),
+                        (Consumer<ButtonComponent>) buttonComponent -> {})
+                .horizontalSizing(Sizing.fixed(NORMAL_WIDTH + this.textRenderer.getWidth(resetButton.getMessage()) + COMPONENT_DISTANCE + BUTTON_TEXT_PADDING))
+                .id(this.getButtonId(id));
+
+        return this.newRow(id, id, false, button);
+    }
+
+    public Component newScreenTabRow(Enum<? extends IScreenTab> defaultTab) {
         FlowLayout rowLayout = (FlowLayout) Containers
                 .horizontalFlow(Sizing.fill(100), Sizing.fixed(28))
                 .surface(Surface.VANILLA_TRANSLUCENT)
@@ -286,8 +385,9 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         for (var tab : defaultTab.getClass().getEnumConstants()) {
             IScreenTab screenTab = (IScreenTab) tab;
             boolean active = tab != defaultTab;
-            Text text = Text.translatable(this.getBaseTranslationKey() + "." + screenTab.getId());
-            ButtonWidget button = Components.button(text, (Consumer<ButtonComponent>) buttonComponent -> {});
+            Text text = Text.translatable(this.getTabTranslationKey() + screenTab.getId());
+            ButtonWidget button = Components.button(text, (Consumer<ButtonComponent>) buttonComponent -> {
+            });
 
             button.id(this.getScreenTabButtonId(screenTab.getId()))
                     .margins(Insets.horizontal(2));
@@ -295,26 +395,26 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 
             rowLayout.child(button);
         }
-        return Containers.horizontalScroll(Sizing.fill(100), Sizing.fixed(30), rowLayout);
+
+        return rowLayout;
     }
 
-    public ScreenTabContainer getScreenTab(String id, Component... components) {
+    public ScreenTabContainer newScreenTab(String id, Component... components) {
         ScreenTabContainer screenTabContainer = new ScreenTabContainer(Sizing.fill(100), Sizing.content(), false);
         screenTabContainer.id(this.getScreenTabId(id));
 
-        id += "TabTitle";
-        screenTabContainer.child(this.getRow(id, id, false));
+        screenTabContainer.child(this.newRow(id, id, false));
         screenTabContainer.children(Arrays.stream(components).toList());
 
         return screenTabContainer;
     }
 
-    public Component getRow(String id, String tooltipId, boolean hasResetButton, Component... components) {
+    public Component newRow(String id, String tooltipId, boolean hasResetButton, Component... components) {
         FlowLayout rowLayout = (FlowLayout) Containers
                 .horizontalFlow(Sizing.fill(100), Sizing.fixed(22))
-                .child(this.getLabel(id, tooltipId))
+                .child(this.newLabel(id, tooltipId, components.length != 0))
                 .alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER)
-                .margins(Insets.bottom(6))
+                .margins(Insets.bottom(4))
                 .id(this.getRowId(id));
 
         FlowLayout rightComponentsLayout = (FlowLayout) Containers
@@ -322,11 +422,19 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
                 .verticalAlignment(VerticalAlignment.CENTER)
                 .positioning(Positioning.relative(100, 0));
 
-        for (var component : components)
+
+        for (var component : components) {
+            component.margins(Insets.left(COMPONENT_DISTANCE));
             rightComponentsLayout.child(component);
+        }
 
         if (hasResetButton)
-            rightComponentsLayout.child(this.getResetButton(id));
+            rightComponentsLayout.child(this.newResetButton(id));
+
+        List<Component> rightComponents = rightComponentsLayout.children();
+        if (!rightComponents.isEmpty())
+            rightComponents.get(rightComponents.size() - 1).margins(Insets.right(20).withLeft(COMPONENT_DISTANCE));
+
 
         return rowLayout.child(rightComponentsLayout);
     }
@@ -340,7 +448,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
                 screenTabContainer.setSelected(selectedTab == tab);
 
             if (screenTabButton != null)
-                screenTabButton.active = true;
+                screenTabButton.active = tab != selectedTab;
         }
     }
 
@@ -402,6 +510,10 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         return id + "-screen-tab-button";
     }
 
+    public String getColorFieldId(String id) {
+        return id + "-color";
+    }
+
     public String getScreenTabButtonId(IScreenTab tab) {
         return this.getScreenTabButtonId(tab.getId());
     }
@@ -410,16 +522,23 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         return "fzmm.gui." + this.baseTranslationKey;
     }
 
+    public String getTabTranslationKey() {
+        return this.getBaseTranslationKey() + ".tab.";
+    }
+
+    public String getOptionBaseTranslationKey() {
+        return this.getBaseTranslationKey() + ".option.";
+    }
+
+    @Contract(value = "null, _, _ -> fail;", pure = true)
     protected void checkNull(Component component, String componentTagName, String id) {
-        Objects.requireNonNull(component, String.format("No '%s' found with detailsId '%s'", componentTagName, id));
+        Objects.requireNonNull(component, String.format("No '%s' found with component id '%s'", componentTagName, id));
     }
 
 
     static {
-        //noinspection UnstableApiUsage
         UIParsing.registerFactory("toggle-button", element -> new ConfigToggleButton());
         UIParsing.registerFactory("number-slider", element -> new SliderWidget());
-        //noinspection UnstableApiUsage
         UIParsing.registerFactory("text-option", element -> new ConfigTextBox());
         UIParsing.registerFactory("image-option", element -> new ImageButtonWidget());
         UIParsing.registerFactory("enum-option", element -> new EnumWidget());

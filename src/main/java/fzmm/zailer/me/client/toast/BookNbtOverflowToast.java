@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.toast;
 
 import fzmm.zailer.me.client.FzmmIcons;
+import fzmm.zailer.me.client.toast.status.IStatus;
 import fzmm.zailer.me.exceptions.BookNbtOverflow;
 import io.wispforest.owo.itemgroup.Icon;
 import net.minecraft.text.Text;
@@ -17,7 +18,7 @@ public class BookNbtOverflowToast extends AbstractStatusToast {
             }
 
             @Override
-            public Text getDetailsTranslation() {
+            public Text getDetailsTranslation(Object... args) {
                 return Text.translatable("fzmm.toast.bookTooltip.overflow.details");
             }
 
@@ -41,5 +42,10 @@ public class BookNbtOverflowToast extends AbstractStatusToast {
     @Override
     public IStatus getStatus() {
         return this.status;
+    }
+
+    @Override
+    public Text getDetails() {
+        return this.status.getDetailsTranslation();
     }
 }
