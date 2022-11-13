@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.config.FzmmConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SkullItem;
@@ -76,18 +77,17 @@ public class HeadUtils {
 
     public HeadUtils uploadHead(BufferedImage headSkin, String skinName) throws IOException {
         this.applyWatermark(headSkin);
-        String apiKey = FzmmClient.CONFIG.mineskin.apiKey();
+        FzmmConfig.Mineskin config = FzmmClient.CONFIG.mineskin;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(headSkin, "png", baos);
         byte[] skin = baos.toByteArray();
 
         try (CloseableHttpClient httpclient = HttpClients.custom().setUserAgent("FZMM/1.0").build()) {
             HttpPost httppost = new HttpPost(MINESKIN_API + "generate/upload");
-            boolean isPublic = FzmmClient.CONFIG.mineskin.publicSkins();
+            httppost.setHeader("Authorization", "Bearer " + config.apiKey());
 
             HttpEntity reqEntity = MultipartEntityBuilder.create()
-                    .addPart("key", new StringBody(apiKey, ContentType.TEXT_PLAIN))
-                    .addPart("visibility", new StringBody(isPublic ? "0" : "1", ContentType.TEXT_PLAIN))
+                    .addPart("visibility", new StringBody(config.publicSkins() ? "0" : "1", ContentType.TEXT_PLAIN))
                     .addBinaryBody("file", skin, ContentType.APPLICATION_FORM_URLENCODED, "head")
                     .build();
 
