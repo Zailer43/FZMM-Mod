@@ -11,13 +11,13 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class InventoryUtils {
 
@@ -74,7 +74,7 @@ public class InventoryUtils {
                         if (!itemCompound.contains(TagsConstant.INVENTORY_ID, NbtElement.STRING_TYPE))
                             continue;
                         String idString = itemCompound.getString(TagsConstant.INVENTORY_ID);
-                        Item item = Registry.ITEM.get(new Identifier(idString));
+                        Item item = Registries.ITEM.get(new Identifier(idString));
 
                         if (!itemCompound.contains(TagsConstant.INVENTORY_COUNT, NbtElement.BYTE_TYPE))
                             continue;
@@ -101,19 +101,17 @@ public class InventoryUtils {
         return items;
     }
 
-    @Nullable
-    public static ItemStack getFocusedItem() {
-        Slot slot = getFocusedSlot();
-        return slot == null ? null : slot.getStack();
+    public static Optional<ItemStack> getFocusedItem() {
+        Optional<Slot> slot = getFocusedSlot();
+        return slot.map(Slot::getStack);
     }
 
-    @Nullable
-    public static Slot getFocusedSlot() {
+    public static Optional<Slot> getFocusedSlot() {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (!(mc.currentScreen instanceof HandledScreen<?> screen))
-            return null;
+            return Optional.empty();
 
-        return ((HandledScreenAccessor) screen).getFocusedSlot();
+        return Optional.of(((HandledScreenAccessor) screen).getFocusedSlot());
     }
 
     public static ItemStack getInItemFrame(ItemStack stack, boolean glowing) {

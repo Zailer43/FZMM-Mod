@@ -30,6 +30,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Optional;
 
 public class HeadUtils {
     public static final String MINESKIN_API = "https://api.mineskin.org/";
@@ -163,10 +164,11 @@ public class HeadUtils {
     }
 
     private void applyWatermark(BufferedImage headSkin) {
-        BufferedImage watermark = FzmmUtils.getImageFromIdentifier(HEADS_WATER_MARK);
-
-        Graphics2D g2d = headSkin.createGraphics();
-        g2d.drawImage(watermark, 0, 16, 64, 64, 0, 16, 64, 64, null);
-        g2d.dispose();
+        Optional<BufferedImage> optionalWatermark = FzmmUtils.getImageFromIdentifier(HEADS_WATER_MARK);
+        optionalWatermark.ifPresent(watermark -> {
+            Graphics2D g2d = headSkin.createGraphics();
+            g2d.drawImage(watermark, 0, 16, 64, 64, 0, 16, 64, 64, null);
+            g2d.dispose();
+        });
     }
 }

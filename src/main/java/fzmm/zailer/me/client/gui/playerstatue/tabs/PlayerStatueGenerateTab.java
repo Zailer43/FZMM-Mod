@@ -13,9 +13,10 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec3f;
+import org.joml.Vector3f;
 
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     private static final ImageStatus OLD_SKIN_FORMAT_NOT_SUPPORTED = new ImageStatus("playerStatue.oldSkinFormatNotSupported", ImageStatus.StatusType.ERROR);
@@ -57,13 +58,18 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
         if (!this.canExecute())
             return;
 
+        Optional<BufferedImage> image = this.skinButton.getImage();
+
+        if (image.isEmpty())
+            return;
+
         CREATE_PLAYER_STATUE_THREAD = new Thread(() -> {
             this.executeButton.active = false;
 
-            BufferedImage image = this.skinButton.getImage();
-            Vec3f pos = new Vec3f(x, y, z);
 
-            lastPlayerStatueGenerated = new PlayerStatue(image, name, pos, direction)
+            Vector3f pos = new Vector3f(x, y, z);
+
+            lastPlayerStatueGenerated = new PlayerStatue(image.get(), name, pos, direction)
                     .generateStatues()
                     .getStatueInContainer();
 

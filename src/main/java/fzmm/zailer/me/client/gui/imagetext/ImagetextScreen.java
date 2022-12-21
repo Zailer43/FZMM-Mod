@@ -19,6 +19,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.math.Vec2f;
 
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ImagetextScreen extends BaseFzmmScreen {
@@ -118,8 +119,11 @@ public class ImagetextScreen extends BaseFzmmScreen {
         if (!imageWidget.hasImage() || !((boolean) preserveImageAspectRatioButton.parsedValue()))
             return;
 
-        BufferedImage image = imageWidget.getImage();
-        assert image != null;
+        Optional<BufferedImage> imageOptional = imageWidget.getImage();
+        if (imageOptional.isEmpty())
+            return;
+        BufferedImage image = imageOptional.get();
+
         int configValue = (int) config.parsedValue();
         Vec2f rescaledSize = ImagetextLogic.changeResolutionKeepingAspectRatio(image.getWidth(), image.getHeight(), configValue, isWidth);
 
@@ -142,10 +146,10 @@ public class ImagetextScreen extends BaseFzmmScreen {
     }
 
     public void updateImagetext() {
-        if (!this.imageButton.hasImage())
+        Optional<BufferedImage> image = this.imageButton.getImage();
+        if (image.isEmpty())
             return;
 
-        BufferedImage image = this.imageButton.getImage();
         String characters = this.charactersTextField.getText();
         int width = (int) this.widthSlider.parsedValue();
         int height = (int) this.heightSlider.parsedValue();
@@ -157,7 +161,7 @@ public class ImagetextScreen extends BaseFzmmScreen {
             height = 15;
         }
 
-        this.imagetextLogic.generateImagetext(image, characters, width, height, smoothScaling);
+        this.imagetextLogic.generateImagetext(image.get(), characters, width, height, smoothScaling);
 
         if (showResolution)
             this.imagetextLogic.addResolution();

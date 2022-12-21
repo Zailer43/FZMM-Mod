@@ -13,6 +13,7 @@ import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ContainerBuilder {
     private final List<ItemStack> itemList;
@@ -22,7 +23,7 @@ public class ContainerBuilder {
     private ContainerBuilder() {
         this.itemList = new ArrayList<>();
         this.containerItem = Items.WHITE_SHULKER_BOX;
-        this.maxItemByContainer = ShulkerBoxBlockEntity.field_31356;
+        this.maxItemByContainer = ShulkerBoxBlockEntity.INVENTORY_SIZE;
     }
 
     public static ContainerBuilder builder() {
@@ -99,9 +100,10 @@ public class ContainerBuilder {
 
     public ContainerBuilder setNameStyleToItems(Style style) {
         for (ItemStack stack : this.itemList) {
-            String name = DisplayBuilder.of(stack).getName();
-            if (name == null)
+            Optional<String> optionalName = DisplayBuilder.of(stack).getName();
+            if (optionalName.isEmpty())
                 continue;
+            String name = optionalName.get();
             MutableText nameText;
             try {
                 nameText = Text.Serializer.fromJson(name);

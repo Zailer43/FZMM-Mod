@@ -12,7 +12,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3f;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -153,20 +153,20 @@ public class StatuePart {
         return this.name;
     }
 
-    public ItemStack get(Vec3f pos, HorizontalDirectionOption direction) {
+    public ItemStack get(Vector3f pos, HorizontalDirectionOption direction) {
         if (!this.isSkinGenerated())
             return new ItemStack(Items.BARRIER);
 
         this.setDirection(direction);
         this.fixZFight(pos);
-        float x = pos.getX() + this.basePos.getX();
-        float y = pos.getY() + this.headHeight * 0.25f - 0.9f;
-        float z = pos.getZ() + this.basePos.getY();
+        float x = pos.x() + this.basePos.getX();
+        float y = pos.y() + this.headHeight * 0.25f - 0.9f;
+        float z = pos.z() + this.basePos.getY();
 
         ItemStack statuePart = ArmorStandBuilder.builder()
                 .setPos(x, y, z)
                 .setImmutableAndInvisible()
-                .setRightArmPose(new Vec3f(-45f, this.rotation, 0f))
+                .setRightArmPose(new Vector3f(-45f, this.rotation, 0f))
                 .setRightHandItem(HeadUtils.playerHeadFromSkin(this.skinValue))
                 .getItem(this.name);
 
@@ -201,7 +201,7 @@ public class StatuePart {
 
     }
 
-    private void fixZFight(Vec3f pos) {
+    private void fixZFight(Vector3f pos) {
         pos.add(zFightX * Z_FIGHT_FIX_DISTANCE, zFightY * Z_FIGHT_FIX_DISTANCE, zFightZ * Z_FIGHT_FIX_DISTANCE);
     }
 

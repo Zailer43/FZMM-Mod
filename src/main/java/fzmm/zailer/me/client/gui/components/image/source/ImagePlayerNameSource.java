@@ -4,6 +4,7 @@ import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.utils.FzmmUtils;
 
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 public class ImagePlayerNameSource implements IImageSource {
     private static final String REGEX = "^[a-zA-Z0-9_]{2,16}$";
@@ -19,8 +20,9 @@ public class ImagePlayerNameSource implements IImageSource {
             if (!this.predicate(value))
                 return ImageStatus.INVALID_USERNAME;
 
-            this.image = FzmmUtils.getPlayerSkin(value);
-            return this.image == null ? ImageStatus.INVALID_USERNAME : ImageStatus.IMAGE_LOADED;
+            Optional<BufferedImage> optionalImage = FzmmUtils.getPlayerSkin(value);
+            optionalImage.ifPresent(image -> this.image = image);
+            return optionalImage.isEmpty() ? ImageStatus.INVALID_USERNAME : ImageStatus.IMAGE_LOADED;
 
         } catch (Exception e) {
             e.printStackTrace();

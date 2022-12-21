@@ -167,7 +167,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
             if (headGenerator == null)
                 headGenerator = new HeadGenerator(layerEntry.getPreviewImage());
             else
-                headGenerator.addTexture(layerEntry.getHeadTextureByName());
+                layerEntry.getHeadTextureByName().ifPresent(headGenerator::addTexture) ;
         }
 
         return headGenerator == null ? Optional.empty() : Optional.of(headGenerator.getHeadTexture());
@@ -237,8 +237,11 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     }
 
     private void addBody(BufferedImage head) {
-        Graphics2D g2d = head.createGraphics();
-        g2d.drawImage(this.skinButton.getImage(), 0, 16, 64, 64, 0, 16, 64, 64, null);
-        g2d.dispose();
+        this.skinButton.getImage().ifPresent(image -> {
+                    Graphics2D g2d = head.createGraphics();
+                    g2d.drawImage(image, 0, 16, 64, 64, 0, 16, 64, 64, null);
+                    g2d.dispose();
+                }
+        );
     }
 }

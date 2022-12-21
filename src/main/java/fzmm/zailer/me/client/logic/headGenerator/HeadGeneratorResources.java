@@ -1,18 +1,15 @@
 package fzmm.zailer.me.client.logic.headGenerator;
 
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourcePackManager;
+import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 
-import javax.annotation.Nullable;
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 public class HeadGeneratorResources {
     public static final String HEADS_FOLDER = "textures/heads";
@@ -23,43 +20,42 @@ public class HeadGeneratorResources {
 
         List<HeadData> skinWithHeadTextureList = new ArrayList<>();
 
-        for (var headName : getHeadsNames()) {
-            BufferedImage headTexture = getTexture(headName);
+        for (var headData : loadHeads()) {
             BufferedImage skinWithHeadTexture = new HeadGenerator(skinBase)
-                    .addTexture(headTexture)
+                    .addTexture(headData.skin())
                     .getHeadTexture();
-            skinWithHeadTextureList.add(new HeadData(skinWithHeadTexture, headName));
+            skinWithHeadTextureList.add(new HeadData(skinWithHeadTexture, headData.name()));
         }
 
         return skinWithHeadTextureList;
     }
 
-    @Nullable
-    public static BufferedImage getTexture(String textureName) {
-        if (!getHeadsNames().contains(textureName))
-            return null;
-
-        Identifier textureIdentifier = getIdentifier(textureName);
-        return FzmmUtils.getImageFromIdentifier(textureIdentifier);
+    public static Optional<BufferedImage> getTexture(String textureName) {
+        Optional<HeadData> headDataOptional = loadHeads().stream().filter(headData -> headData.name().equals(textureName)).findFirst();
+        return headDataOptional.map(HeadData::skin);
     }
 
-    public static Set<String> getHeadsNames() {
-        Set<String> texturesPath = new HashSet<>();
-        ResourcePackManager resourcePackManager = MinecraftClient.getInstance().getResourcePackManager();
-        for (var resourcePackProfile : resourcePackManager.getEnabledProfiles()) {
-            try (var resourcePack = resourcePackProfile.createResourcePack()) {
-                texturesPath.addAll(
-                        resourcePack
-                                .findResources(ResourceType.CLIENT_RESOURCES, FzmmClient.MOD_ID, HEADS_FOLDER, identifier -> identifier.getPath().endsWith(".png"))
-                                .stream().map(identifier -> {
-                                    String path = identifier.getPath();
-                                    return path.substring(HEADS_FOLDER.length() + 1, path.length() - 4);
-                                })
-                                .toList()
-                );
+    public static Set<HeadData> loadHeads() {
+        Set<HeadData> headData = new HashSet<>();
+        MinecraftClient minecraftClient = MinecraftClient.getInstance();
+            List<ResourcePackProfile> resourcePackProfileList = minecraftClient.getResourcePackManager().getEnabledProfiles().stream().toList();
+
+            for (var resourcePackProfile : resourcePackProfileList) {
+                try (var resourcePack = resourcePackProfile.createResourcePack()) {
+
+                    resourcePack.findResources(ResourceType.CLIENT_RESOURCES, FzmmClient.MOD_ID, HEADS_FOLDER, (identifier, inputStreamInputSupplier) -> {
+                        try {
+                            BufferedImage nativeImage = ImageIO.read(inputStreamInputSupplier.get());
+                            String path = identifier.getPath();
+                            String headName = path.substring(HEADS_FOLDER.length() + 1, path.length() - 4);
+                            headData.add(new HeadData(nativeImage, headName));
+                        } catch (IOException ignored) {
+                        }
+
+                    });
+                }
             }
-        }
-        return texturesPath;
+        return headData;
     }
 
     public static Identifier getIdentifier(String name) {

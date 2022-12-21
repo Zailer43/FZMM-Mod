@@ -18,6 +18,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 public class HeadComponentEntry extends AbstractHeadListEntry {
     public static final Text GIVE_BUTTON_TEXT = Text.translatable("fzmm.gui.headGenerator.button.giveHead");
@@ -60,8 +61,12 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     }
 
     private void giveButtonExecute(ButtonComponent button) {
+        Optional<BufferedImage> headTexture = this.getHeadTextureByName();
+        if (headTexture.isEmpty())
+            return;
+
         BufferedImage image = new HeadGenerator(this.getPreviewImage())
-                .addTexture(this.getHeadTextureByName())
+                .addTexture(headTexture.get())
                 .getHeadTexture();
 
         this.parentScreen.giveHead(image);

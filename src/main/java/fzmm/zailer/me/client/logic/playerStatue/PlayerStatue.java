@@ -17,9 +17,9 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -34,11 +34,11 @@ public class PlayerStatue {
     private final List<StatuePart> statueList;
     private final String name;
     private BufferedImage playerSkin;
-    private final Vec3f pos;
+    private final Vector3f pos;
     private final HorizontalDirectionOption direction;
     private LoadingPlayerStatueToast toast;
 
-    public PlayerStatue(BufferedImage playerSkin, String name, Vec3f pos, HorizontalDirectionOption direction) {
+    public PlayerStatue(BufferedImage playerSkin, String name, Vector3f pos, HorizontalDirectionOption direction) {
         this.playerSkin = playerSkin;
         this.name = name;
         this.statueList = new ArrayList<>();
@@ -118,10 +118,10 @@ public class PlayerStatue {
         }
     }
 
-    public static ItemStack getStatueName(Vec3f pos, String name) {
-        float x = pos.getX() + 0.5f;
-        float y = pos.getY() - 0.1f;
-        float z = pos.getZ() + 0.5f;
+    public static ItemStack getStatueName(Vector3f pos, String name) {
+        float x = pos.x() + 0.5f;
+        float y = pos.y() - 0.1f;
+        float z = pos.z() + 0.5f;
 
         if (name != null && !name.isEmpty()) {
             try {
@@ -172,11 +172,11 @@ public class PlayerStatue {
         return getStatueInContainer(this.getStatueItems(), this.pos);
     }
 
-    public static ItemStack getStatueInContainer(List<ItemStack> statueList, Vec3f pos) {
+    public static ItemStack getStatueInContainer(List<ItemStack> statueList, Vector3f pos) {
         DecimalFormat decimalFormat = new DecimalFormat(".00");
-        String x = decimalFormat.format(pos.getX());
-        String y = decimalFormat.format(pos.getY());
-        String z = decimalFormat.format(pos.getZ());
+        String x = decimalFormat.format(pos.x());
+        String y = decimalFormat.format(pos.y());
+        String z = decimalFormat.format(pos.z());
         int color = Integer.parseInt(FzmmClient.CONFIG.colors.playerStatue(), 16);
         Style colorStyle = Style.EMPTY.withColor(color);
 
@@ -207,7 +207,7 @@ public class PlayerStatue {
             this.toast.error();
     }
 
-    public static ItemStack updateStatue(ItemStack container, Vec3f pos, HorizontalDirectionOption direction, String name) {
+    public static ItemStack updateStatue(ItemStack container, Vector3f pos, HorizontalDirectionOption direction, String name) {
         List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container);
         List<ItemStack> statueList = new ArrayList<>();
 

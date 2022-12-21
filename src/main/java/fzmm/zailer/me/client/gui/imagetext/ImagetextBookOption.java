@@ -12,9 +12,8 @@ public enum ImagetextBookOption implements IMode {
     ADD_PAGE("addPage", () -> {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
-        BookBuilder builder = BookBuilder.of(client.player.getMainHandStack());
 
-        return builder == null ? CREATE_BOOK.bookBuilderSupplier.get() : builder;
+        return BookBuilder.of(client.player.getMainHandStack()).orElse(CREATE_BOOK.bookBuilderSupplier.get());
     });
 
 

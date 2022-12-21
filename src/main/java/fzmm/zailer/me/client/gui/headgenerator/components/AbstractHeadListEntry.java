@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.headgenerator.components;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.logic.headGenerator.HeadData;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
@@ -15,18 +16,21 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 import static net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry.WHITE_COLOR;
 
 public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
     private static final int PLAYER_SKIN_SIZE = 24;
-    private Identifier previewIdentifier;
+    private final Identifier previewIdentifier;
     protected HeadData headData;
 
     public AbstractHeadListEntry(HeadData headData) {
         super(Sizing.fill(100), Sizing.fixed(28));
         this.headData = headData;
+        this.previewIdentifier = new Identifier(FzmmClient.MOD_ID, "head/" + this.headData.name());
         this.updatePreview();
     }
 
@@ -58,20 +62,22 @@ public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
         return this.headData.skin();
     }
 
-    public BufferedImage getHeadTextureByName() {
+    public Optional<BufferedImage> getHeadTextureByName() {
         return HeadGeneratorResources.getTexture(this.getName());
     }
 
     public void update(BufferedImage skinBase) {
-        BufferedImage head = HeadGeneratorResources.getTexture(this.headData.name());
-        if (head == null)
-            head = skinBase;
+        Optional<BufferedImage> headImageOptional = HeadGeneratorResources.getTexture(this.headData.name());
+        BufferedImage headImage = headImageOptional.orElse(skinBase);
 
-        this.headData = new HeadData(new HeadGenerator(skinBase).addTexture(head).getHeadTexture(), this.headData.name());
+        this.headData = new HeadData(new HeadGenerator(skinBase).addTexture(headImage).getHeadTexture(), this.headData.name());
         this.updatePreview();
     }
 
     private void updatePreview() {
-        this.previewIdentifier = FzmmUtils.saveBufferedImageAsIdentifier(headData.skin());
+        try {
+            FzmmUtils.saveAsIdentifier(this.headData.skin(), this.previewIdentifier);
+        } catch (IOException ignored) {
+        }
     }
 }

@@ -19,9 +19,9 @@ import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.EnchantmentArgumentType;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
+import net.minecraft.command.argument.RegistryEntryArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -30,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
@@ -101,7 +102,7 @@ public class FzmmCommand {
 
         fzmmCommand.then(ClientCommandManager.literal("enchant")
                 .executes(ctx -> sendHelpMessage("commands.fzmm.enchant.help", BASE_COMMAND + " enchant <enchantment> <level>"))
-                .then(ClientCommandManager.argument("enchantment", EnchantmentArgumentType.enchantment()).executes(ctx -> {
+                .then(ClientCommandManager.argument("enchantment", RegistryEntryArgumentType.registryEntry(registryAccess, RegistryKeys.ENCHANTMENT)).executes(ctx -> {
 
                     Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
 
@@ -120,7 +121,7 @@ public class FzmmCommand {
 
         fzmmCommand.then(ClientCommandManager.literal("fakeenchant")
                 .executes(ctx -> sendHelpMessage("commands.fzmm.fakeenchant.help", BASE_COMMAND + " fakeenchant <enchantment> <level>"))
-                .then(ClientCommandManager.argument("enchantment", EnchantmentArgumentType.enchantment()).executes(ctx -> {
+                .then(ClientCommandManager.argument("enchantment", RegistryEntryArgumentType.registryEntry(registryAccess, RegistryKeys.ENCHANTMENT)).executes(ctx -> {
 
                     Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
 
@@ -277,7 +278,7 @@ public class FzmmCommand {
             throw ERROR_WITHOUT_NBT;
         }
         assert stack.getNbt() != null;
-        String nbt = stack.getNbt().toString().replaceAll("§", "\u00a7");
+        String nbt = stack.getNbt().toString();//.replaceAll("§", "\\\\u00a7");
 
         MutableText message = Text.literal(stack + ": " + nbt)
                 .setStyle(Style.EMPTY

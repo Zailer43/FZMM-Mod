@@ -12,7 +12,7 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class DisplayBuilder {
     private NbtCompound nbt;
@@ -77,10 +77,9 @@ public class DisplayBuilder {
         return display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE) ? display.getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE) : new NbtList();
     }
 
-    @Nullable
-    public String getName() {
+    public Optional<String> getName() {
         NbtCompound display = this.getDisplay();
-        return display.contains(ItemStack.NAME_KEY, NbtElement.STRING_TYPE) ? display.getString(ItemStack.NAME_KEY) : null;
+        return display.contains(ItemStack.NAME_KEY, NbtElement.STRING_TYPE) ? Optional.of(display.getString(ItemStack.NAME_KEY)) : Optional.empty();
     }
 
     public ItemStack get() {

@@ -4,32 +4,33 @@ import fzmm.zailer.me.client.gui.components.image.source.IImageSource;
 import fzmm.zailer.me.client.gui.components.image.source.ImagePlayerNameSource;
 import fzmm.zailer.me.client.toast.LoadingImageToast;
 import fzmm.zailer.me.client.toast.status.ImageStatus;
+import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 import java.util.function.Function;
 
-public class ImageButtonWidget extends ButtonWidget {
+public class ImageButtonWidget extends ButtonComponent {
 
+    @Nullable
     private BufferedImage image;
     private IImageSource mode;
     private Function<BufferedImage, ImageStatus> imageLoadEvent;
 
     public ImageButtonWidget() {
-        super(0, 0, 0, 0, Text.empty(), button -> {});
+        super(Text.empty(), button -> {});
         this.verticalSizing(Sizing.fixed(20));
         this.image = null;
         this.mode = new ImagePlayerNameSource();
         this.imageLoadEvent = null;
     }
 
-    @Nullable
-    public BufferedImage getImage() {
-        return this.image;
+    public Optional<BufferedImage> getImage() {
+        return Optional.ofNullable(this.image);
     }
 
     public void setSourceType(IImageSource mode) {
@@ -65,7 +66,7 @@ public class ImageButtonWidget extends ButtonWidget {
         this.imageLoadEvent = callback;
     }
 
-    public void setImage(BufferedImage image) {
+    public void setImage(@Nullable BufferedImage image) {
         this.image = image;
     }
 }

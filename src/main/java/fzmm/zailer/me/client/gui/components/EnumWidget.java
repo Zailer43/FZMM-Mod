@@ -1,7 +1,9 @@
 package fzmm.zailer.me.client.gui.components;
 
 import io.wispforest.owo.config.ui.component.ConfigEnumButton;
-import net.minecraft.client.gui.widget.ButtonWidget;
+import io.wispforest.owo.ui.component.ButtonComponent;
+
+import java.util.function.Consumer;
 
 
 @SuppressWarnings("UnstableApiUsage")
@@ -28,9 +30,10 @@ public class EnumWidget extends ConfigEnumButton {
         return this.backingValues[this.selectedIndex];
     }
 
+
     @Override
-    public ButtonWidget onPress(PressAction pressAction) {
+    public ButtonComponent onPress(Consumer<ButtonComponent> button) {
         this.onPress();
-        return super.onPress(pressAction);
+        return super.onPress(button);
     }
 }

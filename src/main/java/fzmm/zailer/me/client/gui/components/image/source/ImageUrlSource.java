@@ -4,6 +4,7 @@ import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.utils.FzmmUtils;
 
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 public class ImageUrlSource implements IImageSource {
     private BufferedImage image;
@@ -17,8 +18,9 @@ public class ImageUrlSource implements IImageSource {
         try {
             if (value.isEmpty())
                 return ImageStatus.NO_IMAGE_LOADED;
-            this.image = FzmmUtils.getImageFromUrl(value);
-            return this.image == null ? ImageStatus.URL_HAS_NO_IMAGE : ImageStatus.IMAGE_LOADED;
+            Optional<BufferedImage> optionalImage = FzmmUtils.getImageFromUrl(value);
+            optionalImage.ifPresent(image -> this.image = image);
+            return optionalImage.isEmpty() ? ImageStatus.URL_HAS_NO_IMAGE : ImageStatus.IMAGE_LOADED;
         } catch (Exception e) {
             e.printStackTrace();
             return ImageStatus.MALFORMED_URL;

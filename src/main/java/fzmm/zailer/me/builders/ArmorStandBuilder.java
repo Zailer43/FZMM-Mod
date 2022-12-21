@@ -6,9 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.*;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3f;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 public class ArmorStandBuilder {
 
@@ -82,13 +81,13 @@ public class ArmorStandBuilder {
         return this;
     }
 
-    public ArmorStandBuilder setRightArmPose(Vec3f pos) {
+    public ArmorStandBuilder setRightArmPose(Vector3f pos) {
         NbtList armPose = new NbtList();
         NbtCompound pose = new NbtCompound();
 
-        armPose.add(NbtFloat.of(pos.getX()));
-        armPose.add(NbtFloat.of(pos.getY()));
-        armPose.add(NbtFloat.of(pos.getZ()));
+        armPose.add(NbtFloat.of(pos.x()));
+        armPose.add(NbtFloat.of(pos.y()));
+        armPose.add(NbtFloat.of(pos.z()));
 
         pose.put("RightArm", armPose);
         this.entityTag.put("Pose", pose);

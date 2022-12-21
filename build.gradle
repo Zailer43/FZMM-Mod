@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'fabric-loom' version '1.0-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -23,7 +23,7 @@ dependencies {
     // Fabric API
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation(fabricApi.module('fabric-command-api-v2', project.fabric_version))
-    modImplementation(fabricApi.module('fabric-item-groups-v0', project.fabric_version))
+    modImplementation(fabricApi.module('fabric-item-group-api-v1', project.fabric_version))
     modImplementation(fabricApi.module('fabric-key-binding-api-v1', project.fabric_version))
 
     // owo lib

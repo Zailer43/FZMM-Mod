@@ -23,20 +23,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.lwjgl.BufferUtils;
 
-import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -46,7 +45,6 @@ import java.text.DecimalFormat;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class FzmmUtils {
@@ -104,10 +102,9 @@ public class FzmmUtils {
         return ImageIO.read(imgFile);
     }
 
-    @Nullable
-    public static BufferedImage getImageFromUrl(String urlLocation) throws IOException {
+    public static Optional<BufferedImage> getImageFromUrl(String urlLocation) throws IOException {
         URL url = new URL(urlLocation);
-        return ImageIO.read(url);
+        return Optional.ofNullable(ImageIO.read(url));
     }
 
     public static Text disableItalicConfig(Text message) {
@@ -149,15 +146,13 @@ public class FzmmUtils {
         return NbtString.of(Text.Serializer.toJson(text));
     }
 
-    @Nullable
-    public static BufferedImage getPlayerSkin(String name) throws IOException, NullPointerException, JsonIOException {
-        BufferedImage skin = getPlayerSkinFromCache(name);
+    public static Optional<BufferedImage> getPlayerSkin(String name) throws IOException, NullPointerException, JsonIOException {
+        Optional<BufferedImage> skin = getPlayerSkinFromCache(name);
 
-        return skin == null ? getPlayerSkinFromMojang(name) : skin;
+        return skin.isEmpty() ? getPlayerSkinFromMojang(name) : Optional.empty();
     }
 
-    @Nullable
-    public static BufferedImage getPlayerSkinFromMojang(String name) throws IOException {
+    public static Optional<BufferedImage> getPlayerSkinFromMojang(String name) throws IOException {
         String stringUuid = getPlayerUuid(name);
         try (var httpClient = HttpClients.createDefault()) {
             HttpGet httpGet = new HttpGet("https://sessionserver.mojang.com/session/minecraft/profile/" + stringUuid);
@@ -167,7 +162,7 @@ public class FzmmUtils {
             HttpResponse response = httpClient.execute(httpGet);
             HttpEntity resEntity = response.getEntity();
             if ((response.getStatusLine().getStatusCode() / 100) != 2)
-                return null;
+                return Optional.empty();
 
             InputStream inputStream = resEntity.getContent();
             JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(inputStream));
@@ -181,24 +176,23 @@ public class FzmmUtils {
         }
     }
 
-    @Nullable
-    public static BufferedImage getPlayerSkinFromCache(String name) throws IOException {
+    public static Optional<BufferedImage> getPlayerSkinFromCache(String name) throws IOException {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
         ClientPlayNetworkHandler clientPlayNetworkHandler = client.player.networkHandler;
         PlayerListEntry playerListEntry = clientPlayNetworkHandler.getPlayerListEntry(name);
         if (playerListEntry == null)
-            return null;
+            return Optional.empty();
 
         Identifier skinIdentifier = playerListEntry.getSkinTexture();
         AbstractTexture texture = client.getTextureManager().getTexture(skinIdentifier);
         // if the player is invisible the texture is not an instance of PlayerSkinTexture
         if (!(texture instanceof PlayerSkinTexture skinTexture))
-            return null;
+            return Optional.empty();
 
         File skinFile = ((PlayerSkinTextureAccessor) skinTexture).getCacheFile();
 
-        return ImageIO.read(skinFile);
+        return Optional.of(getImageFromPath(skinFile.getPath()));
     }
 
     public static String getPlayerUuid(String name) throws IOException, JsonIOException {
@@ -216,40 +210,30 @@ public class FzmmUtils {
         }
     }
 
-    public static void saveBufferedImageAsIdentifier(BufferedImage bufferedImage, Identifier identifier) throws IOException {
+    public static void saveAsIdentifier(BufferedImage bufferedImage, Identifier identifier) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", stream);
         byte[] bytes = stream.toByteArray();
 
         ByteBuffer data = BufferUtils.createByteBuffer(bytes.length).put(bytes);
         data.flip();
-        NativeImage img = NativeImage.read(data);
-        NativeImageBackedTexture texture = new NativeImageBackedTexture(img);
+        NativeImage image = NativeImage.read(data);
+        NativeImageBackedTexture texture = new NativeImageBackedTexture(image);
 
         MinecraftClient client = MinecraftClient.getInstance();
         client.execute(() -> client.getTextureManager().registerTexture(identifier, texture));
     }
 
-    public static Identifier saveBufferedImageAsIdentifier(BufferedImage bufferedImage) {
-        Identifier textureIdentifier = new Identifier(FzmmClient.MOD_ID, UUID.randomUUID().toString());
-        try {
-            FzmmUtils.saveBufferedImageAsIdentifier(bufferedImage, textureIdentifier);
-        } catch (IOException ignored) {
-        }
-        return textureIdentifier;
-    }
-
-    @Nullable
-    public static BufferedImage getImageFromIdentifier(Identifier identifier) {
+    public static Optional<BufferedImage> getImageFromIdentifier(Identifier identifier) {
         try {
             Optional<Resource> imageResource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
-            return imageResource.isEmpty() ? null : ImageIO.read(imageResource.get().getInputStream());
+            return imageResource.isEmpty() ? Optional.empty() : Optional.of(ImageIO.read(imageResource.get().getInputStream()));
         } catch (IOException ignored) {
-            return null;
+            return Optional.empty();
         }
     }
 
     public static Item getItem(String value) {
-        return Registry.ITEM.getOrEmpty(new Identifier(value)).orElse(Items.STONE);
+        return Registries.ITEM.getOrEmpty(new Identifier(value)).orElse(Items.STONE);
     }
 }

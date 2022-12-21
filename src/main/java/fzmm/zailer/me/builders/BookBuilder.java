@@ -11,7 +11,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Text;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 public class BookBuilder {
 
@@ -34,10 +34,9 @@ public class BookBuilder {
         return new BookBuilder();
     }
 
-    @Nullable
-    public static BookBuilder of(ItemStack book) {
+    public static Optional<BookBuilder> of(ItemStack book) {
         if (!book.getItem().equals(Items.WRITTEN_BOOK) || !book.hasNbt())
-            return null;
+            return Optional.empty();
         NbtCompound tag = book.getNbt();
         assert tag != null;
 
@@ -47,12 +46,13 @@ public class BookBuilder {
         int generation = tag.getInt(WrittenBookItem.GENERATION_KEY);
         NbtList pages = tag.getList(WrittenBookItem.PAGES_KEY, NbtElement.STRING_TYPE);
 
-        return builder()
+        return Optional.of(builder()
                 .title(title)
                 .author(author)
                 .resolved(resolved)
                 .generation(generation)
-                .addPages(pages);
+                .addPages(pages)
+        );
     }
 
     public BookBuilder addPage(NbtString text) {

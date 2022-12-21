@@ -9,7 +9,7 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec3f;
+import org.joml.Vector3f;
 
 public class PlayerStatueUpdateTab implements IPlayerStatueTab {
     @Override
@@ -31,7 +31,7 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
 
-        ItemStack statue = PlayerStatue.updateStatue(client.player.getMainHandStack(), new Vec3f(x, y, z), direction, name);
+        ItemStack statue = PlayerStatue.updateStatue(client.player.getMainHandStack(), new Vector3f(x, y, z), direction, name);
         FzmmUtils.giveItem(statue);
     }
 

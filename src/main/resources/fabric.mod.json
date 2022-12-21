@@ -29,7 +29,8 @@
   "depends": {
     "fabricloader": ">=0.12.5",
     "fabric": "*",
-    "minecraft": ">=1.19.1"
+    "minecraft": ">=1.19.3",
+    "owo": "0.9.x"
   },
   "custom": {
     "modmenu": {

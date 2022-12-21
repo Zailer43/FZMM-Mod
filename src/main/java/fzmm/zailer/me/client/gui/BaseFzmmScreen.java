@@ -24,8 +24,8 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +55,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     @Override
     protected void build(FlowLayout rootComponent) {
         assert this.client != null;
-        ButtonWidget backButton = rootComponent.childById(ButtonWidget.class, "back-button");
+        ButtonComponent backButton = rootComponent.childById(ButtonComponent.class, "back-button");
         if (backButton != null)
             backButton.onPress(button -> this.client.setScreen(this.parent));
 
@@ -75,9 +75,9 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         this.client.setScreen(this.parent);
     }
 
-    public EnumWidget setupEnum(FlowLayout rootComponent, String id, Enum<? extends IMode> defaultValue, @Nullable ButtonWidget.PressAction callback) {
+    public EnumWidget setupEnum(FlowLayout rootComponent, String id, Enum<? extends IMode> defaultValue, @Nullable ButtonComponent.PressAction callback) {
         EnumWidget enumButton = rootComponent.childById(EnumWidget.class, this.getEnumId(id));
-        ButtonWidget resetButton = rootComponent.childById(ButtonWidget.class, this.getResetId(id));
+        ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, this.getResetId(id));
 
         this.checkNull(enumButton, "enum-option", this.getEnumId(id));
         this.checkNull(resetButton, "button", this.getResetId(id));
@@ -114,13 +114,13 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     public SliderWidget setupSlider(FlowLayout rootComponent, String id, double defaultValue, double min,
                                     double max, Class<? extends Number> numberType, @Nullable Consumer<Double> callback) {
         SliderWidget numberSlider = rootComponent.childById(SliderWidget.class, this.getSliderId(id));
-        ButtonWidget resetButton = rootComponent.childById(ButtonWidget.class, this.getResetId(id));
+        ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, this.getResetId(id));
 
         this.checkNull(numberSlider, "number-slider", this.getSliderId(id));
         this.checkNull(resetButton, "button", this.getResetId(id));
 
         numberSlider.valueType(numberType);
-        numberSlider.onChanged(aDouble -> {
+        numberSlider.onChanged().subscribe(aDouble -> {
             double discreteValue = numberSlider.discreteValue();
             resetButton.active = discreteValue != defaultValue;
             if (callback != null)
@@ -140,7 +140,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 
     public TextFieldWidget setupTextField(FlowLayout rootComponent, String id, String defaultValue, @Nullable Consumer<String> changedListener) {
         TextFieldWidget textField = rootComponent.childById(TextFieldWidget.class, this.getTextFieldId(id));
-        ButtonWidget resetButton = rootComponent.childById(ButtonWidget.class, this.getResetId(id));
+        ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, this.getResetId(id));
 
         this.checkNull(textField, "text-box", this.getTextFieldId(id));
 
@@ -189,12 +189,12 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 
     private ConfigTextBox setupTextBox(FlowLayout rootComponent, String textBoxId, String id, String defaultValue, @Nullable Consumer<String> changedListener, Predicate<String> defaultPredicate) {
         ConfigTextBox textBox = rootComponent.childById(ConfigTextBox.class, textBoxId);
-        ButtonWidget resetButton = rootComponent.childById(ButtonWidget.class, this.getResetId(id));
+        ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, this.getResetId(id));
 
         this.checkNull(textBox, "text-option", textBoxId);
         this.checkNull(resetButton, "button", this.getResetId(id));
 
-        textBox.setChangedListener(s -> {
+        textBox.onChanged().subscribe(s -> {
             resetButton.active = !defaultPredicate.test(s);
             if (changedListener != null)
                 changedListener.accept(s);
@@ -210,9 +210,9 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         return this.setupBooleanButton(rootComponent, id, defaultValue, null);
     }
 
-    public ConfigToggleButton setupBooleanButton(FlowLayout rootComponent, String id, boolean defaultValue, @Nullable ButtonWidget.PressAction toggledListener) {
+    public ConfigToggleButton setupBooleanButton(FlowLayout rootComponent, String id, boolean defaultValue, @Nullable ButtonComponent.PressAction toggledListener) {
         ConfigToggleButton toggleButton = rootComponent.childById(ConfigToggleButton.class, this.getToggleButtonId(id));
-        ButtonWidget resetButton = rootComponent.childById(ButtonWidget.class, this.getResetId(id));
+        ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, this.getResetId(id));
 
         this.checkNull(toggleButton, "toggle-button", this.getToggleButtonId(id));
         this.checkNull(resetButton, "button", this.getResetId(id));
@@ -235,8 +235,8 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         return toggleButton;
     }
 
-    public ButtonWidget setupButton(FlowLayout rootComponent, String rawId, boolean enabled, ButtonWidget.PressAction callback) {
-        ButtonWidget button = rootComponent.childById(ButtonWidget.class, rawId);
+    public ButtonComponent setupButton(FlowLayout rootComponent, String rawId, boolean enabled, Consumer<ButtonComponent> callback) {
+        ButtonComponent button = rootComponent.childById(ButtonComponent.class, rawId);
 
         this.checkNull(button, "button", rawId);
 
@@ -277,7 +277,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 
     public Component newResetButton(String id) {
         return Components
-                .button(Text.translatable("fzmm.gui.button.reset"), (Consumer<ButtonComponent>) buttonComponent -> {
+                .button(Text.translatable("fzmm.gui.button.reset"), buttonComponent -> {
                 })
                 .id(this.getResetId(id));
     }
@@ -368,7 +368,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     public Component newButtonRow(String id) {
         ButtonWidget resetButton = (ButtonWidget) this.newResetButton("");
         Component button = Components.button(Text.translatable(this.getOptionBaseTranslationKey() + id + ".button"),
-                        (Consumer<ButtonComponent>) buttonComponent -> {})
+                        buttonComponent -> {})
                 .horizontalSizing(Sizing.fixed(NORMAL_WIDTH + this.textRenderer.getWidth(resetButton.getMessage()) + COMPONENT_DISTANCE + BUTTON_TEXT_PADDING))
                 .id(this.getButtonId(id));
 
@@ -386,7 +386,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
             IScreenTab screenTab = (IScreenTab) tab;
             boolean active = tab != defaultTab;
             Text text = Text.translatable(this.getTabTranslationKey() + screenTab.getId());
-            ButtonWidget button = Components.button(text, (Consumer<ButtonComponent>) buttonComponent -> {
+            ButtonWidget button = Components.button(text, buttonComponent -> {
             });
 
             button.id(this.getScreenTabButtonId(screenTab.getId()))

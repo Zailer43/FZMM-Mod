@@ -2,8 +2,8 @@ package fzmm.zailer.me.config;
 
 import io.wispforest.owo.config.annotation.*;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 @SuppressWarnings("unused")
 @Modmenu(modId = "fzmm")
@@ -98,6 +98,6 @@ public class FzmmConfigModel {
 
     @SuppressWarnings("unused")
     public static boolean predicateItem(String value) {
-        return Registry.ITEM.getOrEmpty(new Identifier(value)).isPresent();
+        return Registries.ITEM.getOrEmpty(new Identifier(value)).isPresent();
     }
 }
