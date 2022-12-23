@@ -8,6 +8,7 @@ import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.minecraft.block.LightBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
@@ -32,23 +33,37 @@ import java.util.Comparator;
 import java.util.List;
 
 public class FzmmItemGroup {
-    public static final String UNOBTAINABLE_BASE_TRANSLATION_KEY = "itemGroup.fzmm.unobtainable_items.";
+    public static final String OPERATOR_BASE_TRANSLATION_KEY = "itemGroup.op.";
     public static final String USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY = "itemGroup.fzmm.useful_block_states.";
 
     public static void register() {
 
-        FabricItemGroup.builder(new Identifier(FzmmClient.MOD_ID, "unobtainable_items"))
-                .icon(() -> new ItemStack(Items.JIGSAW))
+        ItemGroup oldOperatorItemGroupReference = ItemGroups.OPERATOR;
+        ItemGroups.OPERATOR = ItemGroup.create(ItemGroup.Row.BOTTOM, 5)
+                .displayName(Text.translatable("itemGroup.op"))
+                .icon(() -> new ItemStack(Items.COMMAND_BLOCK))
+                .special()
                 .entries((enabledFeatures, entries, operatorEnabled) -> {
-//                    for (Item item : Registries.ITEM) {
-//                        if (item.getGroup() == null && item != Items.AIR && item != Items.LIGHT) {
-//                            stacks.add(new ItemStack(item));
-//                        }
-//                    }
-                    entries.add(new ItemStack(Items.POTION));
-                    entries.add(new ItemStack(Items.SPLASH_POTION));
-                    entries.add(new ItemStack(Items.LINGERING_POTION));
-                    entries.add(new ItemStack(Items.TIPPED_ARROW));
+                    entries.add(Items.COMMAND_BLOCK);
+                    entries.add(Items.CHAIN_COMMAND_BLOCK);
+                    entries.add(Items.REPEATING_COMMAND_BLOCK);
+                    entries.add(Items.COMMAND_BLOCK_MINECART);
+                    entries.add(Items.JIGSAW);
+                    entries.add(Items.STRUCTURE_BLOCK);
+                    entries.add(Items.STRUCTURE_VOID);
+                    entries.add(Items.BARRIER);
+                    entries.add(Items.DEBUG_STICK);
+
+                    entries.add(Items.DRAGON_EGG);
+                    entries.add(Items.FILLED_MAP);
+                    entries.add(Items.WRITTEN_BOOK);
+                    entries.add(Items.ENCHANTED_BOOK);
+                    entries.add(Items.KNOWLEDGE_BOOK);
+                    entries.add(Items.SUSPICIOUS_STEW);
+                    entries.add(Items.POTION);
+                    entries.add(Items.SPLASH_POTION);
+                    entries.add(Items.LINGERING_POTION);
+                    entries.add(Items.TIPPED_ARROW);
 
                     addArmorStand(entries);
                     addItemFrames(entries);
@@ -58,12 +73,18 @@ public class FzmmItemGroup {
                     entries.add(Raid.getOminousBanner());
 
                     ItemStack elytra = new ItemStack(Items.ELYTRA);
-                    elytra.setDamage(431);
+                    elytra.setDamage(elytra.getMaxDamage() - 1);
                     entries.add(elytra);
 
-                    addLightBlock(entries);
-
+                    for (int i = 15; i >= 0; --i)
+                        entries.add(LightBlock.addNbtForLevel(new ItemStack(Items.LIGHT), i));
                 }).build();
+
+        ItemGroup[] itemGroups = new ItemGroup[ItemGroups.GROUPS.size()];
+        for (int i = 0; i != ItemGroups.GROUPS.size(); i++)
+            itemGroups[i] = ItemGroups.GROUPS.get(i) == oldOperatorItemGroupReference ? ItemGroups.OPERATOR : ItemGroups.GROUPS.get(i);
+
+        ItemGroups.GROUPS = ItemGroups.collect(itemGroups);
 
         FabricItemGroup.builder(new Identifier(FzmmClient.MOD_ID, "useful_block_states"))
                 .icon(() -> new ItemStack(Items.REDSTONE_LAMP))
@@ -181,18 +202,18 @@ public class FzmmItemGroup {
         String baseTranslation = "armorStand.";
         ItemStack armorStandWithArms = ArmorStandBuilder.builder()
                 .setShowArms()
-                .getItem(Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + baseTranslation + "arms"));
+                .getItem(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + baseTranslation + "arms"));
         entries.add(armorStandWithArms);
 
         ItemStack smallArmorStand = ArmorStandBuilder.builder()
                 .setSmall()
-                .getItem(Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + baseTranslation + "small"));
+                .getItem(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + baseTranslation + "small"));
         entries.add(smallArmorStand);
 
         ItemStack smallArmorStandWithArms = ArmorStandBuilder.builder()
                 .setSmall()
                 .setShowArms()
-                .getItem(Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + baseTranslation + "smallWithArms"));
+                .getItem(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + baseTranslation + "smallWithArms"));
         entries.add(smallArmorStandWithArms);
     }
 
@@ -205,8 +226,8 @@ public class FzmmItemGroup {
         itemFrame.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
         glowItemFrame.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
 
-        itemFrame.setCustomName(Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + "invisibleItemFrame").setStyle(Style.EMPTY.withItalic(false)));
-        glowItemFrame.setCustomName(Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + "invisibleGlowItemFrame").setStyle(Style.EMPTY.withItalic(false)));
+        itemFrame.setCustomName(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "invisibleItemFrame").setStyle(Style.EMPTY.withItalic(false)));
+        glowItemFrame.setCustomName(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "invisibleGlowItemFrame").setStyle(Style.EMPTY.withItalic(false)));
 
         entries.add(itemFrame);
         entries.add(glowItemFrame);
@@ -242,7 +263,7 @@ public class FzmmItemGroup {
         String baseTranslation = "nameTag.";
         String commentTranslation = ".comment.";
 
-        return Text.translatable(UNOBTAINABLE_BASE_TRANSLATION_KEY + baseTranslation + value + commentTranslation + line).getString();
+        return Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + baseTranslation + value + commentTranslation + line).getString();
     }
 
     private static void addCrossbows(ItemGroup.Entries entries) {
@@ -263,12 +284,6 @@ public class FzmmItemGroup {
                 .putProjectile(firework);
 
         entries.add(crossbowFirework.get());
-    }
-
-    private static void addLightBlock(ItemGroup.Entries entries) {
-        for (int i = 0; i != 16; i++) {
-            entries.add(new BlockStateItemBuilder(Items.LIGHT).add("level", i).get());
-        }
     }
 
     private static void addLeaves(ItemGroup.Entries entries) {
