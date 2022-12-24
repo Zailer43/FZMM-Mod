@@ -8,8 +8,18 @@
                     <text translate="true">fzmm.gui.title.headGenerator</text>
                 </label>
 
-                <flow-layout direction="vertical" id="head-generator-option-list">
+                <flow-layout direction="vertical" id="head-option-list">
                     <children>
+                        <image-rows>
+                            <buttonId>skin</buttonId>
+                            <enumId>skinSourceType</enumId>
+                        </image-rows>
+                        <text-box-row>
+                            <id>headName</id>
+                        </text-box-row>
+                        <text-box-row>
+                            <id>search</id>
+                        </text-box-row>
                     </children>
                     <margins>
                         <top>48</top>

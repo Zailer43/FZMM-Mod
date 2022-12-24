@@ -2,8 +2,9 @@ package fzmm.zailer.me.client.gui.playerstatue;
 
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
+import fzmm.zailer.me.client.gui.components.row.*;
+import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
@@ -22,7 +23,6 @@ public class PlayerStatueScreen extends BaseFzmmScreen {
     private static final String POS_X_ID = "posX";
     private static final String POS_Y_ID = "posY";
     private static final String POS_Z_ID = "posZ";
-    private static final String POS_TOOLTIP_ID = "pos";
     private static final String NAME_ID = "name";
     public static final String EXECUTE_ID = "execute";
     private static PlayerStatueTabs selectedTab = PlayerStatueTabs.CREATE;
@@ -40,38 +40,21 @@ public class PlayerStatueScreen extends BaseFzmmScreen {
     }
 
     @Override
-    protected void tryAddComponentList(FlowLayout rootComponent) {
-        this.tryAddComponentList(rootComponent, "player-statue-options-list",
-                this.newEnumRow(HORIZONTAL_DIRECTION_ID),
-                this.newNumberRow(POS_X_ID, POS_TOOLTIP_ID),
-                this.newNumberRow(POS_Y_ID, POS_TOOLTIP_ID),
-                this.newNumberRow(POS_Z_ID, POS_TOOLTIP_ID),
-                this.newTextFieldRow(NAME_ID),
-                this.newScreenTabRow(selectedTab)
-        );
-
-        FlowLayout container = rootComponent.childById(FlowLayout.class, "player-statue-options-list");
-        if (container == null)
-            return;
-
-        for (var tab : PlayerStatueTabs.values())
-            container.child(this.newScreenTab(tab.getId(), tab.getComponents(this)));
-    }
-
-    @Override
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
         PlayerEntity player = MinecraftClient.getInstance().player;
         assert player != null;
         //general
-        this.directionEnum = this.setupEnum(rootComponent, HORIZONTAL_DIRECTION_ID, HorizontalDirectionOption.getPlayerHorizontalDirection(), null);
-        this.posX = this.setupNumberField(rootComponent, POS_X_ID, player.getBlockX(), Float.class);
-        this.posY = this.setupNumberField(rootComponent, POS_Y_ID, player.getY(), Float.class);
-        this.posZ = this.setupNumberField(rootComponent, POS_Z_ID, player.getBlockZ(), Float.class);
-        this.nameField = this.setupTextField(rootComponent, NAME_ID, "");
+        this.directionEnum = EnumRow.setup(rootComponent, HORIZONTAL_DIRECTION_ID, HorizontalDirectionOption.getPlayerHorizontalDirection(), null);
+        this.posX = NumberRow.setup(rootComponent, POS_X_ID, player.getBlockX(), Float.class);
+        this.posY = NumberRow.setup(rootComponent, POS_Y_ID, player.getY(), Float.class);
+        this.posZ = NumberRow.setup(rootComponent, POS_Z_ID, player.getBlockZ(), Float.class);
+        this.nameField = TextBoxRow.setup(rootComponent, NAME_ID, "");
+        this.nameField.setMaxLength(0x3FFF);
         //tabs
+        ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
         for (var tab : PlayerStatueTabs.values()) {
-            tab.setupComponents(this, rootComponent);
-            this.setupButton(rootComponent, this.getScreenTabButtonId(tab), tab != selectedTab, button -> {
+            tab.setupComponents(rootComponent);
+            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), tab != selectedTab, button -> {
                 this.selectScreenTab(rootComponent, tab);
                 selectedTab = tab;
                 this.executeButton.active = selectedTab.canExecute();
@@ -79,8 +62,8 @@ public class PlayerStatueScreen extends BaseFzmmScreen {
         }
         this.selectScreenTab(rootComponent, selectedTab);
         //buttons
-        this.setupButton(rootComponent, this.getButtonId("faq"), true, this::faqExecute);
-        this.executeButton = this.setupButton(rootComponent, this.getButtonId(EXECUTE_ID), true, this::execute);
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId("faq"), true, this::faqExecute);
+        this.executeButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(EXECUTE_ID), true, this::execute);
         this.executeButton.active = selectedTab.canExecute();
     }
 

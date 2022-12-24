@@ -1,14 +1,13 @@
 package fzmm.zailer.me.client.gui.imagetext.tabs;
 
 import fzmm.zailer.me.builders.BookBuilder;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.EnumWidget;
+import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextBookOption;
-import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.ingame.BookScreen;
@@ -31,15 +30,8 @@ public class ImagetextBookPageTab implements IImagetextTab {
     }
 
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return new Component[] {
-                parent.newEnumRow(BOOK_PAGE_MODE_ID)
-        };
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
-        this.bookPageMode = parent.setupEnum(rootComponent, BOOK_PAGE_MODE_ID, ImagetextBookOption.ADD_PAGE, null);
+    public void setupComponents(FlowLayout rootComponent) {
+        this.bookPageMode = EnumRow.setup(rootComponent, BOOK_PAGE_MODE_ID, ImagetextBookOption.ADD_PAGE, null);
     }
 
     @Override

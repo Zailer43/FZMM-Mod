@@ -3,6 +3,10 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
+import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.row.NumberRow;
+import fzmm.zailer.me.client.gui.components.row.SliderRow;
+import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.logic.EncryptbookLogic;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -39,23 +43,11 @@ public class EncryptBookScreen extends BaseFzmmScreen {
     }
 
     @Override
-    protected void tryAddComponentList(FlowLayout rootComponent) {
-        this.tryAddComponentList(rootComponent, "encryptBook-options-list",
-                this.newTextFieldRow(MESSAGE_ID),
-                this.newNumberRow(SEED_ID),
-                this.newTextFieldRow(PADDING_CHARACTERS_ID),
-                this.newTextFieldRow(AUTHOR_ID),
-                this.newTextFieldRow(TITLE_ID),
-                this.newSliderRow(MAX_MESSAGE_LENGTH_ID, 0)
-        );
-    }
-
-    @Override
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
         //general
         FzmmConfig.Encryptbook config = FzmmClient.CONFIG.encryptbook;
-        this.messageField = this.setupTextField(rootComponent, MESSAGE_ID, config.defaultBookMessage());
-        ConfigTextBox seedField = this.setupNumberField(rootComponent, SEED_ID, 0, Integer.class, s -> {
+        this.messageField = TextBoxRow.setup(rootComponent, MESSAGE_ID, config.defaultBookMessage());
+        ConfigTextBox seedField = NumberRow.setup(rootComponent, SEED_ID, 0, Integer.class, s -> {
             try {
                 seed = Integer.parseInt(s);
             } catch (NumberFormatException ignored) {
@@ -64,19 +56,20 @@ public class EncryptBookScreen extends BaseFzmmScreen {
 
         seedField.setText(String.valueOf(seed));
         seedField.setCursor(0);
-        this.paddingCharactersField = this.setupTextField(rootComponent, PADDING_CHARACTERS_ID, config.padding());
+        this.paddingCharactersField = TextBoxRow.setup(rootComponent, PADDING_CHARACTERS_ID, config.padding());
         this.paddingCharactersField.setMaxLength(512);
         assert MinecraftClient.getInstance().player != null;
-        this.authorField = this.setupTextField(rootComponent, AUTHOR_ID, MinecraftClient.getInstance().player.getName().getString());
-        this.titleField = this.setupTextField(rootComponent, TITLE_ID, config.defaultBookTitle());
-        this.maxMessageLengthField = this.setupSlider(rootComponent, MAX_MESSAGE_LENGTH_ID, config.maxMessageLength(), 1, 512, Integer.class,
-                aDouble -> this.messageField.setMaxLength((aDouble.intValue()))
+        this.authorField = TextBoxRow.setup(rootComponent, AUTHOR_ID, MinecraftClient.getInstance().player.getName().getString());
+        this.titleField = TextBoxRow.setup(rootComponent, TITLE_ID, config.defaultBookTitle());
+        this.maxMessageLengthField = SliderRow.setup(rootComponent, MAX_MESSAGE_LENGTH_ID, config.maxMessageLength(),
+                1, 512, Integer.class, 0,
+                aDouble -> this.messageField.setMaxLength(aDouble.intValue())
         );
         //bottom buttons
-        this.setupButton(rootComponent, this.getButtonId(GIVE_ID), true, this::giveBook);
-        this.setupButton(rootComponent, this.getButtonId(GET_DECODER_ID), true, this::getDecoder);
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(GIVE_ID), true, this::giveBook);
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(GET_DECODER_ID), true, this::getDecoder);
         //other
-        this.setupButton(rootComponent, this.getButtonId(FAQ_ID), true, this::faqExecute);
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(FAQ_ID), true, this::faqExecute);
     }
 
     private void giveBook(ButtonWidget buttonWidget) {

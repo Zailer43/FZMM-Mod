@@ -4,13 +4,12 @@ import fzmm.zailer.me.builders.ArmorStandBuilder;
 import fzmm.zailer.me.builders.ContainerBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.row.NumberRow;
 import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -26,7 +25,6 @@ public class ImagetextHolgoramTab implements IImagetextTab {
     private static final String POS_X_ID = "hologramPosX";
     private static final String POS_Y_ID = "hologramPosY";
     private static final String POS_Z_ID = "hologramPosZ";
-    private static final String POS_TOOLTIP_ID = "hologramPos";
     private static final String HOLOGRAM_TAG = "ImagetextHologram";
     private static final String BASE_ITEMS_TRANSLATION_KEY = "fzmm.item.imagetext.hologram.";
     private static final float Y_DISTANCE = 0.23f;
@@ -82,21 +80,12 @@ public class ImagetextHolgoramTab implements IImagetextTab {
     }
 
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return new Component[]{
-                parent.newNumberRow(POS_X_ID, POS_TOOLTIP_ID),
-                parent.newNumberRow(POS_Y_ID, POS_TOOLTIP_ID),
-                parent.newNumberRow(POS_Z_ID, POS_TOOLTIP_ID)
-        };
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
+    public void setupComponents(FlowLayout rootComponent) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         assert player != null;
-        this.posX = parent.setupNumberField(rootComponent, POS_X_ID, player.getBlockX(), Integer.class);
-        this.posY = parent.setupNumberField(rootComponent, POS_Y_ID, player.getBlockY(), Integer.class);
-        this.posZ = parent.setupNumberField(rootComponent, POS_Z_ID, player.getBlockZ(), Integer.class);
+        this.posX = NumberRow.setup(rootComponent, POS_X_ID, player.getBlockX(), Integer.class);
+        this.posY = NumberRow.setup(rootComponent, POS_Y_ID, player.getBlockY(), Integer.class);
+        this.posZ = NumberRow.setup(rootComponent, POS_Z_ID, player.getBlockZ(), Integer.class);
     }
 
     @Override

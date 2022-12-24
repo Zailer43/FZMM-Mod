@@ -1,10 +1,10 @@
 package fzmm.zailer.me.client.gui.converters.tabs;
 
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.IScreenTab;
+import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.row.NumberRow;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.random.Random;
 
@@ -25,27 +25,13 @@ public class ConverterArrayToUuidTab implements IScreenTab {
     }
 
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        Component[] components = new Component[6];
-        int i = 0;
-
-        for (; i != ARRAY_SIZE; i++)
-            components[i] = parent.newNumberRow(this.getArrayId(i), String.format(ARRAY_ID, ""));
-
-        components[i++] = parent.newButtonRow(RANDOM_ID);
-        components[i] = parent.newButtonRow(COPY_ID);
-
-        return components;
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
+    public void setupComponents(FlowLayout rootComponent) {
         this.textBoxArray = new ConfigTextBox[ARRAY_SIZE];
 
         for (int i = 0; i != ARRAY_SIZE; i++)
-            this.textBoxArray[i] = parent.setupNumberField(rootComponent, this.getArrayId(i), 0, Integer.class);
+            this.textBoxArray[i] = NumberRow.setup(rootComponent, this.getArrayId(i), 0, Integer.class);
 
-        parent.setupButton(rootComponent, parent.getButtonId(RANDOM_ID), true, button -> {
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(RANDOM_ID), true, button -> {
             Random random = Random.create();
             for (var element : this.textBoxArray) {
                 element.setText(String.valueOf(random.nextInt()));
@@ -53,7 +39,7 @@ public class ConverterArrayToUuidTab implements IScreenTab {
             }
         });
 
-        parent.setupButton(rootComponent, parent.getButtonId(COPY_ID), true, button -> {
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_ID), true, button -> {
             int[] intArray = new int[ARRAY_SIZE];
             for (int i = 0; i != ARRAY_SIZE; i++)
                 intArray[i] = (int) this.textBoxArray[i].parsedValue();

@@ -2,16 +2,16 @@ package fzmm.zailer.me.client.gui.imagetext.tabs;
 
 import fzmm.zailer.me.builders.BookBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.EnumWidget;
+import fzmm.zailer.me.client.gui.components.row.EnumRow;
+import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextBookOption;
-import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.client.toast.BookNbtOverflowToast;
 import fzmm.zailer.me.exceptions.BookNbtOverflow;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.item.ItemStack;
@@ -58,20 +58,11 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
     }
 
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return new Component[] {
-                parent.newEnumRow(BOOK_TOOLTIP_MODE_ID),
-                parent.newTextFieldRow(BOOK_TOOLTIP_AUTHOR_ID),
-                parent.newTextFieldRow(BOOK_TOOLTIP_MESSAGE_ID)
-        };
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
-        this.bookTooltipMode = parent.setupEnum(rootComponent, BOOK_TOOLTIP_MODE_ID, ImagetextBookOption.ADD_PAGE, null);
+    public void setupComponents(FlowLayout rootComponent) {
+        this.bookTooltipMode = EnumRow.setup(rootComponent, BOOK_TOOLTIP_MODE_ID, ImagetextBookOption.ADD_PAGE, null);
         assert MinecraftClient.getInstance().player != null;
-        this.bookTooltipAuthor = parent.setupTextField(rootComponent, BOOK_TOOLTIP_AUTHOR_ID, MinecraftClient.getInstance().player.getName().getString());
-        this.bookTooltipMessage = parent.setupTextField(rootComponent, BOOK_TOOLTIP_MESSAGE_ID, FzmmClient.CONFIG.imagetext.defaultBookMessage());
+        this.bookTooltipAuthor = TextBoxRow.setup(rootComponent, BOOK_TOOLTIP_AUTHOR_ID, MinecraftClient.getInstance().player.getName().getString());
+        this.bookTooltipMessage = TextBoxRow.setup(rootComponent, BOOK_TOOLTIP_MESSAGE_ID, FzmmClient.CONFIG.imagetext.defaultBookMessage());
     }
 
     @Override

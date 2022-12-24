@@ -10,8 +10,92 @@
 
                 <scroll direction="vertical">
 
-                    <flow-layout direction="vertical" id="imagetext-options-list">
+                    <flow-layout direction="vertical" id="options-list">
                         <children>
+                            <image-rows>
+                                <buttonId>image</buttonId>
+                                <enumId>imageSourceType</enumId>
+                            </image-rows>
+                            <slider-row>
+                                <id>width</id>
+                                <tooltipId>resolution</tooltipId>
+                            </slider-row>
+                            <slider-row>
+                                <id>height</id>
+                                <tooltipId>resolution</tooltipId>
+                            </slider-row>
+                            <text-box-row>
+                                <id>characters</id>
+                            </text-box-row>
+                            <boolean-row>
+                                <id>preserveImageAspectRatio</id>
+                            </boolean-row>
+                            <boolean-row>
+                                <id>showResolution</id>
+                            </boolean-row>
+                            <boolean-row>
+                                <id>smoothImage</id>
+                            </boolean-row>
+                            <screen-tab-row>
+                                <id>tabs</id>
+                            </screen-tab-row>
+
+                            <screen-tab>
+                                <id>lore</id>
+                                <children>
+                                    <enum-row>
+                                        <id>loreMode</id>
+                                    </enum-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>bookPageMode</id>
+                                <children>
+                                    <enum-row>
+                                        <id>bookPageMode</id>
+                                    </enum-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>bookTooltip</id>
+                                <children>
+                                    <enum-row>
+                                        <id>bookTooltipMode</id>
+                                    </enum-row>
+                                    <text-box-row>
+                                        <id>bookTooltipAuthor</id>
+                                    </text-box-row>
+                                    <text-box-row>
+                                        <id>bookTooltipMessage</id>
+                                    </text-box-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>hologram</id>
+                                <children>
+                                    <number-row>
+                                        <id>hologramPosX</id>
+                                        <tooltipId>hologramPos</tooltipId>
+                                    </number-row>
+                                    <number-row>
+                                        <id>hologramPosY</id>
+                                        <tooltipId>hologramPos</tooltipId>
+                                    </number-row>
+                                    <number-row>
+                                        <id>hologramPosZ</id>
+                                        <tooltipId>hologramPos</tooltipId>
+                                    </number-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>json</id>
+                                <children>
+                                </children>
+                            </screen-tab>
                         </children>
                     </flow-layout>
 

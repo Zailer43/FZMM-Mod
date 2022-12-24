@@ -30,7 +30,7 @@ public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
     public AbstractHeadListEntry(HeadData headData) {
         super(Sizing.fill(100), Sizing.fixed(28));
         this.headData = headData;
-        this.previewIdentifier = new Identifier(FzmmClient.MOD_ID, "head/" + this.headData.name());
+        this.previewIdentifier = new Identifier(FzmmClient.MOD_ID, "head/" + this.headData.key());
         this.updatePreview();
     }
 
@@ -50,27 +50,29 @@ public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
         RenderSystem.setShaderTexture(0, this.previewIdentifier);
         PlayerSkinDrawer.draw(matrices, xWithPadding, centerY - PLAYER_SKIN_SIZE / 2, PLAYER_SKIN_SIZE);
 
-        textRenderer.draw(matrices, this.getName(), (float) xText, (float) yText, WHITE_COLOR);
+        textRenderer.draw(matrices, this.getDisplayName(), (float) xText, (float) yText, WHITE_COLOR);
     }
-    public String getName() {
-        return this.headData.name();
+    public String getDisplayName() {
+        return this.headData.displayName();
     }
 
-    public abstract void setEnabled(boolean value);
+    public String getHeadKey() {
+        return this.headData.displayName();
+    }
 
     public BufferedImage getPreviewImage() {
         return this.headData.skin();
     }
 
-    public Optional<BufferedImage> getHeadTextureByName() {
-        return HeadGeneratorResources.getTexture(this.getName());
+    public Optional<BufferedImage> getHeadTextureByKey() {
+        return HeadGeneratorResources.getTexture(this.getHeadKey());
     }
 
     public void update(BufferedImage skinBase) {
-        Optional<BufferedImage> headImageOptional = HeadGeneratorResources.getTexture(this.headData.name());
+        Optional<BufferedImage> headImageOptional = HeadGeneratorResources.getTexture(this.getHeadKey());
         BufferedImage headImage = headImageOptional.orElse(skinBase);
 
-        this.headData = new HeadData(new HeadGenerator(skinBase).addTexture(headImage).getHeadTexture(), this.headData.name());
+        this.headData = new HeadData(new HeadGenerator(skinBase).addTexture(headImage).getHeadTexture(), this.getDisplayName(), this.getHeadKey());
         this.updatePreview();
     }
 

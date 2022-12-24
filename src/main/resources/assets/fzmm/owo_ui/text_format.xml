@@ -38,8 +38,59 @@
 
                 <scroll direction="vertical">
 
-                    <flow-layout direction="vertical" id="text-format-options-list">
+                    <flow-layout direction="vertical" id="options-list">
                         <children>
+                            <text-box-row>
+                                <id>message</id>
+                            </text-box-row>
+                            <boolean-row>
+                                <id>bold</id>
+                            </boolean-row>
+                            <boolean-row>
+                                <id>italic</id>
+                            </boolean-row>
+                            <boolean-row>
+                                <id>obfuscated</id>
+                            </boolean-row>
+                            <boolean-row>
+                                <id>strikethrough</id>
+                            </boolean-row>
+                            <boolean-row>
+                                <id>underline</id>
+                            </boolean-row>
+                            <screen-tab-row>
+                                <id>tabs</id>
+                            </screen-tab-row>
+
+                            <screen-tab>
+                                <id>rainbow</id>
+                                <children>
+                                    <slider-row>
+                                        <id>hue</id>
+                                    </slider-row>
+                                    <slider-row>
+                                        <id>brightness</id>
+                                    </slider-row>
+                                    <slider-row>
+                                        <id>saturation</id>
+                                    </slider-row>
+                                    <slider-row>
+                                        <id>hueStep</id>
+                                    </slider-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>two_colors</id>
+                                <children>
+                                    <color-row>
+                                        <id>initialColor</id>
+                                    </color-row>
+                                    <color-row>
+                                        <id>finalColor</id>
+                                    </color-row>
+                                </children>
+                            </screen-tab>
                         </children>
 
                         <horizontal-alignment>center</horizontal-alignment>

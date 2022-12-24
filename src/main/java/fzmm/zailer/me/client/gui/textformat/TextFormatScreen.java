@@ -3,6 +3,10 @@ package fzmm.zailer.me.client.gui.textformat;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.row.BooleanRow;
+import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
+import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -50,44 +54,26 @@ public class TextFormatScreen extends BaseFzmmScreen {
     }
 
     @Override
-    protected void tryAddComponentList(FlowLayout rootComponent) {
-        this.tryAddComponentList(rootComponent, "text-format-options-list",
-                this.newTextFieldRow(MESSAGE_ID),
-                this.newBooleanRow(BOLD_ID),
-                this.newBooleanRow(ITALIC_ID),
-                this.newBooleanRow(OBFUSCATED_ID),
-                this.newBooleanRow(STRIKETHROUGH_ID),
-                this.newBooleanRow(UNDERLINE_ID),
-                this.newScreenTabRow(selectedTab)
-        );
-
-        FlowLayout container = rootComponent.childById(FlowLayout.class, "text-format-options-list");
-        if (container == null)
-            return;
-
-        for (var tab : TextFormatTabs.values())
-            container.child(this.newScreenTab(tab.getId(), tab.getComponents(this)));
-    }
-
-    @Override
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
         this.messagePreviewLabel = rootComponent.childById(LabelComponent.class, MESSAGE_PREVIEW_ID);
-        this.checkNull(this.messagePreviewLabel, "label", MESSAGE_PREVIEW_ID);
+        BaseFzmmScreen.checkNull(this.messagePreviewLabel, "label", MESSAGE_PREVIEW_ID);
+
 
         for (var tab : TextFormatTabs.values())
             tab.componentsCallback(object -> this.updateMessagePreview());
         //general
-        this.messageTextField = this.setupTextField(rootComponent, MESSAGE_ID, "Hello world", s -> this.updateMessagePreview());
+        this.messageTextField = TextBoxRow.setup(rootComponent, MESSAGE_ID, "Hello world", s -> this.updateMessagePreview());
         this.messageTextField.setMaxLength(4096);
-        this.boldToggle = this.setupBooleanButton(rootComponent, BOLD_ID, false, button -> this.updateMessagePreview());
-        this.italicToggle = this.setupBooleanButton(rootComponent, ITALIC_ID, false, button -> this.updateMessagePreview());
-        this.obfuscatedToggle = this.setupBooleanButton(rootComponent, OBFUSCATED_ID, false, button -> this.updateMessagePreview());
-        this.strikethroughToggle = this.setupBooleanButton(rootComponent, STRIKETHROUGH_ID, false, button -> this.updateMessagePreview());
-        this.underlineToggle = this.setupBooleanButton(rootComponent, UNDERLINE_ID, false, button -> this.updateMessagePreview());
+        this.boldToggle = BooleanRow.setup(rootComponent, BOLD_ID, false, button -> this.updateMessagePreview());
+        this.italicToggle = BooleanRow.setup(rootComponent, ITALIC_ID, false, button -> this.updateMessagePreview());
+        this.obfuscatedToggle = BooleanRow.setup(rootComponent, OBFUSCATED_ID, false, button -> this.updateMessagePreview());
+        this.strikethroughToggle = BooleanRow.setup(rootComponent, STRIKETHROUGH_ID, false, button -> this.updateMessagePreview());
+        this.underlineToggle = BooleanRow.setup(rootComponent, UNDERLINE_ID, false, button -> this.updateMessagePreview());
         //tabs
+        ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
         for (var tab : TextFormatTabs.values()) {
-            tab.setupComponents(this, rootComponent);
-            this.setupButton(rootComponent, this.getScreenTabButtonId(tab), tab != selectedTab, button -> {
+            tab.setupComponents(rootComponent);
+            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), tab != selectedTab, button -> {
                 this.selectScreenTab(rootComponent, tab);
                 selectedTab = tab;
                 this.updateMessagePreview();
@@ -106,7 +92,7 @@ public class TextFormatScreen extends BaseFzmmScreen {
         FzmmConfig.TextFormat config = FzmmClient.CONFIG.textFormat;
 
         boolean executeButtonsActive = this.messageTextField.getText().length() > 1;
-        ButtonWidget addLoreButton = this.setupButton(rootComponent, this.getButtonId(ADD_LORE_ID), executeButtonsActive, button -> {
+        ButtonWidget addLoreButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(ADD_LORE_ID), executeButtonsActive, button -> {
             ItemStack handItem = client.player.getInventory().getMainHandStack();
             Text text = this.messagePreviewLabel.text();
 
@@ -116,7 +102,7 @@ public class TextFormatScreen extends BaseFzmmScreen {
 
             FzmmUtils.giveItem(builder.get());
         });
-        ButtonWidget setNameButton = this.setupButton(rootComponent, this.getButtonId(SET_NAME_ID), executeButtonsActive, button -> {
+        ButtonWidget setNameButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(SET_NAME_ID), executeButtonsActive, button -> {
             ItemStack handItem = client.player.getInventory().getMainHandStack();
             Text text = this.messagePreviewLabel.text();
 
@@ -126,8 +112,8 @@ public class TextFormatScreen extends BaseFzmmScreen {
 
             FzmmUtils.giveItem(builder.get());
         });
-        ButtonWidget randomButton = this.setupButton(rootComponent, this.getButtonId(RANDOM_ID), executeButtonsActive, button -> selectedTab.setRandomValues());
-        ButtonWidget copyButton = this.setupButton(rootComponent, this.getButtonId(COPY_ID), executeButtonsActive,
+        ButtonWidget randomButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(RANDOM_ID), executeButtonsActive, button -> selectedTab.setRandomValues());
+        ButtonWidget copyButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_ID), executeButtonsActive,
                 button -> this.client.keyboard.setClipboard(Text.Serializer.toJson(this.messagePreviewLabel.text())));
         this.executeButtons = List.of(addLoreButton, setNameButton, randomButton, copyButton);
 

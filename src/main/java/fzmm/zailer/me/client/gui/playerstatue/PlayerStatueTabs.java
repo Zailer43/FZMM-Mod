@@ -1,11 +1,9 @@
 package fzmm.zailer.me.client.gui.playerstatue;
 
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.playerstatue.tabs.PlayerStatueGenerateTab;
 import fzmm.zailer.me.client.gui.playerstatue.tabs.PlayerStatueUpdateTab;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 
 public enum PlayerStatueTabs implements IPlayerStatueTab {
     CREATE(new PlayerStatueGenerateTab()),
@@ -24,13 +22,8 @@ public enum PlayerStatueTabs implements IPlayerStatueTab {
     }
 
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return this.tab.getComponents(parent);
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
-        this.tab.setupComponents(parent, rootComponent);
+    public void setupComponents(FlowLayout rootComponent) {
+        this.tab.setupComponents(rootComponent);
     }
 
     @Override

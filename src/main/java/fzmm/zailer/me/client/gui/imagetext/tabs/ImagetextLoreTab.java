@@ -2,14 +2,13 @@ package fzmm.zailer.me.client.gui.imagetext.tabs;
 
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.EnumWidget;
+import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.options.LoreOption;
-import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtList;
@@ -40,16 +39,8 @@ public class ImagetextLoreTab implements IImagetextTab {
     public String getId() {
         return "lore";
     }
-
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return new Component[] {
-                parent.newEnumRow(LORE_MODE_ID)
-        };
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
-        this.loreModeOption = parent.setupEnum(rootComponent, LORE_MODE_ID, LoreOption.ADD, null);
+    public void setupComponents(FlowLayout rootComponent) {
+        this.loreModeOption = EnumRow.setup(rootComponent, LORE_MODE_ID, LoreOption.ADD, null);
     }
 }

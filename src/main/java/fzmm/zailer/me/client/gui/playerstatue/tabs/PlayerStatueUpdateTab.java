@@ -1,12 +1,10 @@
 package fzmm.zailer.me.client.gui.playerstatue.tabs;
 
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.playerstatue.IPlayerStatueTab;
 import fzmm.zailer.me.client.logic.playerStatue.PlayerStatue;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import org.joml.Vector3f;
@@ -18,12 +16,7 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
     }
 
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return new Component[0];
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
+    public void setupComponents(FlowLayout rootComponent) {
     }
 
     @Override

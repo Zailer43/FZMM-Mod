@@ -41,7 +41,6 @@ public class HeadLayerComponentEntry extends AbstractHeadListEntry {
         this.parent.removeChild(this);
     }
 
-    @Override
     public void setEnabled(boolean value) {
         this.removeButton.active = value;
     }

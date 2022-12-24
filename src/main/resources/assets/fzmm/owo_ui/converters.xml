@@ -10,8 +10,69 @@
 
                 <scroll direction="vertical">
 
-                    <flow-layout direction="vertical" id="converters-options-list">
+                    <flow-layout direction="vertical" id="options-list">
                         <children>
+                            <screen-tab-row>
+                                <id>tabs</id>
+                            </screen-tab-row>
+
+                            <screen-tab>
+                                <id>base64</id>
+                                <children>
+                                    <text-box-row>
+                                        <id>message</id>
+                                    </text-box-row>
+                                    <button-row>
+                                        <id>copyDecoded</id>
+                                    </button-row>
+                                    <button-row>
+                                        <id>copyEncoded</id>
+                                    </button-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>uuidToArray</id>
+                                <children>
+                                    <predicate-text-box-row>
+                                        <id>uuidField</id>
+                                    </predicate-text-box-row>
+                                    <button-row>
+                                        <id>uuidToArray.random</id>
+                                    </button-row>
+                                    <button-row>
+                                        <id>uuidToArray.copy</id>
+                                    </button-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>arrayToUuid</id>
+                                <children>
+                                    <number-row>
+                                        <id>array.0</id>
+                                        <tooltipId>array</tooltipId>
+                                    </number-row>
+                                    <number-row>
+                                        <id>array.1</id>
+                                        <tooltipId>array</tooltipId>
+                                    </number-row>
+                                    <number-row>
+                                        <id>array.2</id>
+                                        <tooltipId>array</tooltipId>
+                                    </number-row>
+                                    <number-row>
+                                        <id>array.3</id>
+                                        <tooltipId>array</tooltipId>
+                                    </number-row>
+                                    <button-row>
+                                        <id>arrayToUuid.random</id>
+                                    </button-row>
+                                    <button-row>
+                                        <id>arrayToUuid.copy</id>
+                                    </button-row>
+                                </children>
+                            </screen-tab>
                         </children>
                     </flow-layout>
 

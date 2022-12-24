@@ -61,7 +61,7 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     }
 
     private void giveButtonExecute(ButtonComponent button) {
-        Optional<BufferedImage> headTexture = this.getHeadTextureByName();
+        Optional<BufferedImage> headTexture = this.getHeadTextureByKey();
         if (headTexture.isEmpty())
             return;
 
@@ -76,13 +76,9 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
         this.parentScreen.addLayer(this.headData);
     }
 
-    @Override
-    public void setEnabled(boolean value) {
-        this.giveButton.active = value;
-    }
 
     public void filter(String searchValue) {
-        if (searchValue.isBlank() || this.getName().toLowerCase().contains(searchValue.toLowerCase())) {
+        if (searchValue.isBlank() || this.getDisplayName().toLowerCase().contains(searchValue.toLowerCase())) {
             this.hide = false;
             this.verticalSizing(this.originalVerticalSizing);
         } else {

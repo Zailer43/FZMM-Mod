@@ -10,8 +10,48 @@
 
                 <scroll direction="vertical">
 
-                    <flow-layout direction="vertical" id="player-statue-options-list">
+                    <flow-layout direction="vertical" id="options-list">
                         <children>
+                            <enum-row>
+                                <id>horizontal-direction</id>
+                            </enum-row>
+                            <number-row>
+                                <id>posX</id>
+                                <tooltipId>pos</tooltipId>
+                            </number-row>
+                            <number-row>
+                                <id>posY</id>
+                                <tooltipId>pos</tooltipId>
+                            </number-row>
+                            <number-row>
+                                <id>posZ</id>
+                                <tooltipId>pos</tooltipId>
+                            </number-row>
+                            <text-box-row>
+                                <id>name</id>
+                            </text-box-row>
+                            <screen-tab-row>
+                                <id>tabs</id>
+                            </screen-tab-row>
+
+                            <screen-tab>
+                                <id>generate</id>
+                                <children>
+                                    <image-rows>
+                                        <buttonId>skin</buttonId>
+                                        <enumId>skin-source</enumId>
+                                    </image-rows>
+                                    <button-row>
+                                        <id>lastGenerated</id>
+                                    </button-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>update</id>
+                                <children>
+                                </children>
+                            </screen-tab>
                         </children>
                     </flow-layout>
 

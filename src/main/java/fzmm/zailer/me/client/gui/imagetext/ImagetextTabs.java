@@ -1,10 +1,8 @@
 package fzmm.zailer.me.client.gui.imagetext;
 
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.imagetext.tabs.*;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 
 public enum ImagetextTabs implements IImagetextTab {
     LORE(new ImagetextLoreTab()),
@@ -30,12 +28,7 @@ public enum ImagetextTabs implements IImagetextTab {
     }
 
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return this.tab.getComponents(parent);
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
-        this.tab.setupComponents(parent, rootComponent);
+    public void setupComponents(FlowLayout rootComponent) {
+        this.tab.setupComponents(rootComponent);
     }
 }

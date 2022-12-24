@@ -10,8 +10,26 @@
 
                 <scroll direction="vertical">
 
-                    <flow-layout direction="vertical" id="encryptBook-options-list">
+                    <flow-layout direction="vertical" id="options-list">
                         <children>
+                            <text-box-row>
+                                <id>message</id>
+                            </text-box-row>
+                            <number-row>
+                                <id>seed</id>
+                            </number-row>
+                            <text-box-row>
+                                <id>paddingCharacters</id>
+                            </text-box-row>
+                            <text-box-row>
+                                <id>author</id>
+                            </text-box-row>
+                            <text-box-row>
+                                <id>title</id>
+                            </text-box-row>
+                            <slider-row>
+                                <id>maxMessageLength</id>
+                            </slider-row>
                         </children>
                     </flow-layout>
 

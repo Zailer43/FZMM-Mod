@@ -2,10 +2,14 @@ package fzmm.zailer.me.client.gui.headgenerator;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.headgenerator.components.HeadComponentEntry;
-import fzmm.zailer.me.client.gui.headgenerator.components.HeadLayerComponentEntry;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
+import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.row.ImageButtonRow;
+import fzmm.zailer.me.client.gui.components.row.ImageRows;
+import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
+import fzmm.zailer.me.client.gui.headgenerator.components.HeadComponentEntry;
+import fzmm.zailer.me.client.gui.headgenerator.components.HeadLayerComponentEntry;
 import fzmm.zailer.me.client.logic.headGenerator.HeadData;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
@@ -58,38 +62,28 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private FlowLayout layerListLayout;
     private ButtonWidget giveMergedHeadButton;
 
-
     public HeadGeneratorScreen(@Nullable Screen parent) {
         super("head_generator", "headGenerator", parent);
-    }
-
-    @Override
-    protected void tryAddComponentList(FlowLayout rootComponent) {
-        this.tryAddComponentList(rootComponent, "head-generator-option-list",
-                this.newImageRow(SKIN_ID),
-                this.newEnumRow(SKIN_SOURCE_TYPE_ID),
-                this.newTextFieldRow(HEAD_NAME_ID),
-                this.newTextFieldRow(SEARCH_ID)
-        );
     }
 
     @Override
     @SuppressWarnings("ConstantConditions")
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
         //general
-        this.skinButton = this.setupImage(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, SkinMode.NAME);
+        this.skinButton = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, SkinMode.NAME);
         this.skinButton.setImageLoadedEvent(this::onLoadSkin);
-        this.headNameField = this.setupTextField(rootComponent, HEAD_NAME_ID, "");
-        rootComponent.childById(TextFieldWidget.class, this.getImageValueFieldId(SKIN_ID)).setChangedListener(this.headNameField::setText);
-        this.searchField = this.setupTextField(rootComponent, SEARCH_ID, "", s -> this.applyFilters());
+        this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "");
+        rootComponent.childById(TextFieldWidget.class, ImageButtonRow.getImageValueFieldId(SKIN_ID))
+                .setChangedListener(this.headNameField::setText);
+        this.searchField = TextBoxRow.setup(rootComponent, SEARCH_ID, "", s -> this.applyFilters());
         this.headListLayout = rootComponent.childById(FlowLayout.class, HEAD_LIST_ID);
         this.layerListLayout = rootComponent.childById(FlowLayout.class, LAYER_LIST_ID);
-        this.checkNull(this.headListLayout, "flow-layout", HEAD_LIST_ID);
-        this.checkNull(this.layerListLayout, "flow-layout", LAYER_LIST_ID);
+        checkNull(this.headListLayout, "flow-layout", HEAD_LIST_ID);
+        checkNull(this.layerListLayout, "flow-layout", LAYER_LIST_ID);
         //bottom buttons
-        this.giveMergedHeadButton = this.setupButton(rootComponent, this.getButtonId(GIVE_MERGED_HEAD_ID), true, button -> this.getMergedHead().ifPresent(this::giveHead));
-        this.setupButton(rootComponent, this.getButtonId(SAVE_SKIN_ID), true, this::saveSkinExecute);
-        this.setupButton(rootComponent, this.getButtonId(OPEN_SKIN_FOLDER_ID), true, button -> Util.getOperatingSystem().open(SKIN_SAVE_FOLDER_PATH.toFile()));
+        this.giveMergedHeadButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(GIVE_MERGED_HEAD_ID), true, button -> this.getMergedHead().ifPresent(this::giveHead));
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(SAVE_SKIN_ID), true, this::saveSkinExecute);
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(OPEN_SKIN_FOLDER_ID), true, button -> Util.getOperatingSystem().open(SKIN_SAVE_FOLDER_PATH.toFile()));
     }
 
     private ImageStatus onLoadSkin(BufferedImage skinBase) {
@@ -106,7 +100,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
                 List<HeadData> headDataList = HeadGeneratorResources.getHeadTexturesOf(skinBase);
                 List<Component> headEntries = headDataList.stream()
                         .map(headData -> (Component) new HeadComponentEntry(headData, this))
-                        .sorted(Comparator.comparing(component -> ((HeadComponentEntry) component).getName()))
+                        .sorted(Comparator.comparing(component -> ((HeadComponentEntry) component).getDisplayName()))
                         .toList();
 
                 this.headListLayout.children(headEntries);
@@ -119,9 +113,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
             }
 
             if (this.layerListLayout.children().isEmpty()) {
-                HeadLayerComponentEntry layerEntry = new HeadLayerComponentEntry(new HeadData(skinBase, Text.translatable("fzmm.gui.headGenerator.label.baseSkin").getString()), this.layerListLayout);
-                layerEntry.setEnabled(false);
-                this.layerListLayout.child(layerEntry);
+                HeadData baseSkinData = new HeadData(skinBase, Text.translatable("fzmm.gui.headGenerator.label.baseSkin").getString(), "base");
+                this.addLayer(baseSkinData, false);
             }
         });
         return ImageStatus.IMAGE_LOADED;
@@ -167,7 +160,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
             if (headGenerator == null)
                 headGenerator = new HeadGenerator(layerEntry.getPreviewImage());
             else
-                layerEntry.getHeadTextureByName().ifPresent(headGenerator::addTexture) ;
+                layerEntry.getHeadTextureByKey().ifPresent(headGenerator::addTexture);
         }
 
         return headGenerator == null ? Optional.empty() : Optional.of(headGenerator.getHeadTexture());
@@ -205,7 +198,12 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     }
 
     public void addLayer(HeadData headData) {
+        this.addLayer(headData, true);
+    }
+
+    public void addLayer(HeadData headData, boolean active) {
         HeadLayerComponentEntry entry = new HeadLayerComponentEntry(headData, this.layerListLayout);
+        entry.setEnabled(active);
         this.layerListLayout.child(entry);
     }
 

@@ -1,10 +1,10 @@
 package fzmm.zailer.me.client.gui.converters.tabs;
 
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.IScreenTab;
+import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.row.ConfigTextBoxRow;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.MinecraftClient;
 
 import java.util.UUID;
@@ -19,19 +19,10 @@ public class ConverterUuidToArrayTab implements IScreenTab {
         return "uuidToArray";
     }
 
-    @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return new Component[]{
-                parent.newTextBoxRow(UUID_FIELD_ID),
-                parent.newButtonRow(RANDOM_ID),
-                parent.newButtonRow(COPY_ID)
-        };
-    }
-
     @SuppressWarnings("UnstableApiUsage")
     @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
-        ConfigTextBox uuidField = (ConfigTextBox) parent.setupTextField(rootComponent, UUID_FIELD_ID, "");
+    public void setupComponents(FlowLayout rootComponent) {
+        ConfigTextBox uuidField = ConfigTextBoxRow.setup(rootComponent, UUID_FIELD_ID, "");
         uuidField.applyPredicate(s -> {
             try {
                 UUID ignored = UUID.fromString(s);
@@ -41,12 +32,12 @@ public class ConverterUuidToArrayTab implements IScreenTab {
             }
         });
 
-        parent.setupButton(rootComponent, parent.getButtonId(RANDOM_ID), true,
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(RANDOM_ID), true,
                 button -> {
                     uuidField.setText(UUID.randomUUID().toString());
                     uuidField.setCursor(0);
                 });
-        parent.setupButton(rootComponent, parent.getButtonId(COPY_ID), true, button -> {
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_ID), true, button -> {
             if (!uuidField.isValid())
                 return;
 

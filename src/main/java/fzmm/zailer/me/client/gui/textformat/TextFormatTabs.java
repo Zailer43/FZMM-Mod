@@ -1,11 +1,9 @@
 package fzmm.zailer.me.client.gui.textformat;
 
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatRainbowTab;
 import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatTwoColorsTab;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
@@ -25,13 +23,8 @@ public enum TextFormatTabs implements ITextFormatTab {
     }
 
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return this.tab.getComponents(parent);
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
-        this.tab.setupComponents(parent, rootComponent);
+    public void setupComponents(FlowLayout rootComponent) {
+        this.tab.setupComponents(rootComponent);
     }
 
     @Override

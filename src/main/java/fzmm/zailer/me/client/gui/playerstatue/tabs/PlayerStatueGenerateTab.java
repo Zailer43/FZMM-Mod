@@ -1,16 +1,16 @@
 package fzmm.zailer.me.client.gui.playerstatue.tabs;
 
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
+import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
+import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.row.ImageRows;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.playerstatue.IPlayerStatueTab;
 import fzmm.zailer.me.client.gui.playerstatue.PlayerStatueScreen;
-import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
-import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
 import fzmm.zailer.me.client.logic.playerStatue.PlayerStatue;
 import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.item.ItemStack;
 import org.joml.Vector3f;
@@ -35,19 +35,10 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     }
 
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return new Component[]{
-                parent.newImageRow(SKIN_ID),
-                parent.newEnumRow(SKIN_SOURCE_ID),
-                parent.newButtonRow(LAST_PLAYER_STATUE_GENERATED_ID)
-        };
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
-        this.skinButton = parent.setupImage(rootComponent, SKIN_ID, SKIN_SOURCE_ID, SkinMode.NAME);
-        this.lastGeneratedButton = parent.setupButton(rootComponent, parent.getButtonId(LAST_PLAYER_STATUE_GENERATED_ID), lastPlayerStatueGenerated != null, this::lastGeneratedCallback);
-        this.executeButton = rootComponent.childById(ButtonWidget.class, parent.getButtonId(PlayerStatueScreen.EXECUTE_ID));
+    public void setupComponents(FlowLayout rootComponent) {
+        this.skinButton = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_ID, SkinMode.NAME);
+        this.lastGeneratedButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(LAST_PLAYER_STATUE_GENERATED_ID), lastPlayerStatueGenerated != null, this::lastGeneratedCallback);
+        this.executeButton = rootComponent.childById(ButtonWidget.class, ButtonRow.getButtonId(PlayerStatueScreen.EXECUTE_ID));
 
         this.skinButton.setImageLoadedEvent(this::skinCallback);
     }

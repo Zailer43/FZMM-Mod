@@ -4,7 +4,6 @@ import fzmm.zailer.me.client.FzmmClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -24,14 +23,14 @@ public class HeadGeneratorResources {
             BufferedImage skinWithHeadTexture = new HeadGenerator(skinBase)
                     .addTexture(headData.skin())
                     .getHeadTexture();
-            skinWithHeadTextureList.add(new HeadData(skinWithHeadTexture, headData.name()));
+            skinWithHeadTextureList.add(new HeadData(skinWithHeadTexture, headData.displayName(), headData.key()));
         }
 
         return skinWithHeadTextureList;
     }
 
     public static Optional<BufferedImage> getTexture(String textureName) {
-        Optional<HeadData> headDataOptional = loadHeads().stream().filter(headData -> headData.name().equals(textureName)).findFirst();
+        Optional<HeadData> headDataOptional = loadHeads().stream().filter(headData -> headData.key().equals(textureName)).findFirst();
         return headDataOptional.map(HeadData::skin);
     }
 
@@ -48,7 +47,8 @@ public class HeadGeneratorResources {
                             BufferedImage nativeImage = ImageIO.read(inputStreamInputSupplier.get());
                             String path = identifier.getPath();
                             String headName = path.substring(HEADS_FOLDER.length() + 1, path.length() - 4);
-                            headData.add(new HeadData(nativeImage, headName));
+
+                            headData.add(new HeadData(nativeImage, toDisplayName(headName), headName));
                         } catch (IOException ignored) {
                         }
 
@@ -58,7 +58,9 @@ public class HeadGeneratorResources {
         return headData;
     }
 
-    public static Identifier getIdentifier(String name) {
-        return new Identifier(FzmmClient.MOD_ID, String.format("%s/%s.png", HEADS_FOLDER, name));
+    private static String toDisplayName(String name) {
+        String displayName = name.replaceAll("_", " ");
+        String firstCharacter = String.valueOf(displayName.charAt(0));
+        return displayName.replaceFirst(firstCharacter, firstCharacter.toUpperCase());
     }
 }

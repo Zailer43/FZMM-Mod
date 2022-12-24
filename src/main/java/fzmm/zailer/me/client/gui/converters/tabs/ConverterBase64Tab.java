@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.gui.converters.tabs;
 
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.IScreenTab;
+import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -22,21 +22,12 @@ public class ConverterBase64Tab implements IScreenTab {
     }
 
     @Override
-    public Component[] getComponents(BaseFzmmScreen parent) {
-        return new Component[]{
-                parent.newTextFieldRow(MESSAGE_ID),
-                parent.newButtonRow(COPY_DECODED_ID),
-                parent.newButtonRow(COPY_ENCODED_ID)
-        };
-    }
-
-    @Override
-    public void setupComponents(BaseFzmmScreen parent, FlowLayout rootComponent) {
+    public void setupComponents(FlowLayout rootComponent) {
         Keyboard keyboard = MinecraftClient.getInstance().keyboard;
-        TextFieldWidget messageField = parent.setupTextField(rootComponent, MESSAGE_ID, "");
+        TextFieldWidget messageField = TextBoxRow.setup(rootComponent, MESSAGE_ID, "");
         messageField.setMaxLength(10000);
 
-        parent.setupButton(rootComponent, parent.getButtonId(COPY_DECODED_ID), true, button -> {
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_DECODED_ID), true, button -> {
             try {
                 byte[] decodedValue = Base64.getDecoder().decode(messageField.getText());
                 String decodedMessage = new String(decodedValue, StandardCharsets.UTF_8);
@@ -45,7 +36,7 @@ public class ConverterBase64Tab implements IScreenTab {
             }
         });
 
-        parent.setupButton(rootComponent, parent.getButtonId(COPY_ENCODED_ID), true, button -> {
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_ENCODED_ID), true, button -> {
             try {
                 byte[] messageByte = messageField.getText().getBytes(StandardCharsets.UTF_8);
                 String encodedMessage = Base64.getEncoder().encodeToString(messageByte);

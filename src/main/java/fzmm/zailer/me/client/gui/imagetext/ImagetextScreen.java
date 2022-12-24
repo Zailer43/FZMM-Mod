@@ -3,10 +3,11 @@ package fzmm.zailer.me.client.gui.imagetext;
 import blue.endless.jankson.annotation.Nullable;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.imagetext.tabs.ImagetextBookPageTab;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
 import fzmm.zailer.me.client.gui.components.image.mode.ImageMode;
+import fzmm.zailer.me.client.gui.components.row.*;
+import fzmm.zailer.me.client.gui.imagetext.tabs.ImagetextBookPageTab;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.client.toast.status.ImageStatus;
@@ -50,57 +51,36 @@ public class ImagetextScreen extends BaseFzmmScreen {
     }
 
     @Override
-    protected void tryAddComponentList(FlowLayout rootComponent) {
-        this.tryAddComponentList(rootComponent, "imagetext-options-list",
-                this.newImageRow(IMAGE_ID),
-                this.newEnumRow(IMAGE_SOURCE_TYPE_ID),
-                this.newSliderRow(WIDTH_ID, "resolution", 0),
-                this.newSliderRow(HEIGHT_ID, "resolution", 0),
-                this.newTextFieldRow(CHARACTERS_ID),
-                this.newBooleanRow(PRESERVE_IMAGE_ASPECT_RATIO_ID),
-                this.newBooleanRow(SHOW_RESOLUTION_ID),
-                this.newBooleanRow(SMOOTH_IMAGE_ID),
-                this.newScreenTabRow(selectedTab)
-        );
-
-        FlowLayout container = rootComponent.childById(FlowLayout.class, "imagetext-options-list");
-        if (container == null)
-            return;
-
-        for (var tab : ImagetextTabs.values())
-            container.child(this.newScreenTab(tab.getId(), tab.getComponents(this)));
-    }
-
-    @Override
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
         FzmmConfig.Imagetext config = FzmmClient.CONFIG.imagetext;
         //general
-        this.imageButton = this.setupImage(rootComponent, IMAGE_ID, IMAGE_SOURCE_TYPE_ID, ImageMode.URL);
-        this.preserveImageAspectRatioToggle = this.setupBooleanButton(rootComponent, PRESERVE_IMAGE_ASPECT_RATIO_ID, config.defaultPreserveImageAspectRatio());
-        SliderWidget widthSlider = rootComponent.childById(SliderWidget.class, this.getSliderId(WIDTH_ID));
-        SliderWidget heightSlider = rootComponent.childById(SliderWidget.class, this.getSliderId(HEIGHT_ID));
+        this.imageButton = ImageRows.setup(rootComponent, IMAGE_ID, IMAGE_SOURCE_TYPE_ID, ImageMode.URL);
+        this.preserveImageAspectRatioToggle = BooleanRow.setup(rootComponent, PRESERVE_IMAGE_ASPECT_RATIO_ID, config.defaultPreserveImageAspectRatio());
+        SliderWidget widthSlider = rootComponent.childById(SliderWidget.class, SliderRow.getSliderId(WIDTH_ID));
+        SliderWidget heightSlider = rootComponent.childById(SliderWidget.class, SliderRow.getSliderId(HEIGHT_ID));
         ButtonWidget.PressAction onWidthChange = button -> this.onResolutionChanged(this.imageButton, this.preserveImageAspectRatioToggle, widthSlider, heightSlider, true);
-        this.widthSlider = this.setupSlider(rootComponent, WIDTH_ID, DEFAULT_SIZE_VALUE, 2, config.maxResolution(), Integer.class,
+        this.widthSlider = SliderRow.setup(rootComponent, WIDTH_ID, DEFAULT_SIZE_VALUE, 2, config.maxResolution(), Integer.class, 0,
                 aDouble -> onWidthChange.onPress(null)
         );
-        this.heightSlider = this.setupSlider(rootComponent, HEIGHT_ID, DEFAULT_SIZE_VALUE, 2, config.maxResolution(), Integer.class,
+        this.heightSlider = SliderRow.setup(rootComponent, HEIGHT_ID, DEFAULT_SIZE_VALUE, 2, config.maxResolution(), Integer.class, 0,
                 aDouble -> this.onResolutionChanged(this.imageButton, this.preserveImageAspectRatioToggle, heightSlider, widthSlider, false)
         );
-        this.charactersTextField = this.setupTextField(rootComponent, CHARACTERS_ID, ImagetextLine.DEFAULT_TEXT);
-        this.showResolutionToggle = this.setupBooleanButton(rootComponent, SHOW_RESOLUTION_ID, false);
-        this.smoothImageToggle = this.setupBooleanButton(rootComponent, SMOOTH_IMAGE_ID, true);
+        this.charactersTextField = TextBoxRow.setup(rootComponent, CHARACTERS_ID, ImagetextLine.DEFAULT_TEXT);
+        this.showResolutionToggle = BooleanRow.setup(rootComponent, SHOW_RESOLUTION_ID, false);
+        this.smoothImageToggle = BooleanRow.setup(rootComponent, SMOOTH_IMAGE_ID, true);
         //tabs
+        ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
         for (var tab : ImagetextTabs.values()) {
-            tab.setupComponents(this, rootComponent);
-            this.setupButton(rootComponent, this.getScreenTabButtonId(tab), tab != selectedTab, button -> {
+            tab.setupComponents(rootComponent);
+            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), tab != selectedTab, button -> {
                 this.selectScreenTab(rootComponent, tab);
                 selectedTab = tab;
             });
         }
         this.selectScreenTab(rootComponent, selectedTab);
         //bottom buttons
-        ButtonWidget executeButton = this.setupButton(rootComponent, this.getButtonId("execute"), false, button -> this.execute());
-        ButtonWidget previewButton = this.setupButton(rootComponent, this.getButtonId("preview"), false, button -> {
+        ButtonWidget executeButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId("execute"), false, button -> this.execute());
+        ButtonWidget previewButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId("preview"), false, button -> {
             if (this.imageButton.hasImage()) {
                 this.updateImagetext();
                 button.tooltip(this.imagetextLogic.getText());
