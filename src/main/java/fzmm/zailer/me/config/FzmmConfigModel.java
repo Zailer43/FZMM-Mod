@@ -96,8 +96,6 @@ public class FzmmConfigModel {
         @RegexConstraint("[0-9a-fA-F]{6,6}")
         public String imagetextMessages = "71C29F";
         @RegexConstraint("[0-9a-fA-F]{6,6}")
-        public String itemFrameFromHotkey = "BB82B7";
-        @RegexConstraint("[0-9a-fA-F]{6,6}")
         public String playerStatue = "CB347D";
         @RegexConstraint("[0-9a-fA-F]{6,6}")
         public String usefulBlockStates = "66F5B7";
