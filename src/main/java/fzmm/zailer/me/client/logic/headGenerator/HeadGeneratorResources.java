@@ -23,7 +23,7 @@ public class HeadGeneratorResources {
             BufferedImage skinWithHeadTexture = new HeadGenerator(skinBase)
                     .addTexture(headData.headSkin())
                     .getHeadTexture();
-            skinWithHeadTextureList.add(new HeadData(skinWithHeadTexture, headData.displayName()));
+            skinWithHeadTextureList.add(new HeadData(skinWithHeadTexture, headData.displayName(), headData.key()));
         }
 
         return skinWithHeadTextureList;
@@ -41,9 +41,9 @@ public class HeadGeneratorResources {
                         try {
                             BufferedImage nativeImage = ImageIO.read(inputStreamInputSupplier.get());
                             String path = identifier.getPath();
-                            String headName = path.substring(HEADS_FOLDER.length() + 1, path.length() - 4);
+                            String fileName = path.substring(HEADS_FOLDER.length() + 1, path.length() - 4);
 
-                            headData.add(new HeadData(nativeImage, toDisplayName(headName)));
+                            headData.add(new HeadData(nativeImage, toDisplayName(fileName), fileName));
                         } catch (IOException ignored) {
                         }
 

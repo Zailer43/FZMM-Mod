@@ -5,25 +5,32 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @SuppressWarnings("unused")
 @Modmenu(modId = "fzmm")
 @Config(name = "fzmm", wrapperName = "FzmmConfig")
 public class FzmmConfigModel {
 
+
     @Nest
     public GeneralNest general = new GeneralNest();
+
     @Nest
-    public MineskinNest mineskin = new MineskinNest();
-    @Nest
-    public ImagetextNest imagetext = new ImagetextNest();
-    @Nest
-    public TextFormatNest textFormat = new TextFormatNest();
-    @Nest
-    public PlayerStatueNest playerStatue = new PlayerStatueNest();
+    public ColorsNest colors = new ColorsNest();
     @Nest
     public EncryptbookNest encryptbook = new EncryptbookNest();
     @Nest
-    public ColorsNest colors = new ColorsNest();
+    public HeadGeneratorNest headGenerator = new HeadGeneratorNest();
+    @Nest
+    public ImagetextNest imagetext = new ImagetextNest();
+    @Nest
+    public MineskinNest mineskin = new MineskinNest();
+    @Nest
+    public PlayerStatueNest playerStatue = new PlayerStatueNest();
+    @Nest
+    public TextFormatNest textFormat = new TextFormatNest();
 
     public static class GeneralNest {
         public boolean disableItalic = true;
@@ -94,6 +101,11 @@ public class FzmmConfigModel {
         public String playerStatue = "CB347D";
         @RegexConstraint("[0-9a-fA-F]{6,6}")
         public String usefulBlockStates = "66F5B7";
+    }
+
+    public static class HeadGeneratorNest {
+        @ExcludeFromScreen
+        public Set<String> favoriteSkins = new HashSet<>();
     }
 
     @SuppressWarnings("unused")

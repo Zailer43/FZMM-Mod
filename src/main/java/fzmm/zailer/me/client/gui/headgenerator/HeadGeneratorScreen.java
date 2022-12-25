@@ -16,8 +16,10 @@ import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
 import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
+import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.Sizing;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
@@ -54,12 +56,17 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private static final String GIVE_MERGED_HEAD_ID = "give";
     private static final String SAVE_SKIN_ID = "save-skin";
     private static final String OPEN_SKIN_FOLDER_ID = "open-folder";
+    private static final String TOGGLE_FAVORITE_LIST_ID = "toggle-favorite-list";
+    private static final Text SHOW_ALL_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.all");
+    private static final Text SHOW_FAVORITES_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.favorite");
     private ImageButtonWidget skinButton;
     private TextFieldWidget headNameField;
     private TextFieldWidget searchField;
     private FlowLayout headListLayout;
     private FlowLayout layerListLayout;
     private ButtonWidget giveMergedHeadButton;
+    private ButtonWidget toggleFavoriteList;
+    private boolean showFavorites;
     private BufferedImage baseSkin;
 
     public HeadGeneratorScreen(@Nullable Screen parent) {
@@ -84,6 +91,13 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         this.giveMergedHeadButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(GIVE_MERGED_HEAD_ID), true, button -> this.getMergedHead().ifPresent(this::giveHead));
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(SAVE_SKIN_ID), true, this::saveSkinExecute);
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(OPEN_SKIN_FOLDER_ID), true, button -> Util.getOperatingSystem().open(SKIN_SAVE_FOLDER_PATH.toFile()));
+        //other buttons
+        this.toggleFavoriteList =  ButtonRow.setup(rootComponent, TOGGLE_FAVORITE_LIST_ID, true, this::toggleFavoriteListExecute);
+        checkNull(this.toggleFavoriteList, "button", TOGGLE_FAVORITE_LIST_ID);
+        this.showFavorites = false;
+        int toggleFavoriteListWidth = Math.max(this.textRenderer.getWidth(SHOW_ALL_TEXT), this.textRenderer.getWidth(SHOW_FAVORITES_TEXT)) + BUTTON_TEXT_PADDING;
+        this.toggleFavoriteList.horizontalSizing(Sizing.fixed(toggleFavoriteListWidth));
+
     }
 
     private ImageStatus onLoadSkin(BufferedImage skinBase) {
@@ -113,7 +127,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
         if (this.layerListLayout.children().isEmpty()) {
             BufferedImage emptyImage = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-            HeadData baseSkinData = new HeadData(emptyImage, Text.translatable("fzmm.gui.headGenerator.label.baseSkin").getString());
+            HeadData baseSkinData = new HeadData(emptyImage, Text.translatable("fzmm.gui.headGenerator.label.baseSkin").getString(), "base");
             this.addLayer(baseSkinData, false);
         }
 
@@ -139,7 +153,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
         for (var component : componentList) {
             if (component instanceof HeadComponentEntry headEntry)
-                headEntry.filter(searchValue);
+                headEntry.filter(searchValue, this.showFavorites);
         }
     }
 
@@ -257,5 +271,17 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
     public BufferedImage getBaseSkin() {
         return this.baseSkin;
+    }
+
+    private void toggleFavoriteListExecute(ButtonComponent buttonComponent) {
+        this.showFavorites = !this.showFavorites;
+        this.toggleFavoriteList.setMessage(this.showFavorites ? SHOW_FAVORITES_TEXT : SHOW_ALL_TEXT);
+        this.applyFilters();
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        FzmmClient.CONFIG.save();
     }
 }

@@ -43,6 +43,14 @@
   "entity.minecraft.painting.wind": "Wind",
   "entity.minecraft.painting.wither": "Wither",
   "fzmm.giveItem.exceedLimit": "The item exceeds the 2MB limit",
+  "fzmm.gui.button.favorite.enabled": {
+    "text": "★",
+    "color": "#ECC709"
+  },
+  "fzmm.gui.button.favorite.disabled": {
+    "text": "☆",
+    "color": "#ECC709"
+  },
   "fzmm.gui.button.add": "+",
   "fzmm.gui.button.back": "Back",
   "fzmm.gui.button.execute": "Execute",
@@ -117,6 +125,8 @@
   "fzmm.gui.headGenerator.button.giveHead": "Give head",
   "fzmm.gui.headGenerator.button.openFolder": "Open skins folder",
   "fzmm.gui.headGenerator.button.saveSkin": "Save skin",
+  "fzmm.gui.headGenerator.button.toggleFavoriteList.all": "Show all",
+  "fzmm.gui.headGenerator.button.toggleFavoriteList.favorite": "Show favorites",
   "fzmm.gui.headGenerator.label.baseSkin": "Base skin",
   "fzmm.gui.headGenerator.label.headList": "Head list",
   "fzmm.gui.headGenerator.label.headList.tooltip": "List of available heads to generate\nor to add layers and generate a skin composed of many heads",

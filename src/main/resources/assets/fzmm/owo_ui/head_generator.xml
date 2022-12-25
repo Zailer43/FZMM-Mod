@@ -31,10 +31,43 @@
                     <children>
                         <flow-layout direction="vertical" id="layer-list-side" row="0" column="0">
                             <children>
-                                <template name="list">
-                                    <label-id>layerList</label-id>
-                                    <list-id>layer-list</list-id>
-                                </template>
+                                <scroll direction="vertical">
+                                    <flow-layout direction="vertical">
+                                        <children>
+                                            <label>
+                                                <text translate="true">fzmm.gui.headGenerator.label.layerList</text>
+                                                <tooltip-text translate="true">fzmm.gui.headGenerator.label.layerList.tooltip</tooltip-text>
+                                                <margins>
+                                                    <all>4</all>
+                                                </margins>
+                                            </label>
+
+                                            <flow-layout direction="vertical" id="layer-list">
+                                                <children>
+                                                </children>
+                                            </flow-layout>
+                                        </children>
+                                    </flow-layout>
+
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                        <horizontal method="fill">100</horizontal>
+                                    </sizing>
+
+                                    <scrollbar>
+                                        <flat>#FFFFFF</flat>
+                                    </scrollbar>
+
+                                    <surface>
+                                        <outline>#FFFFFF</outline>
+                                    </surface>
+
+                                    <padding>
+                                        <all>1</all>
+                                    </padding>
+
+                                    <positioning type="relative">0,0</positioning>
+                                </scroll>
                             </children>
 
                             <sizing>
@@ -57,11 +90,56 @@
                                     </sizing>
                                 </flow-layout>
 
-                                <template name="list">
-                                    <label-id>headList</label-id>
-                                    <list-id>head-list</list-id>
-                                </template>
+                                <scroll direction="vertical">
+                                <flow-layout direction="vertical">
+                                    <children>
+                                        <flow-layout direction="horizontal" id="head-list-nav">
+                                            <children>
+                                                <label>
+                                                    <text translate="true">fzmm.gui.headGenerator.label.headList</text>
+                                                    <tooltip-text translate="true">fzmm.gui.headGenerator.label.headList.tooltip</tooltip-text>
+                                                    <margins>
+                                                        <all>4</all>
+                                                    </margins>
+                                                </label>
 
+                                                <flow-layout direction="horizontal">
+                                                    <children>
+                                                        <button id="toggle-favorite-list">
+                                                            <text translate="true">fzmm.gui.headGenerator.button.toggleFavoriteList.all</text>
+                                                        </button>
+                                                    </children>
+                                                    <positioning type="relative">0,100</positioning>
+                                                </flow-layout>
+                                            </children>
+                                        </flow-layout>
+
+                                        <flow-layout direction="vertical" id="head-list">
+                                            <children>
+                                            </children>
+                                        </flow-layout>
+                                    </children>
+                                </flow-layout>
+
+                                <sizing>
+                                    <vertical method="fill">100</vertical>
+                                    <horizontal method="fill">100</horizontal>
+                                </sizing>
+
+                                <scrollbar>
+                                    <flat>#FFFFFF</flat>
+                                </scrollbar>
+
+                                <surface>
+                                    <outline>#FFFFFF</outline>
+                                </surface>
+
+                                <padding>
+                                    <all>1</all>
+                                </padding>
+
+                                <positioning type="relative">0,0</positioning>
+                            </scroll>
                             </children>
 
                             <sizing>
@@ -161,46 +239,4 @@
             </surface>
         </flow-layout>
     </components>
-
-    <templates>
-        <list>
-            <scroll direction="vertical">
-                <flow-layout direction="vertical">
-                    <children>
-                        <label>
-                            <text translate="true">fzmm.gui.headGenerator.label.{{label-id}}</text>
-                            <tooltip-text translate="true">fzmm.gui.headGenerator.label.{{label-id}}.tooltip</tooltip-text>
-                            <margins>
-                                <all>4</all>
-                            </margins>
-                        </label>
-
-                        <flow-layout direction="vertical" id="{{list-id}}">
-                            <children>
-                            </children>
-                        </flow-layout>
-                    </children>
-                </flow-layout>
-
-                <sizing>
-                    <vertical method="fill">100</vertical>
-                    <horizontal method="fill">100</horizontal>
-                </sizing>
-
-                <scrollbar>
-                    <flat>#FFFFFF</flat>
-                </scrollbar>
-
-                <surface>
-                    <outline>#FFFFFF</outline>
-                </surface>
-
-                <padding>
-                    <all>1</all>
-                </padding>
-
-                <positioning type="relative">0,0</positioning>
-            </scroll>
-        </list>
-    </templates>
 </owo-ui>
