@@ -21,17 +21,12 @@ public class HeadGeneratorResources {
 
         for (var headData : loadHeads()) {
             BufferedImage skinWithHeadTexture = new HeadGenerator(skinBase)
-                    .addTexture(headData.skin())
+                    .addTexture(headData.headSkin())
                     .getHeadTexture();
-            skinWithHeadTextureList.add(new HeadData(skinWithHeadTexture, headData.displayName(), headData.key()));
+            skinWithHeadTextureList.add(new HeadData(skinWithHeadTexture, headData.displayName()));
         }
 
         return skinWithHeadTextureList;
-    }
-
-    public static Optional<BufferedImage> getTexture(String textureName) {
-        Optional<HeadData> headDataOptional = loadHeads().stream().filter(headData -> headData.key().equals(textureName)).findFirst();
-        return headDataOptional.map(HeadData::skin);
     }
 
     public static Set<HeadData> loadHeads() {
@@ -48,7 +43,7 @@ public class HeadGeneratorResources {
                             String path = identifier.getPath();
                             String headName = path.substring(HEADS_FOLDER.length() + 1, path.length() - 4);
 
-                            headData.add(new HeadData(nativeImage, toDisplayName(headName), headName));
+                            headData.add(new HeadData(nativeImage, toDisplayName(headName)));
                         } catch (IOException ignored) {
                         }
 

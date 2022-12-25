@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.components.image.source;
 
 import fzmm.zailer.me.client.toast.status.ImageStatus;
-import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
@@ -20,7 +20,7 @@ public class ImagePlayerNameSource implements IImageSource {
             if (!this.predicate(value))
                 return ImageStatus.INVALID_USERNAME;
 
-            Optional<BufferedImage> optionalImage = FzmmUtils.getPlayerSkin(value);
+            Optional<BufferedImage> optionalImage = ImageUtils.getPlayerSkin(value);
             optionalImage.ifPresent(image -> this.image = image);
             return optionalImage.isEmpty() ? ImageStatus.INVALID_USERNAME : ImageStatus.IMAGE_LOADED;
 

@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.components.image.source;
 
 import fzmm.zailer.me.client.toast.status.ImageStatus;
-import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -24,7 +24,7 @@ public class ImageFileSource implements IImageSource {
             if (!file.isFile())
                 return ImageStatus.PATH_DOES_NOT_HAVE_A_FILE;
 
-            this.image = FzmmUtils.getImageFromPath(value);
+            this.image = ImageUtils.getImageFromPath(value);
             return ImageStatus.IMAGE_LOADED;
         } catch (Exception e) {
             e.printStackTrace();

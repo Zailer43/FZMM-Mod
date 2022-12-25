@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.components.image.source;
 
 import fzmm.zailer.me.client.toast.status.ImageStatus;
-import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
@@ -18,7 +18,7 @@ public class ImageUrlSource implements IImageSource {
         try {
             if (value.isEmpty())
                 return ImageStatus.NO_IMAGE_LOADED;
-            Optional<BufferedImage> optionalImage = FzmmUtils.getImageFromUrl(value);
+            Optional<BufferedImage> optionalImage = ImageUtils.getImageFromUrl(value);
             optionalImage.ifPresent(image -> this.image = image);
             return optionalImage.isEmpty() ? ImageStatus.URL_HAS_NO_IMAGE : ImageStatus.IMAGE_LOADED;
         } catch (Exception e) {

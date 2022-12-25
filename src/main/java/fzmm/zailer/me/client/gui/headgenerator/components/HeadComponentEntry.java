@@ -18,7 +18,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 import java.awt.image.BufferedImage;
-import java.util.Optional;
 
 public class HeadComponentEntry extends AbstractHeadListEntry {
     public static final Text GIVE_BUTTON_TEXT = Text.translatable("fzmm.gui.headGenerator.button.giveHead");
@@ -61,12 +60,10 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     }
 
     private void giveButtonExecute(ButtonComponent button) {
-        Optional<BufferedImage> headTexture = this.getHeadTextureByKey();
-        if (headTexture.isEmpty())
-            return;
+        BufferedImage headTexture = this.getHeadSkin();
 
-        BufferedImage image = new HeadGenerator(this.getPreviewImage())
-                .addTexture(headTexture.get())
+        BufferedImage image = new HeadGenerator(this.parentScreen.getBaseSkin())
+                .addTexture(headTexture)
                 .getHeadTexture();
 
         this.parentScreen.giveHead(image);
@@ -75,7 +72,6 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     private void addLayerButtonExecute(ButtonComponent button) {
         this.parentScreen.addLayer(this.headData);
     }
-
 
     public void filter(String searchValue) {
         if (searchValue.isBlank() || this.getDisplayName().toLowerCase().contains(searchValue.toLowerCase())) {

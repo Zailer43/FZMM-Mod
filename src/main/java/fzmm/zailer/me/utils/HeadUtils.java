@@ -164,7 +164,7 @@ public class HeadUtils {
     }
 
     private void applyWatermark(BufferedImage headSkin) {
-        Optional<BufferedImage> optionalWatermark = FzmmUtils.getImageFromIdentifier(HEADS_WATER_MARK);
+        Optional<BufferedImage> optionalWatermark = ImageUtils.getImageFromIdentifier(HEADS_WATER_MARK);
         optionalWatermark.ifPresent(watermark -> {
             Graphics2D g2d = headSkin.createGraphics();
             g2d.drawImage(watermark, 0, 16, 64, 64, 0, 16, 64, 64, null);

@@ -38,9 +38,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -61,6 +60,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private FlowLayout headListLayout;
     private FlowLayout layerListLayout;
     private ButtonWidget giveMergedHeadButton;
+    private BufferedImage baseSkin;
 
     public HeadGeneratorScreen(@Nullable Screen parent) {
         super("head_generator", "headGenerator", parent);
@@ -88,36 +88,47 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
     private ImageStatus onLoadSkin(BufferedImage skinBase) {
         assert this.client != null;
+
+        this.baseSkin = skinBase;
+
         this.client.execute(() -> {
-            List<Component> headList = this.headListLayout.children();
-
-            for (var component : headList) {
-                if (component instanceof HeadComponentEntry headEntry)
-                    headEntry.update(skinBase);
-            }
-
-            if (headList.isEmpty()) {
-                List<HeadData> headDataList = HeadGeneratorResources.getHeadTexturesOf(skinBase);
-                List<Component> headEntries = headDataList.stream()
-                        .map(headData -> (Component) new HeadComponentEntry(headData, this))
-                        .sorted(Comparator.comparing(component -> ((HeadComponentEntry) component).getDisplayName()))
-                        .toList();
-
-                this.headListLayout.children(headEntries);
-                this.applyFilters();
-            }
-
-            for (var component : this.layerListLayout.children()) {
-                if (component instanceof HeadLayerComponentEntry layerEntry)
-                    layerEntry.update(skinBase);
-            }
-
-            if (this.layerListLayout.children().isEmpty()) {
-                HeadData baseSkinData = new HeadData(skinBase, Text.translatable("fzmm.gui.headGenerator.label.baseSkin").getString(), "base");
-                this.addLayer(baseSkinData, false);
-            }
+            this.tryFirstSkinLoad();
+            this.updatePreviews();
         });
+
         return ImageStatus.IMAGE_LOADED;
+    }
+
+    private void tryFirstSkinLoad() {
+        if (this.headListLayout.children().isEmpty()) {
+            Set<HeadData> headDataList = HeadGeneratorResources.loadHeads();
+            List<Component> headEntries = headDataList.stream()
+                    .sorted(Comparator.comparing(HeadData::displayName))
+                    .map(headData -> (Component) new HeadComponentEntry(headData, this))
+                    .toList();
+
+            this.headListLayout.children(headEntries);
+            this.applyFilters();
+        }
+
+        if (this.layerListLayout.children().isEmpty()) {
+            BufferedImage emptyImage = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+            HeadData baseSkinData = new HeadData(emptyImage, Text.translatable("fzmm.gui.headGenerator.label.baseSkin").getString());
+            this.addLayer(baseSkinData, false);
+        }
+
+    }
+
+    private void updatePreviews() {
+        for (var component : this.headListLayout.children()) {
+            if (component instanceof HeadComponentEntry headEntry)
+                headEntry.update(this.baseSkin);
+        }
+
+        for (var component : this.layerListLayout.children()) {
+            if (component instanceof HeadLayerComponentEntry layerEntry)
+                layerEntry.update(this.baseSkin);
+        }
     }
 
     private void applyFilters() {
@@ -133,7 +144,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     }
 
     public void giveHead(BufferedImage image) {
-        new Thread(() -> {
+        MinecraftClient.getInstance().execute(() -> {
             try {
                 this.setUndefinedDelay();
                 String headName = this.getHeadName();
@@ -147,23 +158,23 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
                 this.setDelay(delay);
             } catch (IOException ignored) {
             }
-        }, "Head generator").start();
+        });
     }
 
     private Optional<BufferedImage> getMergedHead() {
-        HeadGenerator headGenerator = null;
+        if (this.baseSkin == null)
+            return Optional.empty();
+        HeadGenerator headGenerator = new HeadGenerator(this.baseSkin);
 
         for (var entry : this.layerListLayout.children()) {
+            // it's a flowlayout so there can be any type of component here
             if (!(entry instanceof HeadLayerComponentEntry layerEntry))
                 continue;
 
-            if (headGenerator == null)
-                headGenerator = new HeadGenerator(layerEntry.getPreviewImage());
-            else
-                layerEntry.getHeadTextureByKey().ifPresent(headGenerator::addTexture);
+            headGenerator.addTexture(layerEntry.getHeadSkin());
         }
 
-        return headGenerator == null ? Optional.empty() : Optional.of(headGenerator.getHeadTexture());
+        return Optional.of(headGenerator.getHeadTexture());
     }
 
     public void setUndefinedDelay() {
@@ -204,6 +215,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     public void addLayer(HeadData headData, boolean active) {
         HeadLayerComponentEntry entry = new HeadLayerComponentEntry(headData, this.layerListLayout);
         entry.setEnabled(active);
+        this.skinButton.getImage().ifPresent(entry::update);
         this.layerListLayout.child(entry);
     }
 
@@ -241,5 +253,9 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
                     g2d.dispose();
                 }
         );
+    }
+
+    public BufferedImage getBaseSkin() {
+        return this.baseSkin;
     }
 }
