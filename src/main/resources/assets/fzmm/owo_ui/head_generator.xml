@@ -1,0 +1,255 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <label id="title">
+                    <positioning type="absolute">20,20</positioning>
+                    <text translate="true">fzmm.gui.title.headGenerator</text>
+                </label>
+
+                <flow-layout direction="vertical" id="head-option-list">
+                    <children>
+                        <image-rows>
+                            <buttonId>skin</buttonId>
+                            <enumId>skinSourceType</enumId>
+                        </image-rows>
+                        <text-box-row>
+                            <id>headName</id>
+                        </text-box-row>
+                        <text-box-row>
+                            <id>search</id>
+                        </text-box-row>
+                    </children>
+                    <margins>
+                        <top>48</top>
+                    </margins>
+                </flow-layout>
+
+
+                <grid-layout rows="1" columns="2">
+                    <children>
+                        <flow-layout direction="vertical" id="layer-list-side" row="0" column="0">
+                            <children>
+                                <scroll direction="vertical">
+                                    <flow-layout direction="vertical">
+                                        <children>
+                                            <label>
+                                                <text translate="true">fzmm.gui.headGenerator.label.layerList</text>
+                                                <tooltip-text translate="true">fzmm.gui.headGenerator.label.layerList.tooltip</tooltip-text>
+                                                <margins>
+                                                    <all>4</all>
+                                                </margins>
+                                            </label>
+
+                                            <flow-layout direction="vertical" id="layer-list">
+                                                <children>
+                                                </children>
+                                            </flow-layout>
+                                        </children>
+                                    </flow-layout>
+
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                        <horizontal method="fill">100</horizontal>
+                                    </sizing>
+
+                                    <scrollbar>
+                                        <flat>#FFFFFF</flat>
+                                    </scrollbar>
+
+                                    <surface>
+                                        <outline>#FFFFFF</outline>
+                                    </surface>
+
+                                    <padding>
+                                        <all>1</all>
+                                    </padding>
+
+                                    <positioning type="relative">0,0</positioning>
+                                </scroll>
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fill">50</horizontal>
+                                <vertical method="fill">100</vertical>
+                            </sizing>
+
+                            <vertical-alignment>top</vertical-alignment>
+                        </flow-layout>
+
+                        <flow-layout direction="vertical" id="head-list-side" row="0" column="1">
+                            <children>
+                                <flow-layout direction="horizontal">
+                                    <children>
+                                    </children>
+                                    <vertical-alignment>center</vertical-alignment>
+                                    <sizing>
+                                        <horizontal method="fill">100</horizontal>
+                                        <vertical method="fixed">22</vertical>
+                                    </sizing>
+                                </flow-layout>
+
+                                <scroll direction="vertical">
+                                    <flow-layout direction="vertical">
+                                        <children>
+                                            <flow-layout direction="horizontal">
+                                                <children>
+                                                    <label>
+                                                        <text translate="true">fzmm.gui.headGenerator.label.headList</text>
+                                                        <tooltip-text translate="true">fzmm.gui.headGenerator.label.headList.tooltip</tooltip-text>
+
+                                                        <margins>
+                                                            <all>4</all>
+                                                        </margins>
+                                                        <positioning type="relative">0,0</positioning>
+                                                    </label>
+
+                                                    <flow-layout direction="horizontal" id="head-list-nav">
+                                                        <children>
+                                                            <button id="toggle-favorite-list">
+                                                                <text translate="true">fzmm.gui.headGenerator.button.toggleFavoriteList.all</text>
+                                                            </button>
+                                                        </children>
+
+                                                        <vertical-alignment>center</vertical-alignment>
+                                                        <horizontal-alignment>right</horizontal-alignment>
+
+                                                        <margins>
+                                                            <all>3</all>
+                                                        </margins>
+
+                                                        <sizing>
+                                                            <horizontal method="fill">100</horizontal>
+                                                            <vertical method="fixed">20</vertical>
+                                                        </sizing>
+                                                    </flow-layout>
+                                                </children>
+                                            </flow-layout>
+
+                                            <flow-layout direction="vertical" id="head-list">
+                                                <children>
+                                                </children>
+                                            </flow-layout>
+                                        </children>
+                                    </flow-layout>
+
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                        <horizontal method="fill">100</horizontal>
+                                    </sizing>
+
+                                    <scrollbar>
+                                        <flat>#FFFFFF</flat>
+                                    </scrollbar>
+
+                                    <surface>
+                                        <outline>#FFFFFF</outline>
+                                    </surface>
+
+                                    <padding>
+                                        <all>1</all>
+                                    </padding>
+
+                                    <positioning type="relative">0,0</positioning>
+                                </scroll>
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fill">50</horizontal>
+                                <vertical method="fill">100</vertical>
+                            </sizing>
+
+                            <vertical-alignment>top</vertical-alignment>
+                        </flow-layout>
+                    </children>
+
+                    <sizing>
+                        <horizontal method="fill">100</horizontal>
+                        <vertical method="fill">100</vertical>
+                    </sizing>
+
+                    <!-- FIXME help I didn't find a nice way to do this -->
+                    <margins>
+                        <horizontal>20</horizontal>
+                        <bottom>50</bottom>
+                        <top>154</top>
+                    </margins>
+
+                    <horizontal-alignment>center</horizontal-alignment>
+
+                    <positioning type="absolute">0,0</positioning>
+                </grid-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="give-button">
+                            <text translate="true">fzmm.gui.headGenerator.button.giveHead</text>
+
+                            <margins>
+                                <left>20</left>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                        <button id="save-skin-button">
+                            <text translate="true">fzmm.gui.headGenerator.button.saveSkin</text>
+
+                            <margins>
+                                <left>4</left>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                        <button id="open-folder-button">
+                            <text translate="true">fzmm.gui.headGenerator.button.openFolder</text>
+
+                            <margins>
+                                <left>4</left>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">0,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="back-button">
+                            <text translate="true">fzmm.gui.button.back</text>
+
+                            <margins>
+                                <right>20</right>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+            </children>
+
+            <vertical-alignment>top</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+            <sizing>
+                <vertical method="content">100</vertical>
+            </sizing>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+</owo-ui>

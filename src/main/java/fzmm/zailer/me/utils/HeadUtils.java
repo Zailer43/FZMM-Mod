@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.config.Configs;
+import fzmm.zailer.me.config.FzmmConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SkullItem;
@@ -30,6 +30,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.Optional;
 
 public class HeadUtils {
     public static final String MINESKIN_API = "https://api.mineskin.org/";
@@ -77,18 +78,17 @@ public class HeadUtils {
 
     public HeadUtils uploadHead(BufferedImage headSkin, String skinName) throws IOException {
         this.applyWatermark(headSkin);
-        String apiKey = Configs.Generic.MINESKIN_API_KEY.getStringValue();
+        FzmmConfig.Mineskin config = FzmmClient.CONFIG.mineskin;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(headSkin, "png", baos);
         byte[] skin = baos.toByteArray();
 
         try (CloseableHttpClient httpclient = HttpClients.custom().setUserAgent("FZMM/1.0").build()) {
             HttpPost httppost = new HttpPost(MINESKIN_API + "generate/upload");
-            boolean isPublic = Configs.Generic.MINESKIN_PUBLIC_SKINS.getBooleanValue();
+            httppost.setHeader("Authorization", "Bearer " + config.apiKey());
 
             HttpEntity reqEntity = MultipartEntityBuilder.create()
-                    .addPart("key", new StringBody(apiKey, ContentType.TEXT_PLAIN))
-                    .addPart("visibility", new StringBody(isPublic ? "0" : "1", ContentType.TEXT_PLAIN))
+                    .addPart("visibility", new StringBody(config.publicSkins() ? "0" : "1", ContentType.TEXT_PLAIN))
                     .addBinaryBody("file", skin, ContentType.APPLICATION_FORM_URLENCODED, "head")
                     .build();
 
@@ -164,10 +164,11 @@ public class HeadUtils {
     }
 
     private void applyWatermark(BufferedImage headSkin) {
-        BufferedImage watermark = FzmmUtils.getImageFromIdentifier(HEADS_WATER_MARK);
-
-        Graphics2D g2d = headSkin.createGraphics();
-        g2d.drawImage(watermark, 0, 16, 64, 64, 0, 16, 64, 64, null);
-        g2d.dispose();
+        Optional<BufferedImage> optionalWatermark = ImageUtils.getImageFromIdentifier(HEADS_WATER_MARK);
+        optionalWatermark.ifPresent(watermark -> {
+            Graphics2D g2d = headSkin.createGraphics();
+            g2d.drawImage(watermark, 0, 16, 64, 64, 0, 16, 64, 64, null);
+            g2d.dispose();
+        });
     }
 }

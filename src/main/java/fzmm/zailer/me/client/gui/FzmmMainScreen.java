@@ -1,105 +1,45 @@
 package fzmm.zailer.me.client.gui;
 
-import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.gui.button.ButtonBase;
-import fi.dy.masa.malilib.gui.button.ButtonGeneric;
-import fi.dy.masa.malilib.gui.button.IButtonActionListener;
-import fzmm.zailer.me.client.gui.enums.Buttons;
+import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.converters.ConvertersScreen;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
+import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
+import fzmm.zailer.me.client.gui.playerstatue.PlayerStatueScreen;
+import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
+import io.wispforest.owo.config.ui.ConfigScreen;
+import io.wispforest.owo.ui.component.ButtonComponent;
+import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.Map;
 
-import static fzmm.zailer.me.client.gui.ScreenConstants.*;
+public class FzmmMainScreen extends BaseFzmmScreen {
 
-public class FzmmMainScreen extends GuiBase {
+    public FzmmMainScreen(@Nullable Screen parent) {
+        super("main", "main", parent);
+    }
 
-	public FzmmMainScreen(Screen parent) {
-		super();
-		this.setParent(parent);
-		this.setTitle(Text.translatable("fzmm.gui.title.main").getString());
-	}
+    @Override
+    @SuppressWarnings("ConstantConditions")
+    protected void setupButtonsCallbacks(FlowLayout rootComponent) {
+        rootComponent.childById(ButtonComponent.class, "config-button")
+                .onPress(button -> this.client.setScreen(ConfigScreen.create(FzmmClient.CONFIG, this)));
 
-	@Override
-	public void initGui() {
-		super.initGui();
-		// the width of each column is obtained to prevent translations from being left out of the buttons
-		List<Buttons> buttonColumn1 = List.of(Buttons.MAIN_IMAGETEXT, Buttons.MAIN_ENCRYPTBOOK);
-		List<Buttons> buttonColumn2 = List.of(Buttons.MAIN_GRADIENT, Buttons.MAIN_HEAD_GENERATOR);
-		List<Buttons> buttonColumn3 = List.of(Buttons.MAIN_PLAYER_STATUE, Buttons.MAIN_CONVERTERS);
+        Map<String, Screen> openScreenButtons = Map.of(
+                "imagetext-button", new ImagetextScreen(this),
+                "textFormat-button", new TextFormatScreen(this),
+                "playerStatue-button", new PlayerStatueScreen(this),
+                "encryptbook-button", new EncryptBookScreen(this),
+                "headGenerator-button", new HeadGeneratorScreen(this),
+                "converters-button", new ConvertersScreen(this)
+        );
 
-		int column1Width = this.getMaxWidth(buttonColumn1);
-		int column2Width = this.getMaxWidth(buttonColumn2);
-		int column3Width = this.getMaxWidth(buttonColumn3);
-		int screenCenter = this.width / 2;
+        for (var key : openScreenButtons.keySet()) {
+            ButtonComponent button = rootComponent.childById(ButtonComponent.class, key);
 
-		int columnsWidth = column1Width + column2Width + column3Width + 8;
-		int xCol1 = screenCenter - columnsWidth / 2;
-		int xCol2 = xCol1 + column1Width + 4;
-		int xCol3 = xCol2 + column2Width + 4;
-
-		this.createGenericButton(this.width - this.textRenderer.getWidth(Buttons.MAIN_CONFIGURATION.getText()) - 20, 20, Buttons.MAIN_CONFIGURATION, -1);
-		this.addColumn(buttonColumn1, xCol1, column1Width);
-		this.addColumn(buttonColumn2, xCol2, column2Width);
-		this.addColumn(buttonColumn3, xCol3, column3Width);
-
-		this.addButton(Buttons.BACK.getToLeft(this.width - 30, this.height - 40),
-				(button, mouseButton) -> GuiBase.openGui(this.getParent()));
-	}
-
-	private void addColumn(List<Buttons> buttons, int x, int width) {
-		int y = LINE1;
-		for (var button : buttons) {
-			this.createGenericButton(x, y, button, width);
-			y += 40;
-		}
-	}
-
-	private void createGenericButton(int x, int y, Buttons button, int width) {
-		ButtonGeneric buttonGeneric = button.get(x, y, width);
-		this.addButton(buttonGeneric, this.getActionListener(button));
-	}
-
-	public int getMaxWidth(List<Buttons> buttons) {
-		int max = 0;
-
-		for (var button : buttons)
-			max = Math.max(this.textRenderer.getWidth(button.getText()), max);
-
-		return max + 8;
-	}
-
-	protected IButtonActionListener getActionListener(Buttons button) {
-		return new ButtonActionListener(button);
-	}
-
-	private class ButtonActionListener implements IButtonActionListener {
-		private final Buttons button;
-
-		private ButtonActionListener(Buttons button) {
-			this.button = button;
-		}
-
-		@Override
-		public void actionPerformedWithButton(ButtonBase button, int mouseButton) {
-			Screen parent = FzmmMainScreen.this;
-			Screen guiBase = switch (this.button) {
-				case MAIN_CONFIGURATION -> new ConfigScreen(parent);
-				case MAIN_CONVERTERS -> new ConvertersScreen(parent);
-				case MAIN_ENCRYPTBOOK -> new EncryptbookScreen(parent);
-				case MAIN_GRADIENT -> new GradientScreen(parent);
-				case MAIN_IMAGETEXT -> new ImagetextScreen(parent);
-//				case MAIN_ITEMS_EDITOR -> null;
-				case MAIN_PLAYER_STATUE -> new PlayerStatueScreen(parent);
-				case MAIN_HEAD_GENERATOR -> new HeadGeneratorScreen(parent);
-				default -> null;
-			};
-
-			if (guiBase != null)
-				openGui(guiBase);
-		}
-
-	}
-
+            if (button != null)
+                button.onPress(button1 -> this.client.setScreen(openScreenButtons.get(key)));
+        }
+    }
 }

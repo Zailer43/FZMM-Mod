@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.logic;
 
-import fzmm.zailer.me.config.Configs;
+import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
@@ -31,6 +32,7 @@ public class EncryptbookLogic {
         return encryptedKey;
     }
 
+    //todo: refactor
     public static void give(final int SEED, String message, final String AUTHOR, final String PADDING_CHARS, final int MAX_MESSAGE_LENGTH, String bookTitle) {
 		/*
 		{
@@ -60,6 +62,7 @@ public class EncryptbookLogic {
 
 		 */
 
+        FzmmConfig.Encryptbook config = FzmmClient.CONFIG.encryptbook;
         MinecraftClient mc = MinecraftClient.getInstance();
         Character[] encryptMessage = new Character[MAX_MESSAGE_LENGTH];
         short[] encryptedKey;
@@ -71,10 +74,10 @@ public class EncryptbookLogic {
         NbtCompound tag = new NbtCompound();
         NbtList pages = new NbtList();
         MutableText page1, page2;
-        String translationKeyPrefix = Configs.Encryptbook.TRANSLATION_KEY_PREFIX.getStringValue();
+        String translationKeyPrefix = config.translationKeyPrefix();
         assert mc.player != null;
 
-        message += Configs.Encryptbook.SEPARATOR_MESSAGE.getStringValue();
+        message += config.separatorMessage();
         message = message.replaceAll(" ", "_");
         messageBuilder = new StringBuilder(message);
         int messageLength = message.length();
@@ -106,7 +109,7 @@ public class EncryptbookLogic {
 
         page2 = Text.literal(Formatting.BLUE + "Idea by: " + Formatting.BLACK + "turkeybot69\n" +
                         Formatting.BLUE + "Key: " + Formatting.BLACK + translationKeyPrefix + SEED + "\n" +
-                        Formatting.BLUE + "Asymmetric: " + Formatting.BLACK + (Configs.Encryptbook.ASYMMETRIC_ENCRYPT_KEY.getIntegerValue() != 0) + "\n" +
+                        Formatting.BLUE + "Asymmetric: " + Formatting.BLACK + (config.asymmetricEncryptKey() != 0) + "\n" +
                         Formatting.BLUE + "Encrypted message: " + Formatting.BLACK + "Hover over here")
                 .setStyle(Style.EMPTY
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(encryptMessageString.toString())))
@@ -122,7 +125,7 @@ public class EncryptbookLogic {
 
     public static void showDecryptorInChat(final int SEED, final int MAX_MESSAGE_LENGTH) {
         MinecraftClient mc = MinecraftClient.getInstance();
-        String translationKeyPrefix = Configs.Encryptbook.TRANSLATION_KEY_PREFIX.getStringValue();
+        String translationKeyPrefix = FzmmClient.CONFIG.encryptbook.translationKeyPrefix();
         StringBuilder decryptorString = new StringBuilder();
         short[] encryptedKey = encryptKey(getKey(SEED), MAX_MESSAGE_LENGTH);
 
@@ -142,7 +145,7 @@ public class EncryptbookLogic {
     }
 
     private static long getKey(long seed) {
-        int asymmetricEncryptKey = Configs.Encryptbook.ASYMMETRIC_ENCRYPT_KEY.getIntegerValue();
+        int asymmetricEncryptKey = FzmmClient.CONFIG.encryptbook.asymmetricEncryptKey();
         return seed * (asymmetricEncryptKey != 0 ? (long) asymmetricEncryptKey + 0x19429630 : 1);
     }
 }

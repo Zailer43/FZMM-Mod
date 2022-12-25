@@ -1,28 +1,38 @@
 package fzmm.zailer.me.client.gui.headgenerator;
 
-import com.google.gson.JsonIOException;
-import com.mojang.blaze3d.systems.RenderSystem;
-import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.gui.Message;
-import fi.dy.masa.malilib.util.InfoUtils;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.ScreenConstants;
-import fzmm.zailer.me.client.gui.enums.Buttons;
-import fzmm.zailer.me.client.logic.HeadGenerator;
+import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
+import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
+import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.row.ImageButtonRow;
+import fzmm.zailer.me.client.gui.components.row.ImageRows;
+import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
+import fzmm.zailer.me.client.gui.headgenerator.components.HeadComponentEntry;
+import fzmm.zailer.me.client.gui.headgenerator.components.HeadLayerComponentEntry;
+import fzmm.zailer.me.client.logic.headGenerator.HeadData;
+import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
+import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
+import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
+import io.wispforest.owo.ui.component.ButtonComponent;
+import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.Sizing;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.ScreenshotRecorder;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
-import org.apache.commons.compress.utils.Lists;
+import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -30,259 +40,248 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-public class HeadGeneratorScreen extends GuiBase {
-    private static final Path HEAD_SAVE_FOLDER_PATH = Path.of(FabricLoader.getInstance().getGameDir().toString(), "fzmm", "heads");
-    private HeadListWidget headListWidget;
-    private HeadLayersListWidget headLayersWidget;
-    private boolean initialized;
-    private TextFieldWidget searchBox;
-    private TextFieldWidget playerNameField;
-    private ButtonWidget loadSkinButton;
+public class HeadGeneratorScreen extends BaseFzmmScreen {
+    private static final Path SKIN_SAVE_FOLDER_PATH = Path.of(FabricLoader.getInstance().getGameDir().toString(), FzmmClient.MOD_ID, "skins");
+    private static final String SKIN_ID = "skin";
+    private static final String SKIN_SOURCE_TYPE_ID = "skinSourceType";
+    private static final String HEAD_NAME_ID = "headName";
+    private static final String SEARCH_ID = "search";
+    private static final String HEAD_LIST_ID = "head-list";
+    private static final String LAYER_LIST_ID = "layer-list";
+    private static final String GIVE_MERGED_HEAD_ID = "give";
+    private static final String SAVE_SKIN_ID = "save-skin";
+    private static final String OPEN_SKIN_FOLDER_ID = "open-folder";
+    private static final String TOGGLE_FAVORITE_LIST_ID = "toggle-favorite-list";
+    private static final Text SHOW_ALL_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.all");
+    private static final Text SHOW_FAVORITES_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.favorite");
+    private ImageButtonWidget skinButton;
+    private TextFieldWidget headNameField;
+    private TextFieldWidget searchField;
+    private FlowLayout headListLayout;
+    private FlowLayout layerListLayout;
     private ButtonWidget giveMergedHeadButton;
-    private ButtonWidget saveSkinButton;
-    private ButtonWidget openFolderButton;
-    private String currentSearch;
-    private String playerName;
-    private Set<String> headNames;
+    private ButtonWidget toggleFavoriteList;
+    private boolean showFavorites;
+    private BufferedImage baseSkin;
 
-    public HeadGeneratorScreen(Screen parent) {
-        super();
-        this.initialized = false;
-        this.setTitle(Text.translatable("fzmm.gui.title.headGenerator").getString());
-        this.setParent(parent);
+    public HeadGeneratorScreen(@Nullable Screen parent) {
+        super("head_generator", "headGenerator", parent);
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
-        int halfWidth = this.width / 2;
-        if (this.initialized) {
-            this.headListWidget.updateSize(halfWidth, this.height, 88, this.height - 80);
-            this.headLayersWidget.updateSize(halfWidth, this.height, 88, this.height - 80);
-        } else {
-            this.headListWidget = new HeadListWidget(this, this.client, halfWidth, this.height, 88, this.height - 80, 36);
-            this.headLayersWidget = new HeadLayersListWidget(this.client, halfWidth, this.height, 88, this.height - 80, 36);
-        }
-        this.headListWidget.setLeftPos(halfWidth);
-        this.headLayersWidget.setLeftPos(0);
-        int halfRowWidth = this.headListWidget.getRowWidth() / 2;
-        int headListLeft = this.headListWidget.getLeft() + 1;
-        int headListRowWidth = this.headListWidget.getRowWidth();
+    @SuppressWarnings("ConstantConditions")
+    protected void setupButtonsCallbacks(FlowLayout rootComponent) {
+        //general
+        this.skinButton = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, SkinMode.NAME);
+        this.skinButton.setImageLoadedEvent(this::onLoadSkin);
+        this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "");
+        rootComponent.childById(TextFieldWidget.class, ImageButtonRow.getImageValueFieldId(SKIN_ID))
+                .setChangedListener(this.headNameField::setText);
+        this.searchField = TextBoxRow.setup(rootComponent, SEARCH_ID, "", s -> this.applyFilters());
+        this.headListLayout = rootComponent.childById(FlowLayout.class, HEAD_LIST_ID);
+        this.layerListLayout = rootComponent.childById(FlowLayout.class, LAYER_LIST_ID);
+        checkNull(this.headListLayout, "flow-layout", HEAD_LIST_ID);
+        checkNull(this.layerListLayout, "flow-layout", LAYER_LIST_ID);
+        //bottom buttons
+        this.giveMergedHeadButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(GIVE_MERGED_HEAD_ID), true, button -> this.getMergedHead().ifPresent(this::giveHead));
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(SAVE_SKIN_ID), true, this::saveSkinExecute);
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(OPEN_SKIN_FOLDER_ID), true, button -> Util.getOperatingSystem().open(SKIN_SAVE_FOLDER_PATH.toFile()));
+        //other buttons
+        this.toggleFavoriteList =  ButtonRow.setup(rootComponent, TOGGLE_FAVORITE_LIST_ID, true, this::toggleFavoriteListExecute);
+        checkNull(this.toggleFavoriteList, "button", TOGGLE_FAVORITE_LIST_ID);
+        this.showFavorites = false;
+        int toggleFavoriteListWidth = Math.max(this.textRenderer.getWidth(SHOW_ALL_TEXT), this.textRenderer.getWidth(SHOW_FAVORITES_TEXT)) + BUTTON_TEXT_PADDING;
+        this.toggleFavoriteList.horizontalSizing(Sizing.fixed(toggleFavoriteListWidth));
 
-        String previousUsername = this.playerNameField != null ? this.playerNameField.getText() : "";
-        this.playerNameField = new TextFieldWidget(this.textRenderer, headListLeft, 45, halfRowWidth, 20, Text.translatable("fzmm.gui.headGenerator.playerName"));
-        this.playerNameField.setText(previousUsername);
-
-        this.loadSkinButton = new ButtonWidget(headListLeft + halfRowWidth + 4, 45, Buttons.LOAD_SKIN.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.LOAD_SKIN.getTranslation(), this::loadPlayerSkinExecute);
-
-        String previousSearch = this.searchBox != null ? this.searchBox.getText() : "";
-        this.searchBox = new TextFieldWidget(this.textRenderer, headListLeft, 68, headListRowWidth, 20, Text.translatable("gui.socialInteractions.search_hint"));
-        this.searchBox.setText(previousSearch);
-        this.searchBox.setChangedListener(this::onSearchChange);
-
-        int buttonsY = this.headLayersWidget.getBottom() + 4;
-        this.giveMergedHeadButton = new ButtonWidget(this.headLayersWidget.getLeft(), buttonsY, Buttons.GIVE.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.GIVE.getTranslation(), this::giveMergedHeadExecute);
-        this.saveSkinButton = new ButtonWidget(this.giveMergedHeadButton.x + this.giveMergedHeadButton.getWidth() + 4, buttonsY, Buttons.HEAD_GENERATOR_SAVE_SKIN.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.HEAD_GENERATOR_SAVE_SKIN.getTranslation(), this::saveSkinExecute);
-        this.openFolderButton = new ButtonWidget(this.saveSkinButton.x + this.saveSkinButton.getWidth() + 4, buttonsY, Buttons.HEAD_GENERATOR_OPEN_HEADS_FOLDER.getWidth(), ScreenConstants.NORMAL_BUTTON_HEIGHT, Buttons.HEAD_GENERATOR_OPEN_HEADS_FOLDER.getTranslation(), this::openFolderExecute);
-
-        this.addSelectableChild(this.playerNameField);
-        this.addSelectableChild(this.loadSkinButton);
-        this.addSelectableChild(this.searchBox);
-        this.addSelectableChild(this.headLayersWidget);
-        this.addSelectableChild(this.headListWidget);
-        this.addSelectableChild(this.giveMergedHeadButton);
-        this.addSelectableChild(this.saveSkinButton);
-        this.addSelectableChild(this.openFolderButton);
-
-        if (this.playerName == null)
-            this.playerName = "";
-
-        this.headNames = HeadGenerator.getHeadsNames();
-        this.currentSearch = this.searchBox.getText();
-
-        this.addButton(Buttons.BACK.getToLeft(this.width - 30, this.height - 40),
-                (button, mouseButton) -> GuiBase.openGui(this.getParent()));
-
-        this.initialized = true;
     }
 
-    @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        super.render(matrices, mouseX, mouseY, delta);
-        if (!this.headListWidget.isEmpty()) {
-            this.headListWidget.render(matrices, mouseX, mouseY, delta);
-            this.headLayersWidget.render(matrices, mouseX, mouseY, delta);
-            this.giveMergedHeadButton.render(matrices, mouseX, mouseY, delta);
-            this.saveSkinButton.render(matrices, mouseX, mouseY, delta);
-            this.openFolderButton.render(matrices, mouseX, mouseY, delta);
-        }
-        int halfWidth = this.width / 2;
-        int halfRowWidth = this.headLayersWidget.getRowWidth() / 2;
+    private ImageStatus onLoadSkin(BufferedImage skinBase) {
+        assert this.client != null;
 
-        this.loadSkinButton.render(matrices, mouseX, mouseY, delta);
-        this.searchBox.render(matrices, mouseX, mouseY, delta);
-        this.playerNameField.render(matrices, mouseX, mouseY, delta);
+        this.baseSkin = skinBase;
 
-        if (this.playerNameField.getText().isEmpty() && !this.playerNameField.isFocused())
-            this.textRenderer.drawWithShadow(matrices, this.playerNameField.getMessage(), this.playerNameField.x + 2, this.playerNameField.y + 4, 0xDDDDDD);
+        this.client.execute(() -> {
+            this.tryFirstSkinLoad();
+            this.updatePreviews();
+        });
 
-        if (this.searchBox.getText().isEmpty() && !this.searchBox.isFocused())
-            this.textRenderer.drawWithShadow(matrices, this.searchBox.getMessage(), this.searchBox.x + 2, this.searchBox.y + 4, 0xDDDDDD);
-
-        Text numberOfResults = Text.translatable("fzmm.gui.headGenerator.numberOfResults", this.headListWidget.size());
-        int numberOfResultsPosX = halfWidth - this.textRenderer.getWidth(numberOfResults) / 2 + halfRowWidth;
-        this.textRenderer.drawWithShadow(matrices, numberOfResults, numberOfResultsPosX, 32, ScreenConstants.TEXT_COLOR);
-
-        Identifier mergedHead = this.headLayersWidget.getMergedHeadIdentifier();
-        if (mergedHead != null) {
-            RenderSystem.setShaderTexture(0, mergedHead);
-            DrawableHelper.drawTexture(matrices, halfWidth - this.headLayersWidget.getRowWidth(), this.headLayersWidget.getTop() - 36, 128, 32, 0, 0, 32, 16, 64, 64);
-            RenderSystem.enableBlend();
-            DrawableHelper.drawTexture(matrices, halfWidth - this.headLayersWidget.getRowWidth(), this.headLayersWidget.getTop() - 36, 128, 32, 32, 0,  32, 16, 64, 64);
-            RenderSystem.disableBlend();
-        }
-
-        this.drawGuiMessages(matrices);
+        return ImageStatus.IMAGE_LOADED;
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        return super.mouseClicked(mouseX, mouseY, button)
-                || this.headListWidget.mouseClicked(mouseX, mouseY, button)
-                || this.headLayersWidget.mouseClicked(mouseX, mouseY, button);
+    private void tryFirstSkinLoad() {
+        if (this.headListLayout.children().isEmpty()) {
+            Set<HeadData> headDataList = HeadGeneratorResources.loadHeads();
+            List<Component> headEntries = headDataList.stream()
+                    .sorted(Comparator.comparing(HeadData::displayName))
+                    .map(headData -> (Component) new HeadComponentEntry(headData, this))
+                    .toList();
+
+            this.headListLayout.children(headEntries);
+            this.applyFilters();
+        }
+
+        if (this.layerListLayout.children().isEmpty()) {
+            BufferedImage emptyImage = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+            HeadData baseSkinData = new HeadData(emptyImage, Text.translatable("fzmm.gui.headGenerator.label.baseSkin").getString(), "base");
+            this.addLayer(baseSkinData, false);
+        }
+
     }
 
-    private void onSearchChange(String currentSearch) {
-        currentSearch = currentSearch.toLowerCase();
+    private void updatePreviews() {
+        for (var component : this.headListLayout.children()) {
+            if (component instanceof HeadComponentEntry headEntry)
+                headEntry.update(this.baseSkin);
+        }
 
-        if (!currentSearch.equals(this.currentSearch)) {
-            this.headListWidget.filter(currentSearch);
-            this.currentSearch = currentSearch;
+        for (var component : this.layerListLayout.children()) {
+            if (component instanceof HeadLayerComponentEntry layerEntry)
+                layerEntry.update(this.baseSkin);
         }
     }
 
-    public void loadPlayerSkinExecute(ButtonWidget button) {
-        String playerUsername = this.playerNameField.getText();
-        try {
-            BufferedImage playerSkin = FzmmUtils.getPlayerSkin(playerUsername);
-            if (playerSkin == null)
-                return;
-            this.playerName = playerUsername;
-            this.headLayersWidget.setBaseSkin(playerSkin);
+    private void applyFilters() {
+        if (this.searchField == null)
+            return;
+        String searchValue = this.searchField.getText().toLowerCase();
+        List<Component> componentList = this.headListLayout.children();
 
-            this.headListWidget.updatePreview(playerSkin);
-            this.headListWidget.filter(this.searchBox.getText());
-        } catch (IOException | JsonIOException e) {
-            e.printStackTrace();
+        for (var component : componentList) {
+            if (component instanceof HeadComponentEntry headEntry)
+                headEntry.filter(searchValue, this.showFavorites);
         }
     }
 
-    public void giveMergedHeadExecute(ButtonWidget button) {
-        this.execute(this.headLayersWidget.getMergedHeadImage());
-    }
-
-    public void execute(BufferedImage image) {
-        new Thread(() -> {
+    public void giveHead(BufferedImage image) {
+        MinecraftClient.getInstance().execute(() -> {
             try {
                 this.setUndefinedDelay();
-                String playerName = this.getPlayerName();
-                if (playerName == null)
-                    playerName = "NULL";
+                String headName = this.getHeadName();
+                if (headName == null)
+                    headName = "NULL";
 
-                HeadUtils headUtils = new HeadUtils().uploadHead(image, playerName);
+                HeadUtils headUtils = new HeadUtils().uploadHead(image, headName);
                 int delay = (int) TimeUnit.MILLISECONDS.toSeconds(headUtils.getDelayForNextInMillis());
-                ItemStack head = headUtils.getHead(playerName);
+                ItemStack head = headUtils.getHead(headName);
                 FzmmUtils.giveItem(head);
                 this.setDelay(delay);
             } catch (IOException ignored) {
             }
-        }, "Head generator").start();
+        });
+    }
+
+    private Optional<BufferedImage> getMergedHead() {
+        if (this.baseSkin == null)
+            return Optional.empty();
+        HeadGenerator headGenerator = new HeadGenerator(this.baseSkin);
+
+        for (var entry : this.layerListLayout.children()) {
+            // it's a flowlayout so there can be any type of component here
+            if (!(entry instanceof HeadLayerComponentEntry layerEntry))
+                continue;
+
+            headGenerator.addTexture(layerEntry.getHeadSkin());
+        }
+
+        return Optional.of(headGenerator.getHeadTexture());
     }
 
     public void setUndefinedDelay() {
         Text waitMessage = Text.translatable("fzmm.gui.headGenerator.wait");
-        this.updateButtons(this.getGiveButtons(), waitMessage, false);
+        this.updateButtons(this.getHeadEntries(), waitMessage, false);
     }
 
-    private List<ButtonWidget> getGiveButtons() {
-        List<ButtonWidget> buttonList = Lists.newArrayList();
-        buttonList.add(this.giveMergedHeadButton);
-        buttonList.addAll(this.headListWidget.getGiveButtons());
-
-        return buttonList;
+    private List<HeadComponentEntry> getHeadEntries() {
+        return this.headListLayout.children().stream().map(component -> (HeadComponentEntry) component).toList();
     }
 
     public void setDelay(int seconds) {
-        List<ButtonWidget> buttonList = this.getGiveButtons();
+        List<HeadComponentEntry> entryList = this.getHeadEntries();
 
         for (int i = 0; i != seconds; i++) {
             Text message = Text.translatable("fzmm.gui.headGenerator.wait_seconds", seconds - i);
-            CompletableFuture.delayedExecutor(i, TimeUnit.SECONDS).execute(() -> this.updateButtons(buttonList, message, false));
+            CompletableFuture.delayedExecutor(i, TimeUnit.SECONDS).execute(() -> this.updateButtons(entryList, message, false));
         }
 
-        CompletableFuture.delayedExecutor(seconds, TimeUnit.SECONDS).execute(() -> this.updateButtons(buttonList, Buttons.GIVE.getTranslation(), true));
+        CompletableFuture.delayedExecutor(seconds, TimeUnit.SECONDS).execute(() -> this.updateButtons(entryList, HeadComponentEntry.GIVE_BUTTON_TEXT, true));
     }
 
-    public void updateButtons(List<ButtonWidget> buttonList, Text message, boolean active) {
-        for (var button : buttonList) {
-            button.active = active;
-            button.setMessage(message);
-        }
+    public void updateButtons(List<HeadComponentEntry> entryList, Text message, boolean active) {
+        this.giveMergedHeadButton.active = active;
+        this.giveMergedHeadButton.setMessage(message);
+        for (var entry : entryList)
+            entry.updateGiveButton(active, message);
     }
 
-    @Override
-    public void tick() {
-        super.tick();
-        this.playerNameField.tick();
-        this.searchBox.tick();
+    public String getHeadName() {
+        return this.headNameField.getText();
     }
 
-    public String getPlayerName() {
-        return this.playerNameField.getText();
+    public void addLayer(HeadData headData) {
+        this.addLayer(headData, true);
     }
 
-    public Set<String> getHeadNames() {
-        return this.headNames;
-    }
-
-    public void addLayer(HeadEntry headEntry) {
-        HeadLayerEntry entry = new HeadLayerEntry(this.headLayersWidget, this.client, headEntry.getName(), headEntry.getPreviewImage(), headEntry.getHeadTexture());
-        this.headLayersWidget.add(entry);
+    public void addLayer(HeadData headData, boolean active) {
+        HeadLayerComponentEntry entry = new HeadLayerComponentEntry(headData, this.layerListLayout);
+        entry.setEnabled(active);
+        this.skinButton.getImage().ifPresent(entry::update);
+        this.layerListLayout.child(entry);
     }
 
     public void saveSkinExecute(ButtonWidget button) {
-        BufferedImage skin = this.headLayersWidget.getMergedHeadImage();
-        if (skin == null) {
-            InfoUtils.showGuiMessage(Message.MessageType.ERROR, "fzmm.gui.headGenerator.saveSkin.thereIsNoSkin");
+        Optional<BufferedImage> optionalSkin = this.getMergedHead();
+        ChatHud chatHud = MinecraftClient.getInstance().inGameHud.getChatHud();
+        if (optionalSkin.isEmpty()) {
+            chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.thereIsNoSkin")
+                    .setStyle(Style.EMPTY.withColor(Formatting.RED)));
             return;
         }
-        this.addBody(skin);
-        File file = HEAD_SAVE_FOLDER_PATH.toFile();
-        if (file.mkdirs())
-            FzmmClient.LOGGER.info("Head save folder created");
 
-        file = ScreenshotRecorder.getScreenshotFilename(HEAD_SAVE_FOLDER_PATH.toFile());
+        BufferedImage skin = optionalSkin.get();
+        this.addBody(skin);
+        File file = SKIN_SAVE_FOLDER_PATH.toFile();
+        if (file.mkdirs())
+            FzmmClient.LOGGER.info("Skin save folder created");
+
+        file = ScreenshotRecorder.getScreenshotFilename(file);
         try {
             ImageIO.write(skin, "png", file);
-            InfoUtils.showGuiMessage(Message.MessageType.SUCCESS, "fzmm.gui.headGenerator.saveSkin.saved");
+            chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.saved")
+                    .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
         } catch (IOException e) {
             e.printStackTrace();
-            InfoUtils.showGuiMessage(Message.MessageType.ERROR, "fzmm.gui.headGenerator.saveSkin.saveError");
+            chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.saveError")
+                    .setStyle(Style.EMPTY.withColor(Formatting.RED)));
         }
     }
 
     private void addBody(BufferedImage head) {
-        Graphics2D g2d = head.createGraphics();
-        g2d.drawImage(this.headLayersWidget.getBaseSkin(), 0, 16, 64, 64, 0, 16, 64, 64, null);
-        g2d.dispose();
+        this.skinButton.getImage().ifPresent(image -> {
+                    Graphics2D g2d = head.createGraphics();
+                    g2d.drawImage(image, 0, 16, 64, 64, 0, 16, 64, 64, null);
+                    g2d.dispose();
+                }
+        );
     }
 
-    public void openFolderExecute(ButtonWidget button) {
-        Util.getOperatingSystem().open(HEAD_SAVE_FOLDER_PATH.toFile());
+    public BufferedImage getBaseSkin() {
+        return this.baseSkin;
+    }
+
+    private void toggleFavoriteListExecute(ButtonComponent buttonComponent) {
+        this.showFavorites = !this.showFavorites;
+        this.toggleFavoriteList.setMessage(this.showFavorites ? SHOW_FAVORITES_TEXT : SHOW_ALL_TEXT);
+        this.applyFilters();
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        FzmmClient.CONFIG.save();
     }
 }

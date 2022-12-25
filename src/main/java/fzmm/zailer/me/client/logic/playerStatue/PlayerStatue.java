@@ -1,12 +1,15 @@
 package fzmm.zailer.me.client.logic.playerStatue;
 
-import fi.dy.masa.malilib.gui.Message;
-import fi.dy.masa.malilib.util.InfoUtils;
-import fzmm.zailer.me.client.gui.PlayerStatueScreen;
-import fzmm.zailer.me.client.gui.enums.options.DirectionOption;
+import fzmm.zailer.me.builders.ArmorStandBuilder;
+import fzmm.zailer.me.builders.ContainerBuilder;
+import fzmm.zailer.me.builders.DisplayBuilder;
+import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.*;
-import fzmm.zailer.me.config.Configs;
-import fzmm.zailer.me.utils.*;
+import fzmm.zailer.me.client.toast.LoadingPlayerStatueToast;
+import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.InventoryUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -14,12 +17,13 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Vec3f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,15 +34,13 @@ public class PlayerStatue {
     private final List<StatuePart> statueList;
     private final String name;
     private BufferedImage playerSkin;
-    private final Vec3f pos;
-    private final DirectionOption direction;
-    public static short progress = 0;
-    public static int partsLeft = 0;
+    private final Vector3f pos;
+    private final HorizontalDirectionOption direction;
+    private LoadingPlayerStatueToast toast;
 
-    public PlayerStatue(BufferedImage playerSkin, String name, Vec3f pos, DirectionOption direction) {
+    public PlayerStatue(BufferedImage playerSkin, String name, Vector3f pos, HorizontalDirectionOption direction) {
         this.playerSkin = playerSkin;
         this.name = name;
-        progress = 0;
         this.statueList = new ArrayList<>();
         this.pos = pos;
         this.direction = direction;
@@ -47,13 +49,8 @@ public class PlayerStatue {
     public PlayerStatue generateStatues() {
         this.statueList.clear();
 
-        if (Configs.Generic.CONVERT_SKINS_WITH_ALEX_MODEL_IN_STEVE_MODEL_IN_PLAYER_STATUE.getBooleanValue() && this.isAlexModel())
+        if (FzmmClient.CONFIG.playerStatue.convertSkinWithAlexModelInSteveModel() && this.isAlexModel())
             this.convertInSteveModel();
-
-        if (MinecraftClient.getInstance().currentScreen instanceof PlayerStatueScreen playerStatueScreen)
-            playerStatueScreen.reload();
-        partsLeft = 27;
-        InfoUtils.showGuiOrInGameMessage(Message.MessageType.INFO, "fzmm.gui.playerStatue.status.start");
 
         HeadModelSkin empty = new HeadModelSkin();
         HeadModelSkin bottom = new HeadModelSkin(HeadFace.HEAD_FACE.BOTTOM_FACE);
@@ -95,6 +92,9 @@ public class PlayerStatue {
         this.statueList.add(new StatuePart(StatuePartEnum.RIGHT_HEAD_BACK, "Right bottom back head", 6, bottom, 1, 0, -2, new HeadSkinManager(true, true, true)));
         this.statueList.add(new StatuePart(StatuePartEnum.RIGHT_HEAD_BACK, "Right top back head", 7, top, -2, 0, 1, new HeadSkinManager(true, false, true)));
 
+        this.toast = new LoadingPlayerStatueToast(this.statueList.size());
+        MinecraftClient.getInstance().getToastManager().add(this.toast);
+
         int delay = 0;
         for (StatuePart statuePart : this.statueList) {
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(delay));
@@ -104,11 +104,12 @@ public class PlayerStatue {
 
         this.fixGeneratingError();
 
-        InfoUtils.showGuiOrInGameMessage(Message.MessageType.INFO, "fzmm.gui.playerStatue.status.end");
+        this.toast.finish();
         return this;
     }
 
     public void fixGeneratingError() {
+        this.toast.secondTry();
         for (StatuePart statuePart : this.statueList) {
             if (!statuePart.isSkinGenerated()) {
                 int delay = statuePart.setStatueSkin(this.playerSkin, this.getSkinScale());
@@ -117,10 +118,10 @@ public class PlayerStatue {
         }
     }
 
-    public static ItemStack getStatueName(Vec3f pos, String name) {
-        float x = pos.getX() + 0.5f;
-        float y = pos.getY() - 0.1f;
-        float z = pos.getZ() + 0.5f;
+    public static ItemStack getStatueName(Vector3f pos, String name) {
+        float x = pos.x() + 0.5f;
+        float y = pos.y() - 0.1f;
+        float z = pos.z() + 0.5f;
 
         if (name != null && !name.isEmpty()) {
             try {
@@ -132,7 +133,7 @@ public class PlayerStatue {
             }
         }
 
-        ItemStack nameTagStack = new ArmorStandUtils().setPos(x, y, z).setAsHologram(name).getItem("Name tag");
+        ItemStack nameTagStack = ArmorStandBuilder.builder().setPos(x, y, z).setAsHologram(name).getItem("Name tag");
         NbtCompound fzmmTag = new NbtCompound();
         NbtCompound playerStatueTag = new NbtCompound();
 
@@ -171,32 +172,42 @@ public class PlayerStatue {
         return getStatueInContainer(this.getStatueItems(), this.pos);
     }
 
-    public static ItemStack getStatueInContainer(List<ItemStack> statueList, Vec3f pos) {
-        int x = (int) pos.getX();
-        int y = (int) pos.getY();
-        int z = (int) pos.getZ();
-        int color = FzmmUtils.RGBAtoRGB(Configs.Colors.PLAYER_STATUE.getColor()).intValue;
+    public static ItemStack getStatueInContainer(List<ItemStack> statueList, Vector3f pos) {
+        DecimalFormat decimalFormat = new DecimalFormat(".00");
+        String x = decimalFormat.format(pos.x());
+        String y = decimalFormat.format(pos.y());
+        String z = decimalFormat.format(pos.z());
+        int color = Integer.parseInt(FzmmClient.CONFIG.colors.playerStatue(), 16);
+        Style colorStyle = Style.EMPTY.withColor(color);
 
-        DisplayUtils displayUtils = new DisplayUtils(Configs.getConfigItem(Configs.Generic.PLAYER_STATUE_DEFAULT_CONTAINER))
-                .setName(Text.literal("Player Statue").setStyle(Style.EMPTY.withColor(color).withBold(true)))
-                .addLore("Pos: " + x + " " + y + " " + z, color);
+        ItemStack container = ContainerBuilder.builder()
+                .containerItem(FzmmUtils.getItem(FzmmClient.CONFIG.playerStatue.defaultContainer()))
+                //.maxItemByContainer(FzmmClient.CONFIG.playerStatue.defaultContainer())//todo
+                .addAll(statueList)
+                .setNameStyleToItems(colorStyle)
+                .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.item.playerStatue.lore.1").getString(), color)
+                .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.item.playerStatue.lore.2").getString(), color)
+                .getAsList()
+                .get(0);
 
-        InventoryUtils invUtils = new InventoryUtils(displayUtils.get())
-                .addItem(statueList)
-                .setNameStyleToItems(Style.EMPTY.withColor(color))
-                .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.playerStatue.item.lore.1").getString(), color)
-                .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.playerStatue.item.lore.2").getString(), color);
+        container = DisplayBuilder.of(container)
+                .setName(Text.translatable("fzmm.item.playerStatue.container.name").setStyle(colorStyle.withBold(true)))
+                .addLore(Text.translatable("fzmm.item.playerStatue.container.lore.1", x, y, z), color)
+                .get();
 
-        return invUtils.get();
+        return container;
     }
 
     public void notifyStatus(StatuePart part, int delayInSeconds) {
-        Message.MessageType status = part.isSkinGenerated() ? Message.MessageType.SUCCESS : Message.MessageType.ERROR;
-        String translation = part.isSkinGenerated() ? "fzmm.gui.playerStatue.status.generated" : "fzmm.gui.playerStatue.status.error";
-        InfoUtils.showGuiOrInGameMessage(status, translation, part.getName(), delayInSeconds, partsLeft);
+        this.toast.setDelayToNextStatue(delayInSeconds);
+        this.toast.partName(part.getName());
+        if (part.isSkinGenerated())
+            this.toast.generated();
+        else
+            this.toast.error();
     }
 
-    public static ItemStack updateStatue(ItemStack container, Vec3f pos, DirectionOption direction, String name) {
+    public static ItemStack updateStatue(ItemStack container, Vector3f pos, HorizontalDirectionOption direction, String name) {
         List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container);
         List<ItemStack> statueList = new ArrayList<>();
 

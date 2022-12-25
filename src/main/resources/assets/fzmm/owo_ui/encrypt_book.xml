@@ -1,0 +1,125 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <label id="title">
+                    <positioning type="absolute">20,20</positioning>
+                    <text translate="true">fzmm.gui.title.encryptbook</text>
+                </label>
+
+                <scroll direction="vertical">
+
+                    <flow-layout direction="vertical" id="options-list">
+                        <children>
+                            <text-box-row>
+                                <id>message</id>
+                            </text-box-row>
+                            <number-row>
+                                <id>seed</id>
+                            </number-row>
+                            <text-box-row>
+                                <id>paddingCharacters</id>
+                            </text-box-row>
+                            <text-box-row>
+                                <id>author</id>
+                            </text-box-row>
+                            <text-box-row>
+                                <id>title</id>
+                            </text-box-row>
+                            <slider-row>
+                                <id>maxMessageLength</id>
+                            </slider-row>
+                        </children>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">90</vertical>
+                    </sizing>
+
+                    <margins>
+                        <vertical>30</vertical>
+                    </margins>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="give-button">
+                            <text translate="true">fzmm.gui.encryptbook.button.give</text>
+
+                            <margins>
+                                <left>20</left>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                        <button id="get-decoder-button">
+                            <text translate="true">fzmm.gui.encryptbook.button.getDecoder</text>
+
+                            <margins>
+                                <left>4</left>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">0,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="back-button">
+                            <text translate="true">fzmm.gui.button.back</text>
+
+                            <margins>
+                                <right>20</right>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="faq-button">
+                            <text translate="true">fzmm.gui.button.faq</text>
+
+                            <margins>
+                                <right>20</right>
+                                <top>20</top>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,0</positioning>
+                </flow-layout>
+            </children>
+
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+</owo-ui>

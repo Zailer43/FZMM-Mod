@@ -9,9 +9,7 @@
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
-    "PlayerSkinTextureAccessor",
-    "malilib.ConfigOptionWrapperAccessor",
-    "malilib.WidgetConfigOptionMixin"
+    "PlayerSkinTextureAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

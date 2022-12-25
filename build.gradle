@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'fabric-loom' version '1.0-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -12,7 +12,7 @@ repositories {
         url = "https://maven.terraformersmc.com/releases/"
     }
 
-    maven { url 'https://masa.dy.fi/maven' }
+    maven { url 'https://maven.wispforest.io' }
 }
 
 dependencies {
@@ -23,10 +23,16 @@ dependencies {
     // Fabric API
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation(fabricApi.module('fabric-command-api-v2', project.fabric_version))
-    modImplementation(fabricApi.module('fabric-item-groups-v0', project.fabric_version))
+    modImplementation(fabricApi.module('fabric-item-group-api-v1', project.fabric_version))
+    modImplementation(fabricApi.module('fabric-key-binding-api-v1', project.fabric_version))
 
-    // Malilib
-    modImplementation "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
+    // owo lib
+    modImplementation annotationProcessor ("io.wispforest:owo-lib:${project.owo_version}")
+
+
+    // include this if you don't want force your users to install owo
+    // sentinel will warn them and give the option to download it automatically
+    include "io.wispforest:owo-sentinel:${project.owo_version}"
 
     // Mod Menu
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"

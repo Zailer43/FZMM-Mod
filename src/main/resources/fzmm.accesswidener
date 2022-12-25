@@ -1,3 +1,8 @@
 accessWidener v1 named
 
 accessible method net/minecraft/client/util/ScreenshotRecorder getScreenshotFilename (Ljava/io/File;)Ljava/io/File;
+accessible method net/minecraft/item/ItemGroups collect ([Lnet/minecraft/item/ItemGroup;)Ljava/util/List;
+accessible field net/minecraft/client/gui/screen/ingame/BookScreen MAX_TEXT_WIDTH I
+accessible field net/minecraft/item/ItemGroups GROUPS Ljava/util/List;
+mutable field net/minecraft/item/ItemGroups OPERATOR Lnet/minecraft/item/ItemGroup;
+mutable field net/minecraft/item/ItemGroups GROUPS Ljava/util/List;

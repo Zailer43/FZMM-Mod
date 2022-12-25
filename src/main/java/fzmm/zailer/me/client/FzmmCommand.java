@@ -6,7 +6,11 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
-import fzmm.zailer.me.utils.*;
+import fzmm.zailer.me.builders.DisplayBuilder;
+import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.HeadUtils;
+import fzmm.zailer.me.utils.InventoryUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
@@ -15,9 +19,9 @@ import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.EnchantmentArgumentType;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
+import net.minecraft.command.argument.RegistryEntryArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -26,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
@@ -45,7 +50,7 @@ public class FzmmCommand {
 
                     Text name = ctx.getArgument("name", Text.class);
 
-                    FzmmUtils.renameHandItem(name);
+                    DisplayBuilder.renameHandItem(name);
                     return 1;
                 }))
         );
@@ -54,11 +59,11 @@ public class FzmmCommand {
                 .executes(ctx -> sendHelpMessage("commands.fzmm.lore.help", BASE_COMMAND + " lore add/remove"))
                 .then(ClientCommandManager.literal("add")
                         .executes(ctx -> sendHelpMessage("commands.fzmm.lore.add.help", BASE_COMMAND + " lore add <message>"))
-                        .then(ClientCommandManager.argument("message", TextArgumentType.text()).executes(ctx -> {
+                        .then(ClientCommandManager.argument("id", TextArgumentType.text()).executes(ctx -> {
 
-                            Text message = ctx.getArgument("message", Text.class);
+                            Text message = ctx.getArgument("id", Text.class);
 
-                            DisplayUtils.addLoreToHandItem(message);
+                            DisplayBuilder.addLoreToHandItem(message);
                             return 1;
                         }))
                 ).then(ClientCommandManager.literal("remove")
@@ -97,7 +102,7 @@ public class FzmmCommand {
 
         fzmmCommand.then(ClientCommandManager.literal("enchant")
                 .executes(ctx -> sendHelpMessage("commands.fzmm.enchant.help", BASE_COMMAND + " enchant <enchantment> <level>"))
-                .then(ClientCommandManager.argument("enchantment", EnchantmentArgumentType.enchantment()).executes(ctx -> {
+                .then(ClientCommandManager.argument("enchantment", RegistryEntryArgumentType.registryEntry(registryAccess, RegistryKeys.ENCHANTMENT)).executes(ctx -> {
 
                     Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
 
@@ -116,7 +121,7 @@ public class FzmmCommand {
 
         fzmmCommand.then(ClientCommandManager.literal("fakeenchant")
                 .executes(ctx -> sendHelpMessage("commands.fzmm.fakeenchant.help", BASE_COMMAND + " fakeenchant <enchantment> <level>"))
-                .then(ClientCommandManager.argument("enchantment", EnchantmentArgumentType.enchantment()).executes(ctx -> {
+                .then(ClientCommandManager.argument("enchantment", RegistryEntryArgumentType.registryEntry(registryAccess, RegistryKeys.ENCHANTMENT)).executes(ctx -> {
 
                     Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
 
@@ -201,16 +206,14 @@ public class FzmmCommand {
     }
 
     private static int sendHelpMessage(String infoTranslationKey, String syntax) {
-        int whiteColor = 0xb7b7b7;
-        int fzmmColor = 0x478e47;
         Text infoTranslation = Text.translatable(infoTranslationKey)
-                .setStyle(Style.EMPTY.withColor(whiteColor));
+                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
 
         Text syntaxText = Text.literal(syntax)
-                .setStyle(Style.EMPTY.withColor(whiteColor));
+                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
 
         Text translation = Text.translatable("commands.fzmm.help.format", infoTranslation, syntaxText)
-                .setStyle(Style.EMPTY.withColor(fzmmColor));
+                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
 
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         assert player != null;
@@ -228,7 +231,7 @@ public class FzmmCommand {
     private static void addEnchant(Enchantment enchant, short level) {
         assert MC.player != null;
 
-        //{Enchantments:[{id:"minecraft:aqua_affinity",lvl:1s}]}
+        //{Enchantments:[{message:"minecraft:aqua_affinity",lvl:1s}]}
 
         ItemStack stack = MC.player.getInventory().getMainHandStack();
         NbtCompound tag = stack.getOrCreateNbt();
@@ -255,7 +258,7 @@ public class FzmmCommand {
                 ((MutableText) text).setStyle(style);
         });
 
-        stack = new DisplayUtils(stack).addLore(enchantMessage).get();
+        stack = DisplayBuilder.of(stack).addLore(enchantMessage).get();
 
         NbtCompound tag = stack.getOrCreateNbt();
         if (!tag.contains(ItemStack.ENCHANTMENTS_KEY, NbtElement.LIST_TYPE)) {
@@ -275,7 +278,7 @@ public class FzmmCommand {
             throw ERROR_WITHOUT_NBT;
         }
         assert stack.getNbt() != null;
-        String nbt = stack.getNbt().toString().replaceAll("§", "\u00a7");
+        String nbt = stack.getNbt().toString();//.replaceAll("§", "\\\\u00a7");
 
         MutableText message = Text.literal(stack + ": " + nbt)
                 .setStyle(Style.EMPTY
@@ -311,7 +314,7 @@ public class FzmmCommand {
     private static void fullContainer(int slotsToFill, int firstSlots) {
         assert MC.player != null;
 
-        //{BlockEntityTag:{Items:[{Slot:0b,id:"minecraft:stone",Count:1b}],id:"minecraft:dispenser"}}
+        //{BlockEntityTag:{Items:[{Slot:0b,id:"minecraft:stone",Count:1b}]}}
 
         ItemStack containerItemStack = MC.player.getInventory().getMainHandStack();
         ItemStack itemStack = MC.player.getOffHandStack();

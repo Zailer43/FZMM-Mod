@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.logic.playerStatue;
 
-import fzmm.zailer.me.client.gui.enums.options.DirectionOption;
+import fzmm.zailer.me.builders.ArmorStandBuilder;
+import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.AbstractStatueSkinManager;
 import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.HeadModelSkin;
-import fzmm.zailer.me.utils.ArmorStandUtils;
 import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import fzmm.zailer.me.utils.position.PosF;
@@ -12,7 +12,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3f;
+import org.joml.Vector3f;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -24,7 +24,7 @@ public class StatuePart {
     private final HeadModelSkin headModelSkin;
     private final StatuePartEnum part;
     private final String name;
-    private final DirectionOption direction;
+    private final HorizontalDirectionOption direction;
     private PosF basePos;
     private final int headHeight;
     private int rotation;
@@ -39,7 +39,7 @@ public class StatuePart {
     public StatuePart(StatuePartEnum part, String name, int headHeight, HeadModelSkin headModelSkin, int zFightX, int zFightY, int zFightZ, AbstractStatueSkinManager skinManager) {
         this.part = part;
         this.name = name;
-        this.direction = DirectionOption.NORTH;
+        this.direction = HorizontalDirectionOption.NORTH;
         this.basePos = new PosF(0f, 0f);
         this.headHeight = headHeight;
         this.rotation = 0;
@@ -49,12 +49,12 @@ public class StatuePart {
         this.skinGenerated = false;
         this.skinValue = DEFAULT_SKIN_VALUE;
         this.headModelSkin = HeadModelSkin.of(this.part.getDefaultHeadModel(), headModelSkin);
-        this.setDirection(DirectionOption.NORTH);
+        this.setDirection(HorizontalDirectionOption.NORTH);
         this.headSkin = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
         this.skinManager = skinManager;
     }
 
-    public StatuePart(StatuePartEnum part, String name, int headHeight, int zFightX, int zFightY, int zFightZ, DirectionOption direction, String skinValue) {
+    public StatuePart(StatuePartEnum part, String name, int headHeight, int zFightX, int zFightY, int zFightZ, HorizontalDirectionOption direction, String skinValue) {
         this.part = part;
         this.name = name;
         this.direction = direction;
@@ -104,7 +104,7 @@ public class StatuePart {
         StatuePartEnum part = StatuePartEnum.get(playerStatueTag.getString(PlayerStatueTags.PART));
         String name = playerStatueTag.getString(PlayerStatueTags.NAME);
         int headHeight = playerStatueTag.getInt(PlayerStatueTags.HEAD_HEIGHT);
-        DirectionOption direction = DirectionOption.values()[playerStatueTag.getInt(PlayerStatueTags.DIRECTION)];
+        HorizontalDirectionOption direction = HorizontalDirectionOption.values()[playerStatueTag.getInt(PlayerStatueTags.DIRECTION)];
         String skinValue = playerStatueTag.getString(PlayerStatueTags.SKIN_VALUE);
         int x = zFight.getInt("x");
         int y = zFight.getInt("y");
@@ -153,20 +153,22 @@ public class StatuePart {
         return this.name;
     }
 
-    public ItemStack get(Vec3f pos, DirectionOption direction) {
+    public ItemStack get(Vector3f pos, HorizontalDirectionOption direction) {
         if (!this.isSkinGenerated())
             return new ItemStack(Items.BARRIER);
 
         this.setDirection(direction);
         this.fixZFight(pos);
-        float x = pos.getX() + this.basePos.getX();
-        float y = pos.getY() + this.headHeight * 0.25f - 0.9f;
-        float z = pos.getZ() + this.basePos.getY();
+        float x = pos.x() + this.basePos.getX();
+        float y = pos.y() + this.headHeight * 0.25f - 0.9f;
+        float z = pos.z() + this.basePos.getY();
 
-        ItemStack statuePart = new ArmorStandUtils().setPos(x, y, z)
+        ItemStack statuePart = ArmorStandBuilder.builder()
+                .setPos(x, y, z)
                 .setImmutableAndInvisible()
-                .setRightArmPose(new Vec3f(-45f, this.rotation, 0f))
-                .setRightHandItem(HeadUtils.playerHeadFromSkin(this.skinValue)).getItem(this.name);
+                .setRightArmPose(new Vector3f(-45f, this.rotation, 0f))
+                .setRightHandItem(HeadUtils.playerHeadFromSkin(this.skinValue))
+                .getItem(this.name);
 
         statuePart.setSubNbt(TagsConstant.FZMM, this.writeFzmmTag());
         return statuePart;
@@ -186,8 +188,6 @@ public class StatuePart {
         }
         this.skinValue = headUtils.getSkinValue();
         this.skinGenerated = headUtils.isSkinGenerated();
-        if (this.skinGenerated)
-            PlayerStatue.partsLeft--;
         return (int) TimeUnit.MILLISECONDS.toSeconds(headUtils.getDelayForNextInMillis());
     }
 
@@ -201,11 +201,11 @@ public class StatuePart {
 
     }
 
-    private void fixZFight(Vec3f pos) {
+    private void fixZFight(Vector3f pos) {
         pos.add(zFightX * Z_FIGHT_FIX_DISTANCE, zFightY * Z_FIGHT_FIX_DISTANCE, zFightZ * Z_FIGHT_FIX_DISTANCE);
     }
 
-    private void setDirection(DirectionOption direction) {
+    private void setDirection(HorizontalDirectionOption direction) {
         PosF newPos = switch (direction) {
             case EAST -> {
                 this.basePos = new PosF(0.93f, 0.7f);
