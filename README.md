@@ -7,17 +7,19 @@
 
 
 [![Discord invite](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white&style=for-the-badge&logo=appveyor)](https://discord.com/invite/y3GcaUNgCr)
-[![Downloads](https://img.shields.io/github/downloads/Zailer43/FZMM-Mod/total?color=red&logo=github&style=for-the-badge)](https://discord.com/invite/y3GcaUNgCr)
+[![Downloads](https://img.shields.io/github/downloads/Zailer43/FZMM-Mod/total?color=red&logo=github&style=for-the-badge)](https://github.com/Zailer43/FZMM-Mod/actions)
+[![Modrinth](https://modrinth-utils.vercel.app/api/badge/downloads?id=fzmm&logo=true&style=for-the-badge)](https://modrinth.com/mod/fzmm)
+
 
 A fabric mod that is mainly for editing or creating NBT of items in creative, but it also has a few utilities.
 
 </div>
 
 ## How to use?
-The default key to use the mod is `Z`, there are also some client-side commands with `/fzmm`
+The default key to use the mod is `Z` (can be changed in controls), there are also some client-side commands with `/fzmm`
 
 ## Dependencies
-* [Malilib](https://www.curseforge.com/minecraft/mc-mods/malilib)
+* [owo-lib](https://modrinth.com/mod/owo-lib)
 * [Fabric API](https://modrinth.com/mod/fabric-api)
 
 ## Imagetext
@@ -45,6 +47,7 @@ A generator of colored characters that make an image.
 ### GUI
 
 ![Imagetext gui](images/imagetext_gui.png)
+
 </details>
 
 ## Gradient
@@ -59,13 +62,14 @@ Note: when doing this I didn't know [PlaceHolderAPI](https://github.com/Patbox/F
 
 ![Two colors](images/gradient_two_colors.png)
 
-### HSB (rainbow)
+### Rainbow
 
-![hsb](images/gradient_hsb.png)
+![Rainbow](images/gradient_rainbow.png)
 
 ### Item example
 
 ![Item example](images/gradient_item.png)
+
 </details>
 
 ## Player Statue
@@ -93,6 +97,7 @@ It also allows 128x128 skins.
 ### GUI
 
 ![Player statue GUI](images/player_statue_gui.png)
+
 </details>
 
 ## Head generator
@@ -111,14 +116,17 @@ Disclaimer: the second layer of the original skin is removed (for now).
 ### Examples
 
 ![Examples](images/head_generator_examples.png)
+
 </details>
 
 ## Item groups
 
-### Unobtainable items
+### Operator utilities
 
-The real list of unobtainable items and not the list of generic mods
+An improved version of the one provided by Minecraft 1.19.3
 It includes:
+
+- Access only with creative, **op is not required**
 - Armor stand with arms
 - Small armor stand
 - Small armor stand with arms
@@ -126,10 +134,9 @@ It includes:
 - Invisible glow item frame
 - Special name tags with the description of use for each one
 - Unobtainable paints (1.19+)
-- All light states
 
 
-![Unobtainable items](images/unobtainable_items.png)
+![Unobtainable items](images/operator_utilities.png)
 
 ### Useful block states
 
@@ -151,6 +158,12 @@ A list of heads of all connected players.
   Examples:
   - [Corrected Mob Heads](https://modrinth.com/resourcepack/corrected-mob-heads)
   - [Shelf+](https://www.curseforge.com/minecraft/texture-packs/shelf)
+
+## Special thanks to:
+- [Mineskin](https://mineskin.org) for being able to make Player Statue and Head Generator possible thanks to their API
+- [Logstone & Jespertheend](https://statue.jespertheend.com) for creating Player Statue (or at least doing something known)
+- [owo-lib](https://github.com/wisp-forest/owo-lib) and its contributors for making a fairly complete library
+- The past, present and future contributors of FZMM mod, including people who report bugs or give me suggestions 
 
 ## Disclaimer
 
