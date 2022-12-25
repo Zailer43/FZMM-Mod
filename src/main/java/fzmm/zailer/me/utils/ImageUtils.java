@@ -40,7 +40,7 @@ public class ImageUtils {
     public static Optional<BufferedImage> getPlayerSkin(String name) throws IOException, NullPointerException, JsonIOException {
         Optional<BufferedImage> skin = getPlayerSkinFromCache(name);
 
-        return skin.isEmpty() ? getPlayerSkinFromMojang(name) : Optional.empty();
+        return skin.isEmpty() ? getPlayerSkinFromMojang(name) : skin;
     }
 
     public static Optional<BufferedImage> getPlayerSkinFromMojang(String name) throws IOException {

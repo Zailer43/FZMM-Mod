@@ -91,55 +91,68 @@
                                 </flow-layout>
 
                                 <scroll direction="vertical">
-                                <flow-layout direction="vertical">
-                                    <children>
-                                        <flow-layout direction="horizontal" id="head-list-nav">
-                                            <children>
-                                                <label>
-                                                    <text translate="true">fzmm.gui.headGenerator.label.headList</text>
-                                                    <tooltip-text translate="true">fzmm.gui.headGenerator.label.headList.tooltip</tooltip-text>
-                                                    <margins>
-                                                        <all>4</all>
-                                                    </margins>
-                                                </label>
+                                    <flow-layout direction="vertical">
+                                        <children>
+                                            <flow-layout direction="horizontal">
+                                                <children>
+                                                    <label>
+                                                        <text translate="true">fzmm.gui.headGenerator.label.headList</text>
+                                                        <tooltip-text translate="true">fzmm.gui.headGenerator.label.headList.tooltip</tooltip-text>
 
-                                                <flow-layout direction="horizontal">
-                                                    <children>
-                                                        <button id="toggle-favorite-list">
-                                                            <text translate="true">fzmm.gui.headGenerator.button.toggleFavoriteList.all</text>
-                                                        </button>
-                                                    </children>
-                                                    <positioning type="relative">0,100</positioning>
-                                                </flow-layout>
-                                            </children>
-                                        </flow-layout>
+                                                        <margins>
+                                                            <all>4</all>
+                                                        </margins>
+                                                        <positioning type="relative">0,0</positioning>
+                                                    </label>
 
-                                        <flow-layout direction="vertical" id="head-list">
-                                            <children>
-                                            </children>
-                                        </flow-layout>
-                                    </children>
-                                </flow-layout>
+                                                    <flow-layout direction="horizontal" id="head-list-nav">
+                                                        <children>
+                                                            <button id="toggle-favorite-list">
+                                                                <text translate="true">fzmm.gui.headGenerator.button.toggleFavoriteList.all</text>
+                                                            </button>
+                                                        </children>
 
-                                <sizing>
-                                    <vertical method="fill">100</vertical>
-                                    <horizontal method="fill">100</horizontal>
-                                </sizing>
+                                                        <vertical-alignment>center</vertical-alignment>
+                                                        <horizontal-alignment>right</horizontal-alignment>
 
-                                <scrollbar>
-                                    <flat>#FFFFFF</flat>
-                                </scrollbar>
+                                                        <margins>
+                                                            <all>3</all>
+                                                        </margins>
 
-                                <surface>
-                                    <outline>#FFFFFF</outline>
-                                </surface>
+                                                        <sizing>
+                                                            <horizontal method="fill">100</horizontal>
+                                                            <vertical method="fixed">20</vertical>
+                                                        </sizing>
+                                                    </flow-layout>
+                                                </children>
+                                            </flow-layout>
 
-                                <padding>
-                                    <all>1</all>
-                                </padding>
+                                            <flow-layout direction="vertical" id="head-list">
+                                                <children>
+                                                </children>
+                                            </flow-layout>
+                                        </children>
+                                    </flow-layout>
 
-                                <positioning type="relative">0,0</positioning>
-                            </scroll>
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                        <horizontal method="fill">100</horizontal>
+                                    </sizing>
+
+                                    <scrollbar>
+                                        <flat>#FFFFFF</flat>
+                                    </scrollbar>
+
+                                    <surface>
+                                        <outline>#FFFFFF</outline>
+                                    </surface>
+
+                                    <padding>
+                                        <all>1</all>
+                                    </padding>
+
+                                    <positioning type="relative">0,0</positioning>
+                                </scroll>
                             </children>
 
                             <sizing>
