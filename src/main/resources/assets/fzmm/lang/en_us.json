@@ -122,6 +122,7 @@
   ],
   "fzmm.gui.encryptbook.option.title": "Book title",
   "fzmm.gui.encryptbook.option.title.tooltip": "Title of the book",
+  "fzmm.gui.headGenerator.button.resourcePackInfo": "Resource pack info",
   "fzmm.gui.headGenerator.button.giveHead": "Give head",
   "fzmm.gui.headGenerator.button.openFolder": "Open skins folder",
   "fzmm.gui.headGenerator.button.saveSkin": "Save skin",

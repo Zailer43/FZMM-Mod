@@ -22,6 +22,7 @@ import io.wispforest.owo.ui.core.Sizing;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -45,6 +46,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class HeadGeneratorScreen extends BaseFzmmScreen {
+    private static final String HEAD_GENERATOR_WIKI_LINK = "https://github.com/Zailer43/FZMM-Mod/wiki/Head-Generator-Wiki";
     private static final Path SKIN_SAVE_FOLDER_PATH = Path.of(FabricLoader.getInstance().getGameDir().toString(), FzmmClient.MOD_ID, "skins");
     private static final String SKIN_ID = "skin";
     private static final String SKIN_SOURCE_TYPE_ID = "skinSourceType";
@@ -56,6 +58,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private static final String SAVE_SKIN_ID = "save-skin";
     private static final String OPEN_SKIN_FOLDER_ID = "open-folder";
     private static final String TOGGLE_FAVORITE_LIST_ID = "toggle-favorite-list";
+    private static final String WIKI_BUTTON_ID = "wiki-button";
     private static final Text SHOW_ALL_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.all");
     private static final Text SHOW_FAVORITES_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.favorite");
     private ImageButtonWidget skinButton;
@@ -96,6 +99,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         this.showFavorites = false;
         int toggleFavoriteListWidth = Math.max(this.textRenderer.getWidth(SHOW_ALL_TEXT), this.textRenderer.getWidth(SHOW_FAVORITES_TEXT)) + BUTTON_TEXT_PADDING;
         this.toggleFavoriteList.horizontalSizing(Sizing.fixed(toggleFavoriteListWidth));
+        ButtonRow.setup(rootComponent, WIKI_BUTTON_ID, true, this::wikiExecute);
 
     }
 
@@ -276,6 +280,17 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         this.showFavorites = !this.showFavorites;
         this.toggleFavoriteList.setMessage(this.showFavorites ? SHOW_FAVORITES_TEXT : SHOW_ALL_TEXT);
         this.applyFilters();
+    }
+
+    private void wikiExecute(ButtonWidget buttonWidget) {
+        assert this.client != null;
+
+        this.client.setScreen(new ConfirmLinkScreen(bool -> {
+            if (bool)
+                Util.getOperatingSystem().open(HEAD_GENERATOR_WIKI_LINK);
+
+            this.client.setScreen(this);
+        }, HEAD_GENERATOR_WIKI_LINK, true));
     }
 
     @Override

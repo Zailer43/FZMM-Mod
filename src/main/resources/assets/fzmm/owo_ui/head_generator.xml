@@ -184,6 +184,23 @@
                 <flow-layout direction="horizontal">
                     <children>
 
+                        <button id="wiki-button">
+                            <text translate="true">fzmm.gui.headGenerator.button.resourcePackInfo</text>
+
+                            <margins>
+                                <right>20</right>
+                                <top>20</top>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,0</positioning>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
                         <button id="give-button">
                             <text translate="true">fzmm.gui.headGenerator.button.giveHead</text>
 
