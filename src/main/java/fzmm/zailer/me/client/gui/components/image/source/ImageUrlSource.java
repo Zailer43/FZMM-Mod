@@ -4,6 +4,8 @@ import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Optional;
 
 public class ImageUrlSource implements IImageSource {
@@ -15,21 +17,26 @@ public class ImageUrlSource implements IImageSource {
 
     @Override
     public ImageStatus loadImage(String value) {
+        this.image = null;
         try {
             if (value.isEmpty())
                 return ImageStatus.NO_IMAGE_LOADED;
+
             Optional<BufferedImage> optionalImage = ImageUtils.getImageFromUrl(value);
-            optionalImage.ifPresent(image -> this.image = image);
+            this.image = optionalImage.orElse(null);
+
             return optionalImage.isEmpty() ? ImageStatus.URL_HAS_NO_IMAGE : ImageStatus.IMAGE_LOADED;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MalformedURLException ignored) {
             return ImageStatus.MALFORMED_URL;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ImageStatus.UNEXPECTED_ERROR;
         }
     }
 
     @Override
-    public BufferedImage getImage() {
-        return this.image;
+    public Optional<BufferedImage> getImage() {
+        return Optional.ofNullable(this.image);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package fzmm.zailer.me.client.gui.imagetext;
 
-import blue.endless.jankson.annotation.Nullable;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
@@ -10,7 +9,6 @@ import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.imagetext.tabs.ImagetextBookPageTab;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
-import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.config.ui.component.ConfigToggleButton;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -18,6 +16,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.math.Vec2f;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
@@ -86,11 +85,12 @@ public class ImagetextScreen extends BaseFzmmScreen {
                 button.tooltip(this.imagetextLogic.getText());
             }
         });
-        this.imageButton.setImageLoadedEvent(image -> {
-            onWidthChange.onPress(null);
-            executeButton.active = true;
-            previewButton.active = true;
-            return ImageStatus.IMAGE_LOADED;
+        this.imageButton.setButtonCallback(image -> {
+            boolean hasImage = image != null;
+            executeButton.active = hasImage;
+            previewButton.active = hasImage;
+            if (hasImage)
+                this.updateAspectRatio(image);
         });
     }
 
@@ -147,4 +147,16 @@ public class ImagetextScreen extends BaseFzmmScreen {
             this.imagetextLogic.addResolution();
     }
 
+    private void updateAspectRatio(BufferedImage image) {
+        if (!((boolean) this.preserveImageAspectRatioToggle.parsedValue()))
+            return;
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        if (height > width)
+            this.onResolutionChanged(this.imageButton, this.preserveImageAspectRatioToggle, this.heightSlider, this.widthSlider, false);
+        else
+            this.onResolutionChanged(this.imageButton, this.preserveImageAspectRatioToggle, this.widthSlider, this.heightSlider, true);
+    }
 }

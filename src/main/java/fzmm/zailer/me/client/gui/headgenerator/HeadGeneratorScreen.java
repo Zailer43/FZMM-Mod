@@ -13,7 +13,6 @@ import fzmm.zailer.me.client.gui.headgenerator.components.HeadLayerComponentEntr
 import fzmm.zailer.me.client.logic.headGenerator.HeadData;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
-import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
@@ -78,7 +77,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
         //general
         this.skinButton = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, SkinMode.NAME);
-        this.skinButton.setImageLoadedEvent(this::onLoadSkin);
+        this.skinButton.setButtonCallback(this::imageCallback);
         this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "");
         rootComponent.childById(TextFieldWidget.class, ImageButtonRow.getImageValueFieldId(SKIN_ID))
                 .setChangedListener(this.headNameField::setText);
@@ -100,17 +99,17 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
     }
 
-    private ImageStatus onLoadSkin(BufferedImage skinBase) {
+    private void imageCallback(BufferedImage skinBase) {
         assert this.client != null;
 
+        if (skinBase == null)
+            return;
         this.baseSkin = skinBase;
 
         this.client.execute(() -> {
             this.tryFirstSkinLoad();
             this.updatePreviews();
         });
-
-        return ImageStatus.IMAGE_LOADED;
     }
 
     private void tryFirstSkinLoad() {

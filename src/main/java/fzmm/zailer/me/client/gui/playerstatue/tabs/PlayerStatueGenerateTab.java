@@ -41,6 +41,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
         this.executeButton = rootComponent.childById(ButtonWidget.class, ButtonRow.getButtonId(PlayerStatueScreen.EXECUTE_ID));
 
         this.skinButton.setImageLoadedEvent(this::skinCallback);
+        this.skinButton.setButtonCallback(bufferedImage -> this.executeButton.active = this.canExecute());
     }
 
 
@@ -83,13 +84,11 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     }
 
     public ImageStatus skinCallback(BufferedImage image) {
-        assert image != null;
         int width = image.getWidth();
         int height = image.getHeight();
         if (!(width == 64 && height == 64) && !(width == 128 && height == 128))
             return OLD_SKIN_FORMAT_NOT_SUPPORTED;
 
-        this.executeButton.active = this.canExecute(true);
         return ImageStatus.IMAGE_LOADED;
     }
 

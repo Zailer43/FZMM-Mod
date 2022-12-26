@@ -16,6 +16,8 @@ public class ImagePlayerNameSource implements IImageSource {
 
     @Override
     public ImageStatus loadImage(String value) {
+        this.image = null;
+
         try {
             if (!this.predicate(value))
                 return ImageStatus.INVALID_USERNAME;
@@ -31,8 +33,8 @@ public class ImagePlayerNameSource implements IImageSource {
     }
 
     @Override
-    public BufferedImage getImage() {
-        return this.image;
+    public Optional<BufferedImage> getImage() {
+        return Optional.ofNullable(this.image);
     }
 
     @Override

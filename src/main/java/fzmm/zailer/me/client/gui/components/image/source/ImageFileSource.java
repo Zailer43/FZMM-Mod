@@ -6,6 +6,7 @@ import fzmm.zailer.me.utils.ImageUtils;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 public class ImageFileSource implements IImageSource {
     private BufferedImage image;
@@ -16,6 +17,8 @@ public class ImageFileSource implements IImageSource {
 
     @Override
     public ImageStatus loadImage(String value) {
+        this.image = null;
+
         try {
             File file = Paths.get(value).toFile();
             if (!file.exists())
@@ -33,8 +36,8 @@ public class ImageFileSource implements IImageSource {
     }
 
     @Override
-    public BufferedImage getImage() {
-        return this.image;
+    public Optional<BufferedImage> getImage() {
+        return Optional.ofNullable(this.image);
     }
 
     @Override
