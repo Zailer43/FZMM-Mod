@@ -226,8 +226,11 @@ public class FzmmItemGroup {
         itemFrame.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
         glowItemFrame.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
 
-        itemFrame.setCustomName(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "invisibleItemFrame").setStyle(Style.EMPTY.withItalic(false)));
-        glowItemFrame.setCustomName(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "invisibleGlowItemFrame").setStyle(Style.EMPTY.withItalic(false)));
+        String itemFrameName = Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "invisibleItemFrame").getString();
+        String glowItemFrameName = Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "invisibleGlowItemFrame").getString();
+
+        itemFrame.setCustomName(Text.literal(itemFrameName).setStyle(Style.EMPTY.withItalic(false)));
+        glowItemFrame.setCustomName(Text.literal(glowItemFrameName).setStyle(Style.EMPTY.withItalic(false)));
 
         entries.add(itemFrame);
         entries.add(glowItemFrame);
