@@ -50,7 +50,7 @@
                             </screen-tab>
 
                             <screen-tab>
-                                <id>bookPageMode</id>
+                                <id>bookPage</id>
                                 <children>
                                     <enum-row>
                                         <id>bookPageMode</id>
