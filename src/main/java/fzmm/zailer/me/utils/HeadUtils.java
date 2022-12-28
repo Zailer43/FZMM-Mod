@@ -12,15 +12,6 @@ import net.minecraft.nbt.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,14 +19,19 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Optional;
+import java.util.UUID;
 
 public class HeadUtils {
     public static final String MINESKIN_API = "https://api.mineskin.org/";
     private static final Identifier HEADS_WATER_MARK = new Identifier(FzmmClient.MOD_ID, "textures/watermark/heads_watermark.png");
     private static final Logger LOGGER = LogManager.getLogger("FZMM HeadUtils");
+    private static final String BOUNDARY = UUID.randomUUID().toString();
     private String skinValue;
     private boolean skinGenerated;
     private int delayForNextInMillis;
@@ -83,35 +79,43 @@ public class HeadUtils {
         ImageIO.write(headSkin, "png", baos);
         byte[] skin = baos.toByteArray();
 
-        try (CloseableHttpClient httpclient = HttpClients.custom().setUserAgent("FZMM/1.0").build()) {
-            HttpPost httppost = new HttpPost(MINESKIN_API + "generate/upload");
-            httppost.setHeader("Authorization", "Bearer " + config.apiKey());
+        URL url = new URL(MINESKIN_API + "generate/upload");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Authorization", "Bearer " + config.apiKey());
+        conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
 
-            HttpEntity reqEntity = MultipartEntityBuilder.create()
-                    .addPart("visibility", new StringBody(config.publicSkins() ? "0" : "1", ContentType.TEXT_PLAIN))
-                    .addBinaryBody("file", skin, ContentType.APPLICATION_FORM_URLENCODED, "head")
-                    .build();
+        try (DataOutputStream dataOutputStream = new DataOutputStream(conn.getOutputStream())) {
+            dataOutputStream.writeBytes("--" + BOUNDARY + "\r\n");
+            dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"visibility\"\r\n");
+            dataOutputStream.writeBytes("Content-Type: text/plain\r\n\r\n");
+            dataOutputStream.writeBytes(config.publicSkins() ? "0" : "1");
+            dataOutputStream.writeBytes("\r\n--" + BOUNDARY + "\r\n");
+            dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"head\"\r\n");
+            dataOutputStream.writeBytes("Content-Type: application/x-www-form-urlencoded\r\n\r\n");
+            dataOutputStream.write(skin);
+            dataOutputStream.writeBytes("\r\n--" + BOUNDARY + "--\r\n");
+        }
 
-            httppost.setEntity(reqEntity);
-
-            try (CloseableHttpResponse response = httpclient.execute(httppost)) {
-                HttpEntity resEntity = response.getEntity();
-                int httpCode = response.getStatusLine().getStatusCode();
-                if (httpCode == HttpURLConnection.HTTP_OK) {
-                    this.useResponse(EntityUtils.toString(resEntity));
-                } else {
-                    LOGGER.warn("HTTP error " + httpCode + " generating skin in '" + skinName + "'");
-                    this.delayForNextInMillis = 6000;
+        int httpCode = conn.getResponseCode();
+        if (httpCode / 100 == 2) {
+            try (InputStreamReader isr = new InputStreamReader(conn.getInputStream())) {
+                StringBuilder sb = new StringBuilder();
+                int ch;
+                while ((ch = isr.read()) != -1) {
+                    sb.append((char) ch);
                 }
-                EntityUtils.consume(resEntity);
+                this.useResponse(sb.toString());
             }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        } else {
+            LOGGER.warn("HTTP error " + httpCode + " generating skin in '" + skinName + "'");
+            this.delayForNextInMillis = 6000;
         }
         return this;
     }
 
-    private void useResponse(String reply) throws IOException, InterruptedException {
+    private void useResponse(String reply) {
         //https://rest.wiki/?https://api.mineskin.org/openapi.yml
         JsonObject json = (JsonObject) JsonParser.parseString(reply);
         this.skinValue = json.getAsJsonObject("data").getAsJsonObject("texture").get("value").getAsString();

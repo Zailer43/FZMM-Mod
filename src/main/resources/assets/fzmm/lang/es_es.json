@@ -272,6 +272,11 @@
   "fzmm.gui.title.main": "FZMM Gui",
   "fzmm.gui.title.playerStatue": "Estatua de jugador",
   "fzmm.gui.title.textFormat": "Text format",
+  "fzmm.gui.warning.requiresCreative": {
+    "bold": true,
+    "color": "#df771f",
+    "text": "* Requiere modo creativo"
+  },
   "fzmm.item.imagetext.book.title": "ImagenLibro",
   "fzmm.item.imagetext.hologram.lore.1": "XYZ: %s %s %s",
   "fzmm.item.imagetext.hologram.lore.2": "Resolución: %sx%s",

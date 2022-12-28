@@ -43,14 +43,6 @@ dependencies {
     // Mod Menu
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
-    implementation "org.apache.httpcomponents:httpclient:${apache_httpclient_version}"
-    include "org.apache.httpcomponents:httpclient:${apache_httpclient_version}"
-
-    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime
-    implementation "org.apache.httpcomponents:httpmime:${apache_httpmime_version}"
-    include "org.apache.httpcomponents:httpmime:${apache_httpmime_version}"
-
 }
 
 processResources {
