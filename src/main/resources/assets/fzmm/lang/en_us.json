@@ -55,6 +55,10 @@
     "text": "★",
     "color": "#ECC709"
   },
+  "fzmm.gui.button.favorite.enabled_easter_egg": {
+    "color": "#F4300B",
+    "text": "❤"
+  },
   "fzmm.gui.button.giveHead": "Give head",
   "fzmm.gui.button.loadImage": "Load image",
   "fzmm.gui.button.loadSkin": "Load skin",

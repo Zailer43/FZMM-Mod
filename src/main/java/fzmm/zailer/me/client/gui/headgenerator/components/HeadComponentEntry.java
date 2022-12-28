@@ -18,6 +18,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.random.Random;
 
 import java.awt.image.BufferedImage;
 import java.util.Set;
@@ -26,6 +27,7 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     public static final Text GIVE_BUTTON_TEXT = Text.translatable("fzmm.gui.button.giveHead");
     private static final Text ADD_LAYER_BUTTON_TEXT = Text.translatable("fzmm.gui.button.add");
     private static final Text FAVORITE_ENABLED_TEXT = Text.translatable("fzmm.gui.button.favorite.enabled");
+    private static final Text FAVORITE_ENABLED_EASTER_EGG_TEXT = Text.translatable("fzmm.gui.button.favorite.enabled_easter_egg");
     private static final Text FAVORITE_DISABLED_TEXT = Text.translatable("fzmm.gui.button.favorite.disabled");
     private final ButtonComponent giveButton;
     private final ButtonComponent favoriteButton;
@@ -100,11 +102,23 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
 
         config.favoriteSkins(favorites);
         this.isFavorite = !this.isFavorite;
-        this.updateFavoriteText();
+        this.updateFavoriteText(true);
     }
 
     private void updateFavoriteText() {
-        this.favoriteButton.setMessage(this.isFavorite ? FAVORITE_ENABLED_TEXT : FAVORITE_DISABLED_TEXT);
+        this.updateFavoriteText(false);
+    }
+
+    private void updateFavoriteText(boolean easterEgg) {
+        Text message;
+        if (this.isFavorite) {
+            int number = easterEgg ? Random.create().nextBetween(0, 40) : 0;
+            message = number == 1 ? FAVORITE_ENABLED_EASTER_EGG_TEXT : FAVORITE_ENABLED_TEXT;
+        } else {
+            message = FAVORITE_DISABLED_TEXT;
+        }
+
+        this.favoriteButton.setMessage(message);
     }
 
     public void filter(String searchValue, boolean toggledFavorites) {
