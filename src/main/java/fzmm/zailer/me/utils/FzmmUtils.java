@@ -142,4 +142,9 @@ public class FzmmUtils {
     public static Item getItem(String value) {
         return Registries.ITEM.getOrEmpty(new Identifier(value)).orElse(Items.STONE);
     }
+
+    public static boolean isCreative() {
+        assert MinecraftClient.getInstance().player != null;
+        return MinecraftClient.getInstance().player.isCreative() || FzmmClient.CONFIG.general.giveClientSide();
+    }
 }

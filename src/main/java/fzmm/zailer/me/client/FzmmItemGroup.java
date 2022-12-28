@@ -1,17 +1,12 @@
 package fzmm.zailer.me.client;
 
-import com.mojang.authlib.GameProfile;
 import fzmm.zailer.me.builders.ArmorStandBuilder;
 import fzmm.zailer.me.builders.BlockStateItemBuilder;
 import fzmm.zailer.me.builders.CrossbowBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
-import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.block.LightBlock;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.item.*;
@@ -29,7 +24,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.raid.Raid;
 
-import java.util.Comparator;
 import java.util.List;
 
 public class FzmmItemGroup {
@@ -177,25 +171,6 @@ public class FzmmItemGroup {
                         entries.add(chest);
                     }
                 }).build();
-
-        FabricItemGroup.builder(new Identifier(FzmmClient.MOD_ID, "player_heads"))
-                .icon(() -> new ItemStack(Items.PLAYER_HEAD))
-                .entries((enabledFeatures, entries, operatorEnabled) -> {
-
-                    ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
-                    if (clientPlayer != null) {
-                        List<GameProfile> profileList = clientPlayer.networkHandler.getPlayerList().stream()
-                                .map(PlayerListEntry::getProfile)
-                                .sorted(Comparator.comparing(GameProfile::getName))
-                                .toList();
-
-                        for (GameProfile profile : profileList) {
-                            entries.add(HeadUtils.getPlayerHead(profile));
-                        }
-                    }
-
-                }).build();
-
     }
 
     private static void addArmorStand(ItemGroup.Entries entries) {

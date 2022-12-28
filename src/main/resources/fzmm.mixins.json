@@ -9,7 +9,8 @@
     "ItemFrameEntityRendererMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
-    "PlayerSkinTextureAccessor"
+    "PlayerSkinTextureAccessor",
+    "SocialInteractionsPlayerListEntryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -23,7 +23,7 @@ import java.awt.image.BufferedImage;
 import java.util.Set;
 
 public class HeadComponentEntry extends AbstractHeadListEntry {
-    public static final Text GIVE_BUTTON_TEXT = Text.translatable("fzmm.gui.headGenerator.button.giveHead");
+    public static final Text GIVE_BUTTON_TEXT = Text.translatable("fzmm.gui.button.giveHead");
     private static final Text ADD_LAYER_BUTTON_TEXT = Text.translatable("fzmm.gui.button.add");
     private static final Text FAVORITE_ENABLED_TEXT = Text.translatable("fzmm.gui.button.favorite.enabled");
     private static final Text FAVORITE_DISABLED_TEXT = Text.translatable("fzmm.gui.button.favorite.disabled");

@@ -202,7 +202,7 @@
                     <children>
 
                         <button id="give-button">
-                            <text translate="true">fzmm.gui.headGenerator.button.giveHead</text>
+                            <text translate="true">fzmm.gui.button.giveHead</text>
 
                             <margins>
                                 <left>20</left>

@@ -146,10 +146,6 @@ A list of items that I think can be useful or at least curious/fun, these items 
 
 All types of loot chest, or in other words: a list of chests which each time you open one for the first time has a different loot and all the chests there have different odds and items.
 
-### Player heads
-
-A list of heads of all connected players.
-
 ## Incompatibilities
 
 ### Resource packs
