@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 import java.util.function.Supplier;
 
 public enum ImagetextBookOption implements IMode {
-    CREATE_BOOK("createBook", () -> BookBuilder.builder().title(Text.translatable("imagetext.book.title").getString())),
+    CREATE_BOOK("createBook", () -> BookBuilder.builder().title(Text.translatable("fzmm.item.imagetext.book.title").getString())),
     ADD_PAGE("addPage", () -> {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;

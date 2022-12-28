@@ -303,7 +303,7 @@
   "fzmm.toast.playerStatue.secondTry.title": "Second try generating...",
   "fzmm.toast.playerStatue.successful.details": "Player statue generated successfully",
   "fzmm.toast.playerStatue.successful.title": "Successful generated",
-  "imagetext.book.title": "Imagebook",
+  "fzmm.item.imagetext.book.title": "Imagebook",
   "fzmm.item.imagetext.resolution": "Resolution: %sx%s",
   "itemGroup.fzmm.loot_chests": "Loot chests",
   "itemGroup.fzmm.player_heads": "Player heads",
