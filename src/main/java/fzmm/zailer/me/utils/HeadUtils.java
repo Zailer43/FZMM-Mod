@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class HeadUtils {
     public static final String MINESKIN_API = "https://api.mineskin.org/";
@@ -72,47 +73,56 @@ public class HeadUtils {
         return this.delayForNextInMillis;
     }
 
-    public HeadUtils uploadHead(BufferedImage headSkin, String skinName) throws IOException {
-        this.applyWatermark(headSkin);
-        FzmmConfig.Mineskin config = FzmmClient.CONFIG.mineskin;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(headSkin, "png", baos);
-        byte[] skin = baos.toByteArray();
+    public CompletableFuture<HeadUtils> uploadHead(BufferedImage headSkin, String skinName) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                this.applyWatermark(headSkin);
+                FzmmConfig.Mineskin config = FzmmClient.CONFIG.mineskin;
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(headSkin, "png", baos);
+                byte[] skin = baos.toByteArray();
 
-        URL url = new URL(MINESKIN_API + "generate/upload");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Authorization", "Bearer " + config.apiKey());
-        conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
+                URL url = new URL(MINESKIN_API + "generate/upload");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setDoOutput(true);
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Authorization", "Bearer " + config.apiKey());
+                conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
 
-        try (DataOutputStream dataOutputStream = new DataOutputStream(conn.getOutputStream())) {
-            dataOutputStream.writeBytes("--" + BOUNDARY + "\r\n");
-            dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"visibility\"\r\n");
-            dataOutputStream.writeBytes("Content-Type: text/plain\r\n\r\n");
-            dataOutputStream.writeBytes(config.publicSkins() ? "0" : "1");
-            dataOutputStream.writeBytes("\r\n--" + BOUNDARY + "\r\n");
-            dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"head\"\r\n");
-            dataOutputStream.writeBytes("Content-Type: application/x-www-form-urlencoded\r\n\r\n");
-            dataOutputStream.write(skin);
-            dataOutputStream.writeBytes("\r\n--" + BOUNDARY + "--\r\n");
-        }
-
-        int httpCode = conn.getResponseCode();
-        if (httpCode / 100 == 2) {
-            try (InputStreamReader isr = new InputStreamReader(conn.getInputStream())) {
-                StringBuilder sb = new StringBuilder();
-                int ch;
-                while ((ch = isr.read()) != -1) {
-                    sb.append((char) ch);
+                try (DataOutputStream dataOutputStream = new DataOutputStream(conn.getOutputStream())) {
+                    dataOutputStream.writeBytes("--" + BOUNDARY + "\r\n");
+                    dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"visibility\"\r\n");
+                    dataOutputStream.writeBytes("Content-Type: text/plain\r\n\r\n");
+                    dataOutputStream.writeBytes(config.publicSkins() ? "0" : "1");
+                    dataOutputStream.writeBytes("\r\n--" + BOUNDARY + "\r\n");
+                    dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"file\"; filename=\"head\"\r\n");
+                    dataOutputStream.writeBytes("Content-Type: application/x-www-form-urlencoded\r\n\r\n");
+                    dataOutputStream.write(skin);
+                    dataOutputStream.writeBytes("\r\n--" + BOUNDARY + "--\r\n");
                 }
-                this.useResponse(sb.toString());
+
+                int httpCode = conn.getResponseCode();
+                if (httpCode / 100 == 2) {
+                    try (InputStreamReader isr = new InputStreamReader(conn.getInputStream())) {
+                        StringBuilder sb = new StringBuilder();
+                        int ch;
+                        while ((ch = isr.read()) != -1) {
+                            sb.append((char) ch);
+                        }
+                        this.useResponse(sb.toString());
+                    }
+                } else {
+                    LOGGER.warn("HTTP error " + httpCode + " generating skin in '" + skinName + "'");
+                    this.delayForNextInMillis = 6000;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                this.skinValue = "";
+                this.skinGenerated = false;
+                this.delayForNextInMillis = 6000;
             }
-        } else {
-            LOGGER.warn("HTTP error " + httpCode + " generating skin in '" + skinName + "'");
-            this.delayForNextInMillis = 6000;
-        }
-        return this;
+            return this;
+        });
     }
 
     private void useResponse(String reply) {

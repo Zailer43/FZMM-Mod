@@ -161,20 +161,17 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     }
 
     public void giveHead(BufferedImage image) {
-        MinecraftClient.getInstance().execute(() -> {
-            try {
-                this.setUndefinedDelay();
-                String headName = this.getHeadName();
-                if (headName == null)
-                    headName = "NULL";
+        assert this.client != null;
+        this.client.execute(() -> {
+            this.setUndefinedDelay();
+            String headName = this.getHeadName();
 
-                HeadUtils headUtils = new HeadUtils().uploadHead(image, headName);
+            new HeadUtils().uploadHead(image, headName).thenAccept(headUtils -> {
                 int delay = (int) TimeUnit.MILLISECONDS.toSeconds(headUtils.getDelayForNextInMillis());
                 ItemStack head = headUtils.getHead(headName);
                 FzmmUtils.giveItem(head);
-                this.setDelay(delay);
-            } catch (IOException ignored) {
-            }
+                this.client.execute(() -> this.setDelay(delay));
+            });
         });
     }
 

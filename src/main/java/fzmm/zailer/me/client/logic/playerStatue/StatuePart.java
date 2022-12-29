@@ -16,6 +16,7 @@ import org.joml.Vector3f;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class StatuePart {
@@ -177,20 +178,19 @@ public class StatuePart {
     /**
      * @return seconds left to generate another skin
      */
-    public int setStatueSkin(BufferedImage playerSkin, int scale) {
-        HeadUtils headUtils = new HeadUtils();
-        try {
-            this.draw(playerSkin, this.headSkin, scale);
-            headUtils.uploadHead(this.headSkin, this.name);
+    public CompletableFuture<Integer> setStatueSkin(BufferedImage playerSkin, int scale) {
+        this.draw(playerSkin, this.headSkin, scale);
+        return new HeadUtils().uploadHead(this.headSkin, this.name)
+                .thenApply(headUtils -> {
+                    this.skinValue = headUtils.getSkinValue();
+                    this.skinGenerated = headUtils.isSkinGenerated();
 
-        } catch (Exception e) {
-            PlayerStatue.LOGGER.error("The statue " + this.name + " had an error generating its skin");
-        }
-        this.skinValue = headUtils.getSkinValue();
-        this.skinGenerated = headUtils.isSkinGenerated();
-        return (int) TimeUnit.MILLISECONDS.toSeconds(headUtils.getDelayForNextInMillis());
+                    if (!this.skinGenerated)
+                        PlayerStatue.LOGGER.error("The statue " + this.name + " had an error generating its skin");
+
+                    return (int) TimeUnit.MILLISECONDS.toSeconds(headUtils.getDelayForNextInMillis());
+                });
     }
-
     public boolean isSkinGenerated() {
         return this.skinGenerated;
     }

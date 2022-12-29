@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
@@ -95,26 +96,27 @@ public class PlayerStatue {
         this.toast = new LoadingPlayerStatueToast(this.statueList.size());
         MinecraftClient.getInstance().getToastManager().add(this.toast);
 
-        int delay = 0;
-        for (StatuePart statuePart : this.statueList) {
-            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(delay));
-            delay = statuePart.setStatueSkin(this.playerSkin, this.getSkinScale());
-            this.notifyStatus(statuePart, delay);
-        }
-
-        this.fixGeneratingError();
+        this.generate();
+        this.toast.secondTry();
+        this.generate();
 
         this.toast.finish();
         return this;
     }
 
-    public void fixGeneratingError() {
-        this.toast.secondTry();
+    public void generate() {
+        int delay = 0;
         for (StatuePart statuePart : this.statueList) {
-            if (!statuePart.isSkinGenerated()) {
-                int delay = statuePart.setStatueSkin(this.playerSkin, this.getSkinScale());
-                this.notifyStatus(statuePart, delay);
+            if (statuePart.isSkinGenerated())
+                continue;
+
+            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(delay));
+            try {
+                delay = statuePart.setStatueSkin(this.playerSkin, this.getSkinScale()).get();
+            } catch (InterruptedException | ExecutionException e) {
+                delay = 6;
             }
+            this.notifyStatus(statuePart, delay);
         }
     }
 
