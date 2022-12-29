@@ -10,7 +10,8 @@
     "ItemStackMixin",
     "LivingEntityMixin",
     "PlayerSkinTextureAccessor",
-    "SocialInteractionsPlayerListEntryMixin"
+    "SocialInteractionsPlayerListEntryMixin",
+    "StringHelperMixin"
   ],
   "injectors": {
     "defaultRequire": 1
