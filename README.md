@@ -103,8 +103,6 @@ It also allows 128x128 skins.
 ## Head generator
 Modify skins in seconds and get the head instantly, you can add accessories like glasses, hats, helmets, masks, beards, etc.
 
-Disclaimer: the second layer of the original skin is removed (for now).
-
 <details>
 <summary>Images</summary>
 

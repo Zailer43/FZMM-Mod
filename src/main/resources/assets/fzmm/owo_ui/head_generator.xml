@@ -17,9 +17,9 @@
                         <text-box-row>
                             <id>headName</id>
                         </text-box-row>
-                        <text-box-row>
-                            <id>search</id>
-                        </text-box-row>
+                        <boolean-row>
+                            <id>overlapHatLayer</id>
+                        </boolean-row>
                     </children>
                     <margins>
                         <top>48</top>
@@ -126,6 +126,17 @@
                                                     </flow-layout>
                                                 </children>
                                             </flow-layout>
+
+                                            <text-box-row>
+                                                <id>search</id>
+                                                <removeResetButton>true</removeResetButton>
+                                                <fieldSize>120</fieldSize>
+                                                <removeHorizontalMargins>true</removeHorizontalMargins>
+
+                                                <margins>
+                                                    <horizontal>3</horizontal>
+                                                </margins>
+                                            </text-box-row>
 
                                             <flow-layout direction="vertical" id="head-list">
                                                 <children>

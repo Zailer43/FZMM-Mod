@@ -3,9 +3,11 @@ package fzmm.zailer.me.client.gui.components.row;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.parsing.UIParsing;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -63,7 +65,25 @@ public class TextBoxRow extends AbstractRow {
         String baseTranslationKey = getBaseTranslationKey(element);
         String id = getId(element);
         String tooltipId = getTooltipId(element, id);
+        boolean removeResetButton = UIParsing.childElements(element).containsKey("removeResetButton") &&
+                UIParsing.parseBool(UIParsing.childElements(element).get("removeResetButton"));
+        boolean removeHorizontalMargins = UIParsing.childElements(element).containsKey("removeHorizontalMargins") &&
+                UIParsing.parseBool(UIParsing.childElements(element).get("removeHorizontalMargins"));
+        int fieldSize = UIParsing.childElements(element).containsKey("removeHorizontalMargins") ?
+                UIParsing.parseSignedInt(UIParsing.childElements(element).get("fieldSize")) : -1;
 
-        return new TextBoxRow(baseTranslationKey, id, tooltipId);
+        TextBoxRow row = new TextBoxRow(baseTranslationKey, id, tooltipId);
+        if (removeHorizontalMargins)
+            row.removeHorizontalMargins();
+
+        if (removeResetButton)
+            row.removeResetButton();
+
+        if (fieldSize > 0) {
+            TextBoxComponent textBox = row.childById(TextBoxComponent.class, getTextBoxId(id));
+            if (textBox != null)
+                textBox.horizontalSizing(Sizing.fixed(fieldSize));
+        }
+        return row;
     }
 }

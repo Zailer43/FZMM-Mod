@@ -43,7 +43,7 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         int giveButtonWidth = textRenderer.getWidth(GIVE_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
-        this.giveButton = Components.button(GIVE_BUTTON_TEXT, this::giveButtonExecute);
+        this.giveButton = Components.button(GIVE_BUTTON_TEXT, buttonComponent -> this.giveButtonExecute(parent.overlapHatLayerButton()));
         this.giveButton.sizing(Sizing.fixed(giveButtonWidth), Sizing.fixed(20))
                 .margins(Insets.right(BaseFzmmScreen.COMPONENT_DISTANCE));
 
@@ -77,10 +77,10 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
             super.draw(matrices, mouseX, mouseY, partialTicks, delta);
     }
 
-    private void giveButtonExecute(ButtonComponent button) {
+    private void giveButtonExecute(boolean overlapHatLayer) {
         BufferedImage headTexture = this.getHeadSkin();
 
-        BufferedImage image = new HeadGenerator(this.parentScreen.getBaseSkin())
+        BufferedImage image = new HeadGenerator(this.parentScreen.getBaseSkin(), overlapHatLayer)
                 .addTexture(headTexture)
                 .getHeadTexture();
 

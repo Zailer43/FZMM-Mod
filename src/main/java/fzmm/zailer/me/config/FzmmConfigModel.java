@@ -104,6 +104,7 @@ public class FzmmConfigModel {
     public static class HeadGeneratorNest {
         @ExcludeFromScreen
         public Set<String> favoriteSkins = new HashSet<>();
+        public boolean defaultOverlapHatLayer = true;
     }
 
     @SuppressWarnings("unused")

@@ -13,22 +13,6 @@ import java.util.*;
 public class HeadGeneratorResources {
     public static final String HEADS_FOLDER = "textures/heads";
 
-    public static List<HeadData> getHeadTexturesOf(BufferedImage skinBase) {
-        if (skinBase == null)
-            return new ArrayList<>();
-
-        List<HeadData> skinWithHeadTextureList = new ArrayList<>();
-
-        for (var headData : loadHeads()) {
-            BufferedImage skinWithHeadTexture = new HeadGenerator(skinBase)
-                    .addTexture(headData.headSkin())
-                    .getHeadTexture();
-            skinWithHeadTextureList.add(new HeadData(skinWithHeadTexture, headData.displayName(), headData.key()));
-        }
-
-        return skinWithHeadTextureList;
-    }
-
     public static Set<HeadData> loadHeads() {
         Set<HeadData> headData = new HashSet<>();
         MinecraftClient minecraftClient = MinecraftClient.getInstance();

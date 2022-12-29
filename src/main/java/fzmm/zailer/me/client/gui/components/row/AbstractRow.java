@@ -1,7 +1,9 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.HorizontalFlowLayout;
@@ -24,6 +26,7 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
     public static final int TOTAL_HEIGHT = ROW_HEIGHT + VERTICAL_MARGIN * 2;
     protected final String baseTranslationKey;
     private boolean hasHoveredBackground;
+    private String id;
 
     public AbstractRow(String baseTranslationKey) {
         super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
@@ -34,6 +37,7 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
         super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
         this.baseTranslationKey = baseTranslationKey;
         this.hasHoveredBackground = true;
+        this.id = id;
         Component[] components = this.getComponents(id, tooltipId);
 
         FlowLayout rowLayout = (FlowLayout) Containers
@@ -46,7 +50,8 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
         FlowLayout rightComponentsLayout = (FlowLayout) Containers
                 .horizontalFlow(Sizing.content(), Sizing.fill(100))
                 .verticalAlignment(VerticalAlignment.CENTER)
-                .positioning(Positioning.relative(100, 0));
+                .positioning(Positioning.relative(100, 0))
+                .id(getRightLayoutId(id));
 
 
         for (var component : components) {
@@ -103,6 +108,10 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
         return id + "-label";
     }
 
+    public static String getRightLayoutId(String id) {
+        return id + "-right-layout";
+    }
+
     public String getBaseTranslationKey() {
         return "fzmm.gui." + this.baseTranslationKey;
     }
@@ -139,5 +148,31 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
     public AbstractRow setHasHoveredBackground(boolean hasHoveredBackground) {
         this.hasHoveredBackground = hasHoveredBackground;
         return this;
+    }
+
+    public void removeResetButton() {
+        FlowLayout rightLayout = this.childById(FlowLayout.class, getRightLayoutId(this.id));
+        if (rightLayout == null)
+            return;
+
+        ButtonComponent resetButton = rightLayout.childById(ButtonComponent.class, getResetButtonId(this.id));
+
+        if (resetButton == null)
+            return;
+
+        rightLayout.removeChild(resetButton);
+    }
+
+    public void removeHorizontalMargins() {
+        FlowLayout rightLayout = this.childById(FlowLayout.class, getRightLayoutId(this.id));
+        if (rightLayout != null && rightLayout.children().size() > 0) {
+            Component lastElement = rightLayout.children().get(rightLayout.children().size() - 1);
+            Insets previousMargins = lastElement.margins().get();
+            lastElement.margins(previousMargins.withRight(0));
+        }
+
+        LabelComponent label = this.childById(LabelComponent.class, getLabelId(id));
+        if (label != null)
+            label.margins(Insets.left(0));
     }
 }

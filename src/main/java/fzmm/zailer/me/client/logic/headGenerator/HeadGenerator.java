@@ -8,9 +8,14 @@ import java.awt.image.BufferedImage;
 public final class HeadGenerator {
     private final BufferedImage image;
 
-    public HeadGenerator(@NotNull BufferedImage image) {
+    public HeadGenerator(@NotNull BufferedImage skin, boolean overlapHatLayer) {
         this.image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-        this.addTexture(image, false);
+
+        Graphics2D g2d = this.image.createGraphics();
+        g2d.drawImage(skin, 0, 0, 32, 16, 0, 0, 32, 16, null);
+        if (overlapHatLayer)
+            g2d.drawImage(skin, 0, 0, 32, 16, 32, 0, 64, 16, null);
+        g2d.dispose();
     }
 
     public HeadGenerator addTexture(BufferedImage texture) {

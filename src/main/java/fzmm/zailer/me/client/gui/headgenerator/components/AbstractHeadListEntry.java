@@ -60,7 +60,7 @@ public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
         return this.headData.headSkin();
     }
 
-    public void update(BufferedImage skinBase) {
+    public void update(BufferedImage skinBase, boolean overlapHatLayer) {
         MinecraftClient client = MinecraftClient.getInstance();
         TextureManager textureManager = client.getTextureManager();
 
@@ -68,7 +68,7 @@ public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
             if (this.previewIdentifier != null)
                 textureManager.destroyTexture(this.previewIdentifier);
 
-            BufferedImage previewSkin = new HeadGenerator(skinBase).addTexture(this.headData.headSkin()).getHeadTexture();
+            BufferedImage previewSkin = new HeadGenerator(skinBase, overlapHatLayer).addTexture(this.headData.headSkin()).getHeadTexture();
             ImageUtils.toNativeImage(previewSkin).ifPresent(nativeImage -> {
                 NativeImageBackedTexture preview = new NativeImageBackedTexture(nativeImage);
                 this.previewIdentifier = textureManager.registerDynamicTexture("fzmm_head", preview);
