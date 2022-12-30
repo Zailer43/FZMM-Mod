@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui.textformat;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.CopyTextScreen;
 import fzmm.zailer.me.client.gui.components.row.BooleanRow;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
@@ -114,7 +115,7 @@ public class TextFormatScreen extends BaseFzmmScreen {
         });
         ButtonWidget randomButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(RANDOM_ID), executeButtonsActive, button -> selectedTab.setRandomValues());
         ButtonWidget copyButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_ID), executeButtonsActive,
-                button -> this.client.keyboard.setClipboard(Text.Serializer.toJson(this.messagePreviewLabel.text())));
+                button -> this.client.setScreen(new CopyTextScreen(this, this.messagePreviewLabel.text())));
         this.executeButtons = List.of(addLoreButton, setNameButton, randomButton, copyButton);
 
     }

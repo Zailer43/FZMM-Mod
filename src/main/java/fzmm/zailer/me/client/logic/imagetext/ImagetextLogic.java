@@ -85,10 +85,6 @@ public class ImagetextLogic {
         return this.height;
     }
 
-    public String getImagetextString() {
-        return Text.Serializer.toJson(this.getText());
-    }
-
     public NbtList get() {
         return this.imagetext;
     }

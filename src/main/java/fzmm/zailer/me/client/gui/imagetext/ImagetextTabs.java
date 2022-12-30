@@ -9,7 +9,7 @@ public enum ImagetextTabs implements IImagetextTab {
     BOOK_PAGE(new ImagetextBookPageTab()),
     BOOK_TOOLTIP(new ImagetextBookTooltipTab()),
     HOLOGRAM(new ImagetextHolgoramTab()),
-    JSON(new ImagetextJsonTab());
+    JSON(new ImagetextCopyTab());
 
     private final IImagetextTab tab;
 

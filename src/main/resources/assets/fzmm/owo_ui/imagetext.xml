@@ -92,7 +92,7 @@
                             </screen-tab>
 
                             <screen-tab>
-                                <id>json</id>
+                                <id>copy</id>
                                 <children>
                                 </children>
                             </screen-tab>

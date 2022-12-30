@@ -133,7 +133,7 @@
                         </button>
 
                         <button id="copy-button">
-                            <text translate="true">fzmm.gui.textFormat.button.copy</text>
+                            <text translate="true">fzmm.gui.button.copy</text>
 
                             <margins>
                                 <left>4</left>
