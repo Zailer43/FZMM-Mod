@@ -13,6 +13,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,7 @@ import java.util.function.Supplier;
 @Mixin(SocialInteractionsPlayerListEntry.class)
 public abstract class SocialInteractionsPlayerListEntryMixin {
     private static final Text GIVE_HEAD_TEXT = Text.translatable("fzmm.gui.button.giveHead");
-    private static final Text REQUIRES_CREATIVE_TEXT = GIVE_HEAD_TEXT.copy().append("\n\n").append(Text.translatable("fzmm.gui.warning.requiresCreative"));
+    private static final Text REQUIRES_CREATIVE_TEXT = GIVE_HEAD_TEXT.copy().append("\n\n").append(Text.translatable("fzmm.gui.warning.requiresCreative").setStyle(Style.EMPTY.withColor(0xDF771F)));
 
     @Mutable
     @Shadow

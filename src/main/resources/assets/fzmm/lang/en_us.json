@@ -48,18 +48,9 @@
   "fzmm.gui.button.copy": "Copy",
   "fzmm.gui.button.execute": "Execute",
   "fzmm.gui.button.faq": "FAQ",
-  "fzmm.gui.button.favorite.disabled": {
-    "text": "☆",
-    "color": "#ECC709"
-  },
-  "fzmm.gui.button.favorite.enabled": {
-    "text": "★",
-    "color": "#ECC709"
-  },
-  "fzmm.gui.button.favorite.enabled_easter_egg": {
-    "color": "#F4300B",
-    "text": "❤"
-  },
+  "fzmm.gui.button.favorite.disabled": "☆",
+  "fzmm.gui.button.favorite.enabled": "★",
+  "fzmm.gui.button.favorite.enabled_easter_egg": "❤",
   "fzmm.gui.button.giveHead": "Give head",
   "fzmm.gui.button.loadImage": "Load image",
   "fzmm.gui.button.loadSkin": "Load skin",
@@ -126,27 +117,13 @@
   "fzmm.gui.encryptbook.option.author": "Book author",
   "fzmm.gui.encryptbook.option.author.tooltip": "The author of the book",
   "fzmm.gui.encryptbook.option.maxMessageLength": "Maximum message length",
-  "fzmm.gui.encryptbook.option.maxMessageLength.tooltip": [
-    "Maximum characters for the message\n\nNote: without a resource pack that makes the letters\nsmaller the maximum is close to 255",
-    {
-      "text": "\n\nChanging this value requires another decoder",
-      "bold": true,
-      "color": "#df771f"
-    }
-  ],
+  "fzmm.gui.encryptbook.option.maxMessageLength.tooltip": "Maximum characters for the message\n\nNote: without a resource pack that makes the letters\nsmaller the maximum is close to 255\n\nChanging this value requires another decoder",
   "fzmm.gui.encryptbook.option.message": "Message to encrypt",
   "fzmm.gui.encryptbook.option.message.tooltip": "The message that will be encrypted and will be placed\non page 1 of the book, to be able to read it, the decode\nwill be required (See the wiki for more information)",
   "fzmm.gui.encryptbook.option.paddingCharacters": "Padding characters",
   "fzmm.gui.encryptbook.option.paddingCharacters.tooltip": "Characters to add to the end of the message\nto reach the required numbers of characters",
   "fzmm.gui.encryptbook.option.seed": "Seed",
-  "fzmm.gui.encryptbook.option.seed.tooltip": [
-    "The seed is used to decrypt and encrypt the data",
-    {
-      "text": "\n\nChanging this value requires another decoder",
-      "bold": true,
-      "color": "#df771f"
-    }
-  ],
+  "fzmm.gui.encryptbook.option.seed.tooltip":"The seed is used to decrypt and encrypt the data\n\nChanging this value requires another decoder",
   "fzmm.gui.encryptbook.option.title": "Book title",
   "fzmm.gui.encryptbook.option.title.tooltip": "Title of the book",
   "fzmm.gui.headGenerator.button.openFolder": "Open skins folder",
@@ -249,14 +226,7 @@
   "fzmm.gui.playerStatue.option.skin-source.tooltip": "Name: Username of a premium account\nPath: Path of the image on your PC (supports 128x128!)",
   "fzmm.gui.playerStatue.option.skin.tooltip": "Skin that the statue will have",
   "fzmm.gui.playerStatue.tab.generate": "Generate",
-  "fzmm.gui.playerStatue.tab.generate.tooltip": [
-    "Generate the statue of a player, which is 26 armor stands\nwhich have in their right hand a head with a part of the skin inserted.",
-    {
-      "text": "\n\nNote: generate a statue usually takes about 2 minutes",
-      "bold": true,
-      "color": "#df771f"
-    }
-  ],
+  "fzmm.gui.playerStatue.tab.generate.tooltip": "Generate the statue of a player, which is 26 armor stands\nwhich have in their right hand a head with a part of the skin inserted.\n\nNote: generate a statue usually takes about 2 minutes",
   "fzmm.gui.playerStatue.tab.update": "Update",
   "fzmm.gui.playerStatue.tab.update.tooltip": "Update the player statue container in your hand with new values,\navoiding having to re-generate it to change place",
   "fzmm.gui.textFormat.button.addLore": "Add lore",
@@ -300,11 +270,7 @@
   "fzmm.gui.title.main": "FZMM Gui",
   "fzmm.gui.title.playerStatue": "Player Statue",
   "fzmm.gui.title.textFormat": "Text format",
-  "fzmm.gui.warning.requiresCreative": {
-    "color": "#df771f",
-    "text": "* Requires creative mode",
-    "bold": true
-  },
+  "fzmm.gui.warning.requiresCreative": "* Requires creative mode",
   "fzmm.item.imagetext.book.title": "Imagebook",
   "fzmm.item.imagetext.hologram.lore.1": "XYZ: %s %s %s",
   "fzmm.item.imagetext.hologram.lore.2": "Resolution: %sx%s",
