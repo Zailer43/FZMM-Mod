@@ -36,7 +36,8 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
     }
 
     public MutableText getGradient(byte red, byte green, byte blue, byte red2, byte green2, byte blue2) {
-        int messageLength = this.message.length();
+        List<String> characters = this.splitMessage();
+        int messageLength = characters.size();
         byte[] gradientRed = getByteGradient(red, red2, messageLength);
         byte[] gradientGreen = getByteGradient(green, green2, messageLength);
         byte[] gradientBlue = getByteGradient(blue, blue2, messageLength);
@@ -45,7 +46,7 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
         for (int i = 0; i != messageLength; i++) {
             colors[i] = rgbToInt(gradientRed[i], gradientGreen[i], gradientBlue[i]);
         }
-        return this.applyColors(colors);
+        return this.applyColors(characters, colors);
     }
 
     private byte[] getByteGradient(byte initialColor, byte finalColor, int gradientLength) {
@@ -70,18 +71,18 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
         return new Color(Byte.toUnsignedInt(red), Byte.toUnsignedInt(green), Byte.toUnsignedInt(blue), 0).getRGB();
     }
 
-    private MutableText applyColors(int[] colors) {
+    private MutableText applyColors(List<String> characters, int[] colors) {
         MutableText text = Text.empty().setStyle(this.getStyle());
-        List<String> messageList = splitMessage();
 
-        for (int i = 0; i != this.message.length(); i++)
-            text.append(Text.literal(messageList.get(i)).setStyle(Style.EMPTY.withColor(colors[i])));
+        for (int i = 0; i != characters.size(); i++)
+            text.append(Text.literal(characters.get(i)).setStyle(Style.EMPTY.withColor(colors[i])));
 
         return text;
     }
 
     public Text getRainbow(float hue, float saturation, float brightness, float hueStep) {
-        int messageLength = this.message.length();
+        List<String> characters = this.splitMessage();
+        int messageLength = characters.size();
         int[] colors = new int[messageLength];
 
         for (int i = 0; i != messageLength; i++) {
@@ -89,7 +90,7 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
             colors[i] = Color.HSBtoRGB(hue2, saturation, brightness) - 0xFF000000;
         }
 
-        return this.applyColors(colors);
+        return this.applyColors(characters, colors);
     }
 
     /**
