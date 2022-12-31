@@ -153,6 +153,9 @@ All types of loot chest, or in other words: a list of chests which each time you
   - [Corrected Mob Heads](https://modrinth.com/resourcepack/corrected-mob-heads)
   - [Shelf+](https://www.curseforge.com/minecraft/texture-packs/shelf)
 
+## Translations
+To contribute with the translation of a language or fix a bug in a language other than English you must use the [Crowdin project of the mod](https://crowdin.com/project/fzmm-mod), if you don't find your language and you want to translate it you can suggest it with an issue or post it in discord.
+
 ## Special thanks to:
 - [Mineskin](https://mineskin.org) for being able to make Player Statue and Head Generator possible thanks to their API
 - [Logstone & Jespertheend](https://statue.jespertheend.com) for creating Player Statue (or at least doing something known)
