@@ -36,6 +36,7 @@ public class FzmmConfigModel {
         public boolean disableItalic = true;
         public boolean forceInvisibleItemFrame = false;
         public boolean giveClientSide = false;
+        public boolean showSymbolButton = true;
     }
 
     public static class MineskinNest {

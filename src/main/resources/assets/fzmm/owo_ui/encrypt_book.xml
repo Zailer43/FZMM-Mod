@@ -14,6 +14,8 @@
                         <children>
                             <text-box-row>
                                 <id>message</id>
+                                <symbolButton>true</symbolButton>
+                                <fontButton>true</fontButton>
                             </text-box-row>
                             <number-row>
                                 <id>seed</id>
@@ -23,9 +25,13 @@
                             </text-box-row>
                             <text-box-row>
                                 <id>author</id>
+                                <symbolButton>true</symbolButton>
+                                <fontButton>true</fontButton>
                             </text-box-row>
                             <text-box-row>
                                 <id>title</id>
+                                <symbolButton>true</symbolButton>
+                                <fontButton>true</fontButton>
                             </text-box-row>
                             <slider-row>
                                 <id>maxMessageLength</id>

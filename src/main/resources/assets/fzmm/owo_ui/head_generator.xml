@@ -16,6 +16,8 @@
                         </image-rows>
                         <text-box-row>
                             <id>headName</id>
+                            <symbolButton>true</symbolButton>
+                            <fontButton>true</fontButton>
                         </text-box-row>
                         <boolean-row>
                             <id>overlapHatLayer</id>

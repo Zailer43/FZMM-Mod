@@ -14,6 +14,8 @@ repositories {
     }
 
     maven { url 'https://maven.wispforest.io' }
+
+    maven { url = "https://api.modrinth.com/maven" }
 }
 
 dependencies {
@@ -36,13 +38,15 @@ dependencies {
     // owo lib
     modImplementation annotationProcessor ("io.wispforest:owo-lib:${project.owo_version}")
 
-
     // include this if you don't want force your users to install owo
     // sentinel will warn them and give the option to download it automatically
     include "io.wispforest:owo-sentinel:${project.owo_version}"
 
     // Mod Menu
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+    // Symbol chat
+    modImplementation "maven.modrinth:symbol-chat:${project.symbol_chat_version}"
 
 }
 

@@ -8,7 +8,9 @@ import net.minecraft.resource.ResourceType;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class HeadGeneratorResources {
     public static final String HEADS_FOLDER = "textures/heads";

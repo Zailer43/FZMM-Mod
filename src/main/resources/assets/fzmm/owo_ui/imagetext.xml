@@ -26,6 +26,8 @@
                             </slider-row>
                             <text-box-row>
                                 <id>characters</id>
+                                <symbolButton>true</symbolButton>
+                                <fontButton>true</fontButton>
                             </text-box-row>
                             <boolean-row>
                                 <id>preserveImageAspectRatio</id>

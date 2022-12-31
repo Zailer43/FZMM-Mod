@@ -6,6 +6,8 @@ import fzmm.zailer.me.client.gui.components.ScreenTabContainer;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
 import fzmm.zailer.me.client.gui.components.row.*;
+import fzmm.zailer.me.compat.symbolChat.symbol.CustomSymbolSelectionPanel;
+import fzmm.zailer.me.compat.symbolChat.symbol.SymbolSelectionPanelComponent;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.config.ui.component.ConfigToggleButton;
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
@@ -20,6 +22,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @SuppressWarnings("UnstableApiUsage")
 public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
@@ -28,11 +31,27 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     protected final String baseScreenTranslationKey;
     public static final int BUTTON_TEXT_PADDING = 8;
     public static final int COMPONENT_DISTANCE = 8;
+    private final SymbolSelectionPanelComponent symbolSelectionPanel;
+//    private final FontSelectionDropDownComponent fontSelectionDropDown;
 
     public BaseFzmmScreen(String screenPath, String baseScreenTranslationKey, @Nullable Screen parent) {
         super(FlowLayout.class, DataSource.asset(new Identifier(FzmmClient.MOD_ID, screenPath)));
         this.baseScreenTranslationKey = baseScreenTranslationKey;
         this.parent = parent;
+
+        if (FzmmClient.SYMBOL_CHAT_PRESENT) {
+                this.symbolSelectionPanel = new SymbolSelectionPanelComponent(CustomSymbolSelectionPanel.of(this, 0, 0));
+//            this.fontSelectionDropDown = new FontSelectionDropDownComponent(new net.replaceitem.symbolchat.gui.widget.FontSelectionDropDownWidget(0,
+//                    0,
+//                    net.replaceitem.symbolchat.gui.SymbolSelectionPanel.WIDTH,
+//                    15,
+//                    net.replaceitem.symbolchat.FontProcessor.fontProcessors,
+//                    net.replaceitem.symbolchat.SymbolChat.selectedFont
+//            ));
+        } else {
+            this.symbolSelectionPanel = null;
+//            this.fontSelectionDropDown = null;
+        }
     }
 
     @Override
@@ -41,6 +60,11 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         ButtonComponent backButton = rootComponent.childById(ButtonComponent.class, "back-button");
         if (backButton != null)
             backButton.onPress(button -> this.client.setScreen(this.parent));
+
+        if (FzmmClient.SYMBOL_CHAT_PRESENT) {
+            rootComponent.child(this.symbolSelectionPanel);
+//            rootComponent.child(this.fontSelectionDropDown);
+        }
 
         this.setupButtonsCallbacks(rootComponent);
     }
@@ -69,6 +93,14 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     public String getBaseScreenTranslationKey() {
         return this.baseScreenTranslationKey;
     }
+
+    public Optional<SymbolSelectionPanelComponent> getSymbolSelectionPanel() {
+        return Optional.ofNullable(this.symbolSelectionPanel);
+    }
+
+//    public Optional<FontSelectionDropDownComponent> getFontSelectionDropDown() {
+//        return Optional.ofNullable(this.fontSelectionDropDown);
+//    }
 
     static {
         UIParsing.registerFactory("boolean-row", BooleanRow::parse);

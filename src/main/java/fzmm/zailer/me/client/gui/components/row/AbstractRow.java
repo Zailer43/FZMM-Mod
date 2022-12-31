@@ -17,6 +17,7 @@ import net.minecraft.text.Text;
 import org.w3c.dom.Element;
 
 import java.util.List;
+import java.util.Optional;
 
 public abstract class AbstractRow extends HorizontalFlowLayout {
     protected static final int NORMAL_WIDTH = 200;
@@ -165,9 +166,10 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
     }
 
     public void removeHorizontalMargins() {
-        FlowLayout rightLayout = this.childById(FlowLayout.class, getRightLayoutId(this.id));
-        if (rightLayout != null && rightLayout.children().size() > 0) {
-            Component lastElement = rightLayout.children().get(rightLayout.children().size() - 1);
+        Optional<FlowLayout> rightLayoutOptional = this.getRightLayout();
+        if (rightLayoutOptional.isPresent() && rightLayoutOptional.get().children().size() > 0) {
+            List<Component> rightLayoutChildren = rightLayoutOptional.get().children();
+            Component lastElement = rightLayoutChildren.get(rightLayoutChildren.size() - 1);
             Insets previousMargins = lastElement.margins().get();
             lastElement.margins(previousMargins.withRight(0));
         }
@@ -175,5 +177,13 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
         LabelComponent label = this.childById(LabelComponent.class, getLabelId(id));
         if (label != null)
             label.margins(Insets.left(0));
+    }
+
+    public Optional<FlowLayout> getRightLayout() {
+        return Optional.ofNullable(this.childById(FlowLayout.class, getRightLayoutId(this.id)));
+    }
+
+    protected String getId() {
+        return this.id;
     }
 }
