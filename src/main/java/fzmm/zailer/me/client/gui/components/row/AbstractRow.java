@@ -33,6 +33,7 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
         this.baseTranslationKey = baseTranslationKey;
         this.hasHoveredBackground = true;
     }
+
     public AbstractRow(String baseTranslationKey, String id, String tooltipId, boolean hasResetButton) {
         super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
         this.baseTranslationKey = baseTranslationKey;

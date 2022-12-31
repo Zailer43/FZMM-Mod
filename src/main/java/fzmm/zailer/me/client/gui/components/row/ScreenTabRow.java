@@ -15,7 +15,7 @@ public class ScreenTabRow extends AbstractRow {
         this.sizing(Sizing.fill(100), Sizing.fixed(28));
         this.surface(Surface.VANILLA_TRANSLUCENT);
         this.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-        this.margins(Insets.bottom(12));
+        this.margins(Insets.bottom(4));
     }
 
     @Override
@@ -43,9 +43,9 @@ public class ScreenTabRow extends AbstractRow {
         for (var tab : defaultTab.getClass().getEnumConstants()) {
             IScreenTab screenTab = (IScreenTab) tab;
             boolean active = tab != defaultTab;
-            Text text = Text.translatable(getTabTranslationKey() + screenTab.getId());
-            ButtonWidget button = Components.button(text, buttonComponent -> {
-            });
+            String translationKey = getTabTranslationKey() + screenTab.getId();
+            Text text = Text.translatable(translationKey);
+            ButtonWidget button = Components.button(text, buttonComponent -> {});
 
             button.id(getScreenTabButtonId(screenTab.getId()))
                     .margins(Insets.horizontal(2));

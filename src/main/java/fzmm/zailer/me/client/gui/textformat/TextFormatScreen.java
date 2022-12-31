@@ -59,7 +59,6 @@ public class TextFormatScreen extends BaseFzmmScreen {
         this.messagePreviewLabel = rootComponent.childById(LabelComponent.class, MESSAGE_PREVIEW_ID);
         BaseFzmmScreen.checkNull(this.messagePreviewLabel, "label", MESSAGE_PREVIEW_ID);
 
-
         for (var tab : TextFormatTabs.values())
             tab.componentsCallback(object -> this.updateMessagePreview());
         //general

@@ -1,10 +1,13 @@
 package fzmm.zailer.me.client.gui.components;
 
 import fzmm.zailer.me.client.gui.IScreenTab;
+import fzmm.zailer.me.client.gui.components.row.AbstractRow;
+import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.VerticalFlowLayout;
-import io.wispforest.owo.ui.core.Component;
-import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIParsing;
+import net.minecraft.text.Text;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -14,11 +17,22 @@ public class ScreenTabContainer extends VerticalFlowLayout {
     protected boolean selected;
     protected List<Component> componentList;
 
-    public ScreenTabContainer(Sizing horizontalSizing, Sizing verticalSizing, String id) {
+    public ScreenTabContainer(String baseTranslationKey, Sizing horizontalSizing, Sizing verticalSizing, String id) {
         super(horizontalSizing, verticalSizing);
         this.selected = false;
         this.componentList = new ArrayList<>();
         this.id(getScreenTabId(id));
+
+        String translationKey = "fzmm.gui." + baseTranslationKey + ".tab." + id;
+
+        this.child(
+                Containers.horizontalFlow(Sizing.fill(100), Sizing.content())
+                        .child(
+                                Components.label(Text.translatable(translationKey))
+                                        .tooltip(Text.translatable(translationKey + ".tooltip"))
+                        ).alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
+                        .margins(Insets.vertical(4))
+        );
     }
 
     public void setSelected(boolean selected) {
@@ -52,6 +66,6 @@ public class ScreenTabContainer extends VerticalFlowLayout {
 
     public static ScreenTabContainer parse(Element element) {
         String id = UIParsing.parseText(UIParsing.childElements(element).get("id")).getString();
-        return new ScreenTabContainer(Sizing.content(), Sizing.content(), id);
+        return new ScreenTabContainer(AbstractRow.getBaseTranslationKey(element), Sizing.content(), Sizing.content(), id);
     }
 }
