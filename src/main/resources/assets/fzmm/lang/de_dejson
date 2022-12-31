@@ -1,6 +1,6 @@
 {
-  "commands.fzmm.amount.help": "Changes the amount of items you have in your hand, useful to have 64 items of something not stackable in 64",
-  "commands.fzmm.enchant.help": "Adds an enchantment to the item in your hand, max level 255",
+  "commands.fzmm.amount.help": "Ändert die Anzahl an Gegenständen, die du in deiner Hand hast. Nützlich, um 64 Gegenstände von etwas zu haben, das nicht in 64 stapelbar ist.",
+  "commands.fzmm.enchant.help": "Fügt dem Gegenstand in deiner Hand eine Verzauberung hinzu, max. Level 255",
   "commands.fzmm.fakeenchant.help": "Adds fake enchantments to the item in your hand, they are simply enchantment glow and a line in the lore with the enchantment translation",
   "commands.fzmm.fullcontainer.help": "Fill the container of your main hand with the item from your off hand, \"slots to fill\" is the number of times the item is going to be placed in the container, by default the first slot in which it is filled is 0",
   "commands.fzmm.give.help": "Get an item, similar to the vanilla give command",
