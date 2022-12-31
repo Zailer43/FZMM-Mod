@@ -5,7 +5,7 @@
             <children>
                 <label id="title">
                     <positioning type="absolute">20,20</positioning>
-                    <text translate="true">fzmm.gui.title.textCopy</text>
+                    <text translate="true">fzmm.gui.title.copyText</text>
                 </label>
 
                 <scroll direction="vertical">

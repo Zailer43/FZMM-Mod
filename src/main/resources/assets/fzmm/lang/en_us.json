@@ -263,7 +263,7 @@
   "fzmm.gui.textFormat.tab.two_colors.tooltip": "Two-color gradient on text.",
   "fzmm.gui.title.configs": "FZMM config",
   "fzmm.gui.title.converters": "Converters",
-  "fzmm.gui.title.textCopy": "Text copy",
+  "fzmm.gui.title.copyText": "Copy text",
   "fzmm.gui.title.encryptbook": "Encryptbook",
   "fzmm.gui.title.headGenerator": "Head generator",
   "fzmm.gui.title.imagetext": "Imagetext",
