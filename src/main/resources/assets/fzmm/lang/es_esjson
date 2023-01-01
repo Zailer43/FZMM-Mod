@@ -146,7 +146,7 @@
   "fzmm.gui.headGenerator.option.search": "Buscar",
   "fzmm.gui.headGenerator.option.search.tooltip": "Busca una cabeza por nombre entre las disponibles.",
   "fzmm.gui.headGenerator.option.skin": "Skin",
-  "fzmm.gui.headGenerator.option.skin.tooltip": "Skin utilizada para la cabeza que se generará.\n\nNota: actualmente la segunda capa de la skin es removida.",
+  "fzmm.gui.headGenerator.option.skin.tooltip": "Skin utilizada para la cabeza a generar.",
   "fzmm.gui.headGenerator.option.skinSourceType": "Tipo de fuente de la skin",
   "fzmm.gui.headGenerator.option.skinSourceType.tooltip": "Nombre: Obtén la skin por el nombre de un jugador premium.\nRuta: Obtén la imagen de la ruta en tu PC.",
   "fzmm.gui.headGenerator.saveSkin.saveError": "FZMM: Ocurrió un error guardando la skin",
