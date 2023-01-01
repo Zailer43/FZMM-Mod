@@ -29,6 +29,13 @@ public class SymbolSelectionPanelComponent extends BaseComponent{
     }
 
     @Override
+    public boolean onMouseScroll(double mouseX, double mouseY, double amount) {
+        if (((net.replaceitem.symbolchat.gui.SymbolSelectionPanel) this.selectionPanel).visible && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount))
+            return true;
+        return super.onMouseScroll(mouseX, mouseY, amount);
+    }
+
+    @Override
     protected int determineHorizontalContentSize(Sizing sizing) {
         return net.replaceitem.symbolchat.gui.SymbolSelectionPanel.WIDTH;
     }
