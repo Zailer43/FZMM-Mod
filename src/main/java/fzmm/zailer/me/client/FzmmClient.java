@@ -8,9 +8,13 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -38,5 +42,14 @@ public class FzmmClient implements ClientModInitializer {
                 client.setScreen(new MainScreen(client.currentScreen));
             }
         });
+
+
+        FabricLoader.getInstance().getModContainer(MOD_ID)
+                .map(container -> ResourceManagerHelper.registerBuiltinResourcePack(
+                        new Identifier(MOD_ID, "fzmm_default_heads"),
+                        container,
+                        Text.literal("FZMM: Head generator"),
+                        ResourcePackActivationType.DEFAULT_ENABLED
+                )).filter(success -> !success).ifPresent(success -> LOGGER.warn("Could not register built-in resource pack with custom name."));
     }
 }
