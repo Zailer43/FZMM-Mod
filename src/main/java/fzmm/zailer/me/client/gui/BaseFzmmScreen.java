@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.gui.components.ScreenTabContainer;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
 import fzmm.zailer.me.client.gui.components.row.*;
+import fzmm.zailer.me.client.gui.main.components.MainButtonComponent;
 import fzmm.zailer.me.compat.symbolChat.symbol.CustomSymbolSelectionPanel;
 import fzmm.zailer.me.compat.symbolChat.symbol.SymbolSelectionPanelComponent;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -17,6 +18,7 @@ import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -121,6 +123,8 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         UIParsing.registerFactory("image-option", element -> new ImageButtonWidget());
         UIParsing.registerFactory("enum-option", element -> new EnumWidget());
         UIParsing.registerFactory("screen-tab", ScreenTabContainer::parse);
+        UIParsing.registerFactory("main-button", element -> new MainButtonComponent(Text.empty(), buttonComponent -> {}));
+
     }
 
     @Contract(value = "null, _, _ -> fail;", pure = true)

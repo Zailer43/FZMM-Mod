@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client;
 
-import fzmm.zailer.me.client.gui.FzmmMainScreen;
+import fzmm.zailer.me.client.gui.main.MainScreen;
 import fzmm.zailer.me.config.FzmmConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -35,7 +35,7 @@ public class FzmmClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (OPEN_MAIN_GUI_KEYBINDING.wasPressed()) {
-                client.setScreen(new FzmmMainScreen(client.currentScreen));
+                client.setScreen(new MainScreen(client.currentScreen));
             }
         });
     }

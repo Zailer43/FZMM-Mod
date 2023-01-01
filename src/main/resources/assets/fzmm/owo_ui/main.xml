@@ -10,22 +10,22 @@
 
                 <grid-layout rows="2" columns="3">
                     <children>
-                        <template name="main-button" row="0" column="0">
+                        <template name="main-button-layout" row="0" column="0">
                             <name>imagetext</name>
                         </template>
-                        <template name="main-button" row="0" column="1">
+                        <template name="main-button-layout" row="0" column="1">
                             <name>textFormat</name>
                         </template>
-                        <template name="main-button" row="0" column="2">
+                        <template name="main-button-layout" row="0" column="2">
                             <name>playerStatue</name>
                         </template>
-                        <template name="main-button" row="1" column="0">
+                        <template name="main-button-layout" row="1" column="0">
                             <name>encryptbook</name>
                         </template>
-                        <template name="main-button" row="1" column="1">
+                        <template name="main-button-layout" row="1" column="1">
                             <name>headGenerator</name>
                         </template>
-                        <template name="main-button" row="1" column="2">
+                        <template name="main-button-layout" row="1" column="2">
                             <name>converters</name>
                         </template>
                     </children>
@@ -80,7 +80,6 @@
 
             </children>
 
-
             <vertical-alignment>center</vertical-alignment>
             <horizontal-alignment>center</horizontal-alignment>
 
@@ -91,8 +90,8 @@
     </components>
 
     <templates>
-        <main-button>
-            <button id="{{name}}-button">
+        <main-button-layout>
+            <main-button id="{{name}}-button">
                 <text translate="true">fzmm.gui.main.{{name}}</text>
                 <margins>
                     <all>5</all>
@@ -100,8 +99,10 @@
 
                 <sizing>
                     <horizontal method="fill">25</horizontal>
+                    <vertical method="fixed">60</vertical>
                 </sizing>
-            </button>
-        </main-button>
+
+            </main-button>
+        </main-button-layout>
     </templates>
 </owo-ui>
