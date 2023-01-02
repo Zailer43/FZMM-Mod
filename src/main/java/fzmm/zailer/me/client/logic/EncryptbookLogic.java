@@ -1,138 +1,117 @@
 package fzmm.zailer.me.client.logic;
 
+import fzmm.zailer.me.builders.BookBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.WrittenBookItem;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
 public class EncryptbookLogic {
-    protected static short[] encryptKey(long seed, int messageLength) {
-        short i = 0;
-        short[] encryptedKey = new short[messageLength];
+    protected static List<Short> encryptKey(long seed, int messageLength) {
+        List<Short> encryptedKey = new LinkedList<>();
         Random number = new Random(seed);
 
-        encryptedKey[i] = (short) number.nextInt(messageLength);
-        for (; i < messageLength; i++) {
-            encryptedKey[i] = (short) number.nextInt(messageLength);
-            for (int j = 0; j < i; j++) {
-                if (encryptedKey[i] == encryptedKey[j]) i--;
-            }
+        // this is necessary to have backward compatibility with previous functionality
+        number.nextInt(messageLength);
+
+        while (encryptedKey.size() < messageLength) {
+            short nextInt = (short) number.nextInt(messageLength);
+            if (!encryptedKey.contains(nextInt))
+                encryptedKey.add(nextInt);
         }
 
         return encryptedKey;
     }
 
-    //todo: refactor
-    public static void give(final int SEED, String message, final String AUTHOR, final String PADDING_CHARS, final int MAX_MESSAGE_LENGTH, String bookTitle) {
-		/*
-		{
-			title:"&Encryptbook (secret_mc_1)",
-			author:"Zailer43",
-			pages:[
-				'{
-					"translate":"secret_mc_1",
-					"with":[
-						"y","F","r","d","6","5","8","y","s","A",...,"e","s"
-					]
-				}',
-				'{
-					"hoverEvent":{
-						"action":"show_text",
-						"contents":{
-							"text":"yFrd658ysA...es"
-						}
-					},
-					"text":"&9Idea by: &0turkeybot69\\n
-					&9Key: &0secret_mc_1\\n
-					&9Asymmetric: &0true\\n
-					&9Encrypted message: &0Hover over here"
-				}'
-			]
-		}
-
-		 */
-
+    public static void give(int seed, String message, String author, String paddingChars, int maxMessageLength, String bookTitle) {
         FzmmConfig.Encryptbook config = FzmmClient.CONFIG.encryptbook;
         MinecraftClient mc = MinecraftClient.getInstance();
-        Character[] encryptMessage = new Character[MAX_MESSAGE_LENGTH];
-        short[] encryptedKey;
-        Random random = new Random(new Date().getTime());
-        StringBuilder messageBuilder,
-                encryptMessageString = new StringBuilder();
-        String[] paddingCharacters = PADDING_CHARS.split("");
-        ItemStack book = Items.WRITTEN_BOOK.getDefaultStack();
-        NbtCompound tag = new NbtCompound();
-        NbtList pages = new NbtList();
-        MutableText page1, page2;
-        String translationKeyPrefix = config.translationKeyPrefix();
         assert mc.player != null;
+
+        List<Short> encryptedKey = encryptKey(getKey(seed), maxMessageLength);
+        List<String> encryptMessage = encryptMessage(message, config, paddingChars, maxMessageLength, encryptedKey);
+        String encryptMessageString = getEncryptMessageString(encryptMessage);
+
+        ItemStack book = getBook(seed, config, bookTitle, author, encryptMessage, encryptMessageString);
+
+        FzmmUtils.giveItem(book);
+    }
+
+
+    private static List<String> encryptMessage(String message, FzmmConfig.Encryptbook config, String paddingChars, int maxMessageLength, List<Short> encryptedKey) {
+        Random random = new Random(new Date().getTime());
+        List<String> paddingCharacters = Arrays.asList(paddingChars.split(""));
 
         message += config.separatorMessage();
         message = message.replaceAll(" ", "_");
-        messageBuilder = new StringBuilder(message);
-        int messageLength = message.length();
-        encryptedKey = encryptKey(getKey(SEED), MAX_MESSAGE_LENGTH);
+        List<String> splitMessage = new ArrayList<>(FzmmUtils.splitMessage(message));
+        int messageLength = splitMessage.size();
 
-        if (bookTitle.contains("%s")) {
-            bookTitle = String.format(bookTitle, translationKeyPrefix + SEED);
-        }
-
-        while (messageLength < MAX_MESSAGE_LENGTH) {
-            messageBuilder.append(paddingCharacters[random.nextInt(paddingCharacters.length)]);
+        while (messageLength < maxMessageLength) {
+            String randomCharacter = paddingCharacters.get(random.nextInt(paddingCharacters.size()));
+            splitMessage.add(randomCharacter);
             messageLength++;
         }
 
-        message = messageBuilder.toString();
-        for (int i = 0; i < MAX_MESSAGE_LENGTH; i++)
-            encryptMessage[encryptedKey[i]] = message.charAt(i);
-        for (int i = 0; i < MAX_MESSAGE_LENGTH; i++) {
-            encryptMessageString.append(encryptMessage[i]);
+        List<String> encryptMessage = new ArrayList<>();
+        for (int i = 0; i != splitMessage.size(); i++)
+            encryptMessage.add("");
+
+        for (int i = 0; i < maxMessageLength; i++)
+            encryptMessage.set(encryptedKey.get(i), splitMessage.get(i));
+
+        return encryptMessage;
+    }
+
+    private static String getEncryptMessageString(List<String> encryptMessage) {
+        StringBuilder encryptMessageString = new StringBuilder();
+        for (String s : encryptMessage)
+            encryptMessageString.append(s);
+
+        return encryptMessageString.toString();
+    }
+
+    private static ItemStack getBook(int seed, FzmmConfig.Encryptbook config, String bookTitle, String author, List<String> encryptMessage, String encryptMessageString) {
+        String translationKeyPrefix = config.translationKeyPrefix();
+        if (bookTitle.contains("%s")) {
+            bookTitle = String.format(bookTitle, translationKeyPrefix + seed);
         }
 
-        tag.putString(WrittenBookItem.TITLE_KEY, bookTitle);
-        tag.putString(WrittenBookItem.AUTHOR_KEY, AUTHOR);
+        BookBuilder bookBuilder = BookBuilder.builder()
+                .title(bookTitle)
+                .author(author);
 
-        page1 = Text.translatable(translationKeyPrefix + SEED, (Object[]) encryptMessage)
-                .setStyle(Style.EMPTY
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("You probably need the decryptor to see this message")))
-                );
+        bookBuilder.addPage(
+                        Text.translatable(translationKeyPrefix + seed, encryptMessage.toArray())
+                                .setStyle(Style.EMPTY
+                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("You probably need the decryptor to see this message")))
+                                ))
+                .addPage(Text.literal(Formatting.BLUE + "Idea by: " + Formatting.BLACK + "turkeybot69\n" +
+                                Formatting.BLUE + "Key: " + Formatting.BLACK + translationKeyPrefix + seed + "\n" +
+                                Formatting.BLUE + "Asymmetric: " + Formatting.BLACK + (config.asymmetricEncryptKey() != 0) + "\n" +
+                                Formatting.BLUE + "Encrypted message: " + Formatting.BLACK + "Hover over here")
+                        .setStyle(Style.EMPTY
+                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(encryptMessageString)))
+                        ));
 
-        page2 = Text.literal(Formatting.BLUE + "Idea by: " + Formatting.BLACK + "turkeybot69\n" +
-                        Formatting.BLUE + "Key: " + Formatting.BLACK + translationKeyPrefix + SEED + "\n" +
-                        Formatting.BLUE + "Asymmetric: " + Formatting.BLACK + (config.asymmetricEncryptKey() != 0) + "\n" +
-                        Formatting.BLUE + "Encrypted message: " + Formatting.BLACK + "Hover over here")
-                .setStyle(Style.EMPTY
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(encryptMessageString.toString())))
-                );
-
-        pages.add(FzmmUtils.toNbtString(page1, false));
-        pages.add(FzmmUtils.toNbtString(page2, false));
-        tag.put(WrittenBookItem.PAGES_KEY, pages);
-        book.setNbt(tag);
-
-        FzmmUtils.giveItem(book);
+        return bookBuilder.get();
     }
 
     public static void showDecryptorInChat(final int SEED, final int MAX_MESSAGE_LENGTH) {
         MinecraftClient mc = MinecraftClient.getInstance();
         String translationKeyPrefix = FzmmClient.CONFIG.encryptbook.translationKeyPrefix();
         StringBuilder decryptorString = new StringBuilder();
-        short[] encryptedKey = encryptKey(getKey(SEED), MAX_MESSAGE_LENGTH);
+        List<Short> encryptedKey = encryptKey(getKey(SEED), MAX_MESSAGE_LENGTH);
 
         assert mc.player != null;
 
         for (int i = 0; i < MAX_MESSAGE_LENGTH; i++) {
-            decryptorString.append("%").append(encryptedKey[i] + 1).append("$s");
+            decryptorString.append("%").append(encryptedKey.get(i) + 1).append("$s");
         }
 
         MutableText decryptorMessage = Text.literal(Formatting.GREEN + translationKeyPrefix + SEED)

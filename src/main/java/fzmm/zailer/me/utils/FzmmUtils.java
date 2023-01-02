@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -146,5 +147,12 @@ public class FzmmUtils {
     public static boolean isCreative() {
         assert MinecraftClient.getInstance().player != null;
         return MinecraftClient.getInstance().player.isCreative() || FzmmClient.CONFIG.general.giveClientSide();
+    }
+
+    /**
+     * Splits the characters of a message correctly including multibyte characters correctly
+     */
+    public static List<String> splitMessage(String message) {
+        return Arrays.asList(message.split("(?s)(?<=.)"));
     }
 }

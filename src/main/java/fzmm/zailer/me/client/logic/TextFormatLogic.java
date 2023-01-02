@@ -1,11 +1,11 @@
 package fzmm.zailer.me.client.logic;
 
+import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.List;
 
 public record TextFormatLogic(String message, boolean obfuscated, boolean bold, boolean strikethrough, boolean underline, boolean italic) {
@@ -36,7 +36,7 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
     }
 
     public MutableText getGradient(byte red, byte green, byte blue, byte red2, byte green2, byte blue2) {
-        List<String> characters = this.splitMessage();
+        List<String> characters = FzmmUtils.splitMessage(this.message);
         int messageLength = characters.size();
         byte[] gradientRed = getByteGradient(red, red2, messageLength);
         byte[] gradientGreen = getByteGradient(green, green2, messageLength);
@@ -81,7 +81,7 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
     }
 
     public Text getRainbow(float hue, float saturation, float brightness, float hueStep) {
-        List<String> characters = this.splitMessage();
+        List<String> characters = FzmmUtils.splitMessage(this.message);
         int messageLength = characters.size();
         int[] colors = new int[messageLength];
 
@@ -91,13 +91,6 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
         }
 
         return this.applyColors(characters, colors);
-    }
-
-    /**
-     * Split string well with multibyte characters
-     */
-    public List<String> splitMessage() {
-        return Arrays.asList(this.message.split("(?s)(?<=\\G.)"));
     }
 
 }

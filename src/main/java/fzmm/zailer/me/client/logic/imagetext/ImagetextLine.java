@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.logic.imagetext;
 
+import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -8,16 +9,17 @@ import net.minecraft.util.Pair;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ImagetextLine {
     public static final String DEFAULT_TEXT = "█";
     private final ArrayList<Pair<Integer, Byte>> line; // color, number of pixels of the same color
-    private final String[] text;
+    private final List<String> text;
     private final boolean isDefaultText;
 
     public ImagetextLine(String text) {
         this.line = new ArrayList<>();
-        this.text = text.split("");
+        this.text = FzmmUtils.splitMessage(text);
         this.isDefaultText = text.equals(DEFAULT_TEXT);
     }
 
@@ -64,6 +66,6 @@ public class ImagetextLine {
     }
 
     private String getCharacter(int index) {
-        return this.text[index % this.text.length];
+        return this.text.get(index % this.text.size());
     }
 }
