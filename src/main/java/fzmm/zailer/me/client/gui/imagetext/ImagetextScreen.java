@@ -3,7 +3,7 @@ package fzmm.zailer.me.client.gui.imagetext;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
-import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
+import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.imagetext.tabs.ImagetextBookPageTab;
@@ -35,7 +35,7 @@ public class ImagetextScreen extends BaseFzmmScreen {
     private static final String SMOOTH_IMAGE_ID = "smoothImage";
     private static ImagetextTabs selectedTab = ImagetextTabs.LORE;
     private final ImagetextLogic imagetextLogic;
-    private ImageButtonWidget imageButton;
+    private ImageButtonComponent imageButton;
     private ConfigToggleButton preserveImageAspectRatioToggle;
     private ConfigToggleButton showResolutionToggle;
     private ConfigToggleButton smoothImageToggle;
@@ -94,7 +94,7 @@ public class ImagetextScreen extends BaseFzmmScreen {
         });
     }
 
-    private void onResolutionChanged(ImageButtonWidget imageWidget, ConfigToggleButton preserveImageAspectRatioButton,
+    private void onResolutionChanged(ImageButtonComponent imageWidget, ConfigToggleButton preserveImageAspectRatioButton,
                                      SliderWidget config, SliderWidget configToChange, boolean isWidth) {
         if (!imageWidget.hasImage() || !((boolean) preserveImageAspectRatioButton.parsedValue()))
             return;

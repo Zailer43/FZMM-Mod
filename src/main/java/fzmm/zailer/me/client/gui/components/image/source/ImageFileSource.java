@@ -8,7 +8,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-public class ImageFileSource implements IImageSource {
+public class ImageFileSource implements IImageLoaderFromText {
     private BufferedImage image;
 
     public ImageFileSource() {
@@ -44,5 +44,10 @@ public class ImageFileSource implements IImageSource {
     public boolean predicate(String value) {
         File file = new File(value);
         return file.exists() && file.isFile();
+    }
+
+    @Override
+    public boolean hasTextField() {
+        return true;
     }
 }

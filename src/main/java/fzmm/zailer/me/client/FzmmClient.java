@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client;
 
+import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
 import fzmm.zailer.me.client.gui.main.MainScreen;
 import fzmm.zailer.me.config.FzmmConfig;
 import net.fabricmc.api.ClientModInitializer;
@@ -38,7 +39,12 @@ public class FzmmClient implements ClientModInitializer {
         FzmmItemGroup.register();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (OPEN_MAIN_GUI_KEYBINDING.wasPressed()) {
+            if (!OPEN_MAIN_GUI_KEYBINDING.wasPressed())
+                return;
+
+            if (ScreenshotSource.hasInstance()) {
+                ScreenshotSource.getInstance().takeScreenshot();
+            } else {
                 client.setScreen(new MainScreen(client.currentScreen));
             }
         });

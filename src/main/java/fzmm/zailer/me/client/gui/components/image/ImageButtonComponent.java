@@ -1,6 +1,8 @@
 package fzmm.zailer.me.client.gui.components.image;
 
-import fzmm.zailer.me.client.gui.components.image.source.IImageSource;
+import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
+import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
+import fzmm.zailer.me.client.gui.components.image.source.IInteractiveImageLoader;
 import fzmm.zailer.me.client.gui.components.image.source.ImagePlayerNameSource;
 import fzmm.zailer.me.client.toast.LoadingImageToast;
 import fzmm.zailer.me.client.toast.status.ImageStatus;
@@ -15,14 +17,14 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ImageButtonWidget extends ButtonComponent {
+public class ImageButtonComponent extends ButtonComponent {
 
     private @Nullable BufferedImage image;
-    private IImageSource mode;
+    private IImageGetter mode;
     private Function<BufferedImage, ImageStatus> imageLoadEvent;
     private Consumer<BufferedImage> callback;
 
-    public ImageButtonWidget() {
+    public ImageButtonComponent() {
         super(Text.empty(), button -> {});
         this.verticalSizing(Sizing.fixed(20));
         this.image = null;
@@ -34,7 +36,7 @@ public class ImageButtonWidget extends ButtonComponent {
         return Optional.ofNullable(this.image);
     }
 
-    public void setSourceType(IImageSource mode) {
+    public void setSourceType(IImageGetter mode) {
         this.mode = mode;
     }
 
@@ -43,12 +45,19 @@ public class ImageButtonWidget extends ButtonComponent {
     }
 
     public void loadImage(String value) {
+        if (this.mode instanceof IImageLoaderFromText imageLoaderFromText)
+            this.loadImageFromText(imageLoaderFromText, value);
+        else if (this.mode instanceof IInteractiveImageLoader interactiveImageLoader)
+            this.interactiveImageLoad(interactiveImageLoader);
+    }
+
+    public void loadImageFromText(IImageLoaderFromText imageLoaderFromText, String value) {
         MinecraftClient.getInstance().execute(() ->{
             this.active = false;
             LoadingImageToast toast = new LoadingImageToast();
             MinecraftClient.getInstance().getToastManager().add(toast);
-            ImageStatus status = this.mode.loadImage(value);
-            Optional<BufferedImage> image = this.mode.getImage();
+            ImageStatus status = imageLoaderFromText.loadImage(value);
+            Optional<BufferedImage> image = imageLoaderFromText.getImage();
 
             if (this.imageLoadEvent != null && status.statusType() == ImageStatus.StatusType.SUCCESSFUL) {
                 assert image.isPresent();
@@ -59,6 +68,17 @@ public class ImageButtonWidget extends ButtonComponent {
             toast.setResponse(status);
 
             this.image = image.orElse(null);
+            if (this.callback != null)
+                this.callback.accept(this.image);
+        });
+    }
+
+    public void interactiveImageLoad(IInteractiveImageLoader interactiveImageLoader) {
+        interactiveImageLoader.execute(bufferedImage -> {
+            this.image = bufferedImage;
+
+            this.active = true;
+
             if (this.callback != null)
                 this.callback.accept(this.image);
         });

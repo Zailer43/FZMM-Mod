@@ -1,9 +1,10 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.components.EnumWidget;
-import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
+import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.IImageMode;
-import fzmm.zailer.me.client.gui.components.image.source.IImageSource;
+import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
+import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -18,14 +19,14 @@ import java.util.List;
 public class ImageRows extends HorizontalFlowLayout {
     public static int TOTAL_HEIGHT = AbstractRow.TOTAL_HEIGHT * 2;
 
-    public ImageRows(String baseTranslationKey, String buttonId,  String buttonTooltipId,  String enumId,  String enumTooltipId) {
+    public ImageRows(String baseTranslationKey, String buttonId, String buttonTooltipId, String enumId, String enumTooltipId) {
         super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
 
         FlowLayout rowsLayout = Containers.verticalFlow(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
 
         rowsLayout.children(List.of(
-            new ImageButtonRow(baseTranslationKey, buttonId, buttonTooltipId).setHasHoveredBackground(false),
-            new EnumRow(baseTranslationKey, enumId, enumTooltipId).setHasHoveredBackground(false)
+                new ImageButtonRow(baseTranslationKey, buttonId, buttonTooltipId).setHasHoveredBackground(false),
+                new EnumRow(baseTranslationKey, enumId, enumTooltipId).setHasHoveredBackground(false)
         ));
 
         this.child(rowsLayout);
@@ -40,16 +41,20 @@ public class ImageRows extends HorizontalFlowLayout {
     }
 
     @SuppressWarnings({"ConstantConditions", "UnstableApiUsage"})
-    public static ImageButtonWidget setup(FlowLayout rootComponent, String buttonId, String enumId, Enum<? extends IImageMode> defaultValue) {
-        ImageButtonRow.setup(rootComponent, buttonId, ((IImageMode) defaultValue).getSourceType());
-        ImageButtonWidget imageWidget = rootComponent.childById(ImageButtonWidget.class, ImageButtonRow.getImageButtonId(buttonId));
+    public static ImageButtonComponent setup(FlowLayout rootComponent, String buttonId, String enumId, Enum<? extends IImageMode> defaultValue) {
+        ImageButtonRow.setup(rootComponent, buttonId, ((IImageMode) defaultValue).getImageGetter());
+        ImageButtonComponent imageWidget = rootComponent.childById(ImageButtonComponent.class, ImageButtonRow.getImageButtonId(buttonId));
 
         EnumRow.setup(rootComponent, enumId, defaultValue, button -> {
             IImageMode mode = (IImageMode) ((EnumWidget) button).getValue();
-            IImageSource sourceType = mode.getSourceType();
-            imageWidget.setSourceType(sourceType);
-            rootComponent.childById(ConfigTextBox.class, ImageButtonRow.getImageValueFieldId(buttonId))
-                    .applyPredicate(sourceType::predicate);
+            IImageGetter imageGetter = mode.getImageGetter();
+            imageWidget.setSourceType(imageGetter);
+            ConfigTextBox imageValueField = rootComponent.childById(ConfigTextBox.class, ImageButtonRow.getImageValueFieldId(buttonId));
+
+            if (imageGetter instanceof IImageLoaderFromText imageLoaderFromText)
+                imageValueField.applyPredicate(imageLoaderFromText::predicate);
+
+            imageValueField.visible = imageGetter.hasTextField();
         });
 
         return imageWidget;

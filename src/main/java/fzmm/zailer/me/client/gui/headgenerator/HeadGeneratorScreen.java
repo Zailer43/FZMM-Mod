@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui.headgenerator;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
+import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.headgenerator.components.HeadComponentEntry;
@@ -62,7 +62,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private static final String WIKI_BUTTON_ID = "wiki-button";
     private static final Text SHOW_ALL_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.all");
     private static final Text SHOW_FAVORITES_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.favorite");
-    private ImageButtonWidget skinButton;
+    private ImageButtonComponent skinButton;
     private TextFieldWidget headNameField;
     private ConfigToggleButton overlapHatLayerButton;
     private TextFieldWidget searchField;

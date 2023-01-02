@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client.gui.components.image.mode;
 
-import fzmm.zailer.me.client.gui.components.image.source.IImageSource;
+import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.ImageFileSource;
 import fzmm.zailer.me.client.gui.components.image.source.ImagePlayerNameSource;
 import net.minecraft.text.Text;
@@ -12,9 +12,9 @@ public enum SkinMode implements IImageMode {
 
     private static final String BASE_TRANSLATION_KEY = "fzmm.gui.option.skin.";
     private final String translationKey;
-    private final IImageSource sourceType;
+    private final IImageGetter sourceType;
 
-    SkinMode(String translationKey, IImageSource sourceType) {
+    SkinMode(String translationKey, IImageGetter sourceType) {
         this.translationKey = translationKey;
         this.sourceType = sourceType;
     }
@@ -24,7 +24,7 @@ public enum SkinMode implements IImageMode {
     }
 
     @Override
-    public IImageSource getSourceType() {
+    public IImageGetter getImageGetter() {
         return this.sourceType;
     }
 }

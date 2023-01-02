@@ -4,7 +4,8 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.ScreenTabContainer;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
-import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
+import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
+import fzmm.zailer.me.client.gui.components.image.ScreenshotZoneComponent;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.main.components.MainButtonComponent;
 import fzmm.zailer.me.compat.symbolChat.symbol.CustomSymbolSelectionPanel;
@@ -120,10 +121,11 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         UIParsing.registerFactory("toggle-button", element -> new ConfigToggleButton());
         UIParsing.registerFactory("number-slider", element -> new SliderWidget());
         UIParsing.registerFactory("text-option", element -> new ConfigTextBox());
-        UIParsing.registerFactory("image-option", element -> new ImageButtonWidget());
+        UIParsing.registerFactory("image-option", element -> new ImageButtonComponent());
         UIParsing.registerFactory("enum-option", element -> new EnumWidget());
         UIParsing.registerFactory("screen-tab", ScreenTabContainer::parse);
         UIParsing.registerFactory("main-button", element -> new MainButtonComponent(Text.empty(), buttonComponent -> {}));
+        UIParsing.registerFactory("screenshot-zone", element -> new ScreenshotZoneComponent());
 
     }
 

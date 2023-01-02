@@ -1,8 +1,9 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
-import fzmm.zailer.me.client.gui.components.image.source.IImageSource;
+import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
+import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
+import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -26,7 +27,7 @@ public class ImageButtonRow extends AbstractRow {
                 .id(getImageValueFieldId(id));
         Text loadImageButtonText = Text.translatable("fzmm.gui.button.loadImage");
 
-        ImageButtonWidget imageButton = new ImageButtonWidget();
+        ImageButtonComponent imageButton = new ImageButtonComponent();
         imageButton.setMessage(loadImageButtonText);
         imageButton.id(getImageButtonId(id));
 
@@ -54,17 +55,21 @@ public class ImageButtonRow extends AbstractRow {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static void setup(FlowLayout rootComponent, String id, IImageSource defaultMode) {
+    public static void setup(FlowLayout rootComponent, String id, IImageGetter defaultMode) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        ImageButtonWidget imageButtonWidget = rootComponent.childById(ImageButtonWidget.class, getImageButtonId(id));
+        ImageButtonComponent imageButtonComponent = rootComponent.childById(ImageButtonComponent.class, getImageButtonId(id));
         ConfigTextBox imageValueField = rootComponent.childById(ConfigTextBox.class, getImageValueFieldId(id));
 
-        BaseFzmmScreen.checkNull(imageButtonWidget, "image-option", getImageButtonId(id));
+        BaseFzmmScreen.checkNull(imageButtonComponent, "image-option", getImageButtonId(id));
         BaseFzmmScreen.checkNull(imageValueField, "text-option", getImageValueFieldId(id));
 
-        imageValueField.applyPredicate(defaultMode::predicate);
-        imageButtonWidget.onPress(button -> imageButtonWidget.loadImage(imageValueField.getText()));
-        imageButtonWidget.setSourceType(defaultMode);
-        imageButtonWidget.horizontalSizing(Sizing.fixed(textRenderer.getWidth(imageButtonWidget.getMessage()) + BaseFzmmScreen.BUTTON_TEXT_PADDING));
+        imageButtonComponent.onPress(button -> imageButtonComponent.loadImage(imageValueField.getText()));
+        imageButtonComponent.setSourceType(defaultMode);
+        imageButtonComponent.horizontalSizing(Sizing.fixed(textRenderer.getWidth(imageButtonComponent.getMessage()) + BaseFzmmScreen.BUTTON_TEXT_PADDING));
+        
+        if (defaultMode instanceof  IImageLoaderFromText imageLoaderFromText)
+            imageValueField.applyPredicate(imageLoaderFromText::predicate);
+
+        imageValueField.visible = defaultMode.hasTextField();
     }
 }

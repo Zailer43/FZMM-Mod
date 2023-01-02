@@ -6,7 +6,7 @@ import fzmm.zailer.me.utils.ImageUtils;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
-public class ImagePlayerNameSource implements IImageSource {
+public class ImagePlayerNameSource implements IImageLoaderFromText {
     private static final String REGEX = "^[a-zA-Z0-9_]{2,16}$";
     private BufferedImage image;
 
@@ -40,5 +40,10 @@ public class ImagePlayerNameSource implements IImageSource {
     @Override
     public boolean predicate(String value) {
         return value.matches(REGEX);
+    }
+
+    @Override
+    public boolean hasTextField() {
+        return true;
     }
 }

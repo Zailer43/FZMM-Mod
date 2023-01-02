@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Optional;
 
-public class ImageUrlSource implements IImageSource {
+public class ImageUrlSource implements IImageLoaderFromText {
     private BufferedImage image;
 
     public ImageUrlSource() {
@@ -41,6 +41,11 @@ public class ImageUrlSource implements IImageSource {
 
     @Override
     public boolean predicate(String value) {
+        return true;
+    }
+
+    @Override
+    public boolean hasTextField() {
         return true;
     }
 }

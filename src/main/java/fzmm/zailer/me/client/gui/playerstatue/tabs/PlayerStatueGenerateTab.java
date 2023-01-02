@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client.gui.playerstatue.tabs;
 
-import fzmm.zailer.me.client.gui.components.image.ImageButtonWidget;
+import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.ImageRows;
@@ -25,7 +25,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     private static final String LAST_PLAYER_STATUE_GENERATED_ID = "lastGenerated";
     private static ItemStack lastPlayerStatueGenerated = null;
     private static Thread CREATE_PLAYER_STATUE_THREAD = null;
-    private ImageButtonWidget skinButton;
+    private ImageButtonComponent skinButton;
     private ButtonWidget executeButton;
     private ButtonWidget lastGeneratedButton;
 
