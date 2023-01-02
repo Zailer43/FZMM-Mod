@@ -8,6 +8,7 @@
     "GameRendererMixin",
     "HandledScreenAccessor",
     "ItemFrameEntityRendererMixin",
+    "ItemGroupMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
     "PlayerSkinTextureAccessor",

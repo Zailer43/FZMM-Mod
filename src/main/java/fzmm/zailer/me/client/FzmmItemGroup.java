@@ -38,6 +38,10 @@ public class FzmmItemGroup {
                 .icon(() -> new ItemStack(Items.COMMAND_BLOCK))
                 .special()
                 .entries((enabledFeatures, entries, operatorEnabled) -> {
+                    // works correctly if the player has op, but if the player does not have op it works as if using the variable operatorEnabled
+//                    if (!MinecraftClient.getInstance().options.getOperatorItemsTab().getValue())
+//                        return;
+
                     entries.add(Items.COMMAND_BLOCK);
                     entries.add(Items.CHAIN_COMMAND_BLOCK);
                     entries.add(Items.REPEATING_COMMAND_BLOCK);
