@@ -31,6 +31,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
@@ -103,15 +104,16 @@ public class FzmmCommand {
         fzmmCommand.then(ClientCommandManager.literal("enchant")
                 .executes(ctx -> sendHelpMessage("commands.fzmm.enchant.help", BASE_COMMAND + " enchant <enchantment> <level>"))
                 .then(ClientCommandManager.argument("enchantment", RegistryEntryArgumentType.registryEntry(registryAccess, RegistryKeys.ENCHANTMENT)).executes(ctx -> {
-
-                    Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
+                    @SuppressWarnings("unchecked")
+                    Enchantment enchant = ((RegistryEntry.Reference<Enchantment>) ctx.getArgument("enchantment", RegistryEntry.Reference.class)).value();
 
                     addEnchant(enchant, (short) 1);
                     return 1;
 
                 }).then(ClientCommandManager.argument("level", IntegerArgumentType.integer(0, 255)).executes(ctx -> {
 
-                    Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
+                    @SuppressWarnings("unchecked")
+                    Enchantment enchant = ((RegistryEntry.Reference<Enchantment>) ctx.getArgument("enchantment", RegistryEntry.Reference.class)).value();
                     int level = ctx.getArgument("level", int.class);
 
                     addEnchant(enchant, (short) level);
@@ -123,14 +125,16 @@ public class FzmmCommand {
                 .executes(ctx -> sendHelpMessage("commands.fzmm.fakeenchant.help", BASE_COMMAND + " fakeenchant <enchantment> <level>"))
                 .then(ClientCommandManager.argument("enchantment", RegistryEntryArgumentType.registryEntry(registryAccess, RegistryKeys.ENCHANTMENT)).executes(ctx -> {
 
-                    Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
+                    @SuppressWarnings("unchecked")
+                    Enchantment enchant = ((RegistryEntry.Reference<Enchantment>) ctx.getArgument("enchantment", RegistryEntry.Reference.class)).value();
 
                     addFakeEnchant(enchant, 1);
                     return 1;
 
                 }).then(ClientCommandManager.argument("level", IntegerArgumentType.integer()).executes(ctx -> {
 
-                    Enchantment enchant = ctx.getArgument("enchantment", Enchantment.class);
+                    @SuppressWarnings("unchecked")
+                    Enchantment enchant = ((RegistryEntry.Reference<Enchantment>) ctx.getArgument("enchantment", RegistryEntry.Reference.class)).value();
                     int level = ctx.getArgument("level", int.class);
 
                     addFakeEnchant(enchant, level);
