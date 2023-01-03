@@ -239,6 +239,7 @@
   "fzmm.gui.textFormat.button.randomColors": "Colores aleatorios",
   "fzmm.gui.textFormat.button.setName": "Establecer nombre de ítem",
   "fzmm.gui.textFormat.error.messageLength": "El mensaje debe ser mayor que 1 carácter",
+  "fzmm.gui.textFormat.error.emptyColor": "Colors cannot be empty.",
   "fzmm.gui.textFormat.option.bold": "Negrita",
   "fzmm.gui.textFormat.option.bold.tooltip": "Ejemplo: §lHola mundo.",
   "fzmm.gui.textFormat.option.brightness": "Brillo",
