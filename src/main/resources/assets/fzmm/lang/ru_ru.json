@@ -45,7 +45,7 @@
   "fzmm.giveItem.exceedLimit": "Предмет превышает лимит в 2 Мб",
   "fzmm.gui.button.add": "+",
   "fzmm.gui.button.back": "Назад",
-  "fzmm.gui.button.chatSymbol.notAvailable.note": "* Эта кнопка будет включена, если вы используете мод Symbol Chat.",
+  "fzmm.gui.button.chatSymbol.notAvailable.note": "* Эта кнопка будет включена, если вы установите мод Symbol Chat.",
   "fzmm.gui.button.chatSymbol.symbol": "Просмотр списка символов для использования в этом текстовом поле.",
   "fzmm.gui.button.copy": "Скопировать",
   "fzmm.gui.button.execute": "Создать",
