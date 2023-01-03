@@ -239,6 +239,7 @@
   "fzmm.gui.textFormat.button.randomColors": "Случайные цвета",
   "fzmm.gui.textFormat.button.setName": "Установить название",
   "fzmm.gui.textFormat.error.messageLength": "Текст должен быть более 1 символа",
+  "fzmm.gui.textFormat.error.emptyColor": "Colors cannot be empty.",
   "fzmm.gui.textFormat.option.bold": "Жирный",
   "fzmm.gui.textFormat.option.bold.tooltip": "Пример: §lПривет мир.",
   "fzmm.gui.textFormat.option.brightness": "Яркость",
