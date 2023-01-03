@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.textformat.tabs;
 
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import fzmm.zailer.me.client.gui.textformat.ITextFormatTab;
+import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -28,6 +29,9 @@ public class TextFormatTwoColorsTab implements ITextFormatTab {
 
     @Override
     public Text getText(TextFormatLogic logic) {
+        if (!this.initialColor.isValid() || !this.initialColor.isValid())
+            return TextFormatScreen.EMPTY_COLOR_TEXT;
+
         Color initialColor = new Color(Integer.parseInt(this.initialColor.getText(), 16), false);
         Color finalColor = new Color(Integer.parseInt(this.finalColor.getText(), 16), false);
 

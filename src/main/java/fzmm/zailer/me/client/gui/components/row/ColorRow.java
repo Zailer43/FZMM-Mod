@@ -34,6 +34,7 @@ public class ColorRow extends AbstractRow {
     public static ConfigTextBox setup(FlowLayout rootComponent, String id, String defaultValue, @Nullable Consumer<String> changedListener) {
         ConfigTextBox colorField = ConfigTextBoxRow.setup(rootComponent, getColorFieldId(id), id, defaultValue, changedListener);
         colorField.inputPredicate(input -> input.matches("[0-9a-fA-F]{0,6}"));
+        colorField.applyPredicate(s -> !s.isBlank());
         return colorField;
     }
 

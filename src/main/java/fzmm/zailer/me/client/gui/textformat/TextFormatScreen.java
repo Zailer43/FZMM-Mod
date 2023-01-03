@@ -27,6 +27,7 @@ import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 public class TextFormatScreen extends BaseFzmmScreen {
+    public static final Text EMPTY_COLOR_TEXT = Text.translatable("fzmm.gui.textFormat.error.emptyColor").setStyle(Style.EMPTY.withColor(0xF2200D));
     private static final String MESSAGE_PREVIEW_ID = "message-preview";
     private static final String MESSAGE_ID = "message";
     private static final String BOLD_ID = "bold";
