@@ -25,6 +25,7 @@ import java.util.Optional;
 public class ImagetextScreen extends BaseFzmmScreen {
 
     private static final double DEFAULT_SIZE_VALUE = 32;
+    public static final double MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS = 10d;
     private static final String IMAGE_ID = "image";
     private static final String IMAGE_SOURCE_TYPE_ID = "imageSourceType";
     private static final String WIDTH_ID = "width";
@@ -33,6 +34,7 @@ public class ImagetextScreen extends BaseFzmmScreen {
     private static final String PRESERVE_IMAGE_ASPECT_RATIO_ID = "preserveImageAspectRatio";
     private static final String SHOW_RESOLUTION_ID = "showResolution";
     private static final String SMOOTH_IMAGE_ID = "smoothImage";
+    private static final String PERCENTAGE_OF_SIMILARITY_TO_COMPRESS_ID = "percentageOfSimilarityToCompress";
     private static ImagetextTabs selectedTab = ImagetextTabs.LORE;
     private final ImagetextLogic imagetextLogic;
     private ImageButtonComponent imageButton;
@@ -41,6 +43,7 @@ public class ImagetextScreen extends BaseFzmmScreen {
     private ConfigToggleButton smoothImageToggle;
     private SliderWidget widthSlider;
     private SliderWidget heightSlider;
+    private SliderWidget percentageOfSimilarityToCompress;
     private TextFieldWidget charactersTextField;
 
 
@@ -67,6 +70,7 @@ public class ImagetextScreen extends BaseFzmmScreen {
         this.charactersTextField = TextBoxRow.setup(rootComponent, CHARACTERS_ID, ImagetextLine.DEFAULT_TEXT);
         this.showResolutionToggle = BooleanRow.setup(rootComponent, SHOW_RESOLUTION_ID, false);
         this.smoothImageToggle = BooleanRow.setup(rootComponent, SMOOTH_IMAGE_ID, true);
+        this.percentageOfSimilarityToCompress = SliderRow.setup(rootComponent, PERCENTAGE_OF_SIMILARITY_TO_COMPRESS_ID, config.defaultPercentageOfSimilarityToCompress(), 0d, MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS, Double.class, 1, null);
         //tabs
         ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
         for (var tab : ImagetextTabs.values()) {
@@ -135,13 +139,14 @@ public class ImagetextScreen extends BaseFzmmScreen {
         int height = (int) this.heightSlider.parsedValue();
         boolean smoothScaling = (boolean) this.smoothImageToggle.parsedValue();
         boolean showResolution = (boolean) this.showResolutionToggle.parsedValue();
+        double percentageOfSimilarityToCompress = (double) this.percentageOfSimilarityToCompress.parsedValue();
 
         if (selectedTab == ImagetextTabs.BOOK_PAGE) {
             width = ImagetextBookPageTab.getMaxImageWidthForBookPage(characters);
             height = 15;
         }
 
-        this.imagetextLogic.generateImagetext(image.get(), characters, width, height, smoothScaling);
+        this.imagetextLogic.generateImagetext(image.get(), characters, width, height, smoothScaling, percentageOfSimilarityToCompress);
 
         if (showResolution)
             this.imagetextLogic.addResolution();

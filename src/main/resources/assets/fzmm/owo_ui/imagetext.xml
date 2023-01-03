@@ -38,6 +38,9 @@
                             <boolean-row>
                                 <id>smoothImage</id>
                             </boolean-row>
+                            <slider-row>
+                                <id>percentageOfSimilarityToCompress</id>
+                            </slider-row>
                             <screen-tab-row>
                                 <id>tabs</id>
                             </screen-tab-row>

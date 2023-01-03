@@ -1,5 +1,6 @@
 package fzmm.zailer.me.config;
 
+import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
 import io.wispforest.owo.config.annotation.*;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
@@ -51,6 +52,8 @@ public class FzmmConfigModel {
         public boolean defaultPreserveImageAspectRatio = true;
         @ExcludeFromScreen
         public int maxResolution = 127;
+        @RangeConstraint(min = 0.0f, max = ImagetextScreen.MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS)
+        public double defaultPercentageOfSimilarityToCompress = 2.5d;
 
         public static boolean predicateItem(String value) {
             return FzmmConfigModel.predicateItem(value);

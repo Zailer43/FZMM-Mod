@@ -25,7 +25,7 @@ public class ImagetextLogic {
         this.height = 0;
     }
 
-    public ImagetextLogic generateImagetext(BufferedImage image, @Nullable String characters, int width, int height, boolean smoothRescaling) {
+    public ImagetextLogic generateImagetext(BufferedImage image, @Nullable String characters, int width, int height, boolean smoothRescaling, double percentageOfSimilarityToCompress) {
         image = this.resizeImage(image, width, height, smoothRescaling);
         this.width = width;
         this.height = height;
@@ -34,7 +34,7 @@ public class ImagetextLogic {
         NbtList tooltipList = new NbtList();
 
         for (int y = 0; y != height; y++) {
-            ImagetextLine line = new ImagetextLine(characters);
+            ImagetextLine line = new ImagetextLine(characters, percentageOfSimilarityToCompress);
             for (int x = 0; x != width; x++) {
                 line.add(image.getRGB(x, y));
             }
