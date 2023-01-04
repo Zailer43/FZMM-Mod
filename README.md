@@ -132,6 +132,7 @@ It includes:
 - Invisible glow item frame
 - Special name tags with the description of use for each one
 - Unobtainable paints (1.19+)
+- Petrified oak slab (removed from creative inventory in 1.19.3)
 
 
 ![Unobtainable items](images/operator_utilities.png)

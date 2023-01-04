@@ -50,6 +50,7 @@ public class FzmmItemGroup {
                     entries.add(Items.STRUCTURE_BLOCK);
                     entries.add(Items.STRUCTURE_VOID);
                     entries.add(Items.BARRIER);
+                    entries.add(Items.PETRIFIED_OAK_SLAB);
                     entries.add(Items.DEBUG_STICK);
 
                     entries.add(Items.DRAGON_EGG);
