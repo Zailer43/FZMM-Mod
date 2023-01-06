@@ -65,7 +65,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         assert this.client != null;
         ButtonComponent backButton = rootComponent.childById(ButtonComponent.class, "back-button");
         if (backButton != null)
-            backButton.onPress(button -> this.client.setScreen(this.parent));
+            backButton.onPress(button -> this.close());
 
         if (FzmmClient.SYMBOL_CHAT_PRESENT) {
             rootComponent.child(this.symbolSelectionPanel);

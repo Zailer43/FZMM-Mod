@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.logic.FzmmHistory;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -65,6 +66,11 @@ public class FzmmUtils {
             mc.inGameHud.getChatHud().addMessage(Text.translatable("fzmm.giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)));
             return;
         }
+
+        if (Items.PLAYER_HEAD == stack.getItem())
+            FzmmHistory.addGeneratedHeads(stack);
+        else
+            FzmmHistory.addGeneratedItems(stack);
 
         if (FzmmClient.CONFIG.general.giveClientSide()) {
             mc.player.equipStack(EquipmentSlot.MAINHAND, stack);

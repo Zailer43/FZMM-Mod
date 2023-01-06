@@ -2,6 +2,7 @@ package fzmm.zailer.me.client;
 
 import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
 import fzmm.zailer.me.client.gui.main.MainScreen;
+import fzmm.zailer.me.client.logic.FzmmHistory;
 import fzmm.zailer.me.config.FzmmConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -57,5 +58,8 @@ public class FzmmClient implements ClientModInitializer {
                         Text.literal("FZMM: Head generator"),
                         ResourcePackActivationType.DEFAULT_ENABLED
                 )).filter(success -> !success).ifPresent(success -> LOGGER.warn("Could not register built-in resource pack with custom name."));
+
+        CONFIG.history.subscribeToMaxItemHistory(integer -> FzmmHistory.update());
+        CONFIG.history.subscribeToMaxHeadHistory(integer -> FzmmHistory.update());
     }
 }

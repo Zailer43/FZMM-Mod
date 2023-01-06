@@ -18,6 +18,7 @@ public class MainIcon implements Icon {
     public static final MainIcon ENCRYPTBOOK;
     public static final MainIcon HEAD_GENERATOR;
     public static final MainIcon CONVERTERS;
+    public static final MainIcon HISTORY;
 
     public MainIcon(int width, int height, int u, int v, int textureWidth, int textureHeight) {
         this.width = width;
@@ -49,5 +50,6 @@ public class MainIcon implements Icon {
         ENCRYPTBOOK = new MainIcon(WIDTH, HEIGHT, 16, 48, 256, 256);
         HEAD_GENERATOR = new MainIcon(WIDTH, HEIGHT, 16, 64, 256, 256);
         CONVERTERS = new MainIcon(WIDTH, HEIGHT, 16, 80, 256, 256);
+        HISTORY = new MainIcon(WIDTH, HEIGHT, 16, 96, 256, 256);
     }
 }

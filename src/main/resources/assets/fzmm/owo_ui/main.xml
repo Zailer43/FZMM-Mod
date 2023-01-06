@@ -8,35 +8,55 @@
                     <text translate="true">fzmm.gui.title.main</text>
                 </label>
 
-                <grid-layout rows="2" columns="3">
-                    <children>
-                        <template name="main-button-layout" row="0" column="0">
-                            <name>imagetext</name>
-                        </template>
-                        <template name="main-button-layout" row="0" column="1">
-                            <name>textFormat</name>
-                        </template>
-                        <template name="main-button-layout" row="0" column="2">
-                            <name>playerStatue</name>
-                        </template>
-                        <template name="main-button-layout" row="1" column="0">
-                            <name>encryptbook</name>
-                        </template>
-                        <template name="main-button-layout" row="1" column="1">
-                            <name>headGenerator</name>
-                        </template>
-                        <template name="main-button-layout" row="1" column="2">
-                            <name>converters</name>
-                        </template>
-                    </children>
+                <scroll direction="vertical">
+                    <flow-layout direction="vertical">
+                        <children>
+                            <grid-layout rows="3" columns="3">
+                                <children>
+                                    <template name="main-button-layout" row="0" column="0">
+                                        <name>imagetext</name>
+                                    </template>
+                                    <template name="main-button-layout" row="0" column="1">
+                                        <name>textFormat</name>
+                                    </template>
+                                    <template name="main-button-layout" row="0" column="2">
+                                        <name>playerStatue</name>
+                                    </template>
+                                    <template name="main-button-layout" row="1" column="0">
+                                        <name>encryptbook</name>
+                                    </template>
+                                    <template name="main-button-layout" row="1" column="1">
+                                        <name>headGenerator</name>
+                                    </template>
+                                    <template name="main-button-layout" row="1" column="2">
+                                        <name>converters</name>
+                                    </template>
+                                    <template name="main-button-layout" row="2" column="0">
+                                        <name>history</name>
+                                    </template>
+                                </children>
 
-                    <horizontal-alignment>center</horizontal-alignment>
+                            </grid-layout>
+                        </children>
+
+                        <vertical-alignment>center</vertical-alignment>
+                        <horizontal-alignment>center</horizontal-alignment>
+
+                        <sizing>
+                            <horizontal method="fill">100</horizontal>
+                        </sizing>
+                    </flow-layout>
 
                     <sizing>
-                        <horizontal method="content">9</horizontal>
-                        <vertical method="content">20</vertical>
+                        <vertical method="fill">80</vertical>
+                        <horizontal method="fill">80</horizontal>
                     </sizing>
-                </grid-layout>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+
+                </scroll>
 
                 <flow-layout direction="vertical">
                     <children>

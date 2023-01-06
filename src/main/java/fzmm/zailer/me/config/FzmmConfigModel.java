@@ -25,6 +25,8 @@ public class FzmmConfigModel {
     @Nest
     public HeadGeneratorNest headGenerator = new HeadGeneratorNest();
     @Nest
+    public HistoryNest history = new HistoryNest();
+    @Nest
     public ImagetextNest imagetext = new ImagetextNest();
     @Nest
     public MineskinNest mineskin = new MineskinNest();
@@ -109,6 +111,22 @@ public class FzmmConfigModel {
         @ExcludeFromScreen
         public Set<String> favoriteSkins = new HashSet<>();
         public boolean defaultOverlapHatLayer = true;
+    }
+
+    public static class HistoryNest {
+        public int itemGridColumns = 15;
+        @Hook
+        public int maxItemHistory = 100;
+        @Hook
+        public int maxHeadHistory = 100;
+//        public int maxTotalScreensHistory = 50;
+//        public boolean recoverScreensAutomatically = true;
+//        public boolean historyOfConverters = true;
+//        public boolean historyOfEncryptBook = true;
+//        public boolean historyOfHeadGenerator = true;
+//        public boolean historyOfImagetext = true;
+//        public boolean historyOfPlayerStatue = true;
+//        public boolean historyOfTextFormat = true;
     }
 
     @SuppressWarnings("unused")

@@ -1,0 +1,168 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19/owo-ui.xsd">
+    <components>
+        <flow-layout direction="horizontal">
+            <children>
+                <label id="title">
+                    <positioning type="absolute">20,20</positioning>
+                    <text translate="true">fzmm.gui.title.history</text>
+                </label>
+
+                <scroll direction="vertical">
+
+                    <flow-layout direction="horizontal">
+                        <children>
+                            <flow-layout direction="vertical" id="options-list">
+                                <children>
+                                    <flow-layout direction="vertical" id="generated-with-fzmm-list">
+                                        <children>
+                                            <label>
+                                                <text translate="true">fzmm.gui.history.label.generatedWithFzmm</text>
+                                                <tooltip-text translate="true">fzmm.gui.history.label.generatedWithFzmm.tooltip</tooltip-text>
+
+                                                <margins>
+                                                    <vertical>4</vertical>
+                                                </margins>
+                                            </label>
+                                            <template name="option-button">
+                                                <id>itemGeneratedWithFzmm</id>
+                                                <translation>generatedWithFzmm.item</translation>
+                                            </template>
+                                            <template name="option-button">
+                                                <id>headGeneratedWithFzmm</id>
+                                                <translation>generatedWithFzmm.head</translation>
+                                            </template>
+                                        </children>
+                                    </flow-layout>
+
+                                    <!--
+                                    <flow-layout direction="vertical" id="screen-history-list">
+                                        <children>
+                                            <label>
+                                                <text translate="true">fzmm.gui.history.label.screenHistory</text>
+                                                <tooltip-text translate="true">fzmm.gui.history.label.screenHistory.tooltip</tooltip-text>
+
+                                                <margins>
+                                                    <vertical>4</vertical>
+                                                </margins>
+                                            </label>
+                                            <template name="option-button">
+                                                <id>convertersScreen</id>
+                                                <translation>screenHistory.converters</translation>
+                                            </template>
+                                            <template name="option-button">
+                                                <id>encryptBookScreen</id>
+                                                <translation>screenHistory.encryptBook</translation>
+                                            </template>
+                                            <template name="option-button">
+                                                <id>headGeneratorScreen</id>
+                                                <translation>screenHistory.headGenerator</translation>
+                                            </template>
+                                            <template name="option-button">
+                                                <id>imagetextScreen</id>
+                                                <translation>screenHistory.imagetext</translation>
+                                            </template>
+                                            <template name="option-button">
+                                                <id>playerStatueScreen</id>
+                                                <translation>screenHistory.playerStatue</translation>
+                                            </template>
+                                            <template name="option-button">
+                                                <id>textFormatScreen</id>
+                                                <translation>screenHistory.textFormat</translation>
+                                            </template>
+                                        </children>
+
+                                        <margins>
+                                            <top>20</top>
+                                        </margins>
+                                    </flow-layout>
+                                    -->
+                                </children>
+
+                                <sizing>
+                                    <horizontal method="fixed">150</horizontal>
+                                </sizing>
+
+                            </flow-layout>
+
+                        </children>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">80</vertical>
+                    </sizing>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+
+                <scroll direction="vertical">
+                    <flow-layout direction="vertical" id="content">
+                        <children>
+
+                        </children>
+
+                        <sizing>
+                            <horizontal method="fill">60</horizontal>
+                        </sizing>
+
+                        <horizontal-alignment>center</horizontal-alignment>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">80</vertical>
+                    </sizing>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="back-button">
+                            <text translate="true">fzmm.gui.button.back</text>
+
+                            <margins>
+                                <right>20</right>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+            </children>
+
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+
+    <templates>
+        <option-button>
+            <button id="{{id}}">
+                <text translate="true">fzmm.gui.history.option.{{translation}}</text>
+
+                <sizing>
+                    <horizontal method="fill">97</horizontal>
+                </sizing>
+
+                <margins>
+                    <vertical>4</vertical>
+                </margins>
+            </button>
+        </option-button>
+    </templates>
+</owo-ui>

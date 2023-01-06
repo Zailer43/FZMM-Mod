@@ -22,12 +22,9 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     private static final ImageStatus OLD_SKIN_FORMAT_NOT_SUPPORTED = new ImageStatus("playerStatue.oldSkinFormatNotSupported", ImageStatus.StatusType.ERROR);
     private static final String SKIN_ID = "skin";
     private static final String SKIN_SOURCE_ID = "skin-source";
-    private static final String LAST_PLAYER_STATUE_GENERATED_ID = "lastGenerated";
-    private static ItemStack lastPlayerStatueGenerated = null;
     private static Thread CREATE_PLAYER_STATUE_THREAD = null;
     private ImageButtonComponent skinButton;
     private ButtonWidget executeButton;
-    private ButtonWidget lastGeneratedButton;
 
     @Override
     public String getId() {
@@ -37,7 +34,6 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     @Override
     public void setupComponents(FlowLayout rootComponent) {
         this.skinButton = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_ID, SkinMode.NAME);
-        this.lastGeneratedButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(LAST_PLAYER_STATUE_GENERATED_ID), lastPlayerStatueGenerated != null, this::lastGeneratedCallback);
         this.executeButton = rootComponent.childById(ButtonWidget.class, ButtonRow.getButtonId(PlayerStatueScreen.EXECUTE_ID));
 
         this.skinButton.setImageLoadedEvent(this::skinCallback);
@@ -61,14 +57,13 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
 
             Vector3f pos = new Vector3f(x, y, z);
 
-            lastPlayerStatueGenerated = new PlayerStatue(image.get(), name, pos, direction)
+            ItemStack statueGenerated = new PlayerStatue(image.get(), name, pos, direction)
                     .generateStatues()
                     .getStatueInContainer();
 
-            FzmmUtils.giveItem(lastPlayerStatueGenerated);
+            FzmmUtils.giveItem(statueGenerated);
 
             this.executeButton.active = true;
-            this.lastGeneratedButton.active = true;
         });
 
         CREATE_PLAYER_STATUE_THREAD.start();
@@ -90,10 +85,5 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
             return OLD_SKIN_FORMAT_NOT_SUPPORTED;
 
         return ImageStatus.IMAGE_LOADED;
-    }
-
-    private void lastGeneratedCallback(ButtonWidget buttonWidget) {
-        if (lastGeneratedButton != null)
-            FzmmUtils.giveItem(lastPlayerStatueGenerated);
     }
 }

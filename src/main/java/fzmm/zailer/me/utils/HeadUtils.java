@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.logic.FzmmHistory;
 import fzmm.zailer.me.config.FzmmConfig;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -141,6 +142,7 @@ public class HeadUtils {
         ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
         head.setSubNbt(SkullItem.SKULL_OWNER_KEY, NbtString.of(username));
 
+        FzmmHistory.addGeneratedHeads(head);
         return head;
     }
 
@@ -151,6 +153,7 @@ public class HeadUtils {
         NbtHelper.writeGameProfile(skullOwner, profile);
         head.setSubNbt(SkullItem.SKULL_OWNER_KEY, skullOwner);
 
+        FzmmHistory.addGeneratedHeads(head);
         return head;
     }
 
@@ -174,6 +177,7 @@ public class HeadUtils {
 
         ItemStack stack = Items.PLAYER_HEAD.getDefaultStack();
         stack.setNbt(tag);
+        FzmmHistory.addGeneratedHeads(stack);
         return stack;
     }
 

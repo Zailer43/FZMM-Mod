@@ -43,9 +43,6 @@
                                         <buttonId>skin</buttonId>
                                         <enumId>skin-source</enumId>
                                     </image-rows>
-                                    <button-row>
-                                        <id>lastGenerated</id>
-                                    </button-row>
                                 </children>
                             </screen-tab>
 
