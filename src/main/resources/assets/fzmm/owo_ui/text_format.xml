@@ -83,14 +83,32 @@
                             </screen-tab>
 
                             <screen-tab>
-                                <id>two_colors</id>
+                                <id>gradient</id>
+                                <children>
+                                    <color-list>
+                                        <id>gradientColorList</id>
+                                    </color-list>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>simple</id>
                                 <children>
                                     <color-row>
-                                        <id>initialColor</id>
+                                        <id>color</id>
                                     </color-row>
-                                    <color-row>
-                                        <id>finalColor</id>
-                                    </color-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>interleaved_colors</id>
+                                <children>
+                                    <slider-row>
+                                        <id>interleavedDistance</id>
+                                    </slider-row>
+                                    <color-list>
+                                        <id>interleavedColorList</id>
+                                    </color-list>
                                 </children>
                             </screen-tab>
                         </children>

@@ -24,7 +24,7 @@ public class ButtonRow extends AbstractRow {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         ButtonWidget resetButton = (ButtonWidget) getResetButton("");
 
-        Component button = Components.button(Text.translatable(this.getOptionBaseTranslationKey() + id + ".button"),
+        Component button = Components.button(Text.translatable(BaseFzmmScreen.getOptionBaseTranslationKey(this.baseTranslationKey) + id + ".button"),
                         buttonComponent -> {})
                 .horizontalSizing(Sizing.fixed(NORMAL_WIDTH + textRenderer.getWidth(resetButton.getMessage()) + BaseFzmmScreen.COMPONENT_DISTANCE + BaseFzmmScreen.BUTTON_TEXT_PADDING))
                 .id(getButtonId(id));
@@ -49,7 +49,7 @@ public class ButtonRow extends AbstractRow {
     }
 
     public static ButtonRow parse(Element element) {
-        String baseTranslationKey = getBaseTranslationKey(element);
+        String baseTranslationKey = BaseFzmmScreen.getBaseTranslationKey(element);
         String id = getId(element);
         String tooltipId = getTooltipId(element, id);
 

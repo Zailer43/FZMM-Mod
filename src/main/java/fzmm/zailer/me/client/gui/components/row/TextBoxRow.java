@@ -79,7 +79,7 @@ public class TextBoxRow extends AbstractRow {
     }
 
     public static TextBoxRow parse(Element element) {
-        String baseTranslationKey = getBaseTranslationKey(element);
+        String baseTranslationKey = BaseFzmmScreen.getBaseTranslationKey(element);
         String id = getId(element);
         String tooltipId = getTooltipId(element, id);
         boolean removeResetButton = UIParsing.childElements(element).containsKey("removeResetButton") &&

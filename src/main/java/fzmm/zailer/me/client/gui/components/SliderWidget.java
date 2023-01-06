@@ -9,4 +9,9 @@ public class SliderWidget extends ConfigSlider  {
         this.value = (discreteValue - this.min) / (this.max - this.min);
         this.updateMessage();
     }
+
+    @Override
+    public void updateMessage() {
+        super.updateMessage();
+    }
 }

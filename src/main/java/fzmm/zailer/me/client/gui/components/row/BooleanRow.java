@@ -56,7 +56,7 @@ public class BooleanRow extends AbstractRow {
     }
 
     public static BooleanRow parse(Element element) {
-        String baseTranslationKey = getBaseTranslationKey(element);
+        String baseTranslationKey = BaseFzmmScreen.getBaseTranslationKey(element);
         String id = getId(element);
         String tooltipId = getTooltipId(element, id);
 

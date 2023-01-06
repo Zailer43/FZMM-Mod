@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.components.row;
 
+import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -52,7 +53,7 @@ public class NumberRow extends AbstractRow {
     }
 
     public static NumberRow parse(Element element) {
-        String baseTranslationKey = getBaseTranslationKey(element);
+        String baseTranslationKey = BaseFzmmScreen.getBaseTranslationKey(element);
         String id = getId(element);
         String tooltipId = getTooltipId(element, id);
 

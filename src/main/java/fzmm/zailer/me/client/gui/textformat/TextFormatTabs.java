@@ -1,7 +1,9 @@
 package fzmm.zailer.me.client.gui.textformat;
 
+import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatGradientTab;
+import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatInterleavedColorsTab;
 import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatRainbowTab;
-import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatTwoColorsTab;
+import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatSimpleTab;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.text.Text;
@@ -9,8 +11,10 @@ import net.minecraft.text.Text;
 import java.util.function.Consumer;
 
 public enum TextFormatTabs implements ITextFormatTab {
-    TWO_COLORS(new TextFormatTwoColorsTab()),
-    RAINBOW(new TextFormatRainbowTab());
+    SIMPLE(new TextFormatSimpleTab()),
+    GRADIENT(new TextFormatGradientTab()),
+    RAINBOW(new TextFormatRainbowTab()),
+    INTERLEAVED(new TextFormatInterleavedColorsTab());
 
     private final ITextFormatTab tab;
 

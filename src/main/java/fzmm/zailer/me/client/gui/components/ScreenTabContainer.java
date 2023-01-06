@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.components;
 
+import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.IScreenTab;
-import fzmm.zailer.me.client.gui.components.row.AbstractRow;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.VerticalFlowLayout;
@@ -66,6 +66,6 @@ public class ScreenTabContainer extends VerticalFlowLayout {
 
     public static ScreenTabContainer parse(Element element) {
         String id = UIParsing.parseText(UIParsing.childElements(element).get("id")).getString();
-        return new ScreenTabContainer(AbstractRow.getBaseTranslationKey(element), Sizing.content(), Sizing.content(), id);
+        return new ScreenTabContainer(BaseFzmmScreen.getBaseTranslationKey(element), Sizing.content(), Sizing.content(), id);
     }
 }

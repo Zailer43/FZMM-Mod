@@ -51,13 +51,15 @@ public class SliderRow extends AbstractRow {
         numberSlider.min(min);
         numberSlider.max(max);
         numberSlider.setFromDiscreteValue(defaultValue);
+        numberSlider.updateMessage();
 
         resetButton.onPress(button -> numberSlider.setFromDiscreteValue(defaultValue));
+        resetButton.active = false;
         return numberSlider;
     }
 
     public static SliderRow parse(Element element) {
-        String baseTranslationKey = getBaseTranslationKey(element);
+        String baseTranslationKey = BaseFzmmScreen.getBaseTranslationKey(element);
         String id = getId(element);
         String tooltipId = getTooltipId(element, id);
 

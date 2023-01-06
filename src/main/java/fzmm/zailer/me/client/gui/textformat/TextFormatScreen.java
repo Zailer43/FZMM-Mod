@@ -39,7 +39,7 @@ public class TextFormatScreen extends BaseFzmmScreen {
     private static final String SET_NAME_ID = "set-name";
     private static final String COPY_ID = "copy";
     private static final String RANDOM_ID = "random";
-    private static TextFormatTabs selectedTab = TextFormatTabs.TWO_COLORS;
+    private static TextFormatTabs selectedTab = TextFormatTabs.SIMPLE;
     private LabelComponent messagePreviewLabel;
     private TextFieldWidget messageTextField;
     private ConfigToggleButton boldToggle;

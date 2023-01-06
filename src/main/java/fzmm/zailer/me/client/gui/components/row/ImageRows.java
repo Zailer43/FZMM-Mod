@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.components.row;
 
+import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.IImageMode;
@@ -61,7 +62,7 @@ public class ImageRows extends HorizontalFlowLayout {
     }
 
     public static ImageRows parse(Element element) {
-        String baseTranslationKey = AbstractRow.getBaseTranslationKey(element);
+        String baseTranslationKey = BaseFzmmScreen.getBaseTranslationKey(element);
 
         String buttonId = AbstractRow.getId(element, "buttonId");
         String buttonTooltipId = AbstractRow.getTooltipId(element, buttonId, "buttonTooltipId");

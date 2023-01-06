@@ -8,6 +8,7 @@ import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.ScreenshotZoneComponent;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.main.components.MainButtonComponent;
+import fzmm.zailer.me.client.gui.textformat.components.ColorListContainer;
 import fzmm.zailer.me.compat.symbolChat.symbol.CustomSymbolSelectionPanel;
 import fzmm.zailer.me.compat.symbolChat.symbol.SymbolSelectionPanelComponent;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -17,12 +18,14 @@ import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.parsing.UIParsing;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import org.w3c.dom.Element;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -105,6 +108,23 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 //        return Optional.ofNullable(this.fontSelectionDropDown);
 //    }
 
+    public static String getBaseTranslationKey(Element element) {
+        Screen currentScreen = MinecraftClient.getInstance().currentScreen;
+        return currentScreen instanceof BaseFzmmScreen baseFzmmScreen ? baseFzmmScreen.getBaseScreenTranslationKey() : element.getAttribute("baseScreenTranslationKey");
+    }
+
+    public static String getBaseTranslationKey(String baseTranslationKey) {
+        return "fzmm.gui." + baseTranslationKey;
+    }
+
+    public static String getTabTranslationKey(String baseScreenTranslationKey) {
+        return getBaseTranslationKey(baseScreenTranslationKey) + ".tab.";
+    }
+
+    public static String getOptionBaseTranslationKey(String baseScreenTranslationKey) {
+        return getBaseTranslationKey(baseScreenTranslationKey) + ".option.";
+    }
+
     static {
         UIParsing.registerFactory("boolean-row", BooleanRow::parse);
         UIParsing.registerFactory("button-row", ButtonRow::parse);
@@ -126,6 +146,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         UIParsing.registerFactory("screen-tab", ScreenTabContainer::parse);
         UIParsing.registerFactory("main-button", element -> new MainButtonComponent(Text.empty(), buttonComponent -> {}));
         UIParsing.registerFactory("screenshot-zone", element -> new ScreenshotZoneComponent());
+        UIParsing.registerFactory("color-list", ColorListContainer::parse);
 
     }
 

@@ -10,8 +10,6 @@ import io.wispforest.owo.ui.container.HorizontalFlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.Drawer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.w3c.dom.Element;
@@ -89,7 +87,11 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
     }
 
     public Component getLabel(String id, String tooltipId, boolean isOption) {
-        String baseTranslationKey = isOption ? this.getOptionBaseTranslationKey() : this.getTabTranslationKey();
+        String baseTranslationKey = isOption ? BaseFzmmScreen.getOptionBaseTranslationKey(this.baseTranslationKey) : BaseFzmmScreen.getTabTranslationKey(this.baseTranslationKey);
+        return getLabel(id, tooltipId, baseTranslationKey);
+    }
+
+    public static Component getLabel(String id, String tooltipId, String baseTranslationKey) {
         return Components
                 .label(Text.translatable(baseTranslationKey + id))
                 .tooltip(Text.translatable(baseTranslationKey + tooltipId + ".tooltip"))
@@ -114,32 +116,16 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
         return id + "-right-layout";
     }
 
-    public String getBaseTranslationKey() {
-        return "fzmm.gui." + this.baseTranslationKey;
-    }
-
-    public String getTabTranslationKey() {
-        return this.getBaseTranslationKey() + ".tab.";
-    }
-
-    public String getOptionBaseTranslationKey() {
-        return this.getBaseTranslationKey() + ".option.";
-    }
-
-    public static String getBaseTranslationKey(Element element) {
-        Screen currentScreen = MinecraftClient.getInstance().currentScreen;
-        return currentScreen instanceof BaseFzmmScreen baseFzmmScreen ? baseFzmmScreen.getBaseScreenTranslationKey() : element.getAttribute("baseScreenTranslationKey");
-    }
-
     public static String getId(Element element) {
         return getId(element, "id");
     }
+
     public static String getId(Element element, String id) {
         return UIParsing.parseText(UIParsing.childElements(element).get(id)).getString();
     }
 
     public static String getTooltipId(Element element, String defaultValue) {
-        return getTooltipId(element, defaultValue, "tooltipId" );
+        return getTooltipId(element, defaultValue, "tooltipId");
     }
 
     public static String getTooltipId(Element element, String defaultValue, String id) {
@@ -181,6 +167,10 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
 
     public Optional<FlowLayout> getRightLayout() {
         return Optional.ofNullable(this.childById(FlowLayout.class, getRightLayoutId(this.id)));
+    }
+
+    public Optional<FlowLayout> getRowContainer() {
+        return Optional.ofNullable(this.childById(FlowLayout.class, getRowContainerId(this.id)));
     }
 
     protected String getId() {

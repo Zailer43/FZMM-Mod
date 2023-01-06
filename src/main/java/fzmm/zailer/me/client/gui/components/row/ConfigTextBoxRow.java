@@ -51,22 +51,23 @@ public class ConfigTextBoxRow extends AbstractRow {
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
 
         BaseFzmmScreen.checkNull(textBox, "text-option", textBoxId);
-        BaseFzmmScreen.checkNull(resetButton, "button", getResetButtonId(id));
 
         textBox.onChanged().subscribe(s -> {
-            resetButton.active = !defaultPredicate.test(s);
+            if (resetButton != null)
+                resetButton.active = !defaultPredicate.test(s);
             if (changedListener != null)
                 changedListener.accept(s);
         });
         textBox.setText(defaultValue);
         textBox.setCursor(0);
 
-        resetButton.onPress(button -> textBox.setText(defaultValue));
+        if (resetButton != null)
+            resetButton.onPress(button -> textBox.setText(defaultValue));
         return textBox;
     }
 
     public static ConfigTextBoxRow parse(Element element) {
-        String baseTranslationKey = getBaseTranslationKey(element);
+        String baseTranslationKey = BaseFzmmScreen.getBaseTranslationKey(element);
         String id = getId(element);
         String tooltipId = getTooltipId(element, id);
 
