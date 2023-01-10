@@ -11,4 +11,7 @@ public class TagsConstant {
     public static final String INVENTORY_SLOT = "Slot";
 
     public static final String ITEM_FRAME_ITEM = "Item";
+
+    public static final String SIGN_COLOR = "Color";
+    public static final String SIGN_GLOWING_TEXT = "GlowingText";
 }

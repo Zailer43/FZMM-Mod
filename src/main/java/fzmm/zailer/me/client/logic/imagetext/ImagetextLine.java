@@ -14,36 +14,54 @@ public class ImagetextLine {
     private final List<String> charactersToUse;
     private final boolean isDefaultText;
     private final double percentageOfSimilarityToCompress;
+    private final int splitLineEvery;
+    private int lineLength;
 
-    public ImagetextLine(String charactersToUse, double percentageOfSimilarityToCompress) {
+    public ImagetextLine(String charactersToUse, double percentageOfSimilarityToCompress, int splitLineEvery) {
         this.line = new ArrayList<>();
         this.charactersToUse = FzmmUtils.splitMessage(charactersToUse);
         this.isDefaultText = charactersToUse.equals(DEFAULT_TEXT);
         this.percentageOfSimilarityToCompress = percentageOfSimilarityToCompress;
+        this.splitLineEvery = splitLineEvery;
+        this.lineLength = 0;
     }
 
     public ImagetextLine add(int color) {
         int size = this.line.size();
-        if (size > 0) {
-            if (this.line.get(size - 1).tryAdd(color, this.percentageOfSimilarityToCompress))
-                return this;
+        ImagetextLineComponent lastComponent = size > 0 ? this.line.get(size - 1) : null;
+
+        if (this.shouldSplitLine(this.lineLength) || lastComponent == null || !lastComponent.tryAdd(color, this.percentageOfSimilarityToCompress)) {
+            this.line.add(new ImagetextLineComponent(color));
         }
 
-        this.line.add(new ImagetextLineComponent(color));
+        this.lineLength++;
         return this;
     }
 
-    public MutableText getLine() {
-        MutableText lineList = Text.empty().setStyle(Style.EMPTY.withItalic(false));
+    public List<MutableText> getLine() {
+        List<MutableText> lineList = new ArrayList<>();
+        MutableText line = Text.empty().setStyle(Style.EMPTY.withItalic(false));
         short lineIndex = 0;
-        for (var lineComponent : this.line) {
-            int color = lineComponent.getColor();
-            int alpha = (color >> 24) & 0xFF;
+
+        int lineComponentSize = this.line.size();
+        for (int i = 0; i != lineComponentSize; i++) {
+            ImagetextLineComponent lineComponent = this.line.get(i);
             int repetitions = lineComponent.getRepetitions();
-            Text line = this.isDefaultText && alpha == 0 ? lineComponent.getEmptyText() : lineComponent.getText(this.charactersToUse, lineIndex);
+            Text lineComponentText = lineComponent.getText(this.charactersToUse, lineIndex, this.isDefaultText);
             lineIndex += repetitions;
-            lineList.append(line);
+            line.append(lineComponentText);
+
+            if (this.shouldSplitLine(lineIndex)) {
+                lineList.add(line);
+                line = Text.empty().setStyle(Style.EMPTY.withItalic(false));
+            } else if (lineComponentSize - 1 == i) {
+                lineList.add(line);
+            }
         }
         return lineList;
+    }
+
+    private boolean shouldSplitLine(int index) {
+        return index != 0 && (index % this.splitLineEvery == 0);
     }
 }

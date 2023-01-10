@@ -97,6 +97,18 @@
                             </screen-tab>
 
                             <screen-tab>
+                                <id>sign</id>
+                                <children>
+                                    <enum-row>
+                                        <id>signType</id>
+                                    </enum-row>
+                                    <boolean-row>
+                                        <id>isHangingSign</id>
+                                    </boolean-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
                                 <id>copy</id>
                                 <children>
                                 </children>

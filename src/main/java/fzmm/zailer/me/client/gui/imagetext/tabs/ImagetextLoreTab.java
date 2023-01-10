@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.options.LoreOption;
+import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -16,6 +17,11 @@ import net.minecraft.nbt.NbtList;
 public class ImagetextLoreTab implements IImagetextTab {
     private static final String LORE_MODE_ID = "loreMode";
     private EnumWidget loreModeOption;
+
+    @Override
+    public void generate(ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.generateImagetext(data);
+    }
 
     @Override
     public void execute(ImagetextLogic logic) {

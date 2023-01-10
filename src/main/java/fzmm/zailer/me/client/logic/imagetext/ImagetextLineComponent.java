@@ -50,19 +50,25 @@ public final class ImagetextLineComponent {
         return this.repetitions;
     }
 
+    public Text getText(List<String> charactersToUse, int lineIndex, boolean isDefaultText) {
+        int color = this.getColor();
+        int alpha = (color >> 24) & 0xFF;
+        return isDefaultText && alpha == 0 ? this.getEmptyText() : this.getText(charactersToUse, lineIndex);
+    }
+
     public Text getEmptyText() {
-        String spaceString = " ".repeat(repetitions);
+        String spaceString = " ".repeat(this.repetitions);
         return Text.literal(spaceString + Formatting.BOLD + spaceString + Formatting.RESET);
     }
 
-    public Text getText(List<String> charactersToUse, int lineIndex) {
+    private Text getText(List<String> charactersToUse, int lineIndex) {
         StringBuilder textStrBuilder = new StringBuilder();
         int red = (this.pixelColor >> 16) & 0xff;
         int green = (this.pixelColor >> 8) & 0xff;
         int blue = this.pixelColor & 0xff;
         int colorRGB = (red << 16) + (green << 8) + blue;
 
-        for (int x = 0; x != repetitions; x++)
+        for (int x = 0; x != this.repetitions; x++)
             textStrBuilder.append(this.getCharacter(charactersToUse, lineIndex++));
 
         return Text.literal(textStrBuilder.toString()).setStyle(Style.EMPTY.withColor(colorRGB));

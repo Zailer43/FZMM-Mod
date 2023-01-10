@@ -5,16 +5,32 @@ import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextBookOption;
+import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
+import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.ingame.BookScreen;
+import org.jetbrains.annotations.Nullable;
 
 public class ImagetextBookPageTab implements IImagetextTab {
     private static final String BOOK_PAGE_MODE_ID = "bookPageMode";
     private EnumWidget bookPageMode;
+
+    @Override
+    public void generate(ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        ImagetextData modifiedData = new ImagetextData(data.image(),
+                data.characters(),
+                this.getMaxImageWidthForBookPage(data.characters()),
+                15,
+                data.smoothRescaling(),
+                data.percentageOfSimilarityToCompress()
+        );
+
+        logic.generateImagetext(modifiedData);
+    }
 
     @Override
     public void execute(ImagetextLogic logic) {
@@ -39,7 +55,10 @@ public class ImagetextBookPageTab implements IImagetextTab {
         return "bookPage";
     }
 
-    public static int getMaxImageWidthForBookPage(String characters) {
+    private int getMaxImageWidthForBookPage(@Nullable String characters) {
+        if (characters == null)
+            characters = ImagetextLine.DEFAULT_TEXT;
+
         int maxTextWidth = BookScreen.MAX_TEXT_WIDTH - 1;
         int width = 0;
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;

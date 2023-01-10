@@ -6,7 +6,7 @@ import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.*;
-import fzmm.zailer.me.client.gui.imagetext.tabs.ImagetextBookPageTab;
+import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.config.FzmmConfig;
@@ -85,7 +85,7 @@ public class ImagetextScreen extends BaseFzmmScreen {
         ButtonWidget executeButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId("execute"), false, button -> this.execute());
         ButtonWidget previewButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId("preview"), false, button -> {
             if (this.imageButton.hasImage()) {
-                this.updateImagetext();
+                this.updateImagetext(false);
                 button.tooltip(this.imagetextLogic.getText());
             }
         });
@@ -125,11 +125,11 @@ public class ImagetextScreen extends BaseFzmmScreen {
         if (!this.imageButton.hasImage())
             return;
 
-        this.updateImagetext();
+        this.updateImagetext(true);
         selectedTab.execute(this.imagetextLogic);
     }
 
-    public void updateImagetext() {
+    public void updateImagetext(boolean isExecute) {
         Optional<BufferedImage> image = this.imageButton.getImage();
         if (image.isEmpty())
             return;
@@ -141,12 +141,7 @@ public class ImagetextScreen extends BaseFzmmScreen {
         boolean showResolution = (boolean) this.showResolutionToggle.parsedValue();
         double percentageOfSimilarityToCompress = (double) this.percentageOfSimilarityToCompress.parsedValue();
 
-        if (selectedTab == ImagetextTabs.BOOK_PAGE) {
-            width = ImagetextBookPageTab.getMaxImageWidthForBookPage(characters);
-            height = 15;
-        }
-
-        this.imagetextLogic.generateImagetext(image.get(), characters, width, height, smoothScaling, percentageOfSimilarityToCompress);
+        selectedTab.generate(this.imagetextLogic, new ImagetextData(image.get(), characters, width, height, smoothScaling, percentageOfSimilarityToCompress), isExecute);
 
         if (showResolution)
             this.imagetextLogic.addResolution();

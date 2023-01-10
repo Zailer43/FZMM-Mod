@@ -7,7 +7,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec2f;
-import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -18,30 +17,38 @@ public class ImagetextLogic {
     private NbtList imagetext;
     private int width;
     private int height;
+    private String characters;
 
     public ImagetextLogic() {
         this.imagetext = new NbtList();
         this.width = 0;
         this.height = 0;
+        this.characters = ImagetextLine.DEFAULT_TEXT;
     }
 
-    public ImagetextLogic generateImagetext(BufferedImage image, @Nullable String characters, int width, int height, boolean smoothRescaling, double percentageOfSimilarityToCompress) {
-        image = this.resizeImage(image, width, height, smoothRescaling);
-        this.width = width;
-        this.height = height;
-        if (characters == null || characters.isEmpty())
-            characters = ImagetextLine.DEFAULT_TEXT;
-        NbtList tooltipList = new NbtList();
+    public void generateImagetext(ImagetextData data) {
+        this.generateImagetext(data, Integer.MAX_VALUE);
+    }
+
+    public void generateImagetext(ImagetextData data, int lineSplitInterval) {
+        BufferedImage image = this.resizeImage(data.image(), data.width(), data.height(), data.smoothRescaling());
+        this.width = data.width();
+        this.height = data.height();
+        this.characters = data.characters();
+        if (this.characters == null || this.characters.isBlank())
+            this.characters = ImagetextLine.DEFAULT_TEXT;
+        NbtList linesList = new NbtList();
 
         for (int y = 0; y != height; y++) {
-            ImagetextLine line = new ImagetextLine(characters, percentageOfSimilarityToCompress);
+            ImagetextLine line = new ImagetextLine(this.characters, data.percentageOfSimilarityToCompress(), lineSplitInterval);
             for (int x = 0; x != width; x++) {
                 line.add(image.getRGB(x, y));
             }
-            tooltipList.add(FzmmUtils.toNbtString(line.getLine(), false));
+
+            for (var lineText : line.getLine())
+                linesList.add(FzmmUtils.toNbtString(lineText, false));
         }
-        this.imagetext = tooltipList;
-        return this;
+        this.imagetext = linesList;
     }
 
     private BufferedImage resizeImage(BufferedImage image, int width, int height, boolean smoothRescaling) {
@@ -117,4 +124,7 @@ public class ImagetextLogic {
         return this.imagetext.isEmpty();
     }
 
+    public String getCharacters() {
+        return this.characters;
+    }
 }
