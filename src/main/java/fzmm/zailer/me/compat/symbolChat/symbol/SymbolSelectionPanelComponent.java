@@ -7,7 +7,7 @@ import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class SymbolSelectionPanelComponent extends BaseComponent{
+public class SymbolSelectionPanelComponent extends BaseComponent {
 
     private final AbstractParentElement selectionPanel;
 
@@ -52,5 +52,12 @@ public class SymbolSelectionPanelComponent extends BaseComponent{
 
     public AbstractParentElement getSymbolSelectionPanel() {
         return this.selectionPanel;
+    }
+
+    @Override
+    public boolean isInBoundingBox(double x, double y) {
+        if (!((net.replaceitem.symbolchat.gui.SymbolSelectionPanel) this.selectionPanel).visible)
+            return false;
+        return super.isInBoundingBox(x, y);
     }
 }
