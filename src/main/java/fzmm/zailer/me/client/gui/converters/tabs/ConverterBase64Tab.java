@@ -24,8 +24,7 @@ public class ConverterBase64Tab implements IScreenTab {
     @Override
     public void setupComponents(FlowLayout rootComponent) {
         Keyboard keyboard = MinecraftClient.getInstance().keyboard;
-        TextFieldWidget messageField = TextBoxRow.setup(rootComponent, MESSAGE_ID, "");
-        messageField.setMaxLength(10000);
+        TextFieldWidget messageField = TextBoxRow.setup(rootComponent, MESSAGE_ID, "", 5000);
 
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_DECODED_ID), true, button -> {
             try {

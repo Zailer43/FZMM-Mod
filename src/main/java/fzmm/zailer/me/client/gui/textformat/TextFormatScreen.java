@@ -63,8 +63,7 @@ public class TextFormatScreen extends BaseFzmmScreen {
         for (var tab : TextFormatTabs.values())
             tab.componentsCallback(object -> this.updateMessagePreview());
         //general
-        this.messageTextField = TextBoxRow.setup(rootComponent, MESSAGE_ID, "Hello world", s -> this.updateMessagePreview());
-        this.messageTextField.setMaxLength(4096);
+        this.messageTextField = TextBoxRow.setup(rootComponent, MESSAGE_ID, "Hello world", 4096, s -> this.updateMessagePreview());
         this.boldToggle = BooleanRow.setup(rootComponent, BOLD_ID, false, button -> this.updateMessagePreview());
         this.italicToggle = BooleanRow.setup(rootComponent, ITALIC_ID, false, button -> this.updateMessagePreview());
         this.obfuscatedToggle = BooleanRow.setup(rootComponent, OBFUSCATED_ID, false, button -> this.updateMessagePreview());

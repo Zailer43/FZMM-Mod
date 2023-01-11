@@ -48,8 +48,7 @@ public class PlayerStatueScreen extends BaseFzmmScreen {
         this.posX = NumberRow.setup(rootComponent, POS_X_ID, player.getBlockX(), Float.class);
         this.posY = NumberRow.setup(rootComponent, POS_Y_ID, player.getY(), Float.class);
         this.posZ = NumberRow.setup(rootComponent, POS_Z_ID, player.getBlockZ(), Float.class);
-        this.nameField = TextBoxRow.setup(rootComponent, NAME_ID, "");
-        this.nameField.setMaxLength(0x3FFF);
+        this.nameField = TextBoxRow.setup(rootComponent, NAME_ID, "", 0xFFFF);
         //tabs
         ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
         for (var tab : PlayerStatueTabs.values()) {

@@ -46,7 +46,7 @@ public class EncryptBookScreen extends BaseFzmmScreen {
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
         //general
         FzmmConfig.Encryptbook config = FzmmClient.CONFIG.encryptbook;
-        this.messageField = TextBoxRow.setup(rootComponent, MESSAGE_ID, config.defaultBookMessage());
+        this.messageField = TextBoxRow.setup(rootComponent, MESSAGE_ID, config.defaultBookMessage(), config.maxMessageLength());
         ConfigTextBox seedField = NumberRow.setup(rootComponent, SEED_ID, 0, Integer.class, s -> {
             try {
                 seed = Integer.parseInt(s);
@@ -56,11 +56,10 @@ public class EncryptBookScreen extends BaseFzmmScreen {
 
         seedField.setText(String.valueOf(seed));
         seedField.setCursor(0);
-        this.paddingCharactersField = TextBoxRow.setup(rootComponent, PADDING_CHARACTERS_ID, config.padding());
-        this.paddingCharactersField.setMaxLength(512);
+        this.paddingCharactersField = TextBoxRow.setup(rootComponent, PADDING_CHARACTERS_ID, config.padding(), 512);
         assert MinecraftClient.getInstance().player != null;
-        this.authorField = TextBoxRow.setup(rootComponent, AUTHOR_ID, MinecraftClient.getInstance().player.getName().getString());
-        this.titleField = TextBoxRow.setup(rootComponent, TITLE_ID, config.defaultBookTitle());
+        this.authorField = TextBoxRow.setup(rootComponent, AUTHOR_ID, MinecraftClient.getInstance().player.getName().getString(), 512);
+        this.titleField = TextBoxRow.setup(rootComponent, TITLE_ID, config.defaultBookTitle(), 512);
         this.maxMessageLengthField = SliderRow.setup(rootComponent, MAX_MESSAGE_LENGTH_ID, config.maxMessageLength(),
                 1, 512, Integer.class, 0,
                 aDouble -> this.messageField.setMaxLength(aDouble.intValue())

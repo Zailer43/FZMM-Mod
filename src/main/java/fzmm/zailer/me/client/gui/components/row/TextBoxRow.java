@@ -25,10 +25,10 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class TextBoxRow extends AbstractRow {
-//    private static final Text FONT_BUTTON_TEXT = Text.translatable("fzmm.gui.button.chatSymbol.font");
+    //    private static final Text FONT_BUTTON_TEXT = Text.translatable("fzmm.gui.button.chatSymbol.font");
     private static final Text SYMBOL_BUTTON_TEXT = Text.translatable("fzmm.gui.button.chatSymbol.symbol");
     private static final Text CHAT_SYMBOL_NOT_AVAILABLE_TEXT = Text.translatable("fzmm.gui.button.chatSymbol.notAvailable.note").setStyle(Style.EMPTY.withColor(0xF2200D));
-//    private static final Text NOT_AVAILABLE_FONT_BUTTON_TEXT = FONT_BUTTON_TEXT.copy().append("\n\n").append(CHAT_SYMBOL_NOT_AVAILABLE_TEXT);
+    //    private static final Text NOT_AVAILABLE_FONT_BUTTON_TEXT = FONT_BUTTON_TEXT.copy().append("\n\n").append(CHAT_SYMBOL_NOT_AVAILABLE_TEXT);
     private static final Text NOT_AVALIBLE_SYMBOL_BUTTON_TEXT = SYMBOL_BUTTON_TEXT.copy().append("\n\n").append(CHAT_SYMBOL_NOT_AVAILABLE_TEXT);
 
 
@@ -52,11 +52,11 @@ public class TextBoxRow extends AbstractRow {
     }
 
 
-    public static TextFieldWidget setup(FlowLayout rootComponent, String id, String defaultValue) {
-        return setup(rootComponent, id, defaultValue, null);
+    public static TextFieldWidget setup(FlowLayout rootComponent, String id, String defaultValue, int maxLength) {
+        return setup(rootComponent, id, defaultValue, maxLength, null);
     }
 
-    public static TextFieldWidget setup(FlowLayout rootComponent, String id, String defaultValue, @Nullable Consumer<String> changedListener) {
+    public static TextFieldWidget setup(FlowLayout rootComponent, String id, String defaultValue, int maxLength, @Nullable Consumer<String> changedListener) {
         TextFieldWidget textField = rootComponent.childById(TextFieldWidget.class, getTextBoxId(id));
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
 
@@ -68,8 +68,7 @@ public class TextBoxRow extends AbstractRow {
             if (changedListener != null)
                 changedListener.accept(text);
         });
-        if (defaultValue.length() > 32)
-            textField.setMaxLength(defaultValue.length());
+        textField.setMaxLength(maxLength);
         textField.setText(defaultValue);
         textField.setCursor(0);
 

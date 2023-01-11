@@ -83,11 +83,11 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         //general
         this.skinButton = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, SkinMode.NAME);
         this.skinButton.setButtonCallback(this::imageCallback);
-        this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "");
+        this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "", 512);
         rootComponent.childById(TextFieldWidget.class, ImageButtonRow.getImageValueFieldId(SKIN_ID))
                 .setChangedListener(this.headNameField::setText);
         this.overlapHatLayerButton = BooleanRow.setup(rootComponent, OVERLAP_HAT_LAYER_ID, FzmmClient.CONFIG.headGenerator.defaultOverlapHatLayer(), button -> this.client.execute(this::updatePreviews));
-        this.searchField = TextBoxRow.setup(rootComponent, SEARCH_ID, "", s -> this.applyFilters());
+        this.searchField = TextBoxRow.setup(rootComponent, SEARCH_ID, "", 128, s -> this.applyFilters());
         this.headListLayout = rootComponent.childById(FlowLayout.class, HEAD_LIST_ID);
         this.layerListLayout = rootComponent.childById(FlowLayout.class, LAYER_LIST_ID);
         checkNull(this.headListLayout, "flow-layout", HEAD_LIST_ID);
