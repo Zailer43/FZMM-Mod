@@ -3,6 +3,9 @@ package fzmm.zailer.me.client;
 import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
 import fzmm.zailer.me.client.gui.main.MainScreen;
 import fzmm.zailer.me.client.logic.FzmmHistory;
+import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntity;
+import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntityModel;
+import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntityRenderer;
 import fzmm.zailer.me.config.FzmmConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -10,10 +13,14 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -32,6 +39,8 @@ public class FzmmClient implements ClientModInitializer {
     public static final int CHAT_BASE_COLOR = 0x478e47;
     public static final int CHAT_WHITE_COLOR = 0xb7b7b7;
     public static final boolean SYMBOL_CHAT_PRESENT = FabricLoader.getInstance().isModLoaded("symbol-chat");
+    public static final Identifier CUSTOM_HEAD = new Identifier(FzmmClient.MOD_ID, "custom_head");
+    public static final EntityModelLayer MODEL_CUSTOM_HEAD_LAYER = new EntityModelLayer(CUSTOM_HEAD, "main");
 
 
     @Override
@@ -61,5 +70,9 @@ public class FzmmClient implements ClientModInitializer {
 
         CONFIG.history.subscribeToMaxItemHistory(integer -> FzmmHistory.update());
         CONFIG.history.subscribeToMaxHeadHistory(integer -> FzmmHistory.update());
+
+        EntityRendererRegistry.register(CustomHeadEntity.CUSTOM_HEAD_ENTITY_TYPE, CustomHeadEntityRenderer::new);
+        FabricDefaultAttributeRegistry.register(CustomHeadEntity.CUSTOM_HEAD_ENTITY_TYPE, CustomHeadEntity.createMobAttributes());
+        EntityModelLayerRegistry.registerModelLayer(MODEL_CUSTOM_HEAD_LAYER, CustomHeadEntityModel::getTexturedModelData);
     }
 }

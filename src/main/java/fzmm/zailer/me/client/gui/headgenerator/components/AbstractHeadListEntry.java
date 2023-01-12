@@ -1,19 +1,21 @@
 package fzmm.zailer.me.client.gui.headgenerator.components;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import fzmm.zailer.me.client.logic.headGenerator.HeadData;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
+import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntity;
 import fzmm.zailer.me.utils.ImageUtils;
+import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.EntityComponent;
+import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.HorizontalFlowLayout;
-import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.util.Drawer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.PlayerSkinDrawer;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
 
 import java.awt.image.BufferedImage;
 import java.util.Objects;
@@ -21,14 +23,26 @@ import java.util.Objects;
 import static net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry.WHITE_COLOR;
 
 public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
-    private static final int PLAYER_SKIN_SIZE = 24;
+    public static final int PLAYER_SKIN_SIZE = 24;
     protected final HeadData headData;
-    private Identifier previewIdentifier;
+    private final EntityComponent<CustomHeadEntity> previewComponent;
+    protected FlowLayout buttonsLayout;
 
     public AbstractHeadListEntry(HeadData headData) {
         super(Sizing.fill(100), Sizing.fixed(28));
         this.headData = headData;
-        this.previewIdentifier = null;
+
+        this.previewComponent = Components.entity(Sizing.fixed(PLAYER_SKIN_SIZE), new CustomHeadEntity(MinecraftClient.getInstance().world))
+                .allowMouseRotation(true);
+        this.previewComponent.margins(Insets.left(4));
+
+        this.buttonsLayout = Containers.horizontalFlow(Sizing.content(), this.verticalSizing().get());
+        this.buttonsLayout.alignment(HorizontalAlignment.RIGHT, VerticalAlignment.CENTER);
+        this.buttonsLayout.positioning(Positioning.relative(100, 0));
+
+        this.child(this.previewComponent);
+        this.child(this.buttonsLayout);
+        this.update(headData.headSkin(), false);
     }
 
     @Override
@@ -45,11 +59,6 @@ public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
         int yText = centerY - textRenderer.fontHeight / 2;
 
         textRenderer.draw(matrices, this.getDisplayName(), (float) xText, (float) yText, WHITE_COLOR);
-
-        if (this.previewIdentifier != null) {
-            RenderSystem.setShaderTexture(0, this.previewIdentifier);
-            PlayerSkinDrawer.draw(matrices, xWithPadding, centerY - PLAYER_SKIN_SIZE / 2, PLAYER_SKIN_SIZE);
-        }
     }
 
     public String getDisplayName() {
@@ -65,15 +74,17 @@ public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
         TextureManager textureManager = client.getTextureManager();
 
         client.execute(() -> {
-            if (this.previewIdentifier != null)
-                textureManager.destroyTexture(this.previewIdentifier);
+            CustomHeadEntity customHeadEntity = this.previewComponent.entity();
+            if (customHeadEntity.getCustomHeadTexture() != null)
+                textureManager.destroyTexture(customHeadEntity.getCustomHeadTexture());
 
             BufferedImage previewSkin = new HeadGenerator(skinBase, overlapHatLayer).addTexture(this.headData.headSkin()).getHeadTexture();
             ImageUtils.toNativeImage(previewSkin).ifPresent(nativeImage -> {
                 NativeImageBackedTexture preview = new NativeImageBackedTexture(nativeImage);
-                this.previewIdentifier = textureManager.registerDynamicTexture("fzmm_head", preview);
+                customHeadEntity.setCustomHeadTexture(textureManager.registerDynamicTexture("fzmm_head", preview));
             });
-            textureManager.bindTexture(this.previewIdentifier);
+
+            textureManager.bindTexture(customHeadEntity.getCustomHeadTexture());
         });
     }
 }

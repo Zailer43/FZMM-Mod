@@ -4,12 +4,8 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.logic.headGenerator.HeadData;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.HorizontalAlignment;
-import io.wispforest.owo.ui.core.Insets;
-import io.wispforest.owo.ui.core.Sizing;
-import io.wispforest.owo.ui.core.VerticalAlignment;
+import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
@@ -27,11 +23,7 @@ public class HeadLayerComponentEntry extends AbstractHeadListEntry {
         this.removeButton.sizing(Sizing.fixed(Math.max(20, addLayerButtonWidth)), Sizing.fixed(20))
                 .margins(Insets.right(8));
 
-        FlowLayout buttonsLayout = Containers.horizontalFlow(this.horizontalSizing.get(), this.verticalSizing().get())
-                .child(this.removeButton);
-        buttonsLayout.alignment(HorizontalAlignment.RIGHT, VerticalAlignment.CENTER);
-
-        this.child(buttonsLayout);
+        this.buttonsLayout.child(this.removeButton);
 
         this.parent = parent;
     }

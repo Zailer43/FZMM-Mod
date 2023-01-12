@@ -8,12 +8,7 @@ import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.container.Containers;
-import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.HorizontalAlignment;
-import io.wispforest.owo.ui.core.Insets;
-import io.wispforest.owo.ui.core.Sizing;
-import io.wispforest.owo.ui.core.VerticalAlignment;
+import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -59,13 +54,9 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
                 .margins(Insets.right(8));
         this.updateFavoriteText();
 
-        FlowLayout buttonsLayout = Containers.horizontalFlow(this.horizontalSizing().get(), this.verticalSizing().get())
-                .child(this.giveButton)
+        this.buttonsLayout.child(this.giveButton)
                 .child(addLayerButton)
                 .child(this.favoriteButton);
-        buttonsLayout.alignment(HorizontalAlignment.RIGHT, VerticalAlignment.CENTER);
-
-        this.child(buttonsLayout);
 
         this.hide = false;
         this.originalVerticalSizing = this.verticalSizing().get();
