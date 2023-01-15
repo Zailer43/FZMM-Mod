@@ -109,6 +109,12 @@
 
                                                     <flow-layout direction="horizontal" id="head-list-nav">
                                                         <children>
+                                                            <enum-option id="head-generation-method">
+                                                                <margins>
+                                                                    <right>3</right>
+                                                                </margins>
+                                                            </enum-option>
+
                                                             <button id="toggle-favorite-list">
                                                                 <text translate="true">fzmm.gui.headGenerator.button.toggleFavoriteList.all</text>
                                                             </button>

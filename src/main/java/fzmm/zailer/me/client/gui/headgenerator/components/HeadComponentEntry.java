@@ -2,13 +2,14 @@ package fzmm.zailer.me.client.gui.headgenerator.components;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.headgenerator.HeadGenerationMethod;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
-import fzmm.zailer.me.client.logic.headGenerator.HeadData;
-import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
+import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.core.Insets;
+import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -32,10 +33,10 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     private final Sizing originalVerticalSizing;
     private final HeadGeneratorScreen parentScreen;
 
-    public HeadComponentEntry(HeadData headData, HeadGeneratorScreen parent) {
+    public HeadComponentEntry(AbstractHeadEntry headData, HeadGeneratorScreen parent) {
         super(headData);
         FzmmConfig.HeadGenerator config = FzmmClient.CONFIG.headGenerator;
-        this.isFavorite = config.favoriteSkins().contains(this.headData.key());
+        this.isFavorite = config.favoriteSkins().contains(this.entry.getKey());
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         int giveButtonWidth = textRenderer.getWidth(GIVE_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
@@ -43,20 +44,24 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
         this.giveButton.sizing(Sizing.fixed(giveButtonWidth), Sizing.fixed(20))
                 .margins(Insets.right(BaseFzmmScreen.COMPONENT_DISTANCE));
 
-        int addLayerButtonWidth = textRenderer.getWidth(ADD_LAYER_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
-        ButtonComponent addLayerButton = Components.button(ADD_LAYER_BUTTON_TEXT, this::addLayerButtonExecute);
-        addLayerButton.sizing(Sizing.fixed(Math.max(20, addLayerButtonWidth)), Sizing.fixed(20))
-                .margins(Insets.right(8));
-
         int favoriteButtonWidth = Math.max(textRenderer.getWidth(FAVORITE_ENABLED_TEXT), textRenderer.getWidth(FAVORITE_DISABLED_TEXT)) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
         this.favoriteButton = Components.button(Text.empty(), this::favoriteButtonExecute);
         this.favoriteButton.sizing(Sizing.fixed(Math.max(20, favoriteButtonWidth)), Sizing.fixed(20))
                 .margins(Insets.right(8));
         this.updateFavoriteText();
 
-        this.buttonsLayout.child(this.giveButton)
-                .child(addLayerButton)
-                .child(this.favoriteButton);
+        this.buttonsLayout.child(this.giveButton);
+
+        if (this.entry.canOverlap()) {
+            int addLayerButtonWidth = textRenderer.getWidth(ADD_LAYER_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
+            ButtonComponent addLayerButton = Components.button(ADD_LAYER_BUTTON_TEXT, this::addLayerButtonExecute);
+            addLayerButton.sizing(Sizing.fixed(Math.max(20, addLayerButtonWidth)), Sizing.fixed(20))
+                    .margins(Insets.right(8));
+
+            this.buttonsLayout.child(addLayerButton);
+        }
+
+        this.buttonsLayout.child(this.favoriteButton);
 
         this.hide = false;
         this.originalVerticalSizing = this.verticalSizing().get();
@@ -70,17 +75,13 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     }
 
     private void giveButtonExecute(boolean overlapHatLayer) {
-        BufferedImage headTexture = this.getHeadSkin();
-
-        BufferedImage image = new HeadGenerator(this.parentScreen.getBaseSkin(), overlapHatLayer)
-                .addTexture(headTexture)
-                .getHeadTexture();
+        BufferedImage image = this.entry.getHeadSkin(this.parentScreen.getBaseSkin(), overlapHatLayer);
 
         this.parentScreen.giveHead(image);
     }
 
     private void addLayerButtonExecute(ButtonComponent button) {
-        this.parentScreen.addLayer(this.headData);
+        this.parentScreen.addLayer(this.entry);
     }
 
     private void favoriteButtonExecute(ButtonComponent button) {
@@ -88,9 +89,9 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
         Set<String> favorites = config.favoriteSkins();
 
         if (this.isFavorite)
-            favorites.remove(this.headData.key());
+            favorites.remove(this.entry.getKey());
         else
-            favorites.add(this.headData.key());
+            favorites.add(this.entry.getKey());
 
         config.favoriteSkins(favorites);
         this.isFavorite = !this.isFavorite;
@@ -113,8 +114,8 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
         this.favoriteButton.setMessage(message);
     }
 
-    public void filter(String searchValue, boolean toggledFavorites) {
-        if (!this.isFavorite && toggledFavorites) {
+    public void filter(String searchValue, boolean toggledFavorites, HeadGenerationMethod generationMethod) {
+        if (!this.isFavorite && toggledFavorites || this.entry.getGenerationMethod() != generationMethod) {
             this.setHide(true);
             return;
         }

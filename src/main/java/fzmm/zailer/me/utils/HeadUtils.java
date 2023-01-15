@@ -77,7 +77,8 @@ public class HeadUtils {
     public CompletableFuture<HeadUtils> uploadHead(BufferedImage headSkin, String skinName) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                this.applyWatermark(headSkin);
+                if (this.shouldApplyWatermark(headSkin))
+                    this.applyWatermark(headSkin);
                 FzmmConfig.Mineskin config = FzmmClient.CONFIG.mineskin;
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(headSkin, "png", baos);
@@ -188,5 +189,22 @@ public class HeadUtils {
             g2d.drawImage(watermark, 0, 16, 64, 64, 0, 16, 64, 64, null);
             g2d.dispose();
         });
+    }
+
+    private boolean shouldApplyWatermark(BufferedImage headSkin) {
+        int width = headSkin.getWidth();
+        int height = headSkin.getHeight();
+        if (height < 16)
+            return false;
+
+        for (int x = 0; x != width; x++) {
+            for (int y = 16; y != height; y++) {
+                int alpha = (headSkin.getRGB(x, y) >> 24) & 0xFF;
+                if (alpha != 0)
+                    return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -20,4 +20,14 @@ public record SkinPart(int x, int y, int hatX, int hatY) {
         return new PosI(this.hatX, this.hatY);
     }
 
+    public static SkinPart fromString(String value) {
+        return switch (value.toUpperCase()) {
+            case "RIGHT_LEG" -> RIGHT_LEG;
+            case "RIGHT_ARM" -> RIGHT_ARM;
+            case "LEFT_LEG" -> LEFT_LEG;
+            case "LEFT_ARM" -> LEFT_ARM;
+            case "BODY" -> BODY;
+            default -> HEAD;
+        };
+    }
 }

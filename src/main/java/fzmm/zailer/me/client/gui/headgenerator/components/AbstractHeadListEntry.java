@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.headgenerator.components;
 
-import fzmm.zailer.me.client.logic.headGenerator.HeadData;
-import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
+import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
+import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntity;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.component.Components;
@@ -19,18 +19,19 @@ import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.image.BufferedImage;
 import java.util.Objects;
+import java.util.Optional;
 
 import static net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry.WHITE_COLOR;
 
 public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
     public static final int PLAYER_SKIN_SIZE = 24;
-    protected final HeadData headData;
+    protected final AbstractHeadEntry entry;
     private final EntityComponent<CustomHeadEntity> previewComponent;
     protected FlowLayout buttonsLayout;
 
-    public AbstractHeadListEntry(HeadData headData) {
+    public AbstractHeadListEntry(AbstractHeadEntry entry) {
         super(Sizing.fill(100), Sizing.fixed(28));
-        this.headData = headData;
+        this.entry = entry;
 
         this.previewComponent = Components.entity(Sizing.fixed(PLAYER_SKIN_SIZE), new CustomHeadEntity(MinecraftClient.getInstance().world))
                 .allowMouseRotation(true);
@@ -42,7 +43,7 @@ public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
 
         this.child(this.previewComponent);
         this.child(this.buttonsLayout);
-        this.update(headData.headSkin(), false);
+        this.update(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB), false);
     }
 
     @Override
@@ -62,11 +63,13 @@ public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
     }
 
     public String getDisplayName() {
-        return this.headData.displayName();
+        return this.entry.getDisplayName();
     }
 
-    public BufferedImage getHeadSkin() {
-        return this.headData.headSkin();
+    public Optional<BufferedImage> getHeadSkin() {
+        if (this.entry instanceof HeadTextureEntry textureEntry)
+            return Optional.of(textureEntry.getHeadSkin());
+        return Optional.empty();
     }
 
     public void update(BufferedImage skinBase, boolean overlapHatLayer) {
@@ -78,7 +81,7 @@ public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
             if (customHeadEntity.getCustomHeadTexture() != null)
                 textureManager.destroyTexture(customHeadEntity.getCustomHeadTexture());
 
-            BufferedImage previewSkin = new HeadGenerator(skinBase, overlapHatLayer).addTexture(this.headData.headSkin()).getHeadTexture();
+            BufferedImage previewSkin = this.entry.getHeadSkin(skinBase, overlapHatLayer);
             ImageUtils.toNativeImage(previewSkin).ifPresent(nativeImage -> {
                 NativeImageBackedTexture preview = new NativeImageBackedTexture(nativeImage);
                 customHeadEntity.setCustomHeadTexture(textureManager.registerDynamicTexture("fzmm_head", preview));

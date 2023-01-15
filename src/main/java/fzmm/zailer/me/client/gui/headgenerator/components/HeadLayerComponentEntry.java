@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.headgenerator.components;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.logic.headGenerator.HeadData;
+import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -14,7 +14,7 @@ public class HeadLayerComponentEntry extends AbstractHeadListEntry {
     private static final Text REMOVE_LAYER_BUTTON_TEXT = Text.translatable("fzmm.gui.button.remove");
     private final ButtonComponent removeButton;
 
-    public HeadLayerComponentEntry(HeadData headData, FlowLayout parent) {
+    public HeadLayerComponentEntry(AbstractHeadEntry headData, FlowLayout parent) {
         super(headData);
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
