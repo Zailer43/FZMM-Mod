@@ -1,0 +1,260 @@
+{
+  "convert_in_steve_model": true,
+  "textures": [
+    {
+      "id": "trick_or_treat_basket",
+      "path": "fzmm:textures/model_textures/trick_or_treat_basket.png"
+    }
+  ],
+  "steps": [
+    {
+      "comment": "base head texture",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      },
+    "overlap_source_hat": true
+    },
+    {
+      "comment": "hat head texture left",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 1,
+        "y": 10,
+        "width": 6,
+        "height": 6
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 1,
+        "y": 10,
+        "width": 6,
+        "height": 6
+      },
+    "overlap_source_hat": true
+    },
+    {
+      "comment": "hat head texture front",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 9,
+        "y": 10,
+        "width": 6,
+        "height": 6
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 9,
+        "y": 10,
+        "width": 6,
+        "height": 6
+      },
+    "overlap_source_hat": true
+    },
+    {
+      "comment": "hat head texture right",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 17,
+        "y": 10,
+        "width": 6,
+        "height": 6
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 17,
+        "y": 10,
+        "width": 6,
+        "height": 6
+      },
+    "overlap_source_hat": true
+    },
+    {
+      "comment": "hat head texture back",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 25,
+        "y": 10,
+        "width": 6,
+        "height": 6
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 25,
+        "y": 10,
+        "width": 6,
+        "height": 6
+      },
+    "overlap_source_hat": true
+    },
+    {
+      "comment": "hat head texture",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 11,
+        "width": 32,
+        "height": 4
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 11,
+        "width": 32,
+        "height": 4
+      },
+    "overlap_source_hat": true
+    },
+    {
+      "comment": "head texture bottom",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      }
+    },
+    {
+      "comment": "hat head texture bottom",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 16,
+        "y": 1,
+        "width": 8,
+        "height": 6
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 1,
+        "width": 8,
+        "height": 6
+      }
+    },
+    {
+      "comment": "hat head texture bottom",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 17,
+        "y": 0,
+        "width": 6,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 17,
+        "y": 0,
+        "width": 6,
+        "height": 8
+      }
+    },
+    {
+      "comment": "hat head texture bottom hat",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 16,
+        "y": 1,
+        "width": 8,
+        "height": 6
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 16,
+        "y": 1,
+        "width": 8,
+        "height": 6
+      }
+    },
+    {
+      "comment": "hat head texture bottom hat",
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 17,
+        "y": 0,
+        "width": 6,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 17,
+        "y": 0,
+        "width": 6,
+        "height": 8
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "trick_or_treat_basket"
+    },
+    {
+      "type": "resize",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    }
+  ]
+}

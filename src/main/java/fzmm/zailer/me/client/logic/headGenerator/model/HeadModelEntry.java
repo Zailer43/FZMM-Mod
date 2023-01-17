@@ -6,17 +6,21 @@ import fzmm.zailer.me.utils.ImageUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class HeadModelEntry extends AbstractHeadEntry {
 
     private final boolean convertInSteveModel;
     private final List<IModelStep> steps;
+    private final HashMap<String, BufferedImage> textures;
 
-    public HeadModelEntry(String displayName, String key, List<IModelStep> steps, boolean convertInSteveModel) {
+    public HeadModelEntry(String displayName, String key, List<IModelStep> steps, boolean convertInSteveModel, HashMap<String, BufferedImage> textures) {
         super(displayName, key);
         this.steps = steps;
         this.convertInSteveModel = convertInSteveModel;
+        this.textures = textures;
     }
 
     @Override
@@ -27,9 +31,13 @@ public class HeadModelEntry extends AbstractHeadEntry {
             baseSkin = ImageUtils.convertInSteveModel(baseSkin, 1);
 
         Graphics2D graphics = headSkin.createGraphics();
+        AtomicReference<BufferedImage> selectedTexture = new AtomicReference<>(baseSkin);
+        HashMap<String, BufferedImage> texturesCopy = new HashMap<>(this.textures);
+
+        texturesCopy.put("base_skin", baseSkin);
 
         for (var step : this.steps)
-            step.apply(graphics, baseSkin);
+            step.apply(graphics, texturesCopy, selectedTexture);
 
         graphics.dispose();
 

@@ -79,7 +79,8 @@
         "y": 4,
         "width": 4,
         "height": 12
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "type": "resize",
@@ -98,7 +99,8 @@
         "y": 4,
         "width": 8,
         "height": 12
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "type": "resize",
@@ -117,7 +119,8 @@
         "y": 4,
         "width": 4,
         "height": 12
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "type": "resize",
@@ -136,7 +139,8 @@
         "y": 4,
         "width": 8,
         "height": 12
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "right leg lateral",
@@ -156,7 +160,8 @@
         "y": 4,
         "width": 4,
         "height": 8
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "right leg front",
@@ -176,7 +181,8 @@
         "y": 4,
         "width": 4,
         "height": 8
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "right leg back",
@@ -196,7 +202,8 @@
         "y": 4,
         "width": 4,
         "height": 8
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "right leg bottom",
@@ -216,7 +223,8 @@
         "y": 4,
         "width": 4,
         "height": 8
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "left leg lateral",
@@ -236,7 +244,8 @@
         "y": 4,
         "width": 4,
         "height": 8
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "left leg front",
@@ -256,7 +265,8 @@
         "y": 4,
         "width": 4,
         "height": 8
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "left leg back",
@@ -276,7 +286,8 @@
         "y": 4,
         "width": 4,
         "height": 8
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "left leg bottom",
@@ -296,7 +307,8 @@
         "y": 4,
         "width": 4,
         "height": 8
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "right arm lateral",
@@ -316,7 +328,8 @@
         "y": 4,
         "width": 4,
         "height": 12
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "left arm lateral",
@@ -336,7 +349,8 @@
         "y": 4,
         "width": 4,
         "height": 12
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "right foot diagonal",
@@ -356,7 +370,8 @@
         "y": 12,
         "width": 4,
         "height": 4
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "right foot bottom",
@@ -376,7 +391,8 @@
         "y": 0,
         "width": 4,
         "height": 4
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "left foot diagonal",
@@ -396,7 +412,8 @@
         "y": 12,
         "width": 4,
         "height": 4
-      }
+      },
+      "overlap_source_hat": true
     },
     {
       "comment": "left foot bottom",
@@ -416,7 +433,8 @@
         "y": 0,
         "width": 4,
         "height": 4
-      }
+      },
+    "overlap_source_hat": true
     }
   ]
 }
