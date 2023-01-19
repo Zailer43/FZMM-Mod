@@ -2,6 +2,7 @@ package fzmm.zailer.me.config;
 
 import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
 import io.wispforest.owo.config.annotation.*;
+import io.wispforest.owo.ui.core.Color;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
@@ -17,7 +18,6 @@ public class FzmmConfigModel {
 
     @Nest
     public GeneralNest general = new GeneralNest();
-
     @Nest
     public ColorsNest colors = new ColorsNest();
     @Nest
@@ -97,14 +97,10 @@ public class FzmmConfigModel {
     }
 
     public static class ColorsNest {
-        @RegexConstraint("[0-9a-fA-F]{6,6}")
-        public String imagetextHologram = "F1C232";
-        @RegexConstraint("[0-9a-fA-F]{6,6}")
-        public String imagetextMessages = "71C29F";
-        @RegexConstraint("[0-9a-fA-F]{6,6}")
-        public String playerStatue = "CB347D";
-        @RegexConstraint("[0-9a-fA-F]{6,6}")
-        public String usefulBlockStates = "66F5B7";
+        public Color imagetextHologram = Color.ofRgb(Integer.parseInt("F1C232", 16));
+        public Color imagetextMessages = Color.ofRgb(Integer.parseInt("71C29F", 16));
+        public Color playerStatue = Color.ofRgb(Integer.parseInt("CB347D", 16));
+        public Color usefulBlockStates = Color.ofRgb(Integer.parseInt("66F5B7", 16));
     }
 
     public static class HeadGeneratorNest {

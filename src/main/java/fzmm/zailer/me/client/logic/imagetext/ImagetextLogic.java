@@ -78,7 +78,7 @@ public class ImagetextLogic {
 
     public void addResolution() {
         String message = Text.translatable("fzmm.item.imagetext.resolution", this.width, this.height).getString();
-        int color = Integer.parseInt(FzmmClient.CONFIG.colors.imagetextMessages(), 16);
+        int color = FzmmClient.CONFIG.colors.imagetextMessages().rgb();
         Text text = Text.translatable(message)
                 .setStyle(Style.EMPTY.withColor(color));
         this.imagetext.add(FzmmUtils.toNbtString(text, true));

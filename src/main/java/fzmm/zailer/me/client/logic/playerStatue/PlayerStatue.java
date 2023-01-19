@@ -179,7 +179,7 @@ public class PlayerStatue {
         String x = decimalFormat.format(pos.x());
         String y = decimalFormat.format(pos.y());
         String z = decimalFormat.format(pos.z());
-        int color = Integer.parseInt(FzmmClient.CONFIG.colors.playerStatue(), 16);
+        int color = FzmmClient.CONFIG.colors.playerStatue().rgb();
         Style colorStyle = Style.EMPTY.withColor(color);
 
         ItemStack container = ContainerBuilder.builder()

@@ -43,7 +43,7 @@ public class ImagetextHolgoramTab implements IImagetextTab {
         int x = (int) this.posX.parsedValue();
         int y = (int) this.posY.parsedValue();
         int z = (int) this.posZ.parsedValue();
-        int color = Integer.parseInt(FzmmClient.CONFIG.colors.imagetextHologram(), 16);
+        int color = FzmmClient.CONFIG.colors.imagetextHologram().rgb();
 
         List<ItemStack> hologramContainers = ContainerBuilder.builder()
                 .containerItem(Items.WHITE_SHULKER_BOX)//todo

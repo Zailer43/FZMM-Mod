@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.core.Color;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
 
@@ -28,18 +29,14 @@ public class TextFormatSimpleTab implements ITextFormatTab {
     public Text getText(TextFormatLogic logic) {
         if (!this.color.isValid())
             return TextFormatScreen.EMPTY_COLOR_TEXT;
-        String text = this.color.getText().replaceAll("#", "");
-        if (text.isBlank())
-            return TextFormatScreen.EMPTY_COLOR_TEXT;
+        Color color = (Color) this.color.parsedValue();
 
-        int color = Integer.parseInt(text, 16);
-
-        return logic.getWithColor(color);
+        return logic.getWithColor(color.rgb());
     }
 
     @Override
     public void setupComponents(FlowLayout rootComponent) {
-        this.color = ColorRow.setup(rootComponent, COLOR_ID, "FFFFFF", s -> this.callback.accept(""));
+        this.color = ColorRow.setup(rootComponent, COLOR_ID, Color.ofRgb(Integer.parseInt("FFFFFF", 16)), false, s -> this.callback.accept(""));
     }
 
     @Override

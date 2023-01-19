@@ -1,11 +1,11 @@
 package fzmm.zailer.me.client.logic;
 
 import fzmm.zailer.me.utils.FzmmUtils;
+import io.wispforest.owo.ui.core.Color;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -27,7 +27,7 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
         return style;
     }
 
-    public MutableText getGradient(List<Integer> colors) {
+    public MutableText getGradient(List<Color> colors) {
         if (colors.isEmpty())
             return Text.empty();
 
@@ -41,9 +41,10 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
 
     /**
      * Calculates a gradient of colors based on an array of starting and ending color components.
+     *
      * @param colorComponents An array of color component arrays, where each array represents a
-     *                       starting or ending color in the gradient.
-     * @param messageLength The number of colors in the final gradient.
+     *                        starting or ending color in the gradient.
+     * @param messageLength   The number of colors in the final gradient.
      * @return An array of color component arrays, representing the intermediate colors in the gradient.
      */
     public int[][] getGradientComponents(int[][] colorComponents, int messageLength) {
@@ -67,11 +68,14 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
     }
 
 
-    private int[][] getColorComponents(List<Integer> colors) {
-        return colors.stream().map(color -> new int[]{
-                (color >> 16) & 0xff,
-                (color >> 8) & 0xff,
-                color & 0xff
+    private int[][] getColorComponents(List<Color> colors) {
+        return colors.stream().map(color -> {
+            int colorInt = color.rgb();
+            return new int[]{
+                    (colorInt >> 16) & 0xff,
+                    (colorInt >> 8) & 0xff,
+                    colorInt & 0xff
+            };
         }).toArray(int[][]::new);
     }
 
@@ -101,7 +105,7 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
 
         for (int i = 0; i != messageLength; i++) {
             float hue2 = (hue + hueStep * i) % 1;
-            colors[i] = Color.HSBtoRGB(hue2, saturation, brightness) - 0xFF000000;
+            colors[i] = Color.ofHsv(hue2, saturation, brightness).rgb();
         }
 
         return this.applyColors(characters, colors);
@@ -111,7 +115,7 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
         return Text.literal(this.message).setStyle(this.getStyle().withColor(color));
     }
 
-    public Text getInterleaved(List<Integer> colors, int distance) {
+    public Text getInterleaved(List<Color> colors, int distance) {
         List<String> characters = FzmmUtils.splitMessage(this.message);
 
         List<String> messageSplit = new ArrayList<>();
@@ -135,7 +139,7 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
         int[] finalColors = new int[messageLength];
 
         for (int i = 0; i != messageLength; i++)
-            finalColors[i] = colors.get(i % colors.size());
+            finalColors[i] = colors.get(i % colors.size()).rgb();
 
         return this.applyColors(messageSplit, finalColors);
     }

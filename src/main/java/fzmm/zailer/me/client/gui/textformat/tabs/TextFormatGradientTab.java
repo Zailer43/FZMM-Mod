@@ -5,6 +5,7 @@ import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
 import fzmm.zailer.me.client.gui.textformat.components.ColorListContainer;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.core.Color;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class TextFormatGradientTab implements ITextFormatTab {
     public Text getText(TextFormatLogic logic) {
         if (!this.colorListContainer.isValid())
             return TextFormatScreen.EMPTY_COLOR_TEXT;
-        List<Integer> colorList = this.colorListContainer.getColors();
+        List<Color> colorList = this.colorListContainer.getColors();
         return logic.getGradient(colorList);
     }
 

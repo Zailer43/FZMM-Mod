@@ -25,7 +25,7 @@ public class ColorListEntry extends ColorRow {
     private ButtonComponent removeButton;
 
     public ColorListEntry(ColorListContainer parent, int id) {
-        super(String.valueOf(id), String.valueOf(id), String.valueOf(id), false);
+        super(String.valueOf(id), String.valueOf(id), String.valueOf(id));
         this.parent = parent;
         this.moveUpButton = Components.button(UP_ARROW_TEXT, this::upArrowExecute);
         this.moveUpButton.sizing(Sizing.fixed(20), Sizing.fixed(20));
