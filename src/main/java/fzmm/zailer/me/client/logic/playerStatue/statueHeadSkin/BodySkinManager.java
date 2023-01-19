@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin;
 
+import fzmm.zailer.me.utils.SkinPart;
 import fzmm.zailer.me.utils.position.PosI;
 
 public class BodySkinManager extends AbstractStatueSkinManager {

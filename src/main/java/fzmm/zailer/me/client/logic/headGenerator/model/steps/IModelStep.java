@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.logic.headGenerator.model;
+package fzmm.zailer.me.client.logic.headGenerator.model.steps;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

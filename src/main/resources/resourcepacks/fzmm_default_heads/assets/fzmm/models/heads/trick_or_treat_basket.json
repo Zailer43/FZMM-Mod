@@ -1,5 +1,4 @@
 {
-  "convert_in_steve_model": true,
   "textures": [
     {
       "id": "trick_or_treat_basket",
@@ -135,15 +134,7 @@
     },
     {
       "comment": "head texture bottom",
-      "type": "resize",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 16,
-        "y": 0,
-        "width": 8,
-        "height": 8
-      },
+      "type": "copy",
       "source": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -195,15 +186,7 @@
     },
     {
       "comment": "hat head texture bottom hat",
-      "type": "resize",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": true,
-        "x": 16,
-        "y": 1,
-        "width": 8,
-        "height": 6
-      },
+      "type": "copy",
       "source": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -215,15 +198,7 @@
     },
     {
       "comment": "hat head texture bottom hat",
-      "type": "resize",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": true,
-        "x": 17,
-        "y": 0,
-        "width": 6,
-        "height": 8
-      },
+      "type": "copy",
       "source": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -238,15 +213,7 @@
       "texture_id": "trick_or_treat_basket"
     },
     {
-      "type": "resize",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 0,
-        "y": 0,
-        "width": 64,
-        "height": 16
-      },
+      "type": "copy",
       "source": {
         "offset": "HEAD",
         "hat_layer": false,

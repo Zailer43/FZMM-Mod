@@ -1,7 +1,7 @@
-package fzmm.zailer.me.client.logic.headGenerator.model;
+package fzmm.zailer.me.client.logic.headGenerator.model.steps;
 
 import com.google.gson.JsonObject;
-import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.SkinPart;
+import fzmm.zailer.me.client.logic.headGenerator.model.ModelArea;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -31,12 +31,10 @@ public class ModelResizeStep implements IModelStep {
     }
 
     private void apply(Graphics2D graphics, AtomicReference<BufferedImage> selectedTexture, boolean sourceHatLayer) {
-        SkinPart destinationOffset = this.destination.offset();
-        SkinPart sourceOffset = this.source.offset();
-        int destinationX = (this.destination.hatLayer() ? destinationOffset.hatX() : destinationOffset.x()) + this.destination.x();
-        int destinationY = (this.destination.hatLayer() ? destinationOffset.hatY() : destinationOffset.y()) + this.destination.y();
-        int sourceX = (sourceHatLayer ? sourceOffset.hatX() : sourceOffset.x()) + this.source.x();
-        int sourceY = (sourceHatLayer ? sourceOffset.hatY() : sourceOffset.y()) + this.source.y();
+        int destinationX = this.destination.getXWithOffset();
+        int destinationY = this.destination.getYWithOffset();
+        int sourceX = this.source.getXWithOffset(sourceHatLayer);
+        int sourceY = this.source.getYWithOffset(sourceHatLayer);
 
         graphics.drawImage(selectedTexture.get(),
                 destinationX,

@@ -3,7 +3,9 @@ package fzmm.zailer.me.utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.SkinPart;
+import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
+import fzmm.zailer.me.client.logic.headGenerator.model.HeadModelEntry;
 import fzmm.zailer.me.mixin.PlayerSkinTextureAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -29,6 +31,13 @@ import java.util.Base64;
 import java.util.Optional;
 
 public class ImageUtils {
+    private static final Identifier OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER = new Identifier(FzmmClient.MOD_ID, "models/skins/old_format_to_new_format.json");
+    public static final HeadModelEntry OLD_FORMAT_TO_NEW_FORMAT;
+
+    static {
+        OLD_FORMAT_TO_NEW_FORMAT = getOldFormatToNewFormatEntry().orElseThrow();
+    }
+
 
     public static Optional<BufferedImage> getImageFromIdentifier(Identifier identifier) {
         try {
@@ -162,4 +171,19 @@ public class ImageUtils {
     }
 
 
+    private static Optional<HeadModelEntry> getOldFormatToNewFormatEntry() {
+        Optional<Resource> imageResource = MinecraftClient.getInstance().getResourceManager().getResource(OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER);
+        if (imageResource.isEmpty())
+            return Optional.empty();
+
+        Resource resource = imageResource.get();
+
+        try {
+            return HeadGeneratorResources.getHeadModel(OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER, resource.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
+    }
 }

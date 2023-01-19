@@ -1,5 +1,4 @@
-  {
-  "convert_in_steve_model": true,
+{
   "textures": [
     {
       "id": "boat",
@@ -9,15 +8,7 @@
   "steps": [
     {
       "comment": "head top",
-      "type": "resize",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 8,
-        "y": 0,
-        "width": 8,
-        "height": 8
-      },
+      "type": "copy",
       "source": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -29,15 +20,7 @@
     },
     {
       "comment": "head top hat",
-      "type": "resize",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": true,
-        "x": 8,
-        "y": 0,
-        "width": 8,
-        "height": 8
-      },
+      "type": "copy",
       "source": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -90,7 +73,7 @@
         "width": 32,
         "height": 16
       },
-    "overlap_source_hat": true
+      "overlap_source_hat": true
     },
     {
       "type": "select_texture",
@@ -115,7 +98,7 @@
         "width": 4,
         "height": 12
       },
-    "overlap_source_hat": true
+      "overlap_source_hat": true
     },
     {
       "comment": "right arm front",
@@ -136,7 +119,7 @@
         "width": 4,
         "height": 12
       },
-    "overlap_source_hat": true
+      "overlap_source_hat": true
     },
     {
       "comment": "left arm lateral",
@@ -157,7 +140,7 @@
         "width": 4,
         "height": 12
       },
-    "overlap_source_hat": true
+      "overlap_source_hat": true
     },
     {
       "comment": "left arm front",
@@ -178,7 +161,7 @@
         "width": 4,
         "height": 12
       },
-    "overlap_source_hat": true
+      "overlap_source_hat": true
     }
   ]
 }

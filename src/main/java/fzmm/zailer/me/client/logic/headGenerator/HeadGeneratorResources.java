@@ -4,14 +4,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.logic.headGenerator.model.HeadModelEntry;
-import fzmm.zailer.me.client.logic.headGenerator.model.IModelStep;
-import fzmm.zailer.me.client.logic.headGenerator.model.ModelResizeStep;
-import fzmm.zailer.me.client.logic.headGenerator.model.ModelSelectTextureStep;
+import fzmm.zailer.me.client.logic.headGenerator.model.*;
+import fzmm.zailer.me.client.logic.headGenerator.model.steps.IModelStep;
+import fzmm.zailer.me.client.logic.headGenerator.model.steps.ModelCopyStep;
+import fzmm.zailer.me.client.logic.headGenerator.model.steps.ModelResizeStep;
+import fzmm.zailer.me.client.logic.headGenerator.model.steps.ModelSelectTextureStep;
 import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
 import fzmm.zailer.me.utils.ImageUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.InputSupplier;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Style;
@@ -71,20 +71,24 @@ public class HeadGeneratorResources {
             try (var resourcePack = resourcePackProfile.createResourcePack()) {
 
                 resourcePack.findResources(ResourceType.CLIENT_RESOURCES, FzmmClient.MOD_ID, HEADS_MODELS_FOLDER,
-                        (identifier, inputStreamInputSupplier) -> addHeadModel(entries, identifier, inputStreamInputSupplier));
+                        (identifier, inputStreamInputSupplier) -> {
+                            try {
+                                getHeadModel(identifier, inputStreamInputSupplier.get()).ifPresent(entries::add);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
             }
         }
         return entries;
     }
 
-    private static void addHeadModel(Set<HeadModelEntry> entries, Identifier identifier, InputSupplier<InputStream> inputStreamInputSupplier) {
+    public static Optional<HeadModelEntry> getHeadModel(Identifier identifier, InputStream inputStream) {
         String path = identifier.getPath();
         try {
-            InputStream inputStream = inputStreamInputSupplier.get();
             String fileName = path.substring(HEADS_MODELS_FOLDER.length() + 1, path.length() - ".json".length());
 
             JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
-            boolean convertInSteveModel = jsonObject.get("convert_in_steve_model").getAsBoolean();
             HashMap<String, BufferedImage> textures = getHeadModelTextures(jsonObject);
 
             JsonArray stepsArray = jsonObject.getAsJsonArray("steps");
@@ -96,12 +100,14 @@ public class HeadGeneratorResources {
                 switch (stepObject.get("type").getAsString()) {
                     case "resize" -> steps.add(ModelResizeStep.parse(stepObject));
                     case "select_texture" -> steps.add(ModelSelectTextureStep.parse(stepObject));
+                    case "copy" -> steps.add(ModelCopyStep.parse(stepObject));
                 }
             }
 
-            entries.add(new HeadModelEntry(toDisplayName(fileName), fileName, steps, convertInSteveModel, textures));
+            Optional<HeadModelEntry> entry = Optional.of(new HeadModelEntry(toDisplayName(fileName), fileName, steps, textures));
 
             inputStream.close();
+            return entry;
         } catch (Exception e) {
             e.printStackTrace();
             assert MinecraftClient.getInstance().player != null;
@@ -110,6 +116,7 @@ public class HeadGeneratorResources {
 
             MinecraftClient.getInstance().player.sendMessage(message);
         }
+        return Optional.empty();
     }
 
     private static HashMap<String, BufferedImage> getHeadModelTextures(JsonObject jsonObject) {

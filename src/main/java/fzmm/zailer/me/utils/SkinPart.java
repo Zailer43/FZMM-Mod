@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin;
+package fzmm.zailer.me.utils;
 
 import fzmm.zailer.me.utils.position.PosI;
 

@@ -1,17 +1,8 @@
-  {
-  "convert_in_steve_model": true,
+{
   "steps": [
     {
       "comment": "head top",
-      "type": "resize",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 8,
-        "y": 0,
-        "width": 8,
-        "height": 8
-      },
+      "type": "copy",
       "source": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -23,15 +14,7 @@
     },
     {
       "comment": "head top hat",
-      "type": "resize",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": true,
-        "x": 8,
-        "y": 0,
-        "width": 8,
-        "height": 8
-      },
+      "type": "copy",
       "source": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -434,7 +417,7 @@
         "width": 4,
         "height": 4
       },
-    "overlap_source_hat": true
+      "overlap_source_hat": true
     }
   ]
 }

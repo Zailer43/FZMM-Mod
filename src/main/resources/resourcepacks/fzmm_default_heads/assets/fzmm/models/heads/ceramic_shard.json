@@ -1,5 +1,4 @@
 {
-  "convert_in_steve_model": true,
   "textures": [
     {
       "id": "ceramic_shard",
@@ -12,15 +11,7 @@
       "texture_id": "ceramic_shard"
     },
     {
-      "type": "resize",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 0,
-        "y": 0,
-        "width": 64,
-        "height": 16
-      },
+      "type": "copy",
       "source": {
         "offset": "HEAD",
         "hat_layer": false,

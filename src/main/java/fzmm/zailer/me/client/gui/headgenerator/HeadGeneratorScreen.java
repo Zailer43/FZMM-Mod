@@ -14,6 +14,7 @@ import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
+import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.config.ui.component.ConfigToggleButton;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -125,6 +126,13 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
         if (skinBase == null)
             return;
+
+        if (ImageUtils.isAlexModel(1, skinBase))
+            skinBase = ImageUtils.convertInSteveModel(skinBase, 1);
+
+        if (skinBase.getWidth() == 64 && skinBase.getHeight() == 32)
+            skinBase = ImageUtils.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skinBase, false);
+
         this.baseSkin = skinBase;
 
         this.client.execute(() -> {
