@@ -37,10 +37,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -62,6 +60,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private static final String WIKI_BUTTON_ID = "wiki-button";
     private static final Text SHOW_ALL_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.all");
     private static final Text SHOW_FAVORITES_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.favorite");
+    private final Set<String> favoritesHeadsOnOpenScreen;
     private ImageButtonComponent skinButton;
     private TextFieldWidget headNameField;
     private ConfigToggleButton overlapHatLayerButton;
@@ -75,6 +74,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
     public HeadGeneratorScreen(@Nullable Screen parent) {
         super("head_generator", "headGenerator", parent);
+        this.favoritesHeadsOnOpenScreen = Set.copyOf(FzmmClient.CONFIG.headGenerator.favoriteSkins());
     }
 
     @Override
@@ -300,6 +300,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     @Override
     public void close() {
         super.close();
-        FzmmClient.CONFIG.save();
+
+        if (!this.favoritesHeadsOnOpenScreen.equals(FzmmClient.CONFIG.headGenerator.favoriteSkins()))
+            FzmmClient.CONFIG.save();
     }
 }
