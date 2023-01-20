@@ -212,7 +212,7 @@
             <flow-layout direction="vertical">
                 <children>
                     <label>
-                        <text>Choose color</text>
+                        <text translate="true">fzmm.gui.colorPicker.title</text>
                         <shadow>true</shadow>
                         <margins>
                             <top>3</top>
