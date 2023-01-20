@@ -10,23 +10,12 @@
         "y": 0,
         "width": 8,
         "height": 8
-      }
-    },
-    {
-      "comment": "head top hat",
-      "type": "copy",
-      "source": {
-        "offset": "HEAD",
-        "hat_layer": true,
-        "x": 8,
-        "y": 0,
-        "width": 8,
-        "height": 8
-      }
+      },
+      "add_hat_layer": true
     },
     {
       "comment": "head lateral",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -46,7 +35,7 @@
     },
     {
       "comment": "body",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -66,7 +55,7 @@
       "overlap_source_hat": true
     },
     {
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -86,7 +75,7 @@
       "overlap_source_hat": true
     },
     {
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -106,7 +95,7 @@
       "overlap_source_hat": true
     },
     {
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -127,7 +116,7 @@
     },
     {
       "comment": "right leg lateral",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -148,7 +137,7 @@
     },
     {
       "comment": "right leg front",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -169,7 +158,7 @@
     },
     {
       "comment": "right leg back",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -190,7 +179,7 @@
     },
     {
       "comment": "right leg bottom",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -211,7 +200,7 @@
     },
     {
       "comment": "left leg lateral",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -232,7 +221,7 @@
     },
     {
       "comment": "left leg front",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -253,7 +242,7 @@
     },
     {
       "comment": "left leg back",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -274,7 +263,7 @@
     },
     {
       "comment": "left leg bottom",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -295,7 +284,7 @@
     },
     {
       "comment": "right arm lateral",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -316,7 +305,7 @@
     },
     {
       "comment": "right arm front",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -337,7 +326,7 @@
     },
     {
       "comment": "left arm lateral",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -358,7 +347,7 @@
     },
     {
       "comment": "left arm front",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -379,7 +368,7 @@
     },
     {
       "comment": "right foot front",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -400,7 +389,7 @@
     },
     {
       "comment": "right foot bottom",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -421,7 +410,7 @@
     },
     {
       "comment": "left foot front",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -442,7 +431,7 @@
     },
     {
       "comment": "left foot bottom",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,

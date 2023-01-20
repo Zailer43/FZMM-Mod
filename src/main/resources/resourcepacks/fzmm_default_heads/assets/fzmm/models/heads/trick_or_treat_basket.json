@@ -8,7 +8,7 @@
   "steps": [
     {
       "comment": "base head texture",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -29,7 +29,7 @@
     },
     {
       "comment": "hat head texture left",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -50,7 +50,7 @@
     },
     {
       "comment": "hat head texture front",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -71,7 +71,7 @@
     },
     {
       "comment": "hat head texture right",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -92,7 +92,7 @@
     },
     {
       "comment": "hat head texture back",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -113,7 +113,7 @@
     },
     {
       "comment": "hat head texture",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -146,7 +146,7 @@
     },
     {
       "comment": "hat head texture bottom",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -166,7 +166,7 @@
     },
     {
       "comment": "hat head texture bottom",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,

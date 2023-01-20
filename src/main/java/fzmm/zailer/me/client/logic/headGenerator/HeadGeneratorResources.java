@@ -5,10 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.logic.headGenerator.model.*;
-import fzmm.zailer.me.client.logic.headGenerator.model.steps.IModelStep;
-import fzmm.zailer.me.client.logic.headGenerator.model.steps.ModelCopyStep;
-import fzmm.zailer.me.client.logic.headGenerator.model.steps.ModelResizeStep;
-import fzmm.zailer.me.client.logic.headGenerator.model.steps.ModelSelectTextureStep;
+import fzmm.zailer.me.client.logic.headGenerator.model.steps.*;
 import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
 import fzmm.zailer.me.utils.ImageUtils;
 import net.minecraft.client.MinecraftClient;
@@ -98,7 +95,6 @@ public class HeadGeneratorResources {
                 JsonObject stepObject = element.getAsJsonObject();
 
                 switch (stepObject.get("type").getAsString()) {
-                    case "resize" -> steps.add(ModelResizeStep.parse(stepObject));
                     case "select_texture" -> steps.add(ModelSelectTextureStep.parse(stepObject));
                     case "copy" -> steps.add(ModelCopyStep.parse(stepObject));
                 }

@@ -16,23 +16,12 @@
         "y": 0,
         "width": 8,
         "height": 8
-      }
-    },
-    {
-      "comment": "head top hat",
-      "type": "copy",
-      "source": {
-        "offset": "HEAD",
-        "hat_layer": true,
-        "x": 8,
-        "y": 0,
-        "width": 8,
-        "height": 8
-      }
+      },
+      "add_hat_layer": true
     },
     {
       "comment": "head lateral",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -56,7 +45,7 @@
     },
     {
       "comment": "add boat",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -81,7 +70,7 @@
     },
     {
       "comment": "right arm lateral",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -102,7 +91,7 @@
     },
     {
       "comment": "right arm front",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -123,7 +112,7 @@
     },
     {
       "comment": "left arm lateral",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,
@@ -144,7 +133,7 @@
     },
     {
       "comment": "left arm front",
-      "type": "resize",
+      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": true,

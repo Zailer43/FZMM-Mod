@@ -27,7 +27,9 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Optional;
 
 public class ImageUtils {
@@ -35,7 +37,10 @@ public class ImageUtils {
     public static final HeadModelEntry OLD_FORMAT_TO_NEW_FORMAT;
 
     static {
-        OLD_FORMAT_TO_NEW_FORMAT = getOldFormatToNewFormatEntry().orElseThrow();
+        OLD_FORMAT_TO_NEW_FORMAT = getOldFormatToNewFormatEntry().orElseGet(() -> {
+          FzmmClient.LOGGER.error("Error loading ImageUtils.OLD_FORMAT_TO_NEW_FORMAT");
+          return new HeadModelEntry("", "", new ArrayList<>(), new HashMap<>());
+        });
     }
 
 
