@@ -54,7 +54,7 @@ public class FzmmConfigModel {
         public boolean defaultPreserveImageAspectRatio = true;
         @ExcludeFromScreen
         public int maxResolution = 127;
-        @RangeConstraint(min = 0.0f, max = ImagetextScreen.MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS)
+        @RangeConstraint(min = 0.0f, max = ImagetextScreen.MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS, decimalPlaces = 1)
         public double defaultPercentageOfSimilarityToCompress = 2.5d;
 
         public static boolean predicateItem(String value) {
@@ -65,7 +65,7 @@ public class FzmmConfigModel {
     public static class TextFormatNest {
         @PredicateConstraint("predicateItem")
         public String defaultItem = Items.NAME_TAG.toString();
-        @RangeConstraint(min = 0.001f, max = 0.1f)
+        @RangeConstraint(min = 0.001f, max = 0.1f, decimalPlaces = 3)
         public float minRainbowHueStep = 0.005f;
         @RangeConstraint(min = 0.01f, max = 0.99f)
         public float maxRainbowHueStep = 0.15f;
