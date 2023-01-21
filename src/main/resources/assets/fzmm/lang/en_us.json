@@ -135,8 +135,6 @@
   "fzmm.gui.headGenerator.button.openFolder": "Open skins folder",
   "fzmm.gui.headGenerator.button.resourcePackInfo": "Resource pack info",
   "fzmm.gui.headGenerator.button.saveSkin": "Save skin",
-  "fzmm.gui.headGenerator.button.toggleFavoriteList.all": "Show all",
-  "fzmm.gui.headGenerator.button.toggleFavoriteList.favorite": "Show favorites",
   "fzmm.gui.headGenerator.label.baseSkin": "Base skin",
   "fzmm.gui.headGenerator.label.headList": "Head list",
   "fzmm.gui.headGenerator.label.headList.tooltip": "List of available heads to generate\nor to add layers and generate a skin composed of many heads.",

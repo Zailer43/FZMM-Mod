@@ -116,7 +116,6 @@
                                                             </enum-option>
 
                                                             <button id="toggle-favorite-list">
-                                                                <text translate="true">fzmm.gui.headGenerator.button.toggleFavoriteList.all</text>
                                                             </button>
                                                         </children>
 

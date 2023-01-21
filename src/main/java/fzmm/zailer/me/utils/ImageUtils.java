@@ -156,8 +156,8 @@ public class ImageUtils {
         // copy skin
         g2d.drawImage(skin, 0, 0, imageSize, imageSize, 0, 0, imageSize, imageSize, null);
         // clear skin part
-        g2d.setColor(new Color(0, 0, 0, 0));
-        g2d.fillRect(x, y, skinPartSize, skinPartSize);
+        g2d.setBackground(new Color(0, 0, 0, 0));
+        g2d.clearRect(x, y, skinPartSize, skinPartSize);
         // copy side 1
         g2d.drawImage(skin, x, y + space, x + steveArmWidth, y + skinPartSize, x, y + space, x + steveArmWidth, y + skinPartSize, null);
         // stretching face 2

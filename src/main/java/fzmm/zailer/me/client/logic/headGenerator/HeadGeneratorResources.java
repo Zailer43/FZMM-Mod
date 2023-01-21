@@ -97,6 +97,7 @@ public class HeadGeneratorResources {
                 switch (stepObject.get("type").getAsString()) {
                     case "select_texture" -> steps.add(ModelSelectTextureStep.parse(stepObject));
                     case "copy" -> steps.add(ModelCopyStep.parse(stepObject));
+                    case "delete" -> steps.add(ModelDeleteStep.parse(stepObject));
                 }
             }
 

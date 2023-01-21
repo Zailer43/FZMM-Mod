@@ -1,0 +1,192 @@
+{
+  "textures": [
+    {
+      "id": "cube",
+      "path": "fzmm:textures/model_textures/cube.png"
+    }
+  ],
+  "steps": [
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      }
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "horizontal line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 8,
+        "y": 2,
+        "width": 16,
+        "height": 1
+      }
+    },
+    {
+      "comment": "horizontal line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 8,
+        "y": 5,
+        "width": 16,
+        "height": 1
+      }
+    },
+    {
+      "comment": "horizontal line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 10,
+        "width": 32,
+        "height": 1
+      }
+    },
+    {
+      "comment": "horizontal line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 13,
+        "width": 32,
+        "height": 1
+      }
+    },
+    {
+      "comment": "vertical line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 2,
+        "y": 8,
+        "width": 1,
+        "height": 8
+      }
+    },
+    {
+      "comment": "vertical line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 5,
+        "y": 8,
+        "width": 1,
+        "height": 8
+      }
+    },
+    {
+      "comment": "vertical line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 10,
+        "y": 0,
+        "width": 1,
+        "height": 16
+      }
+    },
+    {
+      "comment": "vertical line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 13,
+        "y": 0,
+        "width": 1,
+        "height": 16
+      }
+    },
+    {
+      "comment": "vertical line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 18,
+        "y": 0,
+        "width": 1,
+        "height": 16
+      }
+    },
+    {
+      "comment": "vertical line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 21,
+        "y": 0,
+        "width": 1,
+        "height": 16
+      }
+    },
+    {
+      "comment": "vertical line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 26,
+        "y": 8,
+        "width": 1,
+        "height": 8
+      }
+    },
+    {
+      "comment": "vertical line",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 29,
+        "y": 8,
+        "width": 1,
+        "height": 8
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "cube"
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    }
+  ]
+}

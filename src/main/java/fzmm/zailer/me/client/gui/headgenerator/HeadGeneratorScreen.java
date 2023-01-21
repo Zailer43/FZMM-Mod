@@ -63,8 +63,6 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private static final String TOGGLE_FAVORITE_LIST_ID = "toggle-favorite-list";
     private static final String HEAD_GENERATION_METHOD_ID = "head-generation-method";
     private static final String WIKI_BUTTON_ID = "wiki-button";
-    private static final Text SHOW_ALL_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.all");
-    private static final Text SHOW_FAVORITES_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.favorite");
     private ImageButtonComponent skinButton;
     private TextFieldWidget headNameField;
     private ConfigToggleButton overlapHatLayerButton;
@@ -114,8 +112,9 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         this.toggleFavoriteList =  ButtonRow.setup(rootComponent, TOGGLE_FAVORITE_LIST_ID, true, buttonComponent -> this.toggleFavoriteListExecute());
         checkNull(this.toggleFavoriteList, "button", TOGGLE_FAVORITE_LIST_ID);
         this.showFavorites = false;
-        int toggleFavoriteListWidth = Math.max(this.textRenderer.getWidth(SHOW_ALL_TEXT), this.textRenderer.getWidth(SHOW_FAVORITES_TEXT)) + BUTTON_TEXT_PADDING;
-        this.toggleFavoriteList.horizontalSizing(Sizing.fixed(toggleFavoriteListWidth));
+        int toggleFavoriteListWidth = Math.max(this.textRenderer.getWidth(HeadComponentEntry.FAVORITE_DISABLED_TEXT), this.textRenderer.getWidth(HeadComponentEntry.FAVORITE_ENABLED_TEXT)) + BUTTON_TEXT_PADDING;
+        this.toggleFavoriteList.horizontalSizing(Sizing.fixed(Math.max(20, toggleFavoriteListWidth)));
+        this.updateToggleFavoriteText();
 
         ButtonRow.setup(rootComponent, WIKI_BUTTON_ID, true, buttonComponent -> this.wikiExecute());
 
@@ -305,8 +304,12 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
     private void toggleFavoriteListExecute() {
         this.showFavorites = !this.showFavorites;
-        this.toggleFavoriteList.setMessage(this.showFavorites ? SHOW_FAVORITES_TEXT : SHOW_ALL_TEXT);
+        this.updateToggleFavoriteText();
         this.applyFilters();
+    }
+
+    private void updateToggleFavoriteText() {
+        this.toggleFavoriteList.setMessage(this.showFavorites ? HeadComponentEntry.FAVORITE_ENABLED_TEXT : HeadComponentEntry.FAVORITE_DISABLED_TEXT);
     }
 
     private void wikiExecute() {
