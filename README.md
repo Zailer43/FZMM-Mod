@@ -1,6 +1,6 @@
 <div align='center'>
 
-# FZMM-Mod (WIP)
+# FZMM-Mod
 
 
 ![Mod icon](src/main/resources/assets/fzmm/icon.png)
@@ -34,15 +34,19 @@ A generator of colored characters that make an image.
 
 ### Book page
 
-![Imagetext lore](images/imagetext_book_page.png)
+![Imagetext book page](images/imagetext_book_page.png)
 
 ### Book tooltip
 
-![Imagetext lore](images/imagetext_book_tooltip.png)
+![Imagetext book tooltip](images/imagetext_book_tooltip.png)
 
 ### Hologram
 
-![Imagetext lore](images/imagetext_hologram.png)
+![Imagetext hologram](images/imagetext_hologram.png)
+
+### Sign
+
+![Imagetext sign](images/imagetext_sign.png)
 
 ### GUI
 
@@ -50,25 +54,29 @@ A generator of colored characters that make an image.
 
 </details>
 
-## Gradient
-To be able to create gradients for the texts.
+## Text format
+Formatting of texts with colors, symbols, etc.
 
 Note: when doing this I didn't know [PlaceHolderAPI](https://github.com/Patbox/FabricPlaceholderAPI), so it is possible that in the future I will improve it using that.
 
 <details>
 <summary>Images</summary>
 
-### Two colors
+### Gradient
 
-![Two colors](images/gradient_two_colors.png)
+![Gradient](images/text_format_gradient.png)
 
 ### Rainbow
 
-![Rainbow](images/gradient_rainbow.png)
+![Rainbow](images/text_format_rainbow.png)
+
+### Interleaved
+
+![Interleaved](images/text_format_interleaved.png)
 
 ### Item example
 
-![Item example](images/gradient_item.png)
+![Item example](images/text_format_item.png)
 
 </details>
 
@@ -106,14 +114,16 @@ Modify skins in seconds and get the head instantly, you can add accessories like
 <details>
 <summary>Images</summary>
 
+### Examples
+
+![Model examples](images/head_generator_model_examples.png)
+![Texture examples](images/head_generator_texture_examples.png)
+
+
 ### GUI
 
 ![Head generator GUI](images/head_generator_gui.png)
 ![Head generator GUI layers](images/head_generator_gui_layers.png)
-
-### Examples
-
-![Examples](images/head_generator_examples.png)
 
 </details>
 
