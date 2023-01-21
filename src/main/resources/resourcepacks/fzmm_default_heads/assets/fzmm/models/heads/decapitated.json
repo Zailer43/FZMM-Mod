@@ -1,0 +1,142 @@
+{
+  "textures": [
+    {
+      "id": "decapitated_bold",
+      "path": "fzmm:textures/model_textures/decapitated.png"
+    }
+  ],
+  "steps": [
+    {
+      "comment": "source left",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true,
+      "degrees": 90
+    },
+    {
+      "comment": "source front",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true,
+      "degrees": 90
+    },
+    {
+      "comment": "source back",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 24,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true,
+      "degrees": 270,
+      "mirror_horizontal": true
+    },
+    {
+      "comment": "source top",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true,
+      "degrees": 90
+    },
+    {
+      "comment": "source right",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true,
+      "degrees": 270,
+      "mirror_vertical": true
+    },
+    {
+      "comment": "source bottom",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "degrees": 270
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "decapitated_bold"
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    }
+  ]
+}

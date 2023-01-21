@@ -2,16 +2,19 @@ package fzmm.zailer.me.client.gui.headgenerator;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.headgenerator.components.HeadComponentEntry;
 import fzmm.zailer.me.client.gui.headgenerator.components.HeadLayerComponentEntry;
-import fzmm.zailer.me.client.logic.headGenerator.HeadData;
+import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
+import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
+import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.config.ui.component.ConfigToggleButton;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -41,6 +44,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("UnstableApiUsage")
 public class HeadGeneratorScreen extends BaseFzmmScreen {
@@ -57,9 +61,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private static final String SAVE_SKIN_ID = "save-skin";
     private static final String OPEN_SKIN_FOLDER_ID = "open-folder";
     private static final String TOGGLE_FAVORITE_LIST_ID = "toggle-favorite-list";
+    private static final String HEAD_GENERATION_METHOD_ID = "head-generation-method";
     private static final String WIKI_BUTTON_ID = "wiki-button";
-    private static final Text SHOW_ALL_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.all");
-    private static final Text SHOW_FAVORITES_TEXT = Text.translatable("fzmm.gui.headGenerator.button.toggleFavoriteList.favorite");
     private final Set<String> favoritesHeadsOnOpenScreen;
     private ImageButtonComponent skinButton;
     private TextFieldWidget headNameField;
@@ -69,6 +72,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private FlowLayout layerListLayout;
     private ButtonWidget giveMergedHeadButton;
     private ButtonWidget toggleFavoriteList;
+    private EnumWidget headGenerationMethod;
     private boolean showFavorites;
     private BufferedImage baseSkin;
 
@@ -97,11 +101,23 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(SAVE_SKIN_ID), true, this::saveSkinExecute);
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(OPEN_SKIN_FOLDER_ID), true, button -> Util.getOperatingSystem().open(SKIN_SAVE_FOLDER_PATH.toFile()));
         //other buttons
+        this.headGenerationMethod = rootComponent.childById(EnumWidget.class, HEAD_GENERATION_METHOD_ID);
+        checkNull(this.headGenerationMethod, "enum-option", HEAD_GENERATION_METHOD_ID);
+        this.headGenerationMethod.init(HeadGenerationMethod.TEXTURE);
+        this.headGenerationMethod.onPress(buttonComponent -> this.applyFilters());
+        this.headGenerationMethod.select(HeadGenerationMethod.TEXTURE.ordinal());
+        int maxHeadGenerationMethodWidth = 0;
+        for (var method : HeadGenerationMethod.values())
+            maxHeadGenerationMethodWidth = Math.max(maxHeadGenerationMethodWidth, this.textRenderer.getWidth(method.getTranslation()) + BaseFzmmScreen.BUTTON_TEXT_PADDING);
+        this.headGenerationMethod.horizontalSizing(Sizing.fixed(maxHeadGenerationMethodWidth));
+
         this.toggleFavoriteList =  ButtonRow.setup(rootComponent, TOGGLE_FAVORITE_LIST_ID, true, buttonComponent -> this.toggleFavoriteListExecute());
         checkNull(this.toggleFavoriteList, "button", TOGGLE_FAVORITE_LIST_ID);
         this.showFavorites = false;
-        int toggleFavoriteListWidth = Math.max(this.textRenderer.getWidth(SHOW_ALL_TEXT), this.textRenderer.getWidth(SHOW_FAVORITES_TEXT)) + BUTTON_TEXT_PADDING;
-        this.toggleFavoriteList.horizontalSizing(Sizing.fixed(toggleFavoriteListWidth));
+        int toggleFavoriteListWidth = Math.max(this.textRenderer.getWidth(HeadComponentEntry.FAVORITE_DISABLED_TEXT), this.textRenderer.getWidth(HeadComponentEntry.FAVORITE_ENABLED_TEXT)) + BUTTON_TEXT_PADDING;
+        this.toggleFavoriteList.horizontalSizing(Sizing.fixed(Math.max(20, toggleFavoriteListWidth)));
+        this.updateToggleFavoriteText();
+
         ButtonRow.setup(rootComponent, WIKI_BUTTON_ID, true, buttonComponent -> this.wikiExecute());
 
     }
@@ -111,6 +127,13 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
         if (skinBase == null)
             return;
+
+        if (ImageUtils.isAlexModel(1, skinBase))
+            skinBase = ImageUtils.convertInSteveModel(skinBase, 1);
+
+        if (skinBase.getWidth() == 64 && skinBase.getHeight() == 32)
+            skinBase = ImageUtils.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skinBase, false);
+
         this.baseSkin = skinBase;
 
         this.client.execute(() -> {
@@ -121,11 +144,15 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
     private void tryFirstSkinLoad() {
         if (this.headListLayout.children().isEmpty()) {
-            Set<HeadData> headDataList = HeadGeneratorResources.loadHeads();
-            List<Component> headEntries = headDataList.stream()
-                    .sorted(Comparator.comparing(HeadData::displayName))
-                    .map(headData -> (Component) new HeadComponentEntry(headData, this))
-                    .toList();
+            Set<AbstractHeadEntry> headDataSet = new HashSet<>();
+            headDataSet.addAll(HeadGeneratorResources.loadHeadsTextures());
+            headDataSet.addAll(HeadGeneratorResources.loadHeadsModels());
+
+            List<Component> headEntries = headDataSet.stream()
+                    .sorted(Comparator.comparing(AbstractHeadEntry::getDisplayName))
+                    .map(entry -> (Component) new HeadComponentEntry(entry, this))
+                    .collect(Collectors.toList());
+
 
             this.headListLayout.children(headEntries);
             this.applyFilters();
@@ -133,7 +160,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
         if (this.layerListLayout.children().isEmpty()) {
             BufferedImage emptyImage = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-            HeadData baseSkinData = new HeadData(emptyImage, Text.translatable("fzmm.gui.headGenerator.label.baseSkin").getString(), "base");
+            HeadTextureEntry baseSkinData = new HeadTextureEntry(emptyImage, Text.translatable("fzmm.gui.headGenerator.label.baseSkin").getString(), "base");
             this.addLayer(baseSkinData, false);
         }
 
@@ -156,10 +183,11 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
             return;
         String searchValue = this.searchField.getText().toLowerCase();
         List<Component> componentList = this.headListLayout.children();
+        HeadGenerationMethod generationMethod = (HeadGenerationMethod) this.headGenerationMethod.getValue();
 
         for (var component : componentList) {
             if (component instanceof HeadComponentEntry headEntry)
-                headEntry.filter(searchValue, this.showFavorites);
+                headEntry.filter(searchValue, this.showFavorites, generationMethod);
         }
     }
 
@@ -188,7 +216,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
             if (!(entry instanceof HeadLayerComponentEntry layerEntry))
                 continue;
 
-            headGenerator.addTexture(layerEntry.getHeadSkin());
+            layerEntry.getHeadSkin().ifPresent(headGenerator::addTexture);
         }
 
         return Optional.of(headGenerator.getHeadTexture());
@@ -225,11 +253,11 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         return this.headNameField.getText();
     }
 
-    public void addLayer(HeadData headData) {
+    public void addLayer(AbstractHeadEntry headData) {
         this.addLayer(headData, true);
     }
 
-    public void addLayer(HeadData headData, boolean active) {
+    public void addLayer(AbstractHeadEntry headData, boolean active) {
         HeadLayerComponentEntry entry = new HeadLayerComponentEntry(headData, this.layerListLayout);
         entry.setEnabled(active);
         this.skinButton.getImage().ifPresent(skin -> entry.update(skin, this.overlapHatLayerButton()));
@@ -278,8 +306,12 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
     private void toggleFavoriteListExecute() {
         this.showFavorites = !this.showFavorites;
-        this.toggleFavoriteList.setMessage(this.showFavorites ? SHOW_FAVORITES_TEXT : SHOW_ALL_TEXT);
+        this.updateToggleFavoriteText();
         this.applyFilters();
+    }
+
+    private void updateToggleFavoriteText() {
+        this.toggleFavoriteList.setMessage(this.showFavorites ? HeadComponentEntry.FAVORITE_ENABLED_TEXT : HeadComponentEntry.FAVORITE_DISABLED_TEXT);
     }
 
     private void wikiExecute() {

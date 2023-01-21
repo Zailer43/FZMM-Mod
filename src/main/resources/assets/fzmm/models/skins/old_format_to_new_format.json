@@ -1,0 +1,86 @@
+{
+  "steps": [
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      }
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 24,
+        "height": 16
+      }
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16
+      }
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16
+      }
+    },
+    {
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16
+      },
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16
+      }
+    },
+    {
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16
+      },
+      "source": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16
+      }
+    }
+  ]
+}
