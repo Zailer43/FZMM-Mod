@@ -4,7 +4,9 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.*;
+import net.minecraft.client.render.entity.model.EntityModelPartNames;
+import net.minecraft.client.render.entity.model.ModelWithHead;
+import net.minecraft.client.render.entity.model.SinglePartEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class CustomHeadEntityModel extends SinglePartEntityModel<CustomHeadEntity> implements ModelWithHead {

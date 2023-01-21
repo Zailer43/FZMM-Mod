@@ -12,8 +12,7 @@
     "ItemStackMixin",
     "LivingEntityMixin",
     "PlayerSkinTextureAccessor",
-    "SocialInteractionsPlayerListEntryMixin",
-    "StringHelperMixin"
+    "SocialInteractionsPlayerListEntryMixin"
   ],
   "injectors": {
     "defaultRequire": 1

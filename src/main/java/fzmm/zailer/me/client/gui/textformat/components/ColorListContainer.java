@@ -58,8 +58,9 @@ public class ColorListContainer extends VerticalFlowLayout {
 
     public void addEntry() {
         int id = this.colorsLayout.children().size();
-        this.colorsLayout.child(new ColorListEntry(this, id));
-        ColorRow.setup(this.colorsLayout, String.valueOf(id), this.getRandomColor(), this.callback);
+        ColorListEntry entry = new ColorListEntry(this, id);
+        ColorRow.setup(entry, String.valueOf(id), this.getRandomColor(), false, this.callback);
+        this.colorsLayout.child(entry);
         this.updateDisplay();
     }
 
@@ -87,8 +88,8 @@ public class ColorListContainer extends VerticalFlowLayout {
         return true;
     }
 
-    public String getRandomColor() {
-        return  Integer.toHexString(this.random.nextInt(0xFFFFFF));
+    public Color getRandomColor() {
+        return  Color.ofRgb(this.random.nextInt(0xFFFFFF));
     }
 
     public void setRandomColors() {
@@ -99,8 +100,8 @@ public class ColorListContainer extends VerticalFlowLayout {
         }
     }
 
-    public List<Integer> getColors() {
-        List<Integer> colorList = new ArrayList<>();
+    public List<Color> getColors() {
+        List<Color> colorList = new ArrayList<>();
 
         for (var component : this.colorsLayout.children()) {
             if (component instanceof ColorListEntry colorEntry) {
@@ -136,10 +137,10 @@ public class ColorListContainer extends VerticalFlowLayout {
 //        this.colorsLayout.clearChildren();
 //        this.colorsLayout.children(colorLayoutChildren);
 
-        List<String> colors = new ArrayList<>();
+        List<Color> colors = new ArrayList<>();
         for (var entry : colorLayoutChildren) {
             if (entry instanceof ColorListEntry colorEntry)
-                colors.add(colorEntry.getText());
+                colors.add(colorEntry.getColor());
         }
 
         for (int i = 0; i != colorLayoutChildren.size(); i++) {

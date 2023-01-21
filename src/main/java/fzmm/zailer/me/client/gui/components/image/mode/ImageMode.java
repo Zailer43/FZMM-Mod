@@ -1,6 +1,9 @@
 package fzmm.zailer.me.client.gui.components.image.mode;
 
-import fzmm.zailer.me.client.gui.components.image.source.*;
+import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
+import fzmm.zailer.me.client.gui.components.image.source.ImageFileSource;
+import fzmm.zailer.me.client.gui.components.image.source.ImageUrlSource;
+import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
 import net.minecraft.text.Text;
 
 public enum ImageMode implements IImageMode {

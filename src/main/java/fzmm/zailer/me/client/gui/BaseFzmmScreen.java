@@ -17,6 +17,7 @@ import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -153,5 +154,9 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     @Contract(value = "null, _, _ -> fail;", pure = true)
     public static void checkNull(Component component, String componentTagName, String id) {
         Objects.requireNonNull(component, String.format("No '%s' found with component id '%s'", componentTagName, id));
+    }
+
+    public UIModel getModel() {
+        return this.model;
     }
 }

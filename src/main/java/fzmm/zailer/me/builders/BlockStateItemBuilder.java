@@ -35,7 +35,7 @@ public class BlockStateItemBuilder {
     public ItemStack get() {
         DisplayBuilder displayBuilder = DisplayBuilder.builder().item(this.item);
         if (this.itemName != null) {
-            int color = Integer.parseInt(FzmmClient.CONFIG.colors.usefulBlockStates(), 16);
+            int color = FzmmClient.CONFIG.colors.usefulBlockStates().rgb();
             displayBuilder.setName(this.itemName, color)
                     .addLore(Text.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + "place").getString(), color);
         }

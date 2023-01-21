@@ -63,6 +63,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private static final String TOGGLE_FAVORITE_LIST_ID = "toggle-favorite-list";
     private static final String HEAD_GENERATION_METHOD_ID = "head-generation-method";
     private static final String WIKI_BUTTON_ID = "wiki-button";
+    private final Set<String> favoritesHeadsOnOpenScreen;
     private ImageButtonComponent skinButton;
     private TextFieldWidget headNameField;
     private ConfigToggleButton overlapHatLayerButton;
@@ -77,6 +78,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
     public HeadGeneratorScreen(@Nullable Screen parent) {
         super("head_generator", "headGenerator", parent);
+        this.favoritesHeadsOnOpenScreen = Set.copyOf(FzmmClient.CONFIG.headGenerator.favoriteSkins());
     }
 
     @Override
@@ -330,6 +332,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     @Override
     public void close() {
         super.close();
-        FzmmClient.CONFIG.save();
+
+        if (!this.favoritesHeadsOnOpenScreen.equals(FzmmClient.CONFIG.headGenerator.favoriteSkins()))
+            FzmmClient.CONFIG.save();
     }
 }

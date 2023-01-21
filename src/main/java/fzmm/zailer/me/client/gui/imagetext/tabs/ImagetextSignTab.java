@@ -56,7 +56,7 @@ public class ImagetextSignTab implements IImagetextTab {
     public void execute(ImagetextLogic logic) {
         assert MinecraftClient.getInstance().player != null;
 
-        int color = Integer.parseInt(FzmmClient.CONFIG.colors.imagetextMessages(), 16);
+        int color = FzmmClient.CONFIG.colors.imagetextMessages().rgb();
 
         List<ItemStack> signContainers = ContainerBuilder.builder()
                 .containerItem(Items.LIGHT_GRAY_SHULKER_BOX)//todo
@@ -148,7 +148,7 @@ public class ImagetextSignTab implements IImagetextTab {
 
     public List<ItemStack> formatSignItems(List<SignBuilder> signBuilders, int signsPerLine) {
         List<ItemStack> signStackList = new ArrayList<>();
-        int color = Integer.parseInt(FzmmClient.CONFIG.colors.imagetextMessages(), 16);
+        int color = FzmmClient.CONFIG.colors.imagetextMessages().rgb();
 
         for (int i = 0; i != signBuilders.size(); i++) {
             ItemStack sign = signBuilders.get(i).get();

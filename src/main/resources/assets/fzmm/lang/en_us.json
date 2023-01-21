@@ -64,6 +64,7 @@
   "fzmm.gui.button.random": "Random",
   "fzmm.gui.button.remove": "-",
   "fzmm.gui.button.reset": "Reset",
+  "fzmm.gui.colorPicker.title": "Choose color",
   "fzmm.gui.converters.option.array.0": "Index 0",
   "fzmm.gui.converters.option.array.1": "Index 1",
   "fzmm.gui.converters.option.array.2": "Index 2",
