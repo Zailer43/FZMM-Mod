@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.logic.playerStatue;
 
 import fzmm.zailer.me.builders.ArmorStandBuilder;
+import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.AbstractStatueSkinManager;
 import fzmm.zailer.me.client.logic.playerStatue.statueHeadSkin.HeadModelSkin;
@@ -168,7 +169,7 @@ public class StatuePart {
                 .setPos(x, y, z)
                 .setImmutableAndInvisible()
                 .setRightArmPose(new Vector3f(-45f, this.rotation, 0f))
-                .setRightHandItem(HeadUtils.playerHeadFromSkin(this.skinValue))
+                .setRightHandItem(HeadBuilder.builder().skinValue(this.skinValue).get())
                 .getItem(this.name);
 
         statuePart.setSubNbt(TagsConstant.FZMM, this.writeFzmmTag());

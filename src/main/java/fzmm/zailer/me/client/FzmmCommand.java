@@ -7,8 +7,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import fzmm.zailer.me.builders.DisplayBuilder;
+import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.InventoryUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -312,7 +312,7 @@ public class FzmmCommand {
     }
 
     private static void getHead(String skullOwner) {
-        FzmmUtils.giveItem(HeadUtils.getPlayerHead(skullOwner));
+        FzmmUtils.giveItem(HeadBuilder.of(skullOwner));
     }
 
     private static void fullContainer(int slotsToFill, int firstSlots) {

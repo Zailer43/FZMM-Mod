@@ -199,7 +199,9 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
             new HeadUtils().uploadHead(image, headName).thenAccept(headUtils -> {
                 int delay = (int) TimeUnit.MILLISECONDS.toSeconds(headUtils.getDelayForNextInMillis());
-                ItemStack head = headUtils.getHead(headName);
+                ItemStack head = headUtils.getBuilder()
+                        .headName(headName)
+                        .get();
                 FzmmUtils.giveItem(head);
                 this.client.execute(() -> this.setDelay(delay));
             });

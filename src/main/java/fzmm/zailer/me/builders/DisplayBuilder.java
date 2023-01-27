@@ -142,6 +142,10 @@ public class DisplayBuilder {
         return this.addLore(nbtList);
     }
 
+    public DisplayBuilder addLore(String lore) {
+        return this.addLore(Text.literal(lore));
+    }
+
     public DisplayBuilder addLore(Text lore) {
         NbtList oldLore = this.getLore();
 

@@ -9,6 +9,7 @@ import fzmm.zailer.me.client.gui.components.image.ScreenshotZoneComponent;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.main.components.MainButtonComponent;
 import fzmm.zailer.me.client.gui.textformat.components.ColorListContainer;
+import fzmm.zailer.me.client.gui.utils.containers.VerticalItemGridLayout;
 import fzmm.zailer.me.compat.symbolChat.symbol.CustomSymbolSelectionPanel;
 import fzmm.zailer.me.compat.symbolChat.symbol.SymbolSelectionPanelComponent;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -148,6 +149,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         UIParsing.registerFactory("main-button", element -> new MainButtonComponent(Text.empty(), buttonComponent -> {}));
         UIParsing.registerFactory("screenshot-zone", element -> new ScreenshotZoneComponent());
         UIParsing.registerFactory("color-list", ColorListContainer::parse);
+        UIParsing.registerFactory("vertical-item-grid-layout", VerticalItemGridLayout::parse);
 
     }
 

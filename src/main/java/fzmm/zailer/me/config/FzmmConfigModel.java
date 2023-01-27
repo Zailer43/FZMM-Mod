@@ -23,6 +23,8 @@ public class FzmmConfigModel {
     @Nest
     public EncryptbookNest encryptbook = new EncryptbookNest();
     @Nest
+    public HeadGalleryNest headGallery = new HeadGalleryNest();
+    @Nest
     public HeadGeneratorNest headGenerator = new HeadGeneratorNest();
     @Nest
     public HistoryNest history = new HistoryNest();
@@ -101,6 +103,10 @@ public class FzmmConfigModel {
         public Color imagetextMessages = Color.ofRgb(Integer.parseInt("71C29F", 16));
         public Color playerStatue = Color.ofRgb(Integer.parseInt("CB347D", 16));
         public Color usefulBlockStates = Color.ofRgb(Integer.parseInt("66F5B7", 16));
+    }
+
+    public static class HeadGalleryNest {
+        public boolean cacheCategories = true;
     }
 
     public static class HeadGeneratorNest {

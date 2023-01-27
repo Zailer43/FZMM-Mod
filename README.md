@@ -171,6 +171,7 @@ To contribute with the translation of a language or fix a bug in a language othe
 - [Mineskin](https://mineskin.org) for being able to make Player Statue and Head Generator possible thanks to their API
 - [Logstone & Jespertheend](https://statue.jespertheend.com) for creating Player Statue (or at least doing something known)
 - [owo-lib](https://github.com/wisp-forest/owo-lib) and its contributors for making a fairly complete library
+- [Minecraft heads](https://minecraft-heads.com) for having a great gallery of heads for Head Gallery
 - The past, present and future contributors of FZMM mod, including people who report bugs or give me suggestions 
 
 ## Disclaimer

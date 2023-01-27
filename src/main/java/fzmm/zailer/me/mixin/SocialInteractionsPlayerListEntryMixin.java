@@ -1,8 +1,8 @@
 package fzmm.zailer.me.mixin;
 
 import com.google.common.collect.ImmutableList;
+import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.HeadUtils;
 import io.wispforest.owo.itemgroup.Icon;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry;
@@ -53,7 +53,7 @@ public abstract class SocialInteractionsPlayerListEntryMixin {
         PlayerListEntry playerListEntry = this.client.player.networkHandler.getPlayerListEntry(uuid);
         if (playerListEntry == null)
             return;
-        this.headStack = HeadUtils.getPlayerHead(playerListEntry.getProfile());
+        this.headStack = HeadBuilder.of(playerListEntry.getProfile());
         this.icon = Icon.of(this.headStack);
         boolean isCreativeMode = FzmmUtils.isCreative();
 

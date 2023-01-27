@@ -46,7 +46,7 @@ public class ConverterUuidToArrayTab implements IScreenTab {
         });
     }
 
-    private int[] UUIDtoArray(UUID uuid) {
+    public static int[] UUIDtoArray(UUID uuid) {
         long msb = uuid.getMostSignificantBits();
         long lsb = uuid.getLeastSignificantBits();
         int[] intArray = new int[4];
@@ -61,7 +61,7 @@ public class ConverterUuidToArrayTab implements IScreenTab {
 
 
     public String stringOfUUIDtoArray(String uuidString) {
-        int[] uuidArray = this.UUIDtoArray(UUID.fromString(uuidString));
+        int[] uuidArray = UUIDtoArray(UUID.fromString(uuidString));
 
         return String.format("[I;%s,%s,%s,%s]", uuidArray[0], uuidArray[1], uuidArray[2], uuidArray[3]);
     }

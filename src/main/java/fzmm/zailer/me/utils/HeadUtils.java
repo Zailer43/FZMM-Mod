@@ -2,17 +2,11 @@ package fzmm.zailer.me.utils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.authlib.GameProfile;
+import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.logic.FzmmHistory;
 import fzmm.zailer.me.config.FzmmConfig;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.SkullItem;
-import net.minecraft.nbt.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,22 +38,9 @@ public class HeadUtils {
         this.delayForNextInMillis = 6000;
     }
 
-    public ItemStack getHead() {
-        return playerHeadFromSkin(this.skinValue);
-    }
-
-    public ItemStack getHead(String name) {
-        ItemStack head = playerHeadFromSkin(this.skinValue);
-
-        assert head.getNbt() != null;
-        NbtCompound nbt = head.getNbt();
-        if (!nbt.contains(SkullItem.SKULL_OWNER_KEY, NbtElement.COMPOUND_TYPE))
-            return head;
-
-        NbtCompound skullOwner = nbt.getCompound(SkullItem.SKULL_OWNER_KEY);
-        skullOwner.putString("Name", name);
-
-        return head;
+    public HeadBuilder getBuilder() {
+        return HeadBuilder.builder()
+                .skinValue(this.skinValue);
     }
 
     public String getSkinValue() {
@@ -137,49 +118,6 @@ public class HeadUtils {
 
     private int getDelay(int delay) {
         return MathHelper.clamp(delay, 2000, 6000);
-    }
-
-    public static ItemStack getPlayerHead(String username) {
-        ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
-        head.setSubNbt(SkullItem.SKULL_OWNER_KEY, NbtString.of(username));
-
-        FzmmHistory.addGeneratedHeads(head);
-        return head;
-    }
-
-    public static ItemStack getPlayerHead(GameProfile profile) {
-        ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
-        NbtCompound skullOwner = new NbtCompound();
-
-        NbtHelper.writeGameProfile(skullOwner, profile);
-        head.setSubNbt(SkullItem.SKULL_OWNER_KEY, skullOwner);
-
-        FzmmHistory.addGeneratedHeads(head);
-        return head;
-    }
-
-    public static ItemStack playerHeadFromSkin(String skinValue) {
-        NbtList textures = new NbtList();
-        NbtCompound value = new NbtCompound();
-        NbtCompound properties = new NbtCompound();
-        NbtCompound skullOwner = new NbtCompound();
-        NbtCompound tag = new NbtCompound();
-        Random random = Random.create();
-        NbtIntArray id = new NbtIntArray(new int[]{random.nextInt(Integer.MAX_VALUE), random.nextInt(Integer.MAX_VALUE),
-                random.nextInt(Integer.MAX_VALUE), random.nextInt(Integer.MAX_VALUE)});
-
-        value.putString("Value", skinValue);
-        textures.add(value);
-        properties.put("textures", textures);
-        skullOwner.put("Properties", properties);
-        skullOwner.put("Id", id);
-
-        tag.put(SkullItem.SKULL_OWNER_KEY, skullOwner);
-
-        ItemStack stack = Items.PLAYER_HEAD.getDefaultStack();
-        stack.setNbt(tag);
-        FzmmHistory.addGeneratedHeads(stack);
-        return stack;
     }
 
     private void applyWatermark(BufferedImage headSkin) {

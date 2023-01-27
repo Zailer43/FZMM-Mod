@@ -1,0 +1,256 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19/owo-ui.xsd">
+    <components>
+        <flow-layout direction="horizontal">
+            <children>
+                <label id="title">
+                    <positioning type="absolute">20,20</positioning>
+                    <text translate="true">fzmm.gui.title.headGallery</text>
+                </label>
+
+
+                <flow-layout direction="horizontal">
+                    <children>
+                        <flow-layout direction="vertical" id="options-list">
+                            <children>
+
+                                <template name="left-option-list">
+                                    <id>minecraft-heads-category-list</id>
+                                    <labelId>category</labelId>
+                                </template>
+
+                                <template name="left-option-list">
+                                    <id>minecraft-heads-tags-list</id>
+                                    <labelId>tags</labelId>
+                                </template>
+
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fill">30</horizontal>
+                                <vertical method="fill">70</vertical>
+                            </sizing>
+
+                        </flow-layout>
+
+                    </children>
+                </flow-layout>
+
+                <flow-layout direction="vertical">
+                    <children>
+                        <flow-layout direction="horizontal">
+                            <children>
+                                <button id="previous-page-button">
+                                    <positioning type="relative">0,100</positioning>
+                                    <text translate="true">fzmm.gui.button.arrow2.left</text>
+                                </button>
+                                <label id="current-page-label">
+                                    <text>0/0</text>
+                                </label>
+                                <button id="next-page-button">
+                                    <positioning type="relative">100,100</positioning>
+                                    <text translate="true">fzmm.gui.button.arrow2.right</text>
+                                </button>
+                            </children>
+
+                            <vertical-alignment>center</vertical-alignment>
+                            <horizontal-alignment>center</horizontal-alignment>
+
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                                <vertical method="fixed">22</vertical>
+                            </sizing>
+                            <margins>
+                                <all>1</all>
+                            </margins>
+
+                            <positioning type="relative">0,100</positioning>
+                        </flow-layout>
+
+                        <flow-layout direction="vertical">
+                            <children>
+                                <scroll direction="vertical">
+
+                                    <vertical-item-grid-layout maxSize="300" maxColumns="25" id="content">
+                                        <children>
+
+                                        </children>
+
+                                        <vertical-alignment>top</vertical-alignment>
+                                        <horizontal-alignment>center</horizontal-alignment>
+
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                        </sizing>
+
+                                    </vertical-item-grid-layout>
+
+
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                    </sizing>
+
+                                    <scrollbar>
+                                        <flat>#FFFFFF</flat>
+                                    </scrollbar>
+
+                                </scroll>
+                            </children>
+
+                            <padding>
+                                <vertical>25</vertical>
+                            </padding>
+
+                            <sizing>
+                                <vertical method="fill">100</vertical>
+                            </sizing>
+
+                        </flow-layout>
+
+                        <flow-layout direction="horizontal">
+                            <children>
+                                <text-box-row>
+                                    <id>content-search</id>
+                                    <removeResetButton>true</removeResetButton>
+                                    <fieldSize>120</fieldSize>
+                                    <removeHorizontalMargins>true</removeHorizontalMargins>
+                                </text-box-row>
+                            </children>
+
+                            <vertical-alignment>center</vertical-alignment>
+                            <horizontal-alignment>center</horizontal-alignment>
+
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                                <vertical method="fixed">22</vertical>
+                            </sizing>
+
+                            <positioning type="relative">0,0</positioning>
+                        </flow-layout>
+                    </children>
+
+                    <sizing>
+                        <horizontal method="fill">60</horizontal>
+                        <vertical method="fill">70</vertical>
+                    </sizing>
+
+                    <surface>
+                        <outline>#FFFFFF</outline>
+                    </surface>
+
+                    <padding>
+                        <all>2</all>
+                    </padding>
+
+                    <horizontal-alignment>center</horizontal-alignment>
+                    <vertical-alignment>center</vertical-alignment>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="back-button">
+                            <text translate="true">fzmm.gui.button.back</text>
+
+                            <margins>
+                                <right>20</right>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="minecraft-heads-button">
+                            <text translate="true">fzmm.gui.headGallery.button.minecraftHeads</text>
+
+                            <margins>
+                                <right>20</right>
+                                <top>20</top>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,0</positioning>
+                </flow-layout>
+            </children>
+
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+
+    <templates>
+        <option-button>
+            <button id="{{id}}">
+                <text translate="true">fzmm.gui.history.option.{{translation}}</text>
+
+                <sizing>
+                    <horizontal method="fill">97</horizontal>
+                </sizing>
+
+                <margins>
+                    <vertical>4</vertical>
+                </margins>
+            </button>
+        </option-button>
+
+        <left-option-list>
+            <flow-layout direction="vertical">
+                <children>
+                    <label>
+                        <text translate="true">fzmm.gui.headGallery.label.{{labelId}}</text>
+                        <tooltip-text translate="true">fzmm.gui.headGallery.label.{{labelId}}.tooltip</tooltip-text>
+
+                        <margins>
+                            <vertical>4</vertical>
+                        </margins>
+                    </label>
+
+                    <scroll direction="vertical">
+
+                        <flow-layout direction="vertical" id="{{id}}">
+                            <children>
+
+                            </children>
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                            </sizing>
+
+                            <padding>
+                                <right>8</right>
+                            </padding>
+                        </flow-layout>
+
+                        <sizing>
+                            <vertical method="fill">50</vertical>
+                        </sizing>
+
+                        <scrollbar>
+                            <flat>#FFFFFF</flat>
+                        </scrollbar>
+
+
+                        <margins>
+                            <bottom>12</bottom>
+                        </margins>
+                    </scroll>
+                </children>
+            </flow-layout>
+
+        </left-option-list>
+    </templates>
+</owo-ui>
