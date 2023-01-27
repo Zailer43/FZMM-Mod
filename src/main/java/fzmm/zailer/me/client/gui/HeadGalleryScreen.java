@@ -124,7 +124,9 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
                         ItemStack head = HeadBuilder.builder()
                                 .skinValue(minecraftHeadsData.value())
                                 .id(minecraftHeadsData.uuid())
+                                .notAddToHistory()
                                 .get();
+
                         head = DisplayBuilder.of(head)
                                 .setName(minecraftHeadsData.name())
                                 .get();

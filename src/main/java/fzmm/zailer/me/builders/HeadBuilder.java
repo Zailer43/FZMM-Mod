@@ -18,10 +18,12 @@ public class HeadBuilder {
     @Nullable
     private String headName;
     private NbtIntArray id;
+    private boolean addToHeadHistory;
 
     private HeadBuilder() {
         this.skinValue = "";
         this.headName = null;
+        this.addToHeadHistory = true;
 
         Random random = Random.create();
         this.id = new NbtIntArray(new int[]{
@@ -56,7 +58,8 @@ public class HeadBuilder {
 
         ItemStack stack = Items.PLAYER_HEAD.getDefaultStack();
         stack.setNbt(tag);
-        FzmmHistory.addGeneratedHeads(stack);
+        if (this.addToHeadHistory)
+            FzmmHistory.addGeneratedHeads(stack);
         return stack;
     }
 
@@ -72,6 +75,11 @@ public class HeadBuilder {
 
     public HeadBuilder id(UUID id) {
         this.id = new NbtIntArray(ConverterUuidToArrayTab.UUIDtoArray(id));
+        return this;
+    }
+
+    public HeadBuilder notAddToHistory() {
+        this.addToHeadHistory = false;
         return this;
     }
 
