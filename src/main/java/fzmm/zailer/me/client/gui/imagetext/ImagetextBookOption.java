@@ -26,8 +26,8 @@ public enum ImagetextBookOption implements IMode {
     }
 
     @Override
-    public Text getTranslation() {
-        return Text.translatable("fzmm.gui.option.book." + this.name);
+    public String getTranslationKey() {
+        return "fzmm.gui.option.book." + this.name;
     }
 
     public BookBuilder getBookBuilder() {

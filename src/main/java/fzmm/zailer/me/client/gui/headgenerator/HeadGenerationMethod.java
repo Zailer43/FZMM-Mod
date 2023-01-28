@@ -1,7 +1,6 @@
 package fzmm.zailer.me.client.gui.headgenerator;
 
 import fzmm.zailer.me.client.gui.components.IMode;
-import net.minecraft.text.Text;
 
 public enum HeadGenerationMethod implements IMode {
     TEXTURE("texture"),
@@ -13,8 +12,8 @@ public enum HeadGenerationMethod implements IMode {
         this.name = name;
     }
     @Override
-    public Text getTranslation() {
-        return Text.translatable("fzmm.gui.headGenerator.option.generationMethod." + this.name);
+    public String getTranslationKey() {
+        return "fzmm.gui.headGenerator.option.generationMethod." + this.name;
     }
 
 }

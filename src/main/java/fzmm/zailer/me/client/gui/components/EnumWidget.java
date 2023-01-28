@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.components;
 
 import io.wispforest.owo.config.ui.component.ConfigEnumButton;
 import io.wispforest.owo.ui.component.ButtonComponent;
+import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 
@@ -9,8 +10,11 @@ import java.util.function.Consumer;
 @SuppressWarnings("UnstableApiUsage")
 public class EnumWidget extends ConfigEnumButton {
 
+    private boolean showTooltip;
+
     public EnumWidget() {
         super();
+        this.showTooltip = false;
     }
 
     public void init(Enum<? extends IMode> enumeration) {
@@ -23,7 +27,11 @@ public class EnumWidget extends ConfigEnumButton {
         if (this.backingValues == null)
             return;
 
-        this.setMessage(((IMode) this.backingValues[this.selectedIndex]).getTranslation());
+        String translationKey = ((IMode) this.backingValues[this.selectedIndex]).getTranslationKey();
+        this.setMessage(Text.translatable(translationKey));
+
+        if (this.showTooltip)
+            this.tooltip(Text.translatable(translationKey + ".tooltip"));
     }
 
     public Enum<?> getValue() {
@@ -35,5 +43,9 @@ public class EnumWidget extends ConfigEnumButton {
     public ButtonComponent onPress(Consumer<ButtonComponent> button) {
         this.onPress();
         return super.onPress(button);
+    }
+
+    public void setShowTooltip(boolean showTooltip) {
+        this.showTooltip = showTooltip;
     }
 }

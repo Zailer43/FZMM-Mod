@@ -4,7 +4,6 @@ import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.ImageFileSource;
 import fzmm.zailer.me.client.gui.components.image.source.ImageUrlSource;
 import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
-import net.minecraft.text.Text;
 
 public enum ImageMode implements IImageMode {
     URL("url", new ImageUrlSource()),
@@ -22,8 +21,8 @@ public enum ImageMode implements IImageMode {
         this.sourceType = sourceType;
     }
 
-    public Text getTranslation() {
-        return Text.translatable(BASE_TRANSLATION_KEY + this.translationKey);
+    public String getTranslationKey() {
+        return BASE_TRANSLATION_KEY + this.translationKey;
     }
 
     @Override

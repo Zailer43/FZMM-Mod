@@ -2,7 +2,6 @@ package fzmm.zailer.me.client.gui.options;
 
 import fzmm.zailer.me.client.gui.components.IMode;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
 import net.minecraft.util.math.Direction;
 
 public enum HorizontalDirectionOption implements IMode {
@@ -18,8 +17,8 @@ public enum HorizontalDirectionOption implements IMode {
     }
 
     @Override
-    public Text getTranslation() {
-        return Text.translatable("fzmm.gui.option.direction." + this.name);
+    public String getTranslationKey() {
+        return "fzmm.gui.option.direction." + this.name;
     }
 
     public static HorizontalDirectionOption getPlayerHorizontalDirection() {

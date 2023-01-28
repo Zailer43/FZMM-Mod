@@ -108,7 +108,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         this.headGenerationMethod.select(HeadGenerationMethod.TEXTURE.ordinal());
         int maxHeadGenerationMethodWidth = 0;
         for (var method : HeadGenerationMethod.values())
-            maxHeadGenerationMethodWidth = Math.max(maxHeadGenerationMethodWidth, this.textRenderer.getWidth(method.getTranslation()) + BaseFzmmScreen.BUTTON_TEXT_PADDING);
+            maxHeadGenerationMethodWidth = Math.max(maxHeadGenerationMethodWidth, this.textRenderer.getWidth(Text.translatable(method.getTranslationKey())) + BaseFzmmScreen.BUTTON_TEXT_PADDING);
         this.headGenerationMethod.horizontalSizing(Sizing.fixed(maxHeadGenerationMethodWidth));
 
         this.toggleFavoriteList =  ButtonRow.setup(rootComponent, TOGGLE_FAVORITE_LIST_ID, true, buttonComponent -> this.toggleFavoriteListExecute());

@@ -30,15 +30,19 @@ public class EnumRow extends AbstractRow {
         return id + "-enum-option";
     }
 
-
-    @SuppressWarnings("UnstableApiUsage")
     public static EnumWidget setup(FlowLayout rootComponent, String id, Enum<? extends IMode> defaultValue, @Nullable ButtonComponent.PressAction callback) {
+        return setup(rootComponent, id, defaultValue, false, callback);
+    }
+
+        @SuppressWarnings("UnstableApiUsage")
+    public static EnumWidget setup(FlowLayout rootComponent, String id, Enum<? extends IMode> defaultValue, boolean showTooltip, @Nullable ButtonComponent.PressAction callback) {
         EnumWidget enumButton = rootComponent.childById(EnumWidget.class, getEnumId(id));
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
 
         BaseFzmmScreen.checkNull(enumButton, "enum-option", getEnumId(id));
         BaseFzmmScreen.checkNull(resetButton, "button", getResetButtonId(id));
 
+        enumButton.setShowTooltip(showTooltip);
         enumButton.init(defaultValue);
         enumButton.onPress(button -> {
             if (callback != null)

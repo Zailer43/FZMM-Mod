@@ -1,7 +1,6 @@
 package fzmm.zailer.me.client.gui.options;
 
 import fzmm.zailer.me.client.gui.components.IMode;
-import net.minecraft.text.Text;
 
 public enum LoreOption implements IMode {
     ADD("add"),
@@ -15,7 +14,7 @@ public enum LoreOption implements IMode {
     }
 
     @Override
-    public Text getTranslation() {
-        return Text.translatable("fzmm.gui.option.lore." + this.name);
+    public String getTranslationKey() {
+        return "fzmm.gui.option.lore." + this.name;
     }
 }

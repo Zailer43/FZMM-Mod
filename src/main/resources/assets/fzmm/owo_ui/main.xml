@@ -65,7 +65,7 @@
                     <children>
 
                         <button id="config-button">
-                            <text translate="true">fzmm.gui.main.configs</text>
+                            <text translate="true">fzmm.gui.title.configs</text>
 
                             <margins>
                                 <right>20</right>
@@ -115,7 +115,7 @@
     <templates>
         <main-button-layout>
             <main-button id="{{name}}-button">
-                <text translate="true">fzmm.gui.main.{{name}}</text>
+                <text translate="true">fzmm.gui.title.{{name}}</text>
                 <margins>
                     <all>5</all>
                 </margins>

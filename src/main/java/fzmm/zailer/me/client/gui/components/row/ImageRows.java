@@ -46,7 +46,7 @@ public class ImageRows extends HorizontalFlowLayout {
         ImageButtonRow.setup(rootComponent, buttonId, ((IImageMode) defaultValue).getImageGetter());
         ImageButtonComponent imageWidget = rootComponent.childById(ImageButtonComponent.class, ImageButtonRow.getImageButtonId(buttonId));
 
-        EnumRow.setup(rootComponent, enumId, defaultValue, button -> {
+        EnumRow.setup(rootComponent, enumId, defaultValue, true, button -> {
             IImageMode mode = (IImageMode) ((EnumWidget) button).getValue();
             IImageGetter imageGetter = mode.getImageGetter();
             imageWidget.setSourceType(imageGetter);

@@ -1,7 +1,6 @@
 package fzmm.zailer.me.client.gui.options;
 
 import fzmm.zailer.me.client.gui.components.IMode;
-import net.minecraft.text.Text;
 import net.minecraft.util.SignType;
 
 //TODO: look for a better way to do this without hardcoding the sign types
@@ -33,8 +32,8 @@ public enum SignTypeOption implements IMode {
     }
 
     @Override
-    public Text getTranslation() {
-        return Text.translatable("block.minecraft." + this.type.getName() + "_sign");
+    public String getTranslationKey() {
+        return "block.minecraft." + this.type.getName() + "_sign";
     }
 
     public SignType getType() {
