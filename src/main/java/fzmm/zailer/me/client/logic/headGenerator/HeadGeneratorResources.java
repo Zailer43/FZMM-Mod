@@ -24,7 +24,7 @@ import java.util.*;
 
 public class HeadGeneratorResources {
     public static final String HEADS_TEXTURES_FOLDER = "textures/heads";
-    public static final String HEADS_MODELS_FOLDER = "models/heads";
+    public static final String HEADS_MODELS_FOLDER = "fzmm_models/heads";
 
     public static Set<HeadTextureEntry> loadHeadsTextures() {
         Set<HeadTextureEntry> entries = new HashSet<>();
