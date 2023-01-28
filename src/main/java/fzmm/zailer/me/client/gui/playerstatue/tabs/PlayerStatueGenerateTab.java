@@ -10,6 +10,7 @@ import fzmm.zailer.me.client.gui.playerstatue.PlayerStatueScreen;
 import fzmm.zailer.me.client.logic.playerStatue.PlayerStatue;
 import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.item.ItemStack;
@@ -19,7 +20,7 @@ import java.awt.image.BufferedImage;
 import java.util.Optional;
 
 public class PlayerStatueGenerateTab implements IPlayerStatueTab {
-    private static final ImageStatus OLD_SKIN_FORMAT_NOT_SUPPORTED = new ImageStatus("playerStatue.oldSkinFormatNotSupported", ImageStatus.StatusType.ERROR);
+    private static final ImageStatus INVALID_SKIN_SIZE = new ImageStatus("playerStatue.invalidSkinSize", ImageStatus.StatusType.ERROR);
     private static final String SKIN_ID = "skin";
     private static final String SKIN_SOURCE_ID = "skin-source";
     private static Thread CREATE_PLAYER_STATUE_THREAD = null;
@@ -37,7 +38,11 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
         this.executeButton = rootComponent.childById(ButtonWidget.class, ButtonRow.getButtonId(PlayerStatueScreen.EXECUTE_ID));
 
         this.skinButton.setImageLoadedEvent(this::skinCallback);
-        this.skinButton.setButtonCallback(bufferedImage -> this.executeButton.active = this.canExecute());
+        this.skinButton.setButtonCallback(skin -> {
+            this.executeButton.active = this.canExecute();
+            if (skin.getWidth() == 64 && skin.getHeight() == 32)
+                this.skinButton.setImage(ImageUtils.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skin, true));
+        });
     }
 
 
@@ -81,8 +86,9 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     public ImageStatus skinCallback(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
-        if (!(width == 64 && height == 64) && !(width == 128 && height == 128))
-            return OLD_SKIN_FORMAT_NOT_SUPPORTED;
+
+        if (!(width == 64 && height == 32) && !(width == 64 && height == 64) && !(width == 128 && height == 128))
+            return INVALID_SKIN_SIZE;
 
         return ImageStatus.IMAGE_LOADED;
     }

@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 public class ImageUtils {
-    private static final Identifier OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER = new Identifier(FzmmClient.MOD_ID, HeadGeneratorResources.HEADS_MODELS_FOLDER + "/old_format_to_new_format.json");
+    private static final Identifier OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER = new Identifier(FzmmClient.MOD_ID, HeadGeneratorResources.FZMM_MODELS_FOLDER + "/skins/old_format_to_new_format.json");
     public static final HeadModelEntry OLD_FORMAT_TO_NEW_FORMAT;
 
     static {
