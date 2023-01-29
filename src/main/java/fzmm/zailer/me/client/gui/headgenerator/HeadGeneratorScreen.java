@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.headgenerator;
 
+import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
@@ -27,7 +28,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.ScreenshotRecorder;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -73,6 +73,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private ButtonWidget giveMergedHeadButton;
     private ButtonWidget toggleFavoriteList;
     private EnumWidget headGenerationMethod;
+    private EnumWidget skinMode;
     private boolean showFavorites;
     private BufferedImage baseSkin;
 
@@ -88,8 +89,9 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         this.skinButton = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, SkinMode.NAME);
         this.skinButton.setButtonCallback(this::imageCallback);
         this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "", 512);
+        this.skinMode = rootComponent.childById(EnumWidget.class, EnumRow.getEnumId(SKIN_SOURCE_TYPE_ID));
         rootComponent.childById(TextFieldWidget.class, ImageButtonRow.getImageValueFieldId(SKIN_ID))
-                .setChangedListener(this.headNameField::setText);
+                .setChangedListener(this::onChangeSkinField);
         this.overlapHatLayerButton = BooleanRow.setup(rootComponent, OVERLAP_HAT_LAYER_ID, FzmmClient.CONFIG.headGenerator.defaultOverlapHatLayer(), button -> this.client.execute(this::updatePreviews));
         this.searchField = TextBoxRow.setup(rootComponent, SEARCH_ID, "", 128, s -> this.applyFilters());
         this.headListLayout = rootComponent.childById(FlowLayout.class, HEAD_LIST_ID);
@@ -199,10 +201,11 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
             new HeadUtils().uploadHead(image, headName).thenAccept(headUtils -> {
                 int delay = (int) TimeUnit.MILLISECONDS.toSeconds(headUtils.getDelayForNextInMillis());
-                ItemStack head = headUtils.getBuilder()
-                        .headName(headName)
-                        .get();
-                FzmmUtils.giveItem(head);
+                HeadBuilder builder = headUtils.getBuilder();
+                if (!headName.isBlank())
+                    builder.headName(headName);
+
+                FzmmUtils.giveItem(builder.get());
                 this.client.execute(() -> this.setDelay(delay));
             });
         });
@@ -337,5 +340,13 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
         if (!this.favoritesHeadsOnOpenScreen.equals(FzmmClient.CONFIG.headGenerator.favoriteSkins()))
             FzmmClient.CONFIG.save();
+    }
+
+    private void onChangeSkinField(String value) {
+        if (this.skinMode == null)
+            return;
+
+        if (((SkinMode) this.skinMode.getValue()).isHeadName())
+            this.headNameField.setText(value);
     }
 }
