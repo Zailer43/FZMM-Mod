@@ -8,7 +8,6 @@ import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.EntityComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.container.HorizontalFlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.util.Drawer;
 import net.minecraft.client.MinecraftClient;
@@ -23,14 +22,14 @@ import java.util.Optional;
 
 import static net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry.WHITE_COLOR;
 
-public abstract class AbstractHeadListEntry extends HorizontalFlowLayout {
+public abstract class AbstractHeadListEntry extends FlowLayout {
     public static final int PLAYER_SKIN_SIZE = 24;
     protected final AbstractHeadEntry entry;
     private final EntityComponent<CustomHeadEntity> previewComponent;
     protected FlowLayout buttonsLayout;
 
     public AbstractHeadListEntry(AbstractHeadEntry entry) {
-        super(Sizing.fill(100), Sizing.fixed(28));
+        super(Sizing.fill(100), Sizing.fixed(28), Algorithm.HORIZONTAL);
         this.entry = entry;
 
         this.previewComponent = Components.entity(Sizing.fixed(PLAYER_SKIN_SIZE), new CustomHeadEntity(MinecraftClient.getInstance().world))

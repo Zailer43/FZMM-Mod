@@ -31,7 +31,7 @@
     "fabricloader": ">=0.12.5",
     "fabric": "*",
     "minecraft": ">=1.19.3",
-    "owo": "0.10.x"
+    "owo": "^0.10.2 <0.11.0"
   },
   "custom": {
     "modmenu": {

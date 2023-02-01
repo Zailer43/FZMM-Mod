@@ -4,7 +4,7 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.IScreenTab;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.Containers;
-import io.wispforest.owo.ui.container.VerticalFlowLayout;
+import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import net.minecraft.text.Text;
@@ -13,12 +13,12 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScreenTabContainer extends VerticalFlowLayout {
+public class ScreenTabContainer extends FlowLayout {
     protected boolean selected;
     protected List<Component> componentList;
 
     public ScreenTabContainer(String baseTranslationKey, Sizing horizontalSizing, Sizing verticalSizing, String id) {
-        super(horizontalSizing, verticalSizing);
+        super(horizontalSizing, verticalSizing, Algorithm.VERTICAL);
         this.selected = false;
         this.componentList = new ArrayList<>();
         this.id(getScreenTabId(id));

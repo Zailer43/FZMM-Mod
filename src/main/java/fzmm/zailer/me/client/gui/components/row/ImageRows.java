@@ -9,7 +9,6 @@ import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.container.HorizontalFlowLayout;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.util.Drawer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -17,11 +16,11 @@ import org.w3c.dom.Element;
 
 import java.util.List;
 
-public class ImageRows extends HorizontalFlowLayout {
+public class ImageRows extends FlowLayout {
     public static int TOTAL_HEIGHT = AbstractRow.TOTAL_HEIGHT * 2;
 
     public ImageRows(String baseTranslationKey, String buttonId, String buttonTooltipId, String enumId, String enumTooltipId) {
-        super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
+        super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT), Algorithm.HORIZONTAL);
 
         FlowLayout rowsLayout = Containers.verticalFlow(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
 

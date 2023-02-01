@@ -9,7 +9,6 @@ import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.container.VerticalFlowLayout;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
@@ -20,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ColorListContainer extends VerticalFlowLayout {
+public class ColorListContainer extends FlowLayout {
     public static final int MINIMUM_SIZE = 2;
     public static final Text ADD_COLOR_TEXT = Text.translatable("fzmm.gui.button.colorList.add");
     public static final String COLOR_AMOUNT_TRANSLATION_KEY = "fzmm.gui.button.colorList.amount";
@@ -30,7 +29,7 @@ public class ColorListContainer extends VerticalFlowLayout {
     private Consumer<String> callback;
 
     public ColorListContainer(String id, String tooltipId, String baseTranslationKey) {
-        super(Sizing.fill(100), Sizing.content());
+        super(Sizing.fill(100), Sizing.content(), Algorithm.VERTICAL);
         this.random = Random.create();
         this.callback = null;
         this.id(id);

@@ -6,7 +6,6 @@ import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.container.HorizontalFlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.Drawer;
@@ -17,7 +16,7 @@ import org.w3c.dom.Element;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractRow extends HorizontalFlowLayout {
+public abstract class AbstractRow extends FlowLayout {
     protected static final int NORMAL_WIDTH = 200;
     protected static final int TEXT_FIELD_WIDTH = NORMAL_WIDTH - 2;
     public static final int ROW_HEIGHT = 22;
@@ -28,13 +27,13 @@ public abstract class AbstractRow extends HorizontalFlowLayout {
     private String id;
 
     public AbstractRow(String baseTranslationKey) {
-        super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
+        super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT), Algorithm.HORIZONTAL);
         this.baseTranslationKey = baseTranslationKey;
         this.hasHoveredBackground = true;
     }
 
     public AbstractRow(String baseTranslationKey, String id, String tooltipId, boolean hasResetButton) {
-        super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
+        super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT), Algorithm.HORIZONTAL);
         this.baseTranslationKey = baseTranslationKey;
         this.hasHoveredBackground = true;
         this.id = id;
