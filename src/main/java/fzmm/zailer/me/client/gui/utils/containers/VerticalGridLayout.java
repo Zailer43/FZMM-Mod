@@ -11,13 +11,16 @@ import org.w3c.dom.Element;
 import java.util.Arrays;
 import java.util.List;
 
-public class VerticalItemGridLayout extends GridLayout {
-    private static final int ITEM_COMPONENT_SIZE = 16;
+public class VerticalGridLayout extends GridLayout {
     private final int maxSize;
+    private final int componentsWidth;
+    private final int componentsHeight;
 
-    protected VerticalItemGridLayout(Sizing verticalSizing, int maxColumns, int maxSize) {
+    protected VerticalGridLayout(Sizing verticalSizing, int maxColumns, int maxSize, int componentsWidth, int componentsHeight) {
         super(Sizing.fill(100), verticalSizing, (int) Math.ceil(maxSize / (float) maxColumns), maxColumns);
         this.maxSize = maxSize;
+        this.componentsWidth = componentsWidth;
+        this.componentsHeight = componentsHeight;
     }
 
     public void layout(Size space) {
@@ -29,13 +32,13 @@ public class VerticalItemGridLayout extends GridLayout {
         }
 
         int availableWidth = space.width() - this.padding.get().horizontal();
-        int columnSize = Math.min((int) Math.floor(availableWidth / (float) ITEM_COMPONENT_SIZE), this.columns);
-        int rowSize = (int) Math.ceil(this.maxSize / (float) columnSize) + 1;
+        int columnSize = Math.min((int) Math.floor(availableWidth / (float) this.componentsWidth), this.columns);
+        int rowSize = (int) Math.ceil(this.getLastChildIndex() / (float) columnSize) + 1;
         var mountingOffset = this.childMountingOffset();
         MutableInt layoutX = new MutableInt(this.x + mountingOffset.width());
         MutableInt layoutY = new MutableInt(this.y + mountingOffset.height());
 
-        this.contentSize = Size.of(ITEM_COMPONENT_SIZE * columnSize, ITEM_COMPONENT_SIZE * rowSize);
+        this.contentSize = Size.of(this.componentsWidth * columnSize, this.componentsHeight * rowSize);
         int startX = this.horizontalAlignment().align(this.contentSize.width(), availableWidth);
         int startY = this.verticalAlignment().align(this.contentSize.height(), space.height() - this.padding.get().vertical());
 
@@ -53,14 +56,24 @@ public class VerticalItemGridLayout extends GridLayout {
                         layoutY.intValue() + startY
                 ));
 
-                layoutX.add(ITEM_COMPONENT_SIZE);
+                layoutX.add(this.componentsWidth);
             }
 
-            layoutY.add(ITEM_COMPONENT_SIZE);
+            layoutY.add(this.componentsHeight);
         }
     }
 
     public GridLayout child(Component child) {
+
+
+        this.children[this.getLastChildIndex()] = child;
+        this.nonNullChildren.add(child);
+        this.updateLayout();
+
+        return this;
+    }
+
+    private int getLastChildIndex() {
         int lastElementIndex = 0;
         for (int i = 0; i != this.children.length; i++) {
             lastElementIndex = i;
@@ -69,11 +82,7 @@ public class VerticalItemGridLayout extends GridLayout {
             }
         }
 
-        this.children[lastElementIndex] = child;
-        this.nonNullChildren.add(child);
-        this.updateLayout();
-
-        return this;
+        return lastElementIndex;
     }
 
     public GridLayout children(List<? extends Component> children) {
@@ -112,7 +121,9 @@ public class VerticalItemGridLayout extends GridLayout {
 
         int maxSize = UIParsing.parseUnsignedInt(element.getAttributeNode("maxSize"));
         int maxColumns = UIParsing.parseUnsignedInt(element.getAttributeNode("maxColumns"));
+        int componentsWidth = UIParsing.parseUnsignedInt(element.getAttributeNode("componentsWidth"));
+        int componentsHeight = UIParsing.parseUnsignedInt(element.getAttributeNode("componentsHeight"));
 
-        return new VerticalItemGridLayout(Sizing.content(), maxColumns, maxSize);
+        return new VerticalGridLayout(Sizing.content(), maxColumns, maxSize, componentsWidth, componentsHeight);
     }
 }

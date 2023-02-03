@@ -5,12 +5,13 @@ import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.utils.components.GiveItemComponent;
-import fzmm.zailer.me.client.gui.utils.containers.VerticalItemGridLayout;
+import fzmm.zailer.me.client.gui.utils.containers.VerticalGridLayout;
 import fzmm.zailer.me.client.logic.headGallery.HeadGalleryResources;
-import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.component.LabelComponent;
+import fzmm.zailer.me.client.logic.headGallery.MinecraftHeadsData;
+import io.wispforest.owo.ui.component.*;
+import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
@@ -30,42 +31,53 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class HeadGalleryScreen extends BaseFzmmScreen {
 
+    private static final int SELECTED_TAG_COLOR = 0x43BCB2;
+    private static final String TAG_BUTTON_TEXT = "fzmm.gui.headGallery.button.tags";
+    private static final String TAG_LABEL_TEXT = "fzmm.gui.headGallery.label.tags-overlay";
     private static final String CATEGORY_LAYOUT_ID = "minecraft-heads-category-list";
-    private static final String TAGS_LAYOUT_ID = "minecraft-heads-tags-list";
+    private static final String TAGS_LAYOUT_ID = "tags-layout";
+    private static final String TAGS_LIST_GRID_ID = "minecraft-heads-tags-grid";
+    private static final String TAGS_OVERLAY_LABEL_ID = "tags-overlay-label";
+    private static final String TAG_SEARCH_ID = "tag-search";
+    private static final String CLEAR_SELECTED_TAGS_ID = "clear-selected-tags";
     private static final String CONTENT_ID = "content";
     private static final String PAGE_PREVIOUS_BUTTON_ID = "previous-page-button";
     private static final String CURRENT_PAGE_LABEL_ID = "current-page-label";
     private static final String NEXT_PAGE_BUTTON_ID = "next-page-button";
     private static final String CONTENT_SEARCH_ID = "content-search";
     private static final String TAGS_NBT_KEY = "tags";
-    private static final String MINECRAFT_HEADS_BUTTON = "minecraft-heads";
+    private static final String MINECRAFT_HEADS_BUTTON_ID = "minecraft-heads";
     private int page;
-    private VerticalItemGridLayout contentGridLayout;
+    private VerticalGridLayout contentGridLayout;
     private LabelComponent currentPageLabel;
     private final ObjectArrayList<GiveItemComponent> heads;
     private final ObjectArrayList<GiveItemComponent> headsWithFilter;
     private TextFieldWidget contentSearchField;
+    private ButtonComponent tagButton;
     private List<Component> categoryButtonList;
-    private FlowLayout tagsLayout;
-    private String selectedTag;
+    private Set<String> selectedTags;
+    private Set<String> availableTags;
+    @Nullable
+    private OverlayContainer<?> tagOverlay;
 
     public HeadGalleryScreen(@Nullable Screen parent) {
         super("head_gallery", "headGallery", parent);
         this.heads = new ObjectArrayList<>();
         this.headsWithFilter = new ObjectArrayList<>();
-        this.page = 1;
     }
 
     @Override
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
+        this.page = 1;
+        this.selectedTags = new HashSet<>();
+        this.availableTags = new HashSet<>();
+        this.tagOverlay = null;
+
         FlowLayout categoryList = rootComponent.childById(FlowLayout.class, CATEGORY_LAYOUT_ID);
         checkNull(categoryList, "flow-layout", CATEGORY_LAYOUT_ID);
 
@@ -77,12 +89,15 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
 
         categoryList.children(this.categoryButtonList);
 
-        this.tagsLayout = rootComponent.childById(FlowLayout.class, TAGS_LAYOUT_ID);
-        checkNull(categoryList, "flow-layout", TAGS_LAYOUT_ID);
+        FlowLayout tagsLayout = rootComponent.childById(FlowLayout.class, TAGS_LAYOUT_ID);
+        checkNull(tagsLayout, "flow-layout", TAGS_LAYOUT_ID);
 
-        this.selectedTag = "";
+        this.tagButton = Components.button(this.getTagButtonText(), buttonComponent -> this.tagButtonExecute(rootComponent));
+        this.tagButton.horizontalSizing(Sizing.fill(100));
 
-        this.contentGridLayout = rootComponent.childById(VerticalItemGridLayout.class, CONTENT_ID);
+        tagsLayout.child(this.tagButton);
+
+        this.contentGridLayout = rootComponent.childById(VerticalGridLayout.class, CONTENT_ID);
         checkNull(this.contentGridLayout, "vertical-item-grid-layout", CONTENT_ID);
 
         ButtonComponent previousPageButton = rootComponent.childById(ButtonComponent.class, PAGE_PREVIOUS_BUTTON_ID);
@@ -100,7 +115,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
             this.setPage(this.page);
         });
 
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(MINECRAFT_HEADS_BUTTON), true, this::minecraftHeadsExecute);
+        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(MINECRAFT_HEADS_BUTTON_ID), true, buttonComponent -> this.minecraftHeadsExecute());
 
         this.applyFilters();
         this.setPage(1);
@@ -114,6 +129,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
                 if (component instanceof ButtonWidget button)
                     button.active = false;
             }
+            this.tagButton.active = false;
         });
 
         HeadGalleryResources.getCategory(category).thenAccept(categoryData -> this.client.execute(() -> {
@@ -147,45 +163,102 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
                     button.active = true;
             }
             selectedButton.active = false;
+            this.tagButton.active = true;
 
-            Set<String> categoryTags = new HashSet<>();
-            for (var minecraftHeadData : categoryData)
-                categoryTags.addAll(minecraftHeadData.tags());
-
-            categoryTags.removeIf(String::isBlank);
-
-            this.tagsLayout.clearChildren();
-            this.tagsLayout.children(
-                    categoryTags.stream()
-                            .sorted()
-                            .map(tag -> Components.button(Text.literal(tag), this::tagButtonExecute)
-                                    .horizontalSizing(Sizing.fill(100))
-                                    .margins(Insets.vertical(2))
-                            ).collect(Collectors.toList())
-            );
-            this.selectedTag = "";
+            this.updateAvailableTagList(categoryData);
 
             this.applyFilters();
             this.setPage(1);
         }));
     }
 
-    private void tagButtonExecute(ButtonComponent selectedButton) {
-        for (var child : this.tagsLayout.children()) {
-            if (child instanceof ButtonWidget tagButton) {
-                tagButton.setMessage(Text.literal(tagButton.getMessage().getString()));
-            }
-        }
-        if (this.selectedTag.equals(selectedButton.getMessage().getString())) {
-            this.selectedTag = "";
-            selectedButton.setMessage(Text.literal(selectedButton.getMessage().getString()));
-        } else {
-            this.selectedTag = selectedButton.getMessage().getString();
-            selectedButton.setMessage(Text.literal(this.selectedTag).setStyle(Style.EMPTY.withBold(true).withUnderline(true)));
+    private void updateAvailableTagList(ObjectArrayList<MinecraftHeadsData> categoryData) {
+        Set<String> categoryTags = new HashSet<>();
+        for (var minecraftHeadData : categoryData)
+            categoryTags.addAll(minecraftHeadData.tags());
+
+        categoryTags.removeIf(String::isBlank);
+
+        this.selectedTags.clear();
+        this.availableTags.addAll(categoryTags);
+        this.tagButton.setMessage(this.getTagButtonText());
+        this.tagOverlay = null;
+    }
+
+    private void tagButtonExecute(FlowLayout rootComponent) {
+        // because owo-lib does not let me modify the scroll of the scroll container
+        // and I don't want to scroll back to the start
+        if (this.tagOverlay == null) {
+            this.tagOverlay = Containers.overlay(
+                    this.getModel().expandTemplate(FlowLayout.class, "select-tag", Map.of()).<FlowLayout>configure(flowLayout -> {
+                        int buttonsZIndex = 200;
+                        VerticalGridLayout tagListGrid = flowLayout.childById(VerticalGridLayout.class, TAGS_LIST_GRID_ID);
+                        checkNull(tagListGrid, "flow-layout", TAGS_LIST_GRID_ID);
+
+                        LabelComponent tagsOverlayLabel = flowLayout.childById(LabelComponent.class, TAGS_OVERLAY_LABEL_ID);
+                        checkNull(tagsOverlayLabel, "label", TAGS_OVERLAY_LABEL_ID);
+
+                        ButtonComponent clearSelectedTags = flowLayout.childById(ButtonComponent.class, CLEAR_SELECTED_TAGS_ID);
+                        checkNull(clearSelectedTags, "button", CLEAR_SELECTED_TAGS_ID);
+
+                        tagsOverlayLabel.text(this.getTagLabelText());
+
+                        List<ButtonComponent> buttonList = new ArrayList<>();
+                        for (var availableTag : this.availableTags.stream().sorted().toList()) {
+                            Text buttonText = this.selectedTags.contains(availableTag) ? this.getSelectedTagText(availableTag) : Text.literal(availableTag);
+                            ButtonComponent button = (ButtonComponent) Components.button(buttonText, buttonComponent -> this.tagButtonExecute(buttonComponent, tagsOverlayLabel))
+                                    .horizontalSizing(Sizing.fixed(200))
+                                    .margins(Insets.of(4));
+                            button.zIndex(buttonsZIndex);
+
+                            buttonList.add(button);
+                        }
+
+                        if (buttonList.size() >= tagListGrid.getMaxSize())
+                            buttonList = buttonList.subList(0, tagListGrid.getMaxSize() - 1);
+
+                        List<ButtonComponent> finalButtonList = buttonList;
+
+                        tagListGrid.children(finalButtonList);
+
+                        clearSelectedTags.onPress(buttonComponent -> {
+                            for (var buttonTag : finalButtonList) {
+                                if (this.selectedTags.contains(buttonTag.getMessage().getString()))
+                                    buttonTag.onPress();
+                            }
+                        });
+                        clearSelectedTags.zIndex(buttonsZIndex);
+
+                        TextBoxRow.setup(flowLayout, TAG_SEARCH_ID, "", 100, value -> {
+                            List<Component> buttonListCopy = new ArrayList<>(finalButtonList);
+
+                            String valueToLowerCase = value.toLowerCase();
+                            buttonListCopy.removeIf(tagComponent -> tagComponent instanceof ButtonComponent buttonTag
+                                    && !buttonTag.getMessage().getString().toLowerCase().contains(valueToLowerCase));
+
+                            tagListGrid.clearChildren();
+                            tagListGrid.children(buttonListCopy);
+                        });
+                    }));
         }
 
+        rootComponent.child(this.tagOverlay);
+    }
+
+    private void tagButtonExecute(ButtonComponent selectedButton, LabelComponent tagsOverlayLabel) {
+        String value = selectedButton.getMessage().getString();
+        if (this.selectedTags.contains(value)) {
+            this.selectedTags.remove(value);
+            selectedButton.setMessage(Text.literal(value));
+        } else {
+            this.selectedTags.add(value);
+            selectedButton.setMessage(this.getSelectedTagText(value));
+        }
         this.applyFilters();
         this.setPage(this.page);
+
+        this.tagButton.setMessage(this.getTagButtonText());
+        tagsOverlayLabel.text(this.getTagLabelText());
     }
 
     public void setPage(int page) {
@@ -228,18 +301,24 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
 
             boolean containsSearch = name.map(s -> s.toLowerCase().contains(search)).orElse(false);
             boolean containsTags = true;
-            if (containsSearch && !this.selectedTag.isBlank()) {
+            if (containsSearch && !this.selectedTags.isEmpty()) {
                 NbtCompound nbt = stack.getOrCreateNbt();
                 NbtList tags = nbt.getList(TAGS_NBT_KEY, NbtElement.STRING_TYPE);
 
-                containsTags = tags.contains(NbtString.of(this.selectedTag));
+                for (var selectedTag : this.selectedTags) {
+                    containsTags = tags.contains(NbtString.of(selectedTag));
+
+                    if (!containsTags)
+                        break;
+                }
+
             }
 
             return !(containsSearch && containsTags);
         });
     }
 
-    private void minecraftHeadsExecute(ButtonComponent buttonComponent) {
+    private void minecraftHeadsExecute() {
         assert this.client != null;
 
         this.client.setScreen(new ConfirmLinkScreen(bool -> {
@@ -248,5 +327,17 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
 
             this.client.setScreen(this);
         }, HeadGalleryResources.MINECRAFT_HEADS_URL, true));
+    }
+
+    private Text getTagButtonText() {
+        return Text.translatable(TAG_BUTTON_TEXT, this.selectedTags.size());
+    }
+
+    private Text getTagLabelText() {
+        return Text.translatable(TAG_LABEL_TEXT, this.selectedTags.size(), this.headsWithFilter.size());
+    }
+
+    private Text getSelectedTagText(String value) {
+        return Text.literal(value).setStyle(Style.EMPTY.withBold(true).withUnderline(true).withColor(SELECTED_TAG_COLOR));
     }
 }

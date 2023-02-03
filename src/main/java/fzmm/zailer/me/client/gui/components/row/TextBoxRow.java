@@ -93,8 +93,9 @@ public class TextBoxRow extends AbstractRow {
 //        boolean fontButton = UIParsing.childElements(element).containsKey("fontButton") &&
 //                UIParsing.parseBool(UIParsing.childElements(element).get("fontButton"));
 
-        int fieldSize = UIParsing.childElements(element).containsKey("removeHorizontalMargins") ?
-                UIParsing.parseSignedInt(UIParsing.childElements(element).get("fieldSize")) : -1;
+
+        int fieldSize = UIParsing.childElements(element).containsKey("fieldSize") ? UIParsing.parseSignedInt(UIParsing.childElements(element).get("fieldSize")) : -1;
+        fieldSize = UIParsing.childElements(element).containsKey("removeHorizontalMargins") ? fieldSize : -1;
 
         TextBoxRow row = new TextBoxRow(baseTranslationKey, id, tooltipId);
         if (removeHorizontalMargins)
