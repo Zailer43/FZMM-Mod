@@ -35,7 +35,6 @@ import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -212,9 +211,17 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     }
 
     private Optional<BufferedImage> getMergedHead() {
-        if (this.baseSkin == null)
+        Optional<BufferedImage> optionalSkin = this.skinButton.getImage();
+        if (optionalSkin.isEmpty())
             return Optional.empty();
-        HeadGenerator headGenerator = new HeadGenerator(this.baseSkin, (boolean) this.overlapHatLayerButton.parsedValue());
+        boolean onlyBaseSkin = this.layerListLayout.children().size() == 1;
+        HeadGenerator headGenerator;
+        BufferedImage skin = optionalSkin.get();
+        if (onlyBaseSkin) {
+            headGenerator = new HeadGenerator().addTexture(skin);
+        } else {
+            headGenerator = new HeadGenerator(skin, (boolean) this.overlapHatLayerButton.parsedValue());
+        }
 
         for (var entry : this.layerListLayout.children()) {
             // it's a flowlayout so there can be any type of component here
@@ -265,7 +272,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     public void addLayer(AbstractHeadEntry headData, boolean active) {
         HeadLayerComponentEntry entry = new HeadLayerComponentEntry(headData, this.layerListLayout);
         entry.setEnabled(active);
-        this.skinButton.getImage().ifPresent(skin -> entry.update(skin, this.overlapHatLayerButton()));
+        entry.update(this.baseSkin, this.overlapHatLayerButton());
         this.layerListLayout.child(entry);
     }
 
@@ -279,7 +286,6 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         }
 
         BufferedImage skin = optionalSkin.get();
-        this.addBody(skin);
         File file = SKIN_SAVE_FOLDER_PATH.toFile();
         if (file.mkdirs())
             FzmmClient.LOGGER.info("Skin save folder created");
@@ -294,15 +300,6 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
             chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.saveError")
                     .setStyle(Style.EMPTY.withColor(Formatting.RED)));
         }
-    }
-
-    private void addBody(BufferedImage head) {
-        this.skinButton.getImage().ifPresent(image -> {
-                    Graphics2D g2d = head.createGraphics();
-                    g2d.drawImage(image, 0, 16, 64, 64, 0, 16, 64, 64, null);
-                    g2d.dispose();
-                }
-        );
     }
 
     public BufferedImage getBaseSkin() {

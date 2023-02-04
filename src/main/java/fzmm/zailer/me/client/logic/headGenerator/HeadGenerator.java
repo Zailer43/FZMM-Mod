@@ -6,15 +6,19 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public final class HeadGenerator {
-    private final BufferedImage image;
+    private final BufferedImage image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+
+    public HeadGenerator() {
+    }
 
     public HeadGenerator(@NotNull BufferedImage skin, boolean overlapHatLayer) {
-        this.image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-
         Graphics2D g2d = this.image.createGraphics();
+        //head
         g2d.drawImage(skin, 0, 0, 32, 16, 0, 0, 32, 16, null);
+        //hat
         if (overlapHatLayer)
             g2d.drawImage(skin, 0, 0, 32, 16, 32, 0, 64, 16, null);
+        this.addBody(g2d, skin);
         g2d.dispose();
     }
 
@@ -34,6 +38,12 @@ public final class HeadGenerator {
     private void addLayer(Graphics2D finalImageGraphics, BufferedImage newLayer, boolean hatLayer) {
         int width = hatLayer ? 64 : 32;
         finalImageGraphics.drawImage(newLayer, 0, 0, width, 16, 0, 0, width, 16, null);
+        this.addBody(finalImageGraphics, newLayer);
+    }
+
+    private void addBody(Graphics2D finalImageGraphics, BufferedImage newLayer) {
+        if (newLayer.getHeight() == 64)
+            finalImageGraphics.drawImage(newLayer, 0, 16, 64, 64, 0, 16, 64, 64, null);
     }
 
     public BufferedImage getHeadTexture() {
