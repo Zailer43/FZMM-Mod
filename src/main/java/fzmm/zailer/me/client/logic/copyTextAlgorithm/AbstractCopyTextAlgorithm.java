@@ -19,7 +19,8 @@ public abstract class AbstractCopyTextAlgorithm {
         Style baseStyle = text.getStyle();
 
         StringBuilder stringBuilder = new StringBuilder();
-        this.getStringRecursive(stringBuilder, baseStyle, text.getSiblings());
+        List<Text> siblings = text.getSiblings();
+        this.getStringRecursive(stringBuilder, baseStyle, siblings.size() > 0 ? siblings : List.of(text));
 
         return stringBuilder.toString();
     }

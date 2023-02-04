@@ -14,8 +14,14 @@ public class CopyTextAsJson extends AbstractCopyTextAlgorithm {
 
     @Override
     protected void getStringRecursive(StringBuilder stringBuilder, Style baseStyle, List<Text> siblings) {
-        Text text = Text.empty().setStyle(baseStyle);
-        text.getSiblings().addAll(siblings);
+        Text text;
+        if (siblings.size() == 1) {
+            text = siblings.get(0);
+        } else {
+            text = Text.empty().setStyle(baseStyle);
+            text.getSiblings().addAll(siblings);
+        }
+
         stringBuilder.append(Text.Serializer.toJson(text));
     }
 }
