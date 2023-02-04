@@ -180,6 +180,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
         categoryTags.removeIf(String::isBlank);
 
         this.selectedTags.clear();
+        this.availableTags.clear();
         this.availableTags.addAll(categoryTags);
         this.tagButton.setMessage(this.getTagButtonText());
         this.tagOverlay = null;
