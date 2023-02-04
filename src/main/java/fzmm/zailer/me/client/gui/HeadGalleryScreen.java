@@ -2,12 +2,14 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.builders.HeadBuilder;
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.utils.components.GiveItemComponent;
 import fzmm.zailer.me.client.gui.utils.containers.VerticalGridLayout;
 import fzmm.zailer.me.client.logic.headGallery.HeadGalleryResources;
 import fzmm.zailer.me.client.logic.headGallery.MinecraftHeadsData;
+import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.ui.component.*;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -135,6 +137,10 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
         HeadGalleryResources.getCategory(category).thenAccept(categoryData -> this.client.execute(() -> {
 
             this.heads.clear();
+            FzmmConfig config = FzmmClient.CONFIG;
+            int nameColor = config.colors.headGalleryName().rgb();
+            int tagsColor = config.colors.headGalleryTags().rgb();
+            boolean stylingHeads = config.headGallery.stylingHeads();
             ObjectArrayList<GiveItemComponent> categoryHeads = categoryData.stream()
                     .map(minecraftHeadsData -> {
                         ItemStack head = HeadBuilder.builder()
@@ -143,15 +149,28 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
                                 .notAddToHistory()
                                 .get();
 
-                        head = DisplayBuilder.of(head)
-                                .setName(minecraftHeadsData.name())
-                                .get();
+                        DisplayBuilder builder = DisplayBuilder.of(head);
+
+                        if (stylingHeads) {
+                            builder.setName(Text.translatable("fzmm.item.headGallery.heads.name", minecraftHeadsData.name()).getString(), nameColor)
+                                    .addLore(Text.translatable("fzmm.item.headGallery.heads.tags.title").getString(), tagsColor);
+
+                            for (var tag : minecraftHeadsData.tags())
+                                builder.addLore(Text.translatable("fzmm.item.headGallery.heads.tags.tag", tag).getString(), tagsColor);
+
+                        } else {
+                            builder.setName(minecraftHeadsData.name());
+                        }
+
+                        head = builder.get();
+
 
                         NbtList tagsNbtList = new NbtList();
                         tagsNbtList.addAll(minecraftHeadsData.tags().stream()
                                 .map(NbtString::of)
                                 .toList()
                         );
+
                         head.setSubNbt(TAGS_NBT_KEY, tagsNbtList);
 
                         return new GiveItemComponent(head);

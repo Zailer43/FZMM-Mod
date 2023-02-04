@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 public class CustomHeadEntity extends MobEntity {
     public static final EntityType<CustomHeadEntity> CUSTOM_HEAD_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
-            FzmmClient.CUSTOM_HEAD,
+            FzmmClient.CUSTOM_HEAD_ENTITY,
             FabricEntityTypeBuilder.<CustomHeadEntity>create(SpawnGroup.MISC)
                     .disableSaving()
                     .disableSummon()

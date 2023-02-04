@@ -103,10 +103,13 @@ public class FzmmConfigModel {
         public Color imagetextMessages = Color.ofRgb(Integer.parseInt("71C29F", 16));
         public Color playerStatue = Color.ofRgb(Integer.parseInt("CB347D", 16));
         public Color usefulBlockStates = Color.ofRgb(Integer.parseInt("66F5B7", 16));
+        public Color headGalleryName = Color.ofRgb(Integer.parseInt("50AF70", 16));
+        public Color headGalleryTags = Color.ofRgb(Integer.parseInt("74D02F", 16));
     }
 
     public static class HeadGalleryNest {
         public boolean cacheCategories = true;
+        public boolean stylingHeads = true;
     }
 
     public static class HeadGeneratorNest {

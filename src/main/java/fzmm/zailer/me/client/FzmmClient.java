@@ -39,8 +39,8 @@ public class FzmmClient implements ClientModInitializer {
     public static final int CHAT_BASE_COLOR = 0x478e47;
     public static final int CHAT_WHITE_COLOR = 0xb7b7b7;
     public static final boolean SYMBOL_CHAT_PRESENT = FabricLoader.getInstance().isModLoaded("symbol-chat");
-    public static final Identifier CUSTOM_HEAD = new Identifier(FzmmClient.MOD_ID, "custom_head");
-    public static final EntityModelLayer MODEL_CUSTOM_HEAD_LAYER = new EntityModelLayer(CUSTOM_HEAD, "main");
+    public static final Identifier CUSTOM_HEAD_ENTITY = new Identifier(FzmmClient.MOD_ID, "custom_head");
+    public static final EntityModelLayer MODEL_CUSTOM_HEAD_LAYER = new EntityModelLayer(CUSTOM_HEAD_ENTITY, "main");
 
 
     @Override
