@@ -31,7 +31,7 @@ public class ColorListContainer extends FlowLayout {
     public ColorListContainer(String id, String tooltipId, String baseTranslationKey) {
         super(Sizing.fill(100), Sizing.content(), Algorithm.VERTICAL);
         this.random = Random.create();
-        this.callback = null;
+        this.callback = s -> {};
         this.id(id);
 
         FlowLayout topLayout = Containers.horizontalFlow(Sizing.fill(100), Sizing.fixed(AbstractRow.TOTAL_HEIGHT));
@@ -61,6 +61,7 @@ public class ColorListContainer extends FlowLayout {
         ColorRow.setup(entry, String.valueOf(id), this.getRandomColor(), false, this.callback);
         this.colorsLayout.child(entry);
         this.updateDisplay();
+        this.callback.accept("");
     }
 
     @SuppressWarnings("UnstableApiUsage")
