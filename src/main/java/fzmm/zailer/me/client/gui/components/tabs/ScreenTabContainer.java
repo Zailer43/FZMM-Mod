@@ -1,7 +1,6 @@
-package fzmm.zailer.me.client.gui.components;
+package fzmm.zailer.me.client.gui.components.tabs;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.IScreenTab;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -53,10 +52,6 @@ public class ScreenTabContainer extends FlowLayout {
 
     public static String getScreenTabId(String id) {
         return id + "-screen-tab";
-    }
-
-    public static String getScreenTabId(IScreenTab tab) {
-        return getScreenTabId(tab.getId());
     }
 
     @Override

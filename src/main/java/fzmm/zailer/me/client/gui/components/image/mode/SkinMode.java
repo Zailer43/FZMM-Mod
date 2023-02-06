@@ -4,19 +4,21 @@ import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.ImageFileSource;
 import fzmm.zailer.me.client.gui.components.image.source.ImagePlayerNameSource;
 
+import java.util.function.Supplier;
+
 public enum SkinMode implements IImageMode {
-    NAME("name", new ImagePlayerNameSource(), true),
+    NAME("name", ImagePlayerNameSource::new, true),
     @SuppressWarnings("unused")
-    PATH("path", new ImageFileSource(), false);
+    PATH("path", ImageFileSource::new, false);
 
     private static final String BASE_TRANSLATION_KEY = "fzmm.gui.option.skin.";
     private final String translationKey;
-    private final IImageGetter sourceType;
+    private final Supplier<IImageGetter> sourceTypeSupplier;
     private final boolean isHeadName;
 
-    SkinMode(String translationKey, IImageGetter sourceType, boolean isHeadName) {
+    SkinMode(String translationKey, Supplier<IImageGetter> sourceTypeSupplier, boolean isHeadName) {
         this.translationKey = translationKey;
-        this.sourceType = sourceType;
+        this.sourceTypeSupplier = sourceTypeSupplier;
         this.isHeadName = isHeadName;
     }
 
@@ -26,7 +28,7 @@ public enum SkinMode implements IImageMode {
 
     @Override
     public IImageGetter getImageGetter() {
-        return this.sourceType;
+        return this.sourceTypeSupplier.get();
     }
 
     public boolean isHeadName() {

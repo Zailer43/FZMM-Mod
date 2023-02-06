@@ -2,7 +2,10 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
-import fzmm.zailer.me.client.gui.components.ScreenTabContainer;
+import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
+import fzmm.zailer.me.client.gui.components.tabs.IScreenTabIdentifier;
+import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
+import fzmm.zailer.me.client.gui.components.tabs.ScreenTabContainer;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.ScreenshotZoneComponent;
@@ -29,6 +32,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -40,12 +45,14 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     public static final int BUTTON_TEXT_PADDING = 8;
     public static final int COMPONENT_DISTANCE = 8;
     private final SymbolSelectionPanelComponent symbolSelectionPanel;
+    private final HashMap<String, IScreenTab> tabs;
 //    private final FontSelectionDropDownComponent fontSelectionDropDown;
 
     public BaseFzmmScreen(String screenPath, String baseScreenTranslationKey, @Nullable Screen parent) {
         super(FlowLayout.class, DataSource.asset(new Identifier(FzmmClient.MOD_ID, screenPath)));
         this.baseScreenTranslationKey = baseScreenTranslationKey;
         this.parent = parent;
+        this.tabs = new HashMap<>();
 
         if (FzmmClient.SYMBOL_CHAT_PRESENT) {
                 this.symbolSelectionPanel = new SymbolSelectionPanelComponent(CustomSymbolSelectionPanel.of(this, 0, 0));
@@ -85,17 +92,37 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         this.client.setScreen(this.parent);
     }
 
-    public void selectScreenTab(FlowLayout rootComponent, IScreenTab selectedTab) {
-        for (var tab : selectedTab.getClass().getEnumConstants()) {
-            ScreenTabContainer screenTabContainer = rootComponent.childById(ScreenTabContainer.class, ScreenTabContainer.getScreenTabId(tab));
-            ButtonWidget screenTabButton = rootComponent.childById(ButtonWidget.class, ScreenTabRow.getScreenTabButtonId(tab));
+    protected void setTabs(Enum<? extends ITabsEnum> tabs) {
+        for (var tab : tabs.getDeclaringClass().getEnumConstants())
+            this.tabs.put(tab.getId(), tab.getTab());
+    }
 
+    @SuppressWarnings("unchecked")
+    public <T extends Enum<? extends IScreenTabIdentifier>> T selectScreenTab(FlowLayout rootComponent, IScreenTabIdentifier selectedTab, T tabs) {
+        for (var tabId : this.tabs.keySet()) {
+            ScreenTabContainer screenTabContainer = rootComponent.childById(ScreenTabContainer.class, ScreenTabContainer.getScreenTabId(tabId));
+            ButtonWidget screenTabButton = rootComponent.childById(ButtonWidget.class, ScreenTabRow.getScreenTabButtonId(tabId));
+            boolean isSelectedTab = selectedTab.getId().equals(tabId);
             if (screenTabContainer != null)
-                screenTabContainer.setSelected(selectedTab == tab);
+                screenTabContainer.setSelected(isSelectedTab);
 
             if (screenTabButton != null)
-                screenTabButton.active = tab != selectedTab;
+                screenTabButton.active = !isSelectedTab;
         }
+
+
+        Optional<T> result = (Optional<T>) Arrays.stream(tabs.getDeclaringClass().getEnumConstants())
+                .filter(tab -> tab.getId().equals(selectedTab.getId()))
+                .findFirst();
+
+        assert result.isPresent();
+
+        return result.get();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends IScreenTab> T getTab(IScreenTabIdentifier tab, Class<T> ignored) {
+        return (T) this.tabs.get(tab.getId());
     }
 
     public String getBaseScreenTranslationKey() {

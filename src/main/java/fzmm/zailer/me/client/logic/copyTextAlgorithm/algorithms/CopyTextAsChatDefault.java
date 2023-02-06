@@ -1,5 +1,6 @@
-package fzmm.zailer.me.client.logic.copyTextAlgorithm;
+package fzmm.zailer.me.client.logic.copyTextAlgorithm.algorithms;
 
+import fzmm.zailer.me.client.logic.copyTextAlgorithm.AbstractCopyTextGeneric;
 import net.minecraft.text.Style;
 
 public class CopyTextAsChatDefault extends AbstractCopyTextGeneric {

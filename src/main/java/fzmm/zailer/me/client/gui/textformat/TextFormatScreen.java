@@ -7,6 +7,7 @@ import fzmm.zailer.me.client.gui.components.row.BooleanRow;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
+import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.utils.CopyTextScreen;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.config.FzmmConfig;
@@ -60,8 +61,6 @@ public class TextFormatScreen extends BaseFzmmScreen {
         this.messagePreviewLabel = rootComponent.childById(LabelComponent.class, MESSAGE_PREVIEW_ID);
         BaseFzmmScreen.checkNull(this.messagePreviewLabel, "label", MESSAGE_PREVIEW_ID);
 
-        for (var tab : TextFormatTabs.values())
-            tab.componentsCallback(object -> this.updateMessagePreview());
         //general
         this.messageTextField = TextBoxRow.setup(rootComponent, MESSAGE_ID, "Hello world", 4096, s -> this.updateMessagePreview());
         this.boldToggle = BooleanRow.setup(rootComponent, BOLD_ID, false, button -> this.updateMessagePreview());
@@ -70,16 +69,20 @@ public class TextFormatScreen extends BaseFzmmScreen {
         this.strikethroughToggle = BooleanRow.setup(rootComponent, STRIKETHROUGH_ID, false, button -> this.updateMessagePreview());
         this.underlineToggle = BooleanRow.setup(rootComponent, UNDERLINE_ID, false, button -> this.updateMessagePreview());
         //tabs
+        this.setTabs(selectedTab);
+        for (var tab : TextFormatTabs.values())
+            this.getTab(tab, ITextFormatTab.class).componentsCallback(object -> this.updateMessagePreview());
+
         ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
-        for (var tab : TextFormatTabs.values()) {
+        for (var textFormatTab : TextFormatTabs.values()) {
+            IScreenTab tab = this.getTab(textFormatTab, ITextFormatTab.class);
             tab.setupComponents(rootComponent);
-            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), tab != selectedTab, button -> {
-                this.selectScreenTab(rootComponent, tab);
-                selectedTab = tab;
+            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button -> {
+                selectedTab = this.selectScreenTab(rootComponent, tab, selectedTab);
                 this.updateMessagePreview();
             });
         }
-        this.selectScreenTab(rootComponent, selectedTab);
+        this.selectScreenTab(rootComponent, selectedTab, selectedTab);
 
         this.setupBottomButtons(rootComponent);
         this.initialized = true;
@@ -112,7 +115,9 @@ public class TextFormatScreen extends BaseFzmmScreen {
 
             FzmmUtils.giveItem(builder.get());
         });
-        ButtonWidget randomButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(RANDOM_ID), executeButtonsActive, button -> selectedTab.setRandomValues());
+        ButtonWidget randomButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(RANDOM_ID), executeButtonsActive,
+                button -> this.getTab(selectedTab, ITextFormatTab.class).setRandomValues());
+
         ButtonWidget copyButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_ID), executeButtonsActive,
                 button -> this.client.setScreen(new CopyTextScreen(this, this.messagePreviewLabel.text())));
         this.executeButtons = List.of(addLoreButton, setNameButton, randomButton, copyButton);
@@ -137,7 +142,7 @@ public class TextFormatScreen extends BaseFzmmScreen {
         boolean italic = (boolean) this.italicToggle.parsedValue();
 
         TextFormatLogic logic = new TextFormatLogic(message, obfuscated, bold, strikethrough, underline, italic);
-        Text messagePreview = selectedTab.getText(logic);
+        Text messagePreview = this.getTab(selectedTab, ITextFormatTab.class).getText(logic);
         this.messagePreviewLabel.text(messagePreview);
     }
 

@@ -127,11 +127,13 @@ public class ScreenshotSource implements IInteractiveImageLoader {
         instance = null;
         Hud.remove(HUD_CAPTURE_SCREENSHOT);
         client.setScreen(this.previousScreen);
+        this.previousScreen = null;
     }
 
     private BufferedImage removePadding(BufferedImage image) {
         // all minecraft rendering varies depending on the gui scale, so it is necessary to adjust the padding value
         int padding = ScreenshotZoneComponent.PADDING * MinecraftClient.getInstance().options.getGuiScale().getValue();
+
         BufferedImage paddedScreenshot = new BufferedImage(image.getWidth() - 2 * padding, image.getHeight() - 2 * padding, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = paddedScreenshot.createGraphics();
         g2d.drawImage(image, -padding, -padding, null);

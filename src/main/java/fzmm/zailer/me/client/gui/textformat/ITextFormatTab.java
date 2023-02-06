@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client.gui.textformat;
 
-import fzmm.zailer.me.client.gui.IScreenTab;
+import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import net.minecraft.text.Text;
 

@@ -32,8 +32,8 @@ import org.lwjgl.glfw.GLFW;
 @Environment(EnvType.CLIENT)
 public class FzmmClient implements ClientModInitializer {
 
-    public final static String MOD_ID = "fzmm";
-    public final static Logger LOGGER = LogManager.getLogger("FZMM");
+    public static final  String MOD_ID = "fzmm";
+    public static final Logger LOGGER = LogManager.getLogger("FZMM");
     public static final FzmmConfig CONFIG = FzmmConfig.createAndLoad();
     public static final KeyBinding OPEN_MAIN_GUI_KEYBINDING = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.fzmm.mainGui", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_Z, "key.category.fzmm"));
     public static final int CHAT_BASE_COLOR = 0x478e47;

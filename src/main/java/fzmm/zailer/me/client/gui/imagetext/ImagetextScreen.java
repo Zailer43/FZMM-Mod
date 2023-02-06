@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.imagetext;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.ImageMode;
@@ -72,15 +73,15 @@ public class ImagetextScreen extends BaseFzmmScreen {
         this.smoothImageToggle = BooleanRow.setup(rootComponent, SMOOTH_IMAGE_ID, true);
         this.percentageOfSimilarityToCompress = SliderRow.setup(rootComponent, PERCENTAGE_OF_SIMILARITY_TO_COMPRESS_ID, config.defaultPercentageOfSimilarityToCompress(), 0d, MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS, Double.class, 1, null);
         //tabs
+        this.setTabs(selectedTab);
         ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
-        for (var tab : ImagetextTabs.values()) {
+        for (var imagetextTab : ImagetextTabs.values()) {
+            IScreenTab tab = this.getTab(imagetextTab, IImagetextTab.class);
             tab.setupComponents(rootComponent);
-            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), tab != selectedTab, button -> {
-                this.selectScreenTab(rootComponent, tab);
-                selectedTab = tab;
-            });
+            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button ->
+                    selectedTab = this.selectScreenTab(rootComponent, tab, selectedTab));
         }
-        this.selectScreenTab(rootComponent, selectedTab);
+        this.selectScreenTab(rootComponent, selectedTab, selectedTab);
         //bottom buttons
         ButtonWidget executeButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId("execute"), false, button -> this.execute());
         ButtonWidget previewButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId("preview"), false, button -> {
@@ -126,7 +127,7 @@ public class ImagetextScreen extends BaseFzmmScreen {
             return;
 
         this.updateImagetext(true);
-        selectedTab.execute(this.imagetextLogic);
+        this.getTab(selectedTab, IImagetextTab.class).execute(this.imagetextLogic);
     }
 
     public void updateImagetext(boolean isExecute) {
@@ -141,7 +142,7 @@ public class ImagetextScreen extends BaseFzmmScreen {
         boolean showResolution = (boolean) this.showResolutionToggle.parsedValue();
         double percentageOfSimilarityToCompress = (double) this.percentageOfSimilarityToCompress.parsedValue();
 
-        selectedTab.generate(this.imagetextLogic, new ImagetextData(image.get(), characters, width, height, smoothScaling, percentageOfSimilarityToCompress), isExecute);
+        this.getTab(selectedTab, IImagetextTab.class).generate(this.imagetextLogic, new ImagetextData(image.get(), characters, width, height, smoothScaling, percentageOfSimilarityToCompress), isExecute);
 
         if (showResolution)
             this.imagetextLogic.addResolution();

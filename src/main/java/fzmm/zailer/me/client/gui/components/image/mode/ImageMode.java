@@ -5,20 +5,22 @@ import fzmm.zailer.me.client.gui.components.image.source.ImageFileSource;
 import fzmm.zailer.me.client.gui.components.image.source.ImageUrlSource;
 import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
 
+import java.util.function.Supplier;
+
 public enum ImageMode implements IImageMode {
-    URL("url", new ImageUrlSource()),
+    URL("url", ImageUrlSource::new),
     @SuppressWarnings("unused")
-    SCREENSHOT("screenshot", new ScreenshotSource()),
+    SCREENSHOT("screenshot", ScreenshotSource::new),
     @SuppressWarnings("unused")
-    PATH("path", new ImageFileSource());
+    PATH("path", ImageFileSource::new);
 
     private static final String BASE_TRANSLATION_KEY = "fzmm.gui.option.imageMode.";
     private final String translationKey;
-    private final IImageGetter sourceType;
+    private final Supplier<IImageGetter> sourceTypeSupplier;
 
-    ImageMode(String translationKey, IImageGetter sourceType) {
+    ImageMode(String translationKey, Supplier<IImageGetter> sourceTypeSupplier) {
         this.translationKey = translationKey;
-        this.sourceType = sourceType;
+        this.sourceTypeSupplier = sourceTypeSupplier;
     }
 
     public String getTranslationKey() {
@@ -27,6 +29,6 @@ public enum ImageMode implements IImageMode {
 
     @Override
     public IImageGetter getImageGetter() {
-        return this.sourceType;
+        return this.sourceTypeSupplier.get();
     }
 }

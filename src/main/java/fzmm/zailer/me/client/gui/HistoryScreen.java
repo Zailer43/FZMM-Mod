@@ -1,7 +1,6 @@
-package fzmm.zailer.me.client.gui.history;
+package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.utils.components.GiveItemComponent;
 import fzmm.zailer.me.client.logic.FzmmHistory;

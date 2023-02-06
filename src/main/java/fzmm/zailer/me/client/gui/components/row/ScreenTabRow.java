@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.IScreenTab;
+import fzmm.zailer.me.client.gui.components.tabs.IScreenTabIdentifier;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
@@ -28,11 +28,11 @@ public class ScreenTabRow extends AbstractRow {
         return id + "-screen-tab-button";
     }
 
-    public static String getScreenTabButtonId(IScreenTab tab) {
+    public static String getScreenTabButtonId(IScreenTabIdentifier tab) {
         return getScreenTabButtonId(tab.getId());
     }
 
-    public static void setup(FlowLayout rootComponent, String id, Enum<? extends IScreenTab> defaultTab) {
+    public static void setup(FlowLayout rootComponent, String id, Enum<? extends IScreenTabIdentifier> defaultTab) {
         ScreenTabRow screenTabRow = rootComponent.childById(ScreenTabRow.class, id);
         if (screenTabRow == null)
             return;
@@ -40,9 +40,9 @@ public class ScreenTabRow extends AbstractRow {
         screenTabRow.setup(defaultTab);
     }
 
-    public void setup(Enum<? extends IScreenTab> defaultTab) {
+    public void setup(Enum<? extends IScreenTabIdentifier> defaultTab) {
         for (var tab : defaultTab.getClass().getEnumConstants()) {
-            IScreenTab screenTab = (IScreenTab) tab;
+            IScreenTabIdentifier screenTab = (IScreenTabIdentifier) tab;
             boolean active = tab != defaultTab;
             String translationKey = BaseFzmmScreen.getTabTranslationKey(this.baseTranslationKey) + screenTab.getId();
             Text text = Text.translatable(translationKey);

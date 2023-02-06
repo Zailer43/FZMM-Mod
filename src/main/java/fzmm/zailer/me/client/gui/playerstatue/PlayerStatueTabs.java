@@ -1,38 +1,30 @@
 package fzmm.zailer.me.client.gui.playerstatue;
 
-import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
+import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 import fzmm.zailer.me.client.gui.playerstatue.tabs.PlayerStatueGenerateTab;
 import fzmm.zailer.me.client.gui.playerstatue.tabs.PlayerStatueUpdateTab;
-import io.wispforest.owo.ui.container.FlowLayout;
 
-public enum PlayerStatueTabs implements IPlayerStatueTab {
-    CREATE(new PlayerStatueGenerateTab()),
-    UPDATE(new PlayerStatueUpdateTab());
+import java.util.function.Supplier;
 
-    private final IPlayerStatueTab tab;
+public enum PlayerStatueTabs implements ITabsEnum {
+    CREATE(PlayerStatueGenerateTab::new),
+    UPDATE(PlayerStatueUpdateTab::new);
 
-    PlayerStatueTabs(IPlayerStatueTab tab) {
-        this.tab = tab;
+    private final Supplier<IPlayerStatueTab> tabSupplier;
+    private final String id;
+
+    PlayerStatueTabs(Supplier<IPlayerStatueTab> tabSupplier) {
+        this.tabSupplier = tabSupplier;
+        this.id = this.getTab().getId();
     }
 
+    @Override
+    public IPlayerStatueTab getTab() {
+        return this.tabSupplier.get();
+    }
 
     @Override
     public String getId() {
-        return this.tab.getId();
-    }
-
-    @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.tab.setupComponents(rootComponent);
-    }
-
-    @Override
-    public void execute(HorizontalDirectionOption direction, float x, float y, float z, String name) {
-        this.tab.execute(direction, x, y, z, name);
-    }
-
-    @Override
-    public boolean canExecute() {
-        return this.tab.canExecute();
+        return this.id;
     }
 }

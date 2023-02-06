@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.logic.copyTextAlgorithm;
+package fzmm.zailer.me.client.logic.copyTextAlgorithm.algorithms;
 
 public class CopyTextAsConsole extends CopyTextAsChatLegacy {
     @Override

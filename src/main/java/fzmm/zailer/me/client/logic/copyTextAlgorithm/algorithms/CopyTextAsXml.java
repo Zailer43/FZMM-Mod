@@ -1,5 +1,6 @@
-package fzmm.zailer.me.client.logic.copyTextAlgorithm;
+package fzmm.zailer.me.client.logic.copyTextAlgorithm.algorithms;
 
+import fzmm.zailer.me.client.logic.copyTextAlgorithm.AbstractCopyTextAlgorithm;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 

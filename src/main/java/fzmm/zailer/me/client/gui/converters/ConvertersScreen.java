@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.converters;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -13,16 +14,17 @@ public class ConvertersScreen extends BaseFzmmScreen {
     public ConvertersScreen(@Nullable Screen parent) {
         super("converters", "converters", parent);
     }
+
     @Override
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
+        this.setTabs(selectedTab);
         ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
-        for (var tab : ConvertersTabs.values()) {
+        for (var converterTab : ConvertersTabs.values()) {
+            IScreenTab tab = this.getTab(converterTab, IScreenTab.class);
             tab.setupComponents(rootComponent);
-            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), tab != selectedTab, button -> {
-                this.selectScreenTab(rootComponent, tab);
-                selectedTab = tab;
-            });
+            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button ->
+                    selectedTab = this.selectScreenTab(rootComponent, tab, selectedTab));
         }
-        this.selectScreenTab(rootComponent, selectedTab);
+        this.selectScreenTab(rootComponent, selectedTab, selectedTab);
     }
 }

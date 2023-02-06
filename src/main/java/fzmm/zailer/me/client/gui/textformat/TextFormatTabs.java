@@ -1,48 +1,34 @@
 package fzmm.zailer.me.client.gui.textformat;
 
+import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatGradientTab;
 import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatInterleavedColorsTab;
 import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatRainbowTab;
 import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatSimpleTab;
-import fzmm.zailer.me.client.logic.TextFormatLogic;
-import io.wispforest.owo.ui.container.FlowLayout;
-import net.minecraft.text.Text;
 
-import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-public enum TextFormatTabs implements ITextFormatTab {
-    SIMPLE(new TextFormatSimpleTab()),
-    GRADIENT(new TextFormatGradientTab()),
-    RAINBOW(new TextFormatRainbowTab()),
-    INTERLEAVED(new TextFormatInterleavedColorsTab());
+public enum TextFormatTabs implements ITabsEnum {
+    SIMPLE(TextFormatSimpleTab::new),
+    GRADIENT(TextFormatGradientTab::new),
+    RAINBOW(TextFormatRainbowTab::new),
+    INTERLEAVED(TextFormatInterleavedColorsTab::new);
 
-    private final ITextFormatTab tab;
+    private final Supplier<ITextFormatTab> tabSupplier;
+    private final String id;
 
-    TextFormatTabs(ITextFormatTab tab) {
-        this.tab = tab;
+    TextFormatTabs(Supplier<ITextFormatTab> tabSupplier) {
+        this.tabSupplier = tabSupplier;
+        this.id = this.getTab().getId();
     }
 
+    @Override
+    public ITextFormatTab getTab() {
+        return this.tabSupplier.get();
+    }
+
+    @Override
     public String getId() {
-        return this.tab.getId();
-    }
-
-    @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.tab.setupComponents(rootComponent);
-    }
-
-    @Override
-    public Text getText(TextFormatLogic logic) {
-        return this.tab.getText(logic);
-    }
-
-    @Override
-    public void setRandomValues() {
-        this.tab.setRandomValues();
-    }
-
-    @Override
-    public void componentsCallback(Consumer<Object> callback) {
-        this.tab.componentsCallback(callback);
+        return this.id;
     }
 }

@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.playerstatue;
 
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
@@ -50,20 +51,21 @@ public class PlayerStatueScreen extends BaseFzmmScreen {
         this.posZ = NumberRow.setup(rootComponent, POS_Z_ID, player.getBlockZ(), Float.class);
         this.nameField = TextBoxRow.setup(rootComponent, NAME_ID, "", 0xFFFF);
         //tabs
+        this.setTabs(selectedTab);
         ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
-        for (var tab : PlayerStatueTabs.values()) {
+        for (var playerStatueTab : PlayerStatueTabs.values()) {
+            IScreenTab tab = this.getTab(playerStatueTab, IPlayerStatueTab.class);
             tab.setupComponents(rootComponent);
-            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), tab != selectedTab, button -> {
-                this.selectScreenTab(rootComponent, tab);
-                selectedTab = tab;
-                this.executeButton.active = selectedTab.canExecute();
+            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button -> {
+                    selectedTab = this.selectScreenTab(rootComponent, tab, selectedTab);
+                this.executeButton.active = this.getTab(selectedTab, IPlayerStatueTab.class).canExecute();
             });
         }
-        this.selectScreenTab(rootComponent, selectedTab);
+        this.selectScreenTab(rootComponent, selectedTab, selectedTab);
         //buttons
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId("faq"), true, this::faqExecute);
         this.executeButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(EXECUTE_ID), true, this::execute);
-        this.executeButton.active = selectedTab.canExecute();
+        this.executeButton.active = this.getTab(selectedTab, IPlayerStatueTab.class).canExecute();
     }
 
     private void faqExecute(ButtonWidget buttonWidget) {
@@ -84,7 +86,7 @@ public class PlayerStatueScreen extends BaseFzmmScreen {
         float z = (float) this.posZ.parsedValue();
         String name = this.nameField.getText();
 
-        selectedTab.execute(direction, x, y, z, name);
+        this.getTab(selectedTab, IPlayerStatueTab.class).execute(direction, x, y, z, name);
     }
 
 }

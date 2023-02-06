@@ -1,29 +1,33 @@
 package fzmm.zailer.me.client.gui.converters;
 
-import fzmm.zailer.me.client.gui.IScreenTab;
+import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
+import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 import fzmm.zailer.me.client.gui.converters.tabs.ConverterArrayToUuidTab;
 import fzmm.zailer.me.client.gui.converters.tabs.ConverterBase64Tab;
 import fzmm.zailer.me.client.gui.converters.tabs.ConverterUuidToArrayTab;
-import io.wispforest.owo.ui.container.FlowLayout;
 
-public enum ConvertersTabs implements IScreenTab {
-    BASE64(new ConverterBase64Tab()),
-    UUID_TO_ARRAY(new ConverterUuidToArrayTab()),
-    ARRAY_TO_UUID(new ConverterArrayToUuidTab());
+import java.util.function.Supplier;
 
-    private final IScreenTab tab;
+    public enum ConvertersTabs implements ITabsEnum {
+    BASE64(ConverterBase64Tab::new),
+    UUID_TO_ARRAY(ConverterUuidToArrayTab::new),
+    ARRAY_TO_UUID(ConverterArrayToUuidTab::new);
 
-    ConvertersTabs(IScreenTab tab) {
-        this.tab = tab;
+    private final Supplier<IScreenTab> tabSupplier;
+    private final String id;
+
+    ConvertersTabs(Supplier<IScreenTab> tabSupplier) {
+        this.tabSupplier = tabSupplier;
+        this.id = this.getTab().getId();
+    }
+
+    @Override
+    public IScreenTab getTab() {
+        return this.tabSupplier.get();
     }
 
     @Override
     public String getId() {
-        return this.tab.getId();
-    }
-
-    @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.tab.setupComponents(rootComponent);
+        return this.id;
     }
 }

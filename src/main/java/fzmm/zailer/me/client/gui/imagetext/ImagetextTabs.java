@@ -1,41 +1,33 @@
 package fzmm.zailer.me.client.gui.imagetext;
 
+import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 import fzmm.zailer.me.client.gui.imagetext.tabs.*;
-import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
-import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
-import io.wispforest.owo.ui.container.FlowLayout;
 
-public enum ImagetextTabs implements IImagetextTab {
-    LORE(new ImagetextLoreTab()),
-    BOOK_PAGE(new ImagetextBookPageTab()),
-    BOOK_TOOLTIP(new ImagetextBookTooltipTab()),
-    HOLOGRAM(new ImagetextHolgoramTab()),
-    SIGN(new ImagetextSignTab()),
-    COPY(new ImagetextCopyTab());
+import java.util.function.Supplier;
 
-    private final IImagetextTab tab;
+public enum ImagetextTabs implements ITabsEnum {
+    LORE(ImagetextLoreTab::new),
+    BOOK_PAGE(ImagetextBookPageTab::new),
+    BOOK_TOOLTIP(ImagetextBookTooltipTab::new),
+    HOLOGRAM(ImagetextHolgoramTab::new),
+    SIGN(ImagetextSignTab::new),
+    COPY(ImagetextCopyTab::new);
 
-    ImagetextTabs(IImagetextTab tab) {
-        this.tab = tab;
+    private final Supplier<IImagetextTab> tabSupplier;
+    private final String id;
+
+    ImagetextTabs(Supplier<IImagetextTab> tabSupplier) {
+        this.tabSupplier = tabSupplier;
+        this.id = this.getTab().getId();
     }
 
     @Override
-    public void generate(ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        this.tab.generate(logic, data, isExecute);
-    }
-
-    @Override
-    public void execute(ImagetextLogic logic) {
-        this.tab.execute(logic);
+    public IImagetextTab getTab() {
+        return this.tabSupplier.get();
     }
 
     @Override
     public String getId() {
-        return this.tab.getId();
-    }
-
-    @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.tab.setupComponents(rootComponent);
+        return this.id;
     }
 }

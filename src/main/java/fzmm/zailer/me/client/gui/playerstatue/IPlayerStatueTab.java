@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client.gui.playerstatue;
 
-import fzmm.zailer.me.client.gui.IScreenTab;
+import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 
 public interface IPlayerStatueTab extends IScreenTab {
