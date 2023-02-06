@@ -1,4 +1,4 @@
-package fzmm.zailer.me.mixin;
+package fzmm.zailer.me.mixin.screenshotHud;
 
 import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
 import net.minecraft.client.render.Camera;

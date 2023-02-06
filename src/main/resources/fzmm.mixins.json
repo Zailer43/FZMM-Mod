@@ -4,8 +4,9 @@
   "package": "fzmm.zailer.me.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "screenshotHud.ChatHudMixin",
+    "screenshotHud.GameRendererMixin",
     "ChatScreenMixin",
-    "GameRendererMixin",
     "HandledScreenAccessor",
     "ItemFrameEntityRendererMixin",
     "ItemGroupMixin",
