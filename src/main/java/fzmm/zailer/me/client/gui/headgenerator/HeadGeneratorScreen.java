@@ -129,11 +129,14 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         if (skinBase == null)
             return;
 
+
+        if (skinBase.getWidth() == 64 && skinBase.getHeight() == 32) {
+            skinBase = ImageUtils.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skinBase, false);
+            this.skinButton.setImage(skinBase);
+        }
+
         if (ImageUtils.isAlexModel(1, skinBase))
             skinBase = ImageUtils.convertInSteveModel(skinBase, 1);
-
-        if (skinBase.getWidth() == 64 && skinBase.getHeight() == 32)
-            skinBase = ImageUtils.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skinBase, false);
 
         this.baseSkin = skinBase;
 
