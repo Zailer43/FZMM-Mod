@@ -41,12 +41,8 @@ public class TextFormatSimpleTab implements ITextFormatTab {
 
     @Override
     public void setRandomValues() {
-        Random random = Random.create();
-        int initialColor = random.nextInt(0xFFFFFF);
-
-        String hexColor = Integer.toHexString(initialColor);
-
-        this.color.setText(hexColor);
+        Color color = Color.ofRgb(Random.create().nextInt(0xFFFFFF));
+        this.color.setText(color.asHexString(false));
     }
 
     @Override
