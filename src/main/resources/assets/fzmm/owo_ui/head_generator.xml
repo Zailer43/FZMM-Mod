@@ -110,9 +110,6 @@
                                                     <flow-layout direction="horizontal" id="head-list-nav">
                                                         <children>
                                                             <enum-option id="head-generation-method">
-                                                                <margins>
-                                                                    <right>3</right>
-                                                                </margins>
                                                             </enum-option>
 
                                                             <button id="toggle-favorite-list">
@@ -130,6 +127,8 @@
                                                             <horizontal method="fill">100</horizontal>
                                                             <vertical method="fixed">20</vertical>
                                                         </sizing>
+
+                                                        <gap>8</gap>
                                                     </flow-layout>
                                                 </children>
                                             </flow-layout>
@@ -221,37 +220,28 @@
 
                         <button id="give-button">
                             <text translate="true">fzmm.gui.button.giveHead</text>
-
-                            <margins>
-                                <left>20</left>
-                                <bottom>20</bottom>
-                            </margins>
                         </button>
 
                         <button id="save-skin-button">
                             <text translate="true">fzmm.gui.headGenerator.button.saveSkin</text>
-
-                            <margins>
-                                <left>4</left>
-                                <bottom>20</bottom>
-                            </margins>
                         </button>
 
                         <button id="open-folder-button">
                             <text translate="true">fzmm.gui.headGenerator.button.openFolder</text>
-
-                            <margins>
-                                <left>4</left>
-                                <bottom>20</bottom>
-                            </margins>
                         </button>
 
                     </children>
 
                     <positioning type="relative">0,100</positioning>
 
-                    <vertical-alignment>bottom</vertical-alignment>
                     <horizontal-alignment>right</horizontal-alignment>
+                    <vertical-alignment>top</vertical-alignment>
+                    <gap>4</gap>
+
+                    <margins>
+                        <left>20</left>
+                        <bottom>20</bottom>
+                    </margins>
                 </flow-layout>
 
                 <flow-layout direction="horizontal">

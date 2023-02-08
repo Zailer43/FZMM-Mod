@@ -8,7 +8,6 @@ import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -41,13 +40,11 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
 
         int giveButtonWidth = textRenderer.getWidth(GIVE_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
         this.giveButton = Components.button(GIVE_BUTTON_TEXT, buttonComponent -> this.giveButtonExecute(parent.overlapHatLayerButton()));
-        this.giveButton.sizing(Sizing.fixed(giveButtonWidth), Sizing.fixed(20))
-                .margins(Insets.right(BaseFzmmScreen.COMPONENT_DISTANCE));
+        this.giveButton.sizing(Sizing.fixed(giveButtonWidth), Sizing.fixed(20));
 
         int favoriteButtonWidth = Math.max(textRenderer.getWidth(FAVORITE_ENABLED_TEXT), textRenderer.getWidth(FAVORITE_DISABLED_TEXT)) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
         this.favoriteButton = Components.button(Text.empty(), this::favoriteButtonExecute);
-        this.favoriteButton.sizing(Sizing.fixed(Math.max(20, favoriteButtonWidth)), Sizing.fixed(20))
-                .margins(Insets.right(8));
+        this.favoriteButton.sizing(Sizing.fixed(Math.max(20, favoriteButtonWidth)), Sizing.fixed(20));
         this.updateFavoriteText();
 
         this.buttonsLayout.child(this.giveButton);
@@ -55,8 +52,7 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
         if (this.entry.canOverlap()) {
             int addLayerButtonWidth = textRenderer.getWidth(ADD_LAYER_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
             ButtonComponent addLayerButton = Components.button(ADD_LAYER_BUTTON_TEXT, this::addLayerButtonExecute);
-            addLayerButton.sizing(Sizing.fixed(Math.max(20, addLayerButtonWidth)), Sizing.fixed(20))
-                    .margins(Insets.right(8));
+            addLayerButton.sizing(Sizing.fixed(Math.max(20, addLayerButtonWidth)), Sizing.fixed(20));
 
             this.buttonsLayout.child(addLayerButton);
         }

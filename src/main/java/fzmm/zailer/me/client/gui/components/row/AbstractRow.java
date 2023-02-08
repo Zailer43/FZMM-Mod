@@ -42,28 +42,28 @@ public abstract class AbstractRow extends FlowLayout {
         FlowLayout rowLayout = (FlowLayout) Containers
                 .horizontalFlow(Sizing.fill(100), Sizing.fixed(ROW_HEIGHT))
                 .child(this.getLabel(id, tooltipId, components.length != 0))
+                .gap(BaseFzmmScreen.COMPONENT_DISTANCE)
                 .alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER)
                 .margins(Insets.vertical(VERTICAL_MARGIN))
                 .id(getRowContainerId(id));
 
         FlowLayout rightComponentsLayout = (FlowLayout) Containers
                 .horizontalFlow(Sizing.content(), Sizing.fill(100))
+                .gap(BaseFzmmScreen.COMPONENT_DISTANCE)
                 .verticalAlignment(VerticalAlignment.CENTER)
                 .positioning(Positioning.relative(100, 0))
                 .id(getRightLayoutId(id));
 
 
-        for (var component : components) {
-            component.margins(Insets.left(BaseFzmmScreen.COMPONENT_DISTANCE));
+        for (var component : components)
             rightComponentsLayout.child(component);
-        }
 
         if (hasResetButton)
             rightComponentsLayout.child(this.getResetButton(id));
 
         List<Component> rightComponents = rightComponentsLayout.children();
         if (!rightComponents.isEmpty())
-            rightComponents.get(rightComponents.size() - 1).margins(Insets.right(20).withLeft(BaseFzmmScreen.COMPONENT_DISTANCE));
+            rightComponents.get(rightComponents.size() - 1).margins(Insets.right(20));
 
         this.child(rowLayout.child(rightComponentsLayout));
     }

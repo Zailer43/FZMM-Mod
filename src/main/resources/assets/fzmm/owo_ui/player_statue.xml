@@ -72,15 +72,19 @@
 
                         <button id="execute-button">
                             <text translate="true">fzmm.gui.button.execute</text>
-
-                            <margins>
-                                <left>20</left>
-                                <bottom>20</bottom>
-                            </margins>
                         </button>
                     </children>
 
                     <positioning type="relative">0,100</positioning>
+
+                    <horizontal-alignment>right</horizontal-alignment>
+                    <vertical-alignment>top</vertical-alignment>
+                    <gap>4</gap>
+
+                    <margins>
+                        <left>20</left>
+                        <bottom>20</bottom>
+                    </margins>
                 </flow-layout>
 
                 <flow-layout direction="horizontal">

@@ -86,7 +86,6 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
         this.categoryButtonList = HeadGalleryResources.CATEGORY_LIST.stream()
                 .map(category -> Components.button(Text.translatable("fzmm.gui.headGallery.button.category." + category), buttonComponent -> this.categoryButtonExecute(buttonComponent, category))
                         .horizontalSizing(Sizing.fill(100))
-                        .margins(Insets.vertical(2))
                 ).collect(Collectors.toList());
 
         categoryList.children(this.categoryButtonList);

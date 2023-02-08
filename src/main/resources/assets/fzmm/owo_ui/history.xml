@@ -19,10 +19,6 @@
                                             <label>
                                                 <text translate="true">fzmm.gui.history.label.generatedWithFzmm</text>
                                                 <tooltip-text translate="true">fzmm.gui.history.label.generatedWithFzmm.tooltip</tooltip-text>
-
-                                                <margins>
-                                                    <vertical>4</vertical>
-                                                </margins>
                                             </label>
                                             <template name="option-button">
                                                 <id>itemGeneratedWithFzmm</id>
@@ -33,6 +29,8 @@
                                                 <translation>generatedWithFzmm.head</translation>
                                             </template>
                                         </children>
+
+                                        <gap>8</gap>
                                     </flow-layout>
 
                                     <!--
@@ -158,10 +156,6 @@
                 <sizing>
                     <horizontal method="fill">97</horizontal>
                 </sizing>
-
-                <margins>
-                    <vertical>4</vertical>
-                </margins>
             </button>
         </option-button>
     </templates>

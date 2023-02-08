@@ -33,16 +33,15 @@ public class ColorListContainer extends FlowLayout {
         this.random = Random.create();
         this.callback = s -> {};
         this.id(id);
+        this.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
 
         FlowLayout topLayout = Containers.horizontalFlow(Sizing.fill(100), Sizing.fixed(AbstractRow.TOTAL_HEIGHT));
         topLayout.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
         Component labelComponent = AbstractRow.getLabel(id, tooltipId, BaseFzmmScreen.getOptionBaseTranslationKey(baseTranslationKey));
         this.colorsLayout = Containers.verticalFlow(Sizing.fill(100), Sizing.content());
         this.colorAmountLabel = Components.label(Text.translatable(COLOR_AMOUNT_TRANSLATION_KEY, this.colorsLayout.children().size()));
-        this.colorAmountLabel.margins(Insets.left(BaseFzmmScreen.COMPONENT_DISTANCE));
 
         ButtonComponent addButton = Components.button(ADD_COLOR_TEXT, buttonComponent -> this.addEntry());
-        addButton.margins(Insets.left(BaseFzmmScreen.COMPONENT_DISTANCE));
 
         topLayout.child(labelComponent);
         topLayout.child(addButton);

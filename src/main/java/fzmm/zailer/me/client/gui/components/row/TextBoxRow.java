@@ -9,7 +9,6 @@ import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
-import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import net.minecraft.client.MinecraftClient;
@@ -147,14 +146,12 @@ public class TextBoxRow extends AbstractRow {
             Optional<ButtonComponent> component = SymbolButtonComponent.of(symbolSelectionPanel.getSymbolSelectionPanel(), button, textBoxComponent);
             if (component.isPresent())
                 return component.get()
-                        .tooltip(SYMBOL_BUTTON_TEXT)
-                        .margins(Insets.left(BaseFzmmScreen.COMPONENT_DISTANCE));
+                        .tooltip(SYMBOL_BUTTON_TEXT);
         }
 
         ButtonComponent button = (ButtonComponent) Components.button(Text.literal("☺"), buttonComponent -> {
                 }).sizing(Sizing.fixed(20), Sizing.fixed(20))
-                .tooltip(NOT_AVALIBLE_SYMBOL_BUTTON_TEXT)
-                .margins(Insets.left(BaseFzmmScreen.COMPONENT_DISTANCE));
+                .tooltip(NOT_AVALIBLE_SYMBOL_BUTTON_TEXT);
 
         button.active = false;
         return button;

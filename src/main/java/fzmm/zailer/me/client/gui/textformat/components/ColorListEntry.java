@@ -29,11 +29,9 @@ public class ColorListEntry extends ColorRow {
         this.parent = parent;
         this.moveUpButton = Components.button(UP_ARROW_TEXT, this::upArrowExecute);
         this.moveUpButton.sizing(Sizing.fixed(20), Sizing.fixed(20));
-        this.moveUpButton.margins(Insets.left(BaseFzmmScreen.COMPONENT_DISTANCE));
 
         this.moveDownButton = Components.button(DOWN_ARROW_TEXT, this::downArrowExecute);
         this.moveDownButton.sizing(Sizing.fixed(20), Sizing.fixed(20));
-        this.moveDownButton.margins(Insets.left(BaseFzmmScreen.COMPONENT_DISTANCE));
 
         this.setButtons();
     }
@@ -44,7 +42,7 @@ public class ColorListEntry extends ColorRow {
             return;
 
         String labelId = AbstractRow.getLabelId(this.getId());
-        FlowLayout rowContainer = rowContainerOptional.get();
+        FlowLayout rowContainer = rowContainerOptional.get().gap(BaseFzmmScreen.COMPONENT_DISTANCE);
         List<Component> componentList = new ArrayList<>(List.copyOf(rowContainer.children()));
         componentList.removeIf(component -> labelId.equals(component.id()));
 

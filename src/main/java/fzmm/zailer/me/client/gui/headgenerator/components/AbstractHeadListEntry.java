@@ -1,26 +1,25 @@
 package fzmm.zailer.me.client.gui.headgenerator.components;
 
+import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntity;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.EntityComponent;
+import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.util.Drawer;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.Text;
 
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 import java.util.Optional;
-
-import static net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry.WHITE_COLOR;
 
 public abstract class AbstractHeadListEntry extends FlowLayout {
     public static final int PLAYER_SKIN_SIZE = 24;
@@ -34,13 +33,19 @@ public abstract class AbstractHeadListEntry extends FlowLayout {
 
         this.previewComponent = Components.entity(Sizing.fixed(PLAYER_SKIN_SIZE), new CustomHeadEntity(MinecraftClient.getInstance().world))
                 .allowMouseRotation(true);
-        this.previewComponent.margins(Insets.left(4));
+
+        LabelComponent label = Components.label(Text.literal(entry.getDisplayName()));
 
         this.buttonsLayout = Containers.horizontalFlow(Sizing.content(), this.verticalSizing().get());
         this.buttonsLayout.alignment(HorizontalAlignment.RIGHT, VerticalAlignment.CENTER);
         this.buttonsLayout.positioning(Positioning.relative(100, 0));
+        this.buttonsLayout.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
 
+        this.verticalAlignment(VerticalAlignment.CENTER);
+        this.margins(Insets.horizontal(4));
+        this.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
         this.child(this.previewComponent);
+        this.child(label);
         this.child(this.buttonsLayout);
         this.update(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB), false);
     }
@@ -51,14 +56,6 @@ public abstract class AbstractHeadListEntry extends FlowLayout {
             Drawer.fill(matrices, this.x, this.y, this.x + this.width, this.y + this.height, 0x40000000);
 
         super.draw(matrices, mouseX, mouseY, partialTicks, delta);
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        int xWithPadding = this.x + 4;
-        int centerY = this.y + (this.height / 2);
-        int xText = xWithPadding + 24 + 4;
-        Objects.requireNonNull(textRenderer);
-        int yText = centerY - textRenderer.fontHeight / 2;
-
-        textRenderer.draw(matrices, this.getDisplayName(), (float) xText, (float) yText, WHITE_COLOR);
     }
 
     public String getDisplayName() {

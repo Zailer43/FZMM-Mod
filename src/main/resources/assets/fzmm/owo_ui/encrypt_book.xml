@@ -57,28 +57,24 @@
 
                         <button id="give-button">
                             <text translate="true">fzmm.gui.encryptbook.button.give</text>
-
-                            <margins>
-                                <left>20</left>
-                                <bottom>20</bottom>
-                            </margins>
                         </button>
 
                         <button id="get-decoder-button">
                             <text translate="true">fzmm.gui.encryptbook.button.getDecoder</text>
-
-                            <margins>
-                                <left>4</left>
-                                <bottom>20</bottom>
-                            </margins>
                         </button>
 
                     </children>
 
                     <positioning type="relative">0,100</positioning>
 
-                    <vertical-alignment>bottom</vertical-alignment>
                     <horizontal-alignment>right</horizontal-alignment>
+                    <vertical-alignment>top</vertical-alignment>
+                    <gap>4</gap>
+
+                    <margins>
+                        <left>20</left>
+                        <bottom>20</bottom>
+                    </margins>
                 </flow-layout>
 
                 <flow-layout direction="horizontal">

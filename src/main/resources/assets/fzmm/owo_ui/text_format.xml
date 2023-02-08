@@ -136,45 +136,31 @@
 
                         <button id="add-lore-button">
                             <text translate="true">fzmm.gui.textFormat.button.addLore</text>
-
-                            <margins>
-                                <left>20</left>
-                                <bottom>20</bottom>
-                            </margins>
                         </button>
 
                         <button id="set-name-button">
                             <text translate="true">fzmm.gui.textFormat.button.setName</text>
-
-                            <margins>
-                                <left>4</left>
-                                <bottom>20</bottom>
-                            </margins>
                         </button>
 
                         <button id="copy-button">
                             <text translate="true">fzmm.gui.button.copy</text>
-
-                            <margins>
-                                <left>4</left>
-                                <bottom>20</bottom>
-                            </margins>
                         </button>
 
                         <button id="random-button">
                             <text translate="true">fzmm.gui.textFormat.button.randomColors</text>
-
-                            <margins>
-                                <left>4</left>
-                                <bottom>20</bottom>
-                            </margins>
                         </button>
                     </children>
 
                     <positioning type="relative">0,100</positioning>
 
-                    <vertical-alignment>bottom</vertical-alignment>
                     <horizontal-alignment>right</horizontal-alignment>
+                    <vertical-alignment>top</vertical-alignment>
+                    <gap>4</gap>
+
+                    <margins>
+                        <left>20</left>
+                        <bottom>20</bottom>
+                    </margins>
                 </flow-layout>
 
                 <flow-layout direction="horizontal">

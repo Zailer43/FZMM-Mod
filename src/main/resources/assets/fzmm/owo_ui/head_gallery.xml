@@ -236,6 +236,7 @@
                             <padding>
                                 <right>8</right>
                             </padding>
+                            <gap>4</gap>
                         </flow-layout>
 
                         <sizing>
