@@ -36,8 +36,10 @@ public class FzmmHistory {
 
     public static void add(ItemStack stack, ArrayDeque<ItemStack> stacks, int max) {
         for (var stackFromHistory : stacks) {
-            if (ItemStack.areEqual(stackFromHistory, stack))
-                return;
+            if (ItemStack.areEqual(stackFromHistory, stack)) {
+                stacks.remove(stackFromHistory);
+                break;
+            }
         }
         stacks.addFirst(stack);
         removeExcess(stacks, max);

@@ -8,7 +8,7 @@ import fzmm.zailer.me.client.gui.converters.tabs.ConverterUuidToArrayTab;
 
 import java.util.function.Supplier;
 
-    public enum ConvertersTabs implements ITabsEnum {
+public enum ConvertersTabs implements ITabsEnum {
     BASE64(ConverterBase64Tab::new),
     UUID_TO_ARRAY(ConverterUuidToArrayTab::new),
     ARRAY_TO_UUID(ConverterArrayToUuidTab::new);
