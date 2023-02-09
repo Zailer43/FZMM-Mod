@@ -17,8 +17,11 @@ import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.config.ui.component.ConfigToggleButton;
+import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.HorizontalAlignment;
+import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -112,7 +115,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
             maxHeadGenerationMethodWidth = Math.max(maxHeadGenerationMethodWidth, this.textRenderer.getWidth(Text.translatable(method.getTranslationKey())) + BaseFzmmScreen.BUTTON_TEXT_PADDING);
         this.headGenerationMethod.horizontalSizing(Sizing.fixed(maxHeadGenerationMethodWidth));
 
-        this.toggleFavoriteList =  ButtonRow.setup(rootComponent, TOGGLE_FAVORITE_LIST_ID, true, buttonComponent -> this.toggleFavoriteListExecute());
+        this.toggleFavoriteList = ButtonRow.setup(rootComponent, TOGGLE_FAVORITE_LIST_ID, true, buttonComponent -> this.toggleFavoriteListExecute());
         checkNull(this.toggleFavoriteList, "button", TOGGLE_FAVORITE_LIST_ID);
         this.showFavorites = false;
         int toggleFavoriteListWidth = Math.max(this.textRenderer.getWidth(HeadComponentEntry.FAVORITE_DISABLED_TEXT), this.textRenderer.getWidth(HeadComponentEntry.FAVORITE_ENABLED_TEXT)) + BUTTON_TEXT_PADDING;
@@ -152,11 +155,20 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
             headDataSet.addAll(HeadGeneratorResources.loadHeadsTextures());
             headDataSet.addAll(HeadGeneratorResources.loadHeadsModels());
 
+            if (headDataSet.size() == 0) {
+                Component label = Components.label(Text.translatable("fzmm.gui.headGenerator.label.noResults")
+                                .setStyle(Style.EMPTY.withColor(0xD83F27)))
+                        .horizontalTextAlignment(HorizontalAlignment.CENTER)
+                        .sizing(Sizing.fill(100), Sizing.content())
+                        .margins(Insets.top(4));
+                this.headListLayout.child(label);
+                return;
+            }
+
             List<Component> headEntries = headDataSet.stream()
                     .sorted(Comparator.comparing(AbstractHeadEntry::getDisplayName))
                     .map(entry -> (Component) new HeadComponentEntry(entry, this))
                     .collect(Collectors.toList());
-
 
             this.headListLayout.children(headEntries);
             this.applyFilters();

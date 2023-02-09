@@ -163,6 +163,7 @@
   "fzmm.gui.headGenerator.button.saveSkin": "Save skin",
   "fzmm.gui.headGenerator.label.baseSkin": "Base skin",
   "fzmm.gui.headGenerator.label.headList": "Head list",
+  "fzmm.gui.headGenerator.label.noResults": "No textures or models have been found, this is because you have not placed any resource pack that adds textures or models, you can activate the resource pack with default textures called \"FZMM: Head generator\".",
   "fzmm.gui.headGenerator.label.headList.tooltip": "List of available heads to generate\nor to add layers and generate a skin composed of many heads.",
   "fzmm.gui.headGenerator.label.layerList": "Layer list",
   "fzmm.gui.headGenerator.label.layerList.tooltip": "List of layers to generate a composite skin,\nthe layers are applied from top to bottom overlapping.",
