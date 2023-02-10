@@ -35,6 +35,7 @@ public class BookBuilder {
     }
 
     public static Optional<BookBuilder> of(ItemStack book) {
+        book = book.copy();
         if (!book.getItem().equals(Items.WRITTEN_BOOK) || !book.hasNbt())
             return Optional.empty();
         NbtCompound tag = book.getNbt();

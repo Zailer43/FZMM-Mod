@@ -30,6 +30,7 @@ public class DisplayBuilder {
     }
 
     public static DisplayBuilder of(ItemStack stack) {
+        stack = stack.copy();
         return builder()
                 .nbt(stack.hasNbt() ? stack.getNbt() : new NbtCompound())
                 .item(stack.getItem())
