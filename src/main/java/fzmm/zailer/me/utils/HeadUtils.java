@@ -68,6 +68,7 @@ public class HeadUtils {
                 URL url = new URL(MINESKIN_API + "generate/upload");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setDoOutput(true);
+                conn.setRequestProperty("User-Agent", FzmmClient.HTTP_USER_AGENT);
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Authorization", "Bearer " + config.apiKey());
                 conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);

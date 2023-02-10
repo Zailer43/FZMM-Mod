@@ -41,6 +41,7 @@ public class FzmmClient implements ClientModInitializer {
     public static final boolean SYMBOL_CHAT_PRESENT = FabricLoader.getInstance().isModLoaded("symbol-chat");
     public static final Identifier CUSTOM_HEAD_ENTITY = new Identifier(FzmmClient.MOD_ID, "custom_head");
     public static final EntityModelLayer MODEL_CUSTOM_HEAD_LAYER = new EntityModelLayer(CUSTOM_HEAD_ENTITY, "main");
+    public static final String HTTP_USER_AGENT = "FZMM/1.0";
 
 
     @Override
