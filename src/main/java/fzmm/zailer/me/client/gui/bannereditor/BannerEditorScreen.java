@@ -105,7 +105,6 @@ public class BannerEditorScreen extends BaseFzmmScreen {
             });
         }
         this.selectScreenTab(rootComponent, selectedTab, selectedTab);
-        this.updatePreview(this.bannerBuilder);
 
         //other
         ConfigToggleButton isShieldButton = BooleanRow.setup(rootComponent, IS_SHIELD_ID, false, button -> {
@@ -116,11 +115,13 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         if (mainHandStack.getItem() instanceof ShieldItem) {
             isShieldButton.onPress();
         }
+
+        this.updatePreview(this.bannerBuilder);
     }
 
     public void updatePreview(BannerBuilder builder) {
         this.bannerPreview.stack(builder.get());
-        this.getTab(selectedTab, IBannerEditorTab.class).update(this, this.bannerBuilder, this.selectedColor);
+        this.getTab(selectedTab, IBannerEditorTab.class).update(this, builder, this.selectedColor);
     }
 
 }

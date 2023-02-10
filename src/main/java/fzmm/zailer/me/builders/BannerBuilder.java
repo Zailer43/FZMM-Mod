@@ -33,9 +33,11 @@ public class BannerBuilder {
 
     public static BannerBuilder of(ItemStack stack) {
         stack = stack.copy();
-        NbtCompound nbt = stack.getOrCreateNbt();
-        NbtCompound blockEntityTag = stack.getOrCreateSubNbt(TagsConstant.BLOCK_ENTITY);
+        // don't ask me why air can and has nbt
+        NbtCompound nbt = stack.isEmpty() ? new NbtCompound() : stack.getOrCreateNbt();
+        NbtCompound blockEntityTag = nbt.contains(TagsConstant.BLOCK_ENTITY, NbtElement.COMPOUND_TYPE) ? nbt.getCompound(TagsConstant.BLOCK_ENTITY) : new NbtCompound();
         NbtList patterns = new NbtList();
+
         if (blockEntityTag.contains(TagsConstant.BANNER_PATTERN, NbtElement.LIST_TYPE))
             patterns = blockEntityTag.getList(TagsConstant.BANNER_PATTERN, NbtElement.COMPOUND_TYPE);
 
