@@ -38,7 +38,7 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
         for (var pattern : currentBanner.patterns()) {
             builder.addPattern(pattern);
 
-            ItemComponent itemComponent = Components.item(builder.get());
+            ItemComponent itemComponent = Components.item(builder.copy().get());
             itemComponent.sizing(Sizing.fixed(32), Sizing.fixed(32));
 
             this.onItemCreated(parent, itemComponent, pattern, currentBanner, color);
