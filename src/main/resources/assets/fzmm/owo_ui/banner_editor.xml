@@ -1,0 +1,172 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="horizontal">
+            <children>
+                <label id="title">
+                    <positioning type="absolute">20,20</positioning>
+                    <text translate="true">fzmm.gui.title.bannerEditor</text>
+                </label>
+
+
+                <scroll direction="vertical">
+                    <flow-layout direction="vertical">
+                        <children>
+                            <boolean-row>
+                                <id>isShield</id>
+                            </boolean-row>
+
+                            <screen-tab-row>
+                                <id>tabs</id>
+                            </screen-tab-row>
+
+                            <flow-layout direction="horizontal">
+                                <children>
+                                    <flow-layout direction="vertical">
+                                        <children>
+                                            <item id="banner-preview">
+                                                <sizing>
+                                                    <vertical method="fixed">100</vertical>
+                                                    <horizontal method="fixed">100</horizontal>
+                                                </sizing>
+                                            </item>
+
+                                            <button id="give-button">
+                                                <text translate="true">fzmm.gui.bannerEditor.button.give</text>
+                                            </button>
+                                        </children>
+
+                                        <sizing>
+                                            <vertical method="fixed">200</vertical>
+                                        </sizing>
+
+                                        <vertical-alignment>center</vertical-alignment>
+                                        <horizontal-alignment>center</horizontal-alignment>
+                                    </flow-layout>
+
+                                    <flow-layout direction="vertical" id="content">
+                                        <children>
+                                            <vertical-grid-layout maxSize="128" maxColumns="16" componentsWidth="18" componentsHeight="18" id="color-grid">
+                                                <children>
+
+                                                </children>
+
+                                                <vertical-alignment>top</vertical-alignment>
+                                                <horizontal-alignment>center</horizontal-alignment>
+
+                                            </vertical-grid-layout>
+
+                                            <screen-tab>
+                                                <id>addPatterns</id>
+                                                <children>
+                                                    <vertical-grid-layout maxSize="128" maxColumns="9" componentsWidth="32" componentsHeight="32" id="add-patterns-grid">
+                                                        <children>
+
+                                                        </children>
+
+                                                        <vertical-alignment>top</vertical-alignment>
+                                                        <horizontal-alignment>center</horizontal-alignment>
+
+                                                    </vertical-grid-layout>
+                                                </children>
+                                            </screen-tab>
+
+                                            <screen-tab>
+                                                <id>changeColor</id>
+                                                <children>
+                                                    <vertical-grid-layout maxSize="128" maxColumns="9" componentsWidth="32" componentsHeight="32" id="change-color-grid">
+                                                        <children>
+
+                                                        </children>
+
+                                                        <vertical-alignment>top</vertical-alignment>
+                                                        <horizontal-alignment>center</horizontal-alignment>
+
+                                                    </vertical-grid-layout>
+                                                </children>
+                                            </screen-tab>
+
+                                            <screen-tab>
+                                                <id>removePatterns</id>
+                                                <children>
+                                                    <vertical-grid-layout maxSize="128" maxColumns="9" componentsWidth="32" componentsHeight="32" id="remove-patterns-grid">
+                                                        <children>
+
+                                                        </children>
+
+                                                        <vertical-alignment>top</vertical-alignment>
+                                                        <horizontal-alignment>center</horizontal-alignment>
+
+                                                    </vertical-grid-layout>
+                                                </children>
+                                            </screen-tab>
+                                        </children>
+
+                                        <sizing>
+                                            <horizontal method="fill">60</horizontal>
+                                        </sizing>
+
+                                        <surface>
+                                            <panel dark="true"/>
+                                        </surface>
+
+                                        <padding>
+                                            <all>6</all>
+                                        </padding>
+                                    </flow-layout>
+                                </children>
+
+                                <sizing>
+                                    <horizontal method="fill">100</horizontal>
+                                </sizing>
+
+                                <horizontal-alignment>center</horizontal-alignment>
+
+                            </flow-layout>
+                        </children>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">90</vertical>
+                    </sizing>
+
+                    <margins>
+                        <vertical>30</vertical>
+                    </margins>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="back-button">
+                            <text translate="true">fzmm.gui.button.back</text>
+
+                            <margins>
+                                <right>20</right>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+            </children>
+
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+</owo-ui>

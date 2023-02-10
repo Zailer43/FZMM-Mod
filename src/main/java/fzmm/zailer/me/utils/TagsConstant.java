@@ -14,4 +14,8 @@ public class TagsConstant {
 
     public static final String SIGN_COLOR = "Color";
     public static final String SIGN_GLOWING_TEXT = "GlowingText";
+
+    public static final String BANNER_PATTERN = "Patterns";
+    public static final String BANNER_PATTERN_COLOR = "Color";
+    public static final String BANNER_PATTERN_VALUE = "Pattern";
 }

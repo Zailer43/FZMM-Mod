@@ -33,7 +33,7 @@ public class VerticalGridLayout extends GridLayout {
 
         int availableWidth = space.width() - this.padding.get().horizontal();
         int columnSize = Math.min((int) Math.floor(availableWidth / (float) this.componentsWidth), this.columns);
-        int rowSize = (int) Math.ceil(this.getLastChildIndex() / (float) columnSize) + 1;
+        int rowSize = (int) Math.ceil(this.getLastChildIndex() / (float) columnSize);
         var mountingOffset = this.childMountingOffset();
         MutableInt layoutX = new MutableInt(this.x + mountingOffset.width());
         MutableInt layoutY = new MutableInt(this.y + mountingOffset.height());

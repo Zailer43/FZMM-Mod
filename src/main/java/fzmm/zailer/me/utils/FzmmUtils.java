@@ -22,6 +22,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import org.apache.http.HttpEntity;
@@ -160,5 +161,26 @@ public class FzmmUtils {
      */
     public static List<String> splitMessage(String message) {
         return Arrays.asList(message.split("(?s)(?<=.)"));
+    }
+
+    public static DyeColor[] getColorsInOrder() {
+        return new DyeColor[] {
+                DyeColor.WHITE,
+                DyeColor.LIGHT_GRAY,
+                DyeColor.GRAY,
+                DyeColor.BLACK,
+                DyeColor.BROWN,
+                DyeColor.RED,
+                DyeColor.ORANGE,
+                DyeColor.YELLOW,
+                DyeColor.LIME,
+                DyeColor.GREEN,
+                DyeColor.CYAN,
+                DyeColor.LIGHT_BLUE,
+                DyeColor.BLUE,
+                DyeColor.PURPLE,
+                DyeColor.MAGENTA,
+                DyeColor.PINK
+        };
     }
 }

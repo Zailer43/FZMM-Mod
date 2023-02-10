@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui.main;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.EncryptBookScreen;
+import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
 import fzmm.zailer.me.client.gui.converters.ConvertersScreen;
 import fzmm.zailer.me.client.gui.HeadGalleryScreen;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
@@ -40,7 +41,8 @@ public class MainScreen extends BaseFzmmScreen {
                 "headGenerator-button", new ButtonData(() -> new HeadGeneratorScreen(this), MainIcon.HEAD_GENERATOR),
                 "converters-button", new ButtonData(() -> new ConvertersScreen(this), MainIcon.CONVERTERS),
                 "history-button", new ButtonData(() -> new HistoryScreen(this), MainIcon.HISTORY),
-                "headGallery-button", new ButtonData(() -> new HeadGalleryScreen(this), MainIcon.HEAD_GALLERY)
+                "headGallery-button", new ButtonData(() -> new HeadGalleryScreen(this), MainIcon.HEAD_GALLERY),
+                "bannerEditor-button", new ButtonData(() -> new BannerEditorScreen(this), MainIcon.BANNER_EDITOR)
         );
 
         for (var key : openScreenButtons.keySet()) {

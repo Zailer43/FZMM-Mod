@@ -37,6 +37,9 @@
                                     <template name="main-button-layout" row="2" column="1">
                                         <name>headGallery</name>
                                     </template>
+                                    <template name="main-button-layout" row="2" column="2">
+                                        <name>bannerEditor</name>
+                                    </template>
                                 </children>
 
                             </grid-layout>
