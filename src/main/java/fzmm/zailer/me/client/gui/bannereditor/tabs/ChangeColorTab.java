@@ -5,7 +5,9 @@ import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
 import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.util.UISounds;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -62,7 +64,16 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
         ItemStack modifiedStack;
         if (isBannerColor) {
             NbtCompound modifiedNbt = itemComponentStack.copy().getNbt();
-            modifiedStack = BannerBuilder.getBannerByDye(color).getDefaultStack();
+            Item modifiedItem;
+            if (currentBanner.isShield()) {
+                modifiedItem = itemComponentStack.getItem();
+                if (modifiedNbt != null && modifiedNbt.contains(TagsConstant.BLOCK_ENTITY, NbtElement.COMPOUND_TYPE)) {
+                    modifiedNbt.getCompound(TagsConstant.BLOCK_ENTITY).putInt(ShieldItem.BASE_KEY, color.getId());
+                }
+            } else {
+                modifiedItem = BannerBuilder.getBannerByDye(color);
+            }
+            modifiedStack = modifiedItem.getDefaultStack();
             modifiedStack.setNbt(modifiedNbt);
         } else {
             modifiedStack = itemComponentStack.copy();

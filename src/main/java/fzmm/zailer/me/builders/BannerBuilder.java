@@ -3,8 +3,6 @@ package fzmm.zailer.me.builders;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.block.AbstractBannerBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.item.*;
@@ -68,14 +66,7 @@ public class BannerBuilder {
 
         if (this.isShield) {
             stack = Items.SHIELD.getDefaultStack();
-            Block block = Block.getBlockFromItem(this.item);
-            if (!(block instanceof AbstractBannerBlock)) {
-                FzmmClient.LOGGER.error("[Banner builder] Item {} is not a banner type, the white banner will be used instead.", this.item.getName());
-                block = Blocks.WHITE_BANNER;
-            }
-            assert block instanceof AbstractBannerBlock;
-            int color = ((AbstractBannerBlock) block).getColor().getId();
-
+            int color = this.bannerColor().getId();
             blockEntityTag.putInt(ShieldItem.BASE_KEY, color);
         }
 
@@ -97,6 +88,10 @@ public class BannerBuilder {
     public BannerBuilder isShield(boolean isShield) {
         this.isShield = isShield;
         return this;
+    }
+
+    public boolean isShield() {
+        return this.isShield;
     }
 
     public BannerBuilder nbt(NbtCompound nbt) {
