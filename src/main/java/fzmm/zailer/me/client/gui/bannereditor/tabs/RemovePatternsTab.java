@@ -20,7 +20,12 @@ public class RemovePatternsTab extends AbstractModifyPatternsTab {
     }
 
     @Override
-    protected void onItemCreated(BannerEditorScreen parent, ItemComponent itemComponent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color) {
+    public boolean shouldAddBaseColor() {
+        return false;
+    }
+
+    @Override
+    protected void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color) {
         itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
             currentBanner.removePattern(pattern);
 

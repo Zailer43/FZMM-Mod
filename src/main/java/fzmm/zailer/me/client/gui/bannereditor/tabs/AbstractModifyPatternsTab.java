@@ -11,7 +11,9 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Sizing;
+import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.util.DyeColor;
 
 import java.util.ArrayList;
@@ -29,19 +31,30 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
 
     protected abstract String getGridId();
 
+    public abstract boolean shouldAddBaseColor();
+
     @Override
     public void update(BannerEditorScreen parent, BannerBuilder currentBanner, DyeColor color) {
         this.patternsGrid.clearChildren();
         List<Component> bannerList = new ArrayList<>();
-        BannerBuilder builder = currentBanner.copy().clear();
+        BannerBuilder builder = currentBanner.copy().clearPatterns();
 
-        for (var pattern : currentBanner.patterns()) {
+        NbtList patterns = currentBanner.patterns();
+        if (this.shouldAddBaseColor()) {
+            patterns = currentBanner.copy()
+                    .clearPatterns()
+                    .addPattern(currentBanner.bannerColor(), BannerPatterns.BASE)
+                    .addPatterns(patterns)
+                    .patterns();
+        }
+
+        for (var pattern : patterns) {
             builder.addPattern(pattern);
 
             ItemComponent itemComponent = Components.item(builder.copy().get());
             itemComponent.sizing(Sizing.fixed(32), Sizing.fixed(32));
 
-            this.onItemCreated(parent, itemComponent, pattern, currentBanner, color);
+            this.onItemComponentCreated(parent, itemComponent, pattern, currentBanner, color);
             itemComponent.cursorStyle(CursorStyle.HAND);
 
             bannerList.add(itemComponent);
@@ -49,5 +62,5 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
         this.patternsGrid.children(bannerList);
     }
 
-    protected abstract void onItemCreated(BannerEditorScreen parent, ItemComponent itemComponent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color);
+    protected abstract void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color);
 }

@@ -6,11 +6,13 @@ import net.minecraft.block.AbstractBannerBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BannerPattern;
+import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.DyeColor;
 
 public class BannerBuilder {
@@ -43,9 +45,8 @@ public class BannerBuilder {
 
         Item item = stack.getItem();
         boolean isShield = item instanceof ShieldItem;
-        if (item instanceof ShieldItem) {
+        if (isShield)
             item = getBannerByDye(ShieldItem.getColor(stack));
-        }
 
         return builder()
                 .addPatterns(patterns)
@@ -72,6 +73,7 @@ public class BannerBuilder {
             blockEntityTag.putInt(ShieldItem.BASE_KEY, color);
         }
 
+        this.formatPatterns();
         patterns.addAll(this.patterns);
 
         blockEntityTag.put(TagsConstant.BANNER_PATTERN, patterns);
@@ -94,6 +96,17 @@ public class BannerBuilder {
     public BannerBuilder nbt(NbtCompound nbt) {
         this.nbt = nbt;
         return this;
+    }
+
+    public BannerBuilder addPattern(DyeColor color, RegistryKey<BannerPattern> patternRegistry) {
+        BannerPattern pattern = Registries.BANNER_PATTERN.get(patternRegistry);
+
+        if (pattern == null) {
+            FzmmClient.LOGGER.error("[Banner builder] No banner pattern found '{}'", patternRegistry.getValue());
+            return this;
+        }
+
+        return this.addPattern(color, pattern);
     }
 
     public BannerBuilder addPattern(DyeColor color, BannerPattern pattern) {
@@ -131,7 +144,23 @@ public class BannerBuilder {
         return this.patterns;
     }
 
-    public BannerBuilder clear() {
+    private void formatPatterns() {
+        BannerPattern basePattern = Registries.BANNER_PATTERN.get(BannerPatterns.BASE);
+        if (basePattern == null || this.patterns.size() == 0)
+            return;
+
+        NbtElement firstPatternElement = this.patterns.get(0);
+        if (!(firstPatternElement instanceof NbtCompound firstPattern))
+            return;
+
+        if (firstPattern.getString(TagsConstant.BANNER_PATTERN_VALUE).equals(basePattern.getId())) {
+            int color = firstPattern.getInt(TagsConstant.BANNER_PATTERN_COLOR);
+            this.bannerColor(DyeColor.byId(color));
+            this.patterns.remove(firstPatternElement);
+        }
+    }
+
+    public BannerBuilder clearPatterns() {
         this.patterns.clear();
 
         return this;
@@ -159,5 +188,16 @@ public class BannerBuilder {
         }
 
         return Items.WHITE_BANNER;
+    }
+
+    public void bannerColor(DyeColor color) {
+        this.item(getBannerByDye(color));
+    }
+
+    public DyeColor bannerColor() {
+        if (this.item instanceof BannerItem bannerItem)
+            return bannerItem.getColor();
+
+        return DyeColor.WHITE;
     }
 }
