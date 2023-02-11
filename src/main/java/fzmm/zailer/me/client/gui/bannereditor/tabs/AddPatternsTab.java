@@ -10,6 +10,7 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.DyeColor;
@@ -46,6 +47,7 @@ public class AddPatternsTab implements IBannerEditorTab {
                     .sizing(Sizing.fixed(32), Sizing.fixed(32));
 
             itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
+                UISounds.playButtonSound();
 
                 currentBanner.addPattern(color, pattern);
 

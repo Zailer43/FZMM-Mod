@@ -4,6 +4,7 @@ import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
 import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.ui.component.ItemComponent;
+import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -46,6 +47,8 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
         boolean isBannerColor = index == -1;
 
         itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
+            UISounds.playButtonSound();
+
             if (isBannerColor) {
                 currentBanner.bannerColor(color);
             } else if (pattern instanceof NbtCompound patternCompound) {
