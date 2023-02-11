@@ -13,7 +13,13 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class BannerBuilder {
 
@@ -199,5 +205,21 @@ public class BannerBuilder {
             return bannerItem.getColor();
 
         return DyeColor.WHITE;
+    }
+
+    public static Text tooltipOf(DyeColor color, @Nullable RegistryEntry<BannerPattern> patternRegistry) {
+        if (patternRegistry == null) {
+            FzmmClient.LOGGER.error("[Banner builder] No banner pattern found");
+            return Text.empty();
+        }
+
+        Optional<String> patternKeyOptional = patternRegistry.getKey().map(key -> key.getValue().toShortTranslationKey());
+
+        if (patternKeyOptional.isEmpty()) {
+            FzmmClient.LOGGER.error("[Banner builder] No banner pattern translation key found");
+            return Text.empty();
+        }
+
+        return Text.translatable("block.minecraft.banner." + patternKeyOptional.get() + "." + color.getName()).formatted(Formatting.GRAY);
     }
 }

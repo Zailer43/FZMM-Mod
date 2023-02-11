@@ -5,15 +5,19 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
 import fzmm.zailer.me.client.gui.bannereditor.IBannerEditorTab;
 import fzmm.zailer.me.client.gui.utils.containers.VerticalGridLayout;
+import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Sizing;
+import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.DyeColor;
 
 import java.util.ArrayList;
@@ -56,6 +60,12 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
 
             this.onItemComponentCreated(parent, itemComponent, pattern, currentBanner, color);
             itemComponent.cursorStyle(CursorStyle.HAND);
+            if (pattern instanceof NbtCompound patternCompound) {
+                DyeColor patternColor = DyeColor.byId(patternCompound.getInt(TagsConstant.BANNER_PATTERN_COLOR));
+                RegistryEntry<BannerPattern> patternRegistry = BannerPattern.byId(patternCompound.getString(TagsConstant.BANNER_PATTERN_VALUE));
+
+                itemComponent.tooltip(BannerBuilder.tooltipOf(patternColor, patternRegistry));
+            }
 
             bannerList.add(itemComponent);
         }
