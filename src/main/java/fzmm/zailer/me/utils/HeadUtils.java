@@ -96,7 +96,7 @@ public class HeadUtils {
                         this.useResponse(sb.toString());
                     }
                 } else {
-                    LOGGER.warn("HTTP error " + httpCode + " generating skin in '" + skinName + "'");
+                    LOGGER.error("HTTP error {} generating skin in '{}'", httpCode, skinName);
                     this.delayForNextInMillis = 6000;
                 }
             } catch (IOException e) {

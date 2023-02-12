@@ -174,8 +174,7 @@ public class BannerBuilder {
 
         for (var pattern : this.patterns) {
             if (pattern instanceof NbtCompound patternCompound) {
-                copy.addPattern(patternCompound.getInt(TagsConstant.BANNER_PATTERN_COLOR),
-                        patternCompound.getString(TagsConstant.BANNER_PATTERN_VALUE));
+                copy.addPattern(patternCompound.getInt(TagsConstant.BANNER_PATTERN_COLOR), patternCompound.getString(TagsConstant.BANNER_PATTERN_VALUE));
             }
         }
 

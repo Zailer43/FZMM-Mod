@@ -46,7 +46,7 @@
 
                                     <flow-layout direction="vertical" id="content">
                                         <children>
-                                            <vertical-grid-layout maxSize="128" maxColumns="16" componentsWidth="18" componentsHeight="18" id="color-grid">
+                                            <vertical-grid-layout maxColumns="16" componentsWidth="18" componentsHeight="18" id="color-grid">
                                                 <children>
 
                                                 </children>
@@ -59,7 +59,7 @@
                                             <screen-tab>
                                                 <id>addPatterns</id>
                                                 <children>
-                                                    <vertical-grid-layout maxSize="128" maxColumns="9" componentsWidth="32" componentsHeight="32" id="add-patterns-grid">
+                                                    <vertical-grid-layout maxColumns="9" componentsWidth="32" componentsHeight="32" id="add-patterns-grid">
                                                         <children>
 
                                                         </children>
@@ -74,7 +74,7 @@
                                             <screen-tab>
                                                 <id>changeColor</id>
                                                 <children>
-                                                    <vertical-grid-layout maxSize="128" maxColumns="9" componentsWidth="32" componentsHeight="32" id="change-color-grid">
+                                                    <vertical-grid-layout maxColumns="9" componentsWidth="32" componentsHeight="32" id="change-color-grid">
                                                         <children>
 
                                                         </children>
@@ -89,7 +89,7 @@
                                             <screen-tab>
                                                 <id>removePatterns</id>
                                                 <children>
-                                                    <vertical-grid-layout maxSize="128" maxColumns="9" componentsWidth="32" componentsHeight="32" id="remove-patterns-grid">
+                                                    <vertical-grid-layout maxColumns="9" componentsWidth="32" componentsHeight="32" id="remove-patterns-grid">
                                                         <children>
 
                                                         </children>

@@ -233,8 +233,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
                             buttonList.add(button);
                         }
 
-                        if (buttonList.size() >= tagListGrid.getMaxSize())
-                            buttonList = buttonList.subList(0, tagListGrid.getMaxSize() - 1);
+                        if (buttonList.size() >= tagListGrid.getMaxChildren())
+                            buttonList = buttonList.subList(0, tagListGrid.getMaxChildren() - 1);
 
                         List<ButtonComponent> finalButtonList = buttonList;
 
@@ -284,19 +284,19 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
         if (page < 1)
             page = 1;
 
-        int firstElementIndex = (page - 1) * this.contentGridLayout.getMaxSize();
-        int lastPage = (int) Math.ceil(this.headsWithFilter.size() / (float) this.contentGridLayout.getMaxSize());
+        int firstElementIndex = (page - 1) * this.contentGridLayout.getMaxChildren();
+        int lastPage = (int) Math.ceil(this.headsWithFilter.size() / (float) this.contentGridLayout.getMaxChildren());
 
         if (firstElementIndex >= this.headsWithFilter.size()) {
             page = lastPage;
             if (this.headsWithFilter.size() != 0)
-                firstElementIndex = (lastPage - 1) * this.contentGridLayout.getMaxSize();
+                firstElementIndex = (lastPage - 1) * this.contentGridLayout.getMaxChildren();
         }
 
         this.page = page;
         this.currentPageLabel.text(Text.translatable("fzmm.gui.headGallery.label.page", page, lastPage));
 
-        int lastElementIndex = Math.min((page) * this.contentGridLayout.getMaxSize(), this.headsWithFilter.size());
+        int lastElementIndex = Math.min((page) * this.contentGridLayout.getMaxChildren(), this.headsWithFilter.size());
         ObjectList<GiveItemComponent> currentPageHeads = this.headsWithFilter.subList(firstElementIndex, lastElementIndex);
 
         assert this.client != null;

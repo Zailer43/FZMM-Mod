@@ -64,7 +64,7 @@ public class HeadGalleryResources {
                     if (cacheCategories)
                         cache.put(category, headsData);
                 } else {
-                    FzmmClient.LOGGER.warn("[Head gallery] HTTP Error {} ({})", responseCode, conn.getResponseMessage());
+                    FzmmClient.LOGGER.error("[Head gallery] HTTP Error {} ({})", responseCode, conn.getResponseMessage());
                 }
             } catch (Exception e) {
                 e.printStackTrace();

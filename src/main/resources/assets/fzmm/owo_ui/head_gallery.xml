@@ -74,7 +74,7 @@
                             <children>
                                 <scroll direction="vertical">
 
-                                    <vertical-grid-layout maxSize="300" maxColumns="25" componentsWidth="16" componentsHeight="16" id="content">
+                                    <vertical-grid-layout maxChildren="300" maxColumns="25" componentsWidth="16" componentsHeight="16" id="content">
                                         <children>
 
                                         </children>
@@ -280,7 +280,7 @@
                     </button>
 
                     <scroll direction="vertical" id="tag-scroll">
-                        <vertical-grid-layout maxSize="2000" maxColumns="4" componentsWidth="208" componentsHeight="28" id="minecraft-heads-tags-grid">
+                        <vertical-grid-layout maxColumns="4" componentsWidth="208" componentsHeight="28" id="minecraft-heads-tags-grid">
                             <children>
 
                             </children>
