@@ -233,15 +233,10 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
                             buttonList.add(button);
                         }
 
-                        if (buttonList.size() >= tagListGrid.getMaxChildren())
-                            buttonList = buttonList.subList(0, tagListGrid.getMaxChildren() - 1);
-
-                        List<ButtonComponent> finalButtonList = buttonList;
-
-                        tagListGrid.children(finalButtonList);
+                        tagListGrid.children(buttonList);
 
                         clearSelectedTags.onPress(buttonComponent -> {
-                            for (var buttonTag : finalButtonList) {
+                            for (var buttonTag : buttonList) {
                                 if (this.selectedTags.contains(buttonTag.getMessage().getString()))
                                     buttonTag.onPress();
                             }
@@ -249,7 +244,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
                         clearSelectedTags.zIndex(buttonsZIndex);
 
                         TextBoxRow.setup(flowLayout, TAG_SEARCH_ID, "", 100, value -> {
-                            List<Component> buttonListCopy = new ArrayList<>(finalButtonList);
+                            List<Component> buttonListCopy = new ArrayList<>(buttonList);
 
                             String valueToLowerCase = value.toLowerCase();
                             buttonListCopy.removeIf(tagComponent -> tagComponent instanceof ButtonComponent buttonTag
