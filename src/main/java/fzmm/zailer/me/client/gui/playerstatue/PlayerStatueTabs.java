@@ -15,11 +15,11 @@ public enum PlayerStatueTabs implements ITabsEnum {
 
     PlayerStatueTabs(Supplier<IPlayerStatueTab> tabSupplier) {
         this.tabSupplier = tabSupplier;
-        this.id = this.getTab().getId();
+        this.id = this.createTab().getId();
     }
 
     @Override
-    public IPlayerStatueTab getTab() {
+    public IPlayerStatueTab createTab() {
         return this.tabSupplier.get();
     }
 

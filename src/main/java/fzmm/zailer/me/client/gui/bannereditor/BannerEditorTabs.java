@@ -17,11 +17,11 @@ public enum BannerEditorTabs implements ITabsEnum {
 
     BannerEditorTabs(Supplier<IBannerEditorTab> tabSupplier) {
         this.tabSupplier = tabSupplier;
-        this.id = this.getTab().getId();
+        this.id = this.createTab().getId();
     }
 
     @Override
-    public IBannerEditorTab getTab() {
+    public IBannerEditorTab createTab() {
         return this.tabSupplier.get();
     }
 

@@ -13,4 +13,6 @@ public interface ITextFormatTab extends IScreenTab {
     void setRandomValues();
 
     void componentsCallback(Consumer<Object> callback);
+
+    boolean hasStyles();
 }

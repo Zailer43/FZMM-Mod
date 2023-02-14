@@ -52,4 +52,9 @@ public class TextFormatInterleavedColorsTab implements ITextFormatTab {
     public void componentsCallback(Consumer<Object> callback) {
         this.callback = callback;
     }
+
+    @Override
+    public boolean hasStyles() {
+        return true;
+    }
 }

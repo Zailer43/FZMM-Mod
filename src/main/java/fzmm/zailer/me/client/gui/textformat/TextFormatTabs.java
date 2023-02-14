@@ -1,10 +1,7 @@
 package fzmm.zailer.me.client.gui.textformat;
 
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
-import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatGradientTab;
-import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatInterleavedColorsTab;
-import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatRainbowTab;
-import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatSimpleTab;
+import fzmm.zailer.me.client.gui.textformat.tabs.*;
 
 import java.util.function.Supplier;
 
@@ -12,18 +9,19 @@ public enum TextFormatTabs implements ITabsEnum {
     SIMPLE(TextFormatSimpleTab::new),
     GRADIENT(TextFormatGradientTab::new),
     RAINBOW(TextFormatRainbowTab::new),
-    INTERLEAVED(TextFormatInterleavedColorsTab::new);
+    INTERLEAVED(TextFormatInterleavedColorsTab::new),
+    PLACEHOLDER_API(TextFormatPlaceholderApiTab::new);
 
     private final Supplier<ITextFormatTab> tabSupplier;
     private final String id;
 
     TextFormatTabs(Supplier<ITextFormatTab> tabSupplier) {
         this.tabSupplier = tabSupplier;
-        this.id = this.getTab().getId();
+        this.id = this.createTab().getId();
     }
 
     @Override
-    public ITextFormatTab getTab() {
+    public ITextFormatTab createTab() {
         return this.tabSupplier.get();
     }
 

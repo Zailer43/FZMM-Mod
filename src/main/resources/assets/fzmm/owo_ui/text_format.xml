@@ -45,21 +45,51 @@
                                 <symbolButton>true</symbolButton>
                                 <fontButton>true</fontButton>
                             </text-box-row>
-                            <boolean-row>
-                                <id>bold</id>
-                            </boolean-row>
-                            <boolean-row>
-                                <id>italic</id>
-                            </boolean-row>
-                            <boolean-row>
-                                <id>obfuscated</id>
-                            </boolean-row>
-                            <boolean-row>
-                                <id>strikethrough</id>
-                            </boolean-row>
-                            <boolean-row>
-                                <id>underline</id>
-                            </boolean-row>
+                            <flow-layout direction="horizontal" id="styles-layout">
+                                <children>
+                                    <boolean-button id="bold">
+                                        <text translate="true">fzmm.gui.textFormat.option.bold</text>
+                                        <tooltip-text translate="true">fzmm.gui.textFormat.option.bold.tooltip</tooltip-text>
+                                        <enabled-color>#31CE52</enabled-color>
+                                    </boolean-button>
+
+                                    <boolean-button id="italic">
+                                        <text translate="true">fzmm.gui.textFormat.option.italic</text>
+                                        <tooltip-text translate="true">fzmm.gui.textFormat.option.italic.tooltip</tooltip-text>
+                                        <enabled-color>#31CE52</enabled-color>
+                                    </boolean-button>
+
+                                    <boolean-button id="strikethrough">
+                                        <text translate="true">fzmm.gui.textFormat.option.strikethrough</text>
+                                        <tooltip-text translate="true">fzmm.gui.textFormat.option.strikethrough.tooltip</tooltip-text>
+                                        <enabled-color>#31CE52</enabled-color>
+                                    </boolean-button>
+
+                                    <boolean-button id="underline">
+                                        <text translate="true">fzmm.gui.textFormat.option.underline</text>
+                                        <tooltip-text translate="true">fzmm.gui.textFormat.option.underline.tooltip</tooltip-text>
+                                        <enabled-color>#31CE52</enabled-color>
+                                    </boolean-button>
+
+                                    <boolean-button id="obfuscated">
+                                        <text translate="true">fzmm.gui.textFormat.option.obfuscated</text>
+                                        <tooltip-text translate="true">fzmm.gui.textFormat.option.obfuscated.tooltip</tooltip-text>
+                                        <enabled-color>#31CE52</enabled-color>
+                                    </boolean-button>
+                                </children>
+
+                                <gap>8</gap>
+
+                                <margins>
+                                    <vertical>4</vertical>
+                                </margins>
+
+                                <horizontal-alignment>center</horizontal-alignment>
+
+                                <sizing>
+                                    <horizontal method="fill">100</horizontal>
+                                </sizing>
+                            </flow-layout>
                             <screen-tab-row>
                                 <id>tabs</id>
                             </screen-tab-row>
@@ -109,6 +139,26 @@
                                     <color-list>
                                         <id>interleavedColorList</id>
                                     </color-list>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>placeholder_api</id>
+                                <children>
+                                    <flow-layout direction="vertical" id="placeholder-info">
+                                        <children>
+
+                                        </children>
+
+                                        <vertical-alignment>center</vertical-alignment>
+                                        <horizontal-alignment>center</horizontal-alignment>
+
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                        </sizing>
+
+                                        <gap>8</gap>
+                                    </flow-layout>
                                 </children>
                             </screen-tab>
                         </children>

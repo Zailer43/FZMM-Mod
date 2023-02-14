@@ -46,6 +46,7 @@ public class ColorListContainer extends FlowLayout {
         topLayout.child(labelComponent);
         topLayout.child(addButton);
         topLayout.child(this.colorAmountLabel);
+        topLayout.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
 
         this.child(topLayout);
         this.child(this.colorsLayout);

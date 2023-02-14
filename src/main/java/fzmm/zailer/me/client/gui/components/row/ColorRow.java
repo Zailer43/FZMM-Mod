@@ -37,7 +37,7 @@ public class ColorRow extends AbstractRow {
 
         Component box = Components.box(Sizing.fixed(15), Sizing.fixed(15))
                 .fill(true)
-                .margins(Insets.right(5)).cursorStyle(CursorStyle.HAND)
+                .cursorStyle(CursorStyle.HAND)
                 .id(getColorPreviewId(id));
 
         return new Component[]{

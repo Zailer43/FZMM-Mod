@@ -18,11 +18,11 @@ public enum ImagetextTabs implements ITabsEnum {
 
     ImagetextTabs(Supplier<IImagetextTab> tabSupplier) {
         this.tabSupplier = tabSupplier;
-        this.id = this.getTab().getId();
+        this.id = this.createTab().getId();
     }
 
     @Override
-    public IImagetextTab getTab() {
+    public IImagetextTab createTab() {
         return this.tabSupplier.get();
     }
 

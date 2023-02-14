@@ -18,11 +18,11 @@ public enum ConvertersTabs implements ITabsEnum {
 
     ConvertersTabs(Supplier<IScreenTab> tabSupplier) {
         this.tabSupplier = tabSupplier;
-        this.id = this.getTab().getId();
+        this.id = this.createTab().getId();
     }
 
     @Override
-    public IScreenTab getTab() {
+    public IScreenTab createTab() {
         return this.tabSupplier.get();
     }
 

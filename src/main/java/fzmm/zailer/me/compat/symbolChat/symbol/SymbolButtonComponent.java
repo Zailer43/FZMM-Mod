@@ -1,6 +1,6 @@
 package fzmm.zailer.me.compat.symbolChat.symbol;
 
-import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.compat.CompatMods;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.core.Sizing;
@@ -13,7 +13,7 @@ import java.util.Optional;
 public class SymbolButtonComponent {
 
     public static Optional<ButtonComponent> of(AbstractParentElement customSymbolSelectionPanel, Object symbolButtonWidget, TextFieldWidget textFieldWidget) {
-        if (!FzmmClient.SYMBOL_CHAT_PRESENT)
+        if (!CompatMods.SYMBOL_CHAT_PRESENT)
             return Optional.empty();
 
         net.replaceitem.symbolchat.gui.widget.symbolButton.SymbolButtonWidget symbolButton = (net.replaceitem.symbolchat.gui.widget.symbolButton.SymbolButtonWidget) symbolButtonWidget;

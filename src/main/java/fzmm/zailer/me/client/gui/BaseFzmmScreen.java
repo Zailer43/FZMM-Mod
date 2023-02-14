@@ -12,11 +12,12 @@ import fzmm.zailer.me.client.gui.components.image.ScreenshotZoneComponent;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.main.components.MainButtonComponent;
 import fzmm.zailer.me.client.gui.textformat.components.ColorListContainer;
+import fzmm.zailer.me.client.gui.utils.components.BooleanButton;
 import fzmm.zailer.me.client.gui.utils.containers.VerticalGridLayout;
+import fzmm.zailer.me.compat.CompatMods;
 import fzmm.zailer.me.compat.symbolChat.symbol.CustomSymbolSelectionPanel;
 import fzmm.zailer.me.compat.symbolChat.symbol.SymbolSelectionPanelComponent;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
-import io.wispforest.owo.config.ui.component.ConfigToggleButton;
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -54,7 +55,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         this.parent = parent;
         this.tabs = new HashMap<>();
 
-        if (FzmmClient.SYMBOL_CHAT_PRESENT) {
+        if (CompatMods.SYMBOL_CHAT_PRESENT) {
                 this.symbolSelectionPanel = new SymbolSelectionPanelComponent(CustomSymbolSelectionPanel.of(this, 0, 0));
 //            this.fontSelectionDropDown = new FontSelectionDropDownComponent(new net.replaceitem.symbolchat.gui.widget.FontSelectionDropDownWidget(0,
 //                    0,
@@ -76,7 +77,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         if (backButton != null)
             backButton.onPress(button -> this.close());
 
-        if (FzmmClient.SYMBOL_CHAT_PRESENT) {
+        if (CompatMods.SYMBOL_CHAT_PRESENT) {
             rootComponent.child(this.symbolSelectionPanel);
 //            rootComponent.child(this.fontSelectionDropDown);
         }
@@ -94,7 +95,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 
     protected void setTabs(Enum<? extends ITabsEnum> tabs) {
         for (var tab : tabs.getDeclaringClass().getEnumConstants())
-            this.tabs.put(tab.getId(), tab.getTab());
+            this.tabs.put(tab.getId(), tab.createTab());
     }
 
     @SuppressWarnings("unchecked")
@@ -167,7 +168,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         UIParsing.registerFactory("text-box-row", TextBoxRow::parse);
 
         // these are necessary in case you want to create the fields manually with XML
-        UIParsing.registerFactory("toggle-button", element -> new ConfigToggleButton());
+        UIParsing.registerFactory("boolean-button", BooleanButton::parse);
         UIParsing.registerFactory("number-slider", element -> new SliderWidget());
         UIParsing.registerFactory("text-option", element -> new ConfigTextBox());
         UIParsing.registerFactory("image-option", element -> new ImageButtonComponent());
