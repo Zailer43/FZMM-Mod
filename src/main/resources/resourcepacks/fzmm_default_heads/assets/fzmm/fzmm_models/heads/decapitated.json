@@ -121,7 +121,8 @@
         "width": 8,
         "height": 8
       },
-      "degrees": 270
+      "degrees": 270,
+      "overlap_source_hat": true
     },
     {
       "type": "select_texture",

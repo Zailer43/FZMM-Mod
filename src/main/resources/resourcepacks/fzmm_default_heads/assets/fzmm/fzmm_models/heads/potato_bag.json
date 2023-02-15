@@ -1,0 +1,92 @@
+{
+  "textures": [
+    {
+      "id": "potato_bag",
+      "path": "fzmm:textures/model_textures/potato_bag.png"
+    }
+  ],
+  "steps": [
+    {
+      "comment": "face",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "delete edge pixels",
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 8,
+        "y": 0,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 15,
+        "y": 0,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 8,
+        "y": 7,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "type": "delete",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 15,
+        "y": 7,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "potato_bag"
+    },
+    {
+      "comment": "potato bag",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    }
+  ]
+}

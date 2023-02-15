@@ -1,16 +1,17 @@
 {
   "textures": [
     {
-      "id": "ceramic_shard",
-      "path": "fzmm:textures/model_textures/ceramic_shard.png"
+      "id": "pop_vinyl",
+      "path": "fzmm:textures/model_textures/pop_vinyl.png"
     }
   ],
   "steps": [
     {
       "type": "select_texture",
-      "texture_id": "ceramic_shard"
+      "texture_id": "pop_vinyl"
     },
     {
+      "comment": "pop vinyl",
       "type": "copy",
       "source": {
         "offset": "HEAD",
@@ -26,16 +27,8 @@
       "texture_id": "base_skin"
     },
     {
-      "comment": "head",
+      "comment": "right side face",
       "type": "copy",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 10,
-        "y": 9,
-        "width": 3,
-        "height": 3
-      },
       "source": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -44,103 +37,61 @@
         "width": 8,
         "height": 8
       },
-      "add_hat_layer": true
-    },
-    {
-      "comment": "right arm",
-      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
-        "x": 9,
-        "y": 12,
-        "width": 1,
-        "height": 3
-      },
-      "source": {
-        "offset": "RIGHT_ARM",
-        "hat_layer": false,
-        "x": 4,
-        "y": 4,
+        "x": 2,
+        "y": 10,
         "width": 4,
-        "height": 12
+        "height": 4
       },
       "add_hat_layer": true
     },
     {
-      "comment": "body",
+      "comment": "right side body",
       "type": "copy",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 10,
-        "y": 12,
-        "width": 3,
-        "height": 3
-      },
       "source": {
         "offset": "BODY",
         "hat_layer": false,
         "x": 4,
         "y": 4,
         "width": 8,
-        "height": 12
+        "height": 1
+      },
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 1,
+        "y": 14,
+        "width": 6,
+        "height": 1
       },
       "add_hat_layer": true
     },
     {
-      "comment": "right leg",
+      "comment": "front side head",
       "type": "copy",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 10,
-        "y": 15,
-        "width": 1,
-        "height": 1
-      },
       "source": {
-        "offset": "RIGHT_LEG",
+        "offset": "HEAD",
         "hat_layer": false,
-        "x": 4,
-        "y": 4,
-        "width": 4,
-        "height": 12
+        "x": 8,
+        "y": 8,
+        "width": 8,
+        "height": 8
       },
-      "add_hat_layer": true
-    },
-    {
-      "comment": "left leg",
-      "type": "copy",
       "destination": {
         "offset": "HEAD",
         "hat_layer": false,
-        "x": 12,
-        "y": 15,
-        "width": 1,
-        "height": 1
+        "x": 11,
+        "y": 10,
+        "width": 3,
+        "height": 3
       },
-      "source": {
-        "offset": "LEFT_LEG",
-        "hat_layer": false,
-        "x": 4,
-        "y": 4,
-        "width": 4,
-        "height": 12
-      },
-      "add_hat_layer": true
+      "overlap_source_hat": true
     },
     {
-      "comment": "left arm",
+      "comment": "front side left arm",
       "type": "copy",
-      "destination": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 13,
-        "y": 12,
-        "width": 2,
-        "height": 1
-      },
       "source": {
         "offset": "LEFT_ARM",
         "hat_layer": false,
@@ -149,7 +100,57 @@
         "width": 4,
         "height": 12
       },
-      "add_hat_layer": true
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 10,
+        "y": 13,
+        "width": 1,
+        "height": 3
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "front side right arm",
+      "type": "copy",
+      "source": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 14,
+        "y": 13,
+        "width": 1,
+        "height": 3
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "front side body",
+      "type": "copy",
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 8,
+        "height": 12
+      },
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 11,
+        "y": 13,
+        "width": 3,
+        "height": 3
+      },
+      "overlap_source_hat": true
     }
   ]
 }
