@@ -31,6 +31,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.util.ScreenshotRecorder;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -301,14 +303,16 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         }
 
         BufferedImage skin = optionalSkin.get();
-        File file = SKIN_SAVE_FOLDER_PATH.toFile();
-        if (file.mkdirs())
+        File skinFolder = SKIN_SAVE_FOLDER_PATH.toFile();
+        if (skinFolder.mkdirs())
             FzmmClient.LOGGER.info("Skin save folder created");
 
-        file = ScreenshotRecorder.getScreenshotFilename(file);
+        File file = ScreenshotRecorder.getScreenshotFilename(skinFolder);
         try {
             ImageIO.write(skin, "png", file);
-            chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.saved")
+            MutableText fileMessage = Text.literal(file.getName())
+                    .setStyle(Style.EMPTY.withUnderline(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath())));
+            chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.saved", fileMessage)
                     .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
         } catch (IOException e) {
             e.printStackTrace();
