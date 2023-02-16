@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.apache.http.client.HttpResponseException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 public class HeadGalleryResources {
     public static final HashMap<String, ObjectArrayList<MinecraftHeadsData>> cache = new HashMap<>();
@@ -64,12 +66,17 @@ public class HeadGalleryResources {
                     if (cacheCategories)
                         cache.put(category, headsData);
                 } else {
-                    FzmmClient.LOGGER.error("[Head gallery] HTTP Error {} ({})", responseCode, conn.getResponseMessage());
+                    String errorReason = conn.getResponseMessage();
+                    FzmmClient.LOGGER.error("[Head gallery] HTTP Error {} ({})", responseCode, errorReason);
+                    throw new HttpResponseException(responseCode, errorReason == null ? "" : errorReason);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                throw new CompletionException(e);
             }
             return headsData;
+        }).exceptionally(e -> {
+            throw new RuntimeException(e.getCause());
         });
     }
 

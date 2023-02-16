@@ -54,6 +54,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
     private static final String CONTENT_SEARCH_ID = "content-search";
     private static final String TAGS_NBT_KEY = "tags";
     private static final String MINECRAFT_HEADS_BUTTON_ID = "minecraft-heads";
+    private static final String ERROR_MESSAGE_ID = "error-message";
     private int page;
     private VerticalGridLayout contentGridLayout;
     private LabelComponent currentPageLabel;
@@ -66,6 +67,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
     private Set<String> availableTags;
     @Nullable
     private OverlayContainer<?> tagOverlay;
+    private LabelComponent errorLabel;
 
     public HeadGalleryScreen(@Nullable Screen parent) {
         super("head_gallery", "headGallery", parent);
@@ -118,6 +120,9 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
 
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(MINECRAFT_HEADS_BUTTON_ID), true, buttonComponent -> this.minecraftHeadsExecute());
 
+        this.errorLabel = rootComponent.childById(LabelComponent.class, ERROR_MESSAGE_ID);
+        checkNull(this.errorLabel, "label", ERROR_MESSAGE_ID);
+
         this.applyFilters();
         this.setPage(1);
     }
@@ -134,7 +139,6 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
         });
 
         HeadGalleryResources.getCategory(category).thenAccept(categoryData -> this.client.execute(() -> {
-
             this.heads.clear();
             FzmmConfig config = FzmmClient.CONFIG;
             int nameColor = config.colors.headGalleryName().rgb();
@@ -187,7 +191,22 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
 
             this.applyFilters();
             this.setPage(1);
-        }));
+        })).whenComplete((unused, throwable) -> {
+            if (throwable == null) {
+                this.errorLabel.text(Text.empty());
+            } else {
+                this.heads.clear();
+                this.applyFilters();
+                this.setPage(1);
+                this.errorLabel.text(Text.translatable("fzmm.gui.headGallery.label.error", category, throwable.getCause())
+                        .setStyle(Style.EMPTY.withColor(0xD83F27)));
+
+                for (var component : this.categoryButtonList) {
+                    if (component instanceof ButtonWidget button)
+                        button.active = true;
+                }
+            }
+        });
     }
 
     private void updateAvailableTagList(ObjectArrayList<MinecraftHeadsData> categoryData) {

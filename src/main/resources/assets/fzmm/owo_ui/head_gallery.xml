@@ -26,7 +26,6 @@
                                     <vertical-size>40</vertical-size>
                                 </template>
 
-
                             </children>
 
                             <sizing>
@@ -72,8 +71,20 @@
 
                         <flow-layout direction="vertical">
                             <children>
-                                <scroll direction="vertical">
+                                <label id="error-message">
 
+                                    <margins>
+                                        <all>4</all>
+                                    </margins>
+
+                                    <positioning type="relative">0,0</positioning>
+
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                    </sizing>
+                                </label>
+
+                                <scroll direction="vertical">
                                     <vertical-grid-layout maxChildren="300" maxColumns="25" componentsWidth="16" componentsHeight="16" id="content">
                                         <children>
 
