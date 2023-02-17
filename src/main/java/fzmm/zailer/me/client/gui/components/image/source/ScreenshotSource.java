@@ -116,7 +116,7 @@ public class ScreenshotSource implements IInteractiveImageLoader {
 
             this.setImage(finalImage);
         } catch (IOException e) {
-            e.printStackTrace();
+            FzmmClient.LOGGER.error("Unexpected error loading an image", e);
             LoadingImageToast toast = new LoadingImageToast();
             MinecraftClient.getInstance().getToastManager().add(toast);
 

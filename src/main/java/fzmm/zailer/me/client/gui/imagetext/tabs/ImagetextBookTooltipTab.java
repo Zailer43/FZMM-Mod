@@ -53,7 +53,7 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
             ItemStack book = bookBuilder.get();
             assert book.getNbt() != null;
 
-            long bookLength = FzmmUtils.getLength(book);
+            long bookLength = FzmmUtils.getLengthInBytes(book);
             if (bookLength > BookNbtOverflow.MAX_BOOK_NBT_SIZE)
                 throw new BookNbtOverflow(bookLength);
             else

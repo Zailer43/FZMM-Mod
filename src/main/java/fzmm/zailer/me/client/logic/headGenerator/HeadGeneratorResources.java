@@ -71,9 +71,16 @@ public class HeadGeneratorResources {
                 resourcePack.findResources(ResourceType.CLIENT_RESOURCES, FzmmClient.MOD_ID, HEADS_MODELS_FOLDER,
                         (identifier, inputStreamInputSupplier) -> {
                             try {
-                                getHeadModel(identifier, inputStreamInputSupplier.get()).ifPresent(entries::add);
+                                InputStream inputStream = inputStreamInputSupplier.get();
+                                entries.add(getHeadModel(identifier, inputStream));
+                                inputStream.close();
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                FzmmClient.LOGGER.error("Error loading head generator model", e);
+                                assert MinecraftClient.getInstance().player != null;
+                                Text message = Text.translatable("fzmm.gui.headGenerator.model.error.loadingModel", identifier.getPath())
+                                        .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
+
+                                MinecraftClient.getInstance().player.sendMessage(message);
                             }
                         });
             }
@@ -81,40 +88,27 @@ public class HeadGeneratorResources {
         return entries;
     }
 
-    public static Optional<HeadModelEntry> getHeadModel(Identifier identifier, InputStream inputStream) {
+    public static HeadModelEntry getHeadModel(Identifier identifier, InputStream inputStream) {
         String path = identifier.getPath();
-        try {
-            String fileName = path.substring(HEADS_MODELS_FOLDER.length() + 1, path.length() - ".json".length());
+        String fileName = path.substring(HEADS_MODELS_FOLDER.length() + 1, path.length() - ".json".length());
 
-            JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
-            HashMap<String, BufferedImage> textures = getHeadModelTextures(jsonObject);
+        JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
+        HashMap<String, BufferedImage> textures = getHeadModelTextures(jsonObject);
 
-            JsonArray stepsArray = jsonObject.getAsJsonArray("steps");
-            List<IModelStep> steps = new ArrayList<>();
+        JsonArray stepsArray = jsonObject.getAsJsonArray("steps");
+        List<IModelStep> steps = new ArrayList<>();
 
-            for (var element : stepsArray) {
-                JsonObject stepObject = element.getAsJsonObject();
+        for (var element : stepsArray) {
+            JsonObject stepObject = element.getAsJsonObject();
 
-                switch (stepObject.get("type").getAsString()) {
-                    case "select_texture" -> steps.add(ModelSelectTextureStep.parse(stepObject));
-                    case "copy" -> steps.add(ModelCopyStep.parse(stepObject));
-                    case "delete" -> steps.add(ModelDeleteStep.parse(stepObject));
-                }
+            switch (stepObject.get("type").getAsString()) {
+                case "select_texture" -> steps.add(ModelSelectTextureStep.parse(stepObject));
+                case "copy" -> steps.add(ModelCopyStep.parse(stepObject));
+                case "delete" -> steps.add(ModelDeleteStep.parse(stepObject));
             }
-
-            Optional<HeadModelEntry> entry = Optional.of(new HeadModelEntry(toDisplayName(fileName), fileName, steps, textures));
-
-            inputStream.close();
-            return entry;
-        } catch (Exception e) {
-            e.printStackTrace();
-            assert MinecraftClient.getInstance().player != null;
-            Text message = Text.translatable("fzmm.gui.headGenerator.model.error.loadingModel", path)
-                    .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
-
-            MinecraftClient.getInstance().player.sendMessage(message);
         }
-        return Optional.empty();
+
+        return new HeadModelEntry(toDisplayName(fileName), fileName, steps, textures);
     }
 
     private static HashMap<String, BufferedImage> getHeadModelTextures(JsonObject jsonObject) {

@@ -7,8 +7,6 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -26,7 +24,6 @@ import java.util.concurrent.CompletableFuture;
 public class HeadUtils {
     public static final String MINESKIN_API = "https://api.mineskin.org/";
     private static final Identifier HEADS_WATER_MARK = new Identifier(FzmmClient.MOD_ID, "textures/watermark/heads_watermark.png");
-    private static final Logger LOGGER = LogManager.getLogger("FZMM HeadUtils");
     private static final String BOUNDARY = UUID.randomUUID().toString();
     private String skinValue;
     private boolean skinGenerated;
@@ -94,13 +91,14 @@ public class HeadUtils {
                             sb.append((char) ch);
                         }
                         this.useResponse(sb.toString());
+                        FzmmClient.LOGGER.info("[HeadUtils] '{}' head generated using mineskin", skinName);
                     }
                 } else {
-                    LOGGER.error("HTTP error {} generating skin in '{}'", httpCode, skinName);
+                    FzmmClient.LOGGER.error("[HeadUtils] HTTP error {} generating skin in '{}'", httpCode, skinName);
                     this.delayForNextInMillis = 6000;
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                FzmmClient.LOGGER.error("Head '{}' could not be generated", skinName, e);
                 this.skinValue = "";
                 this.skinGenerated = false;
                 this.delayForNextInMillis = 6000;

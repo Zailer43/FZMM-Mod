@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.components.image.source;
 
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.utils.ImageUtils;
 
@@ -30,7 +31,7 @@ public class ImageFileSource implements IImageLoaderFromText {
             this.image = ImageUtils.getImageFromPath(value);
             return ImageStatus.IMAGE_LOADED;
         } catch (Exception e) {
-            e.printStackTrace();
+            FzmmClient.LOGGER.error("Unexpected error loading an image", e);
             return ImageStatus.UNEXPECTED_ERROR;
         }
     }

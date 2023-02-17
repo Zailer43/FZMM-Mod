@@ -103,7 +103,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         checkNull(this.headListLayout, "flow-layout", HEAD_LIST_ID);
         checkNull(this.layerListLayout, "flow-layout", LAYER_LIST_ID);
         //bottom buttons
-        this.giveMergedHeadButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(GIVE_MERGED_HEAD_ID), true, button -> this.getMergedHead().ifPresent(this::giveHead));
+        this.giveMergedHeadButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(GIVE_MERGED_HEAD_ID), true, button -> this.getMergedHead().ifPresent(bufferedImage -> this.giveHead(bufferedImage, "merged")));
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(SAVE_SKIN_ID), true, this::saveSkinExecute);
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(OPEN_SKIN_FOLDER_ID), true, button -> Util.getOperatingSystem().open(SKIN_SAVE_FOLDER_PATH.toFile()));
         //other buttons
@@ -209,13 +209,13 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         }
     }
 
-    public void giveHead(BufferedImage image) {
+    public void giveHead(BufferedImage image, String textureName) {
         assert this.client != null;
         this.client.execute(() -> {
             this.setUndefinedDelay();
             String headName = this.getHeadName();
 
-            new HeadUtils().uploadHead(image, headName).thenAccept(headUtils -> {
+            new HeadUtils().uploadHead(image, headName + " + " + textureName).thenAccept(headUtils -> {
                 int delay = (int) TimeUnit.MILLISECONDS.toSeconds(headUtils.getDelayForNextInMillis());
                 HeadBuilder builder = headUtils.getBuilder();
                 if (!headName.isBlank())
@@ -315,7 +315,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
             chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.saved", fileMessage)
                     .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
         } catch (IOException e) {
-            e.printStackTrace();
+            FzmmClient.LOGGER.error("Unexpected error saving the skin", e);
             chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.saveError")
                     .setStyle(Style.EMPTY.withColor(Formatting.RED)));
         }

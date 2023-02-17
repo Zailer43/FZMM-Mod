@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.components.image;
 
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
 import fzmm.zailer.me.client.gui.components.image.source.IInteractiveImageLoader;
@@ -59,9 +60,14 @@ public class ImageButtonComponent extends ButtonComponent {
             ImageStatus status = imageLoaderFromText.loadImage(value);
             Optional<BufferedImage> image = imageLoaderFromText.getImage();
 
-            if (this.imageLoadEvent != null && status.statusType() == ImageStatus.StatusType.SUCCESSFUL) {
-                assert image.isPresent();
-                status = this.imageLoadEvent.apply(image.get());
+            if (status.statusType() == ImageStatus.StatusType.SUCCESSFUL) {
+                if (this.imageLoadEvent != null) {
+                    assert image.isPresent();
+                    status = this.imageLoadEvent.apply(image.get());
+                }
+                FzmmClient.LOGGER.info("[ImageButtonComponent] image loaded successfully");
+            } else {
+                FzmmClient.LOGGER.error("[ImageButtonComponent] failed to load image");
             }
 
             this.active = true;

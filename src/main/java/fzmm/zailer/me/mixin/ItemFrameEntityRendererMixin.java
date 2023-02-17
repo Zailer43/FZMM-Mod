@@ -18,11 +18,11 @@ public class ItemFrameEntityRendererMixin<T extends ItemFrameEntity> {
 
     @Inject(method = "render*", at = @At("HEAD"))
     private void render(T itemFrameEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        hasStack = itemFrameEntity.getHeldItemStack().isEmpty();
+        this.hasStack = itemFrameEntity.getHeldItemStack().isEmpty();
     }
 
     @ModifyVariable(method = "render*", at = @At("STORE"))
     private boolean disableItemFrameFrameRendering(boolean bl) {
-        return (FzmmClient.CONFIG.general.forceInvisibleItemFrame() && !hasStack) || bl;
+        return (FzmmClient.CONFIG.general.forceInvisibleItemFrame() && !this.hasStack) || bl;
     }
 }

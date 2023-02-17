@@ -65,13 +65,15 @@ public class HeadGalleryResources {
 
                     if (cacheCategories)
                         cache.put(category, headsData);
+
+                    FzmmClient.LOGGER.info("[HeadGalleryResources] category '{}' successfully loaded", category);
                 } else {
                     String errorReason = conn.getResponseMessage();
-                    FzmmClient.LOGGER.error("[Head gallery] HTTP Error {} ({})", responseCode, errorReason);
+                    FzmmClient.LOGGER.error("[HeadGalleryResources] HTTP Error {} ({})", responseCode, errorReason);
                     throw new HttpResponseException(responseCode, errorReason == null ? "" : errorReason);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                FzmmClient.LOGGER.error("The category '{}' of head gallery could not be loaded", category, e);
                 throw new CompletionException(e);
             }
             return headsData;

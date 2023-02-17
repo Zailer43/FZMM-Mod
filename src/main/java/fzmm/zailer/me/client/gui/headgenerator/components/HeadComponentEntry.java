@@ -73,7 +73,7 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     private void giveButtonExecute(boolean overlapHatLayer) {
         BufferedImage image = this.entry.getHeadSkin(this.parentScreen.getBaseSkin(), overlapHatLayer);
 
-        this.parentScreen.giveHead(image);
+        this.parentScreen.giveHead(image, this.getDisplayName());
     }
 
     private void addLayerButtonExecute(ButtonComponent button) {

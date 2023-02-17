@@ -55,8 +55,12 @@ public class ImageUtils {
 
     public static Optional<BufferedImage> getPlayerSkin(String name) throws IOException, NullPointerException, JsonIOException {
         Optional<BufferedImage> skin = getPlayerSkinFromCache(name);
+        skin = skin.isEmpty() ? getPlayerSkinFromMojang(name) : skin;
 
-        return skin.isEmpty() ? getPlayerSkinFromMojang(name) : skin;
+        if (skin.isEmpty())
+            FzmmClient.LOGGER.warn("[ImageUtils] skin of '{}' was not found", name);
+
+        return skin;
     }
 
     public static Optional<BufferedImage> getPlayerSkinFromMojang(String name) throws IOException {
@@ -122,6 +126,7 @@ public class ImageUtils {
             data.flip();
             return Optional.of(NativeImage.read(data));
         } catch (IOException ignored) {
+            FzmmClient.LOGGER.error("[ImageUtils]: could not convert BufferedImage to NativeImage");
             return Optional.empty();
         }
     }
@@ -184,9 +189,12 @@ public class ImageUtils {
         Resource resource = imageResource.get();
 
         try {
-            return HeadGeneratorResources.getHeadModel(OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER, resource.getInputStream());
+            InputStream inputStream = resource.getInputStream();
+            HeadModelEntry result = HeadGeneratorResources.getHeadModel(OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER, inputStream);
+            inputStream.close();
+            return Optional.of(result);
         } catch (IOException e) {
-            e.printStackTrace();
+            FzmmClient.LOGGER.error("Error loading head generator '{}' model", OLD_FORMAT_TO_NEW_FORMAT, e);
         }
 
         return Optional.empty();

@@ -63,8 +63,10 @@ public class FzmmUtils {
         MinecraftClient mc = MinecraftClient.getInstance();
         assert mc.player != null;
 
-        if (getLength(stack) > 1950000) {
+        long sizeLength = getLengthInBytes(stack);
+        if (sizeLength > 1950000) {
             mc.inGameHud.getChatHud().addMessage(Text.translatable("fzmm.giveItem.exceedLimit").setStyle(Style.EMPTY.withColor(Formatting.RED)));
+            FzmmClient.LOGGER.warn("[FzmmUtils] An attempt was made to give an item with size of {} bytes", sizeLength);
             return;
         }
 
@@ -104,10 +106,10 @@ public class FzmmUtils {
     }
 
     public static String getLengthInKB(ItemStack stack) {
-        return new DecimalFormat("#,##0.0").format(getLength(stack) / 1024f) + "KB";
+        return new DecimalFormat("#,##0.0").format(getLengthInBytes(stack) / 1024f) + "KB";
     }
 
-    public static long getLength(ItemStack stack) {
+    public static long getLengthInBytes(ItemStack stack) {
         ByteCountDataOutput byteCountDataOutput = ByteCountDataOutput.getInstance();
 
         try {
