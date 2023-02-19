@@ -1,9 +1,10 @@
-package fzmm.zailer.me.client.gui.components.row;
+package fzmm.zailer.me.client.gui.components.row.image;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
+import fzmm.zailer.me.client.gui.components.row.AbstractRow;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;

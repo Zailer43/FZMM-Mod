@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
-import fzmm.zailer.me.client.gui.utils.components.GiveItemComponent;
+import fzmm.zailer.me.client.gui.components.GiveItemComponent;
 import fzmm.zailer.me.client.logic.FzmmHistory;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;

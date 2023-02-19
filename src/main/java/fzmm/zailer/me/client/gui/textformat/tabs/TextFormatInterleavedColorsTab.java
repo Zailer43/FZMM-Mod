@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.textformat.tabs;
 
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.textformat.ITextFormatTab;
 import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
 import fzmm.zailer.me.client.gui.textformat.components.ColorListContainer;
@@ -56,5 +57,21 @@ public class TextFormatInterleavedColorsTab implements ITextFormatTab {
     @Override
     public boolean hasStyles() {
         return true;
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    @Override
+    public IMementoObject createMemento() {
+        return new InterleavedColorsMementoTab(this.colorListContainer.getColors(), (int) this.distanceField.parsedValue());
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+        InterleavedColorsMementoTab memento = (InterleavedColorsMementoTab) mementoTab;
+        this.colorListContainer.setColors(memento.colors);
+        this.distanceField.setFromDiscreteValue(memento.distance);
+    }
+
+    private record InterleavedColorsMementoTab(List<Color> colors, int distance) implements IMementoObject {
     }
 }

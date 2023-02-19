@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui.utils.containers;
+package fzmm.zailer.me.client.gui.components.containers;
 
 import io.wispforest.owo.ui.base.BaseParentComponent;
 import io.wispforest.owo.ui.core.Component;

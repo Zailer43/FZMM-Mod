@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.textformat.tabs;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.textformat.ITextFormatTab;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.compat.CompatMods;
@@ -92,5 +93,15 @@ public class TextFormatPlaceholderApiTab implements ITextFormatTab {
     @Override
     public boolean hasStyles() {
         return false;
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return null;
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+
     }
 }

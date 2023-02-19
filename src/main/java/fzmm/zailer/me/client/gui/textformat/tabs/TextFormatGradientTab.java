@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui.textformat.tabs;
 import fzmm.zailer.me.client.gui.textformat.ITextFormatTab;
 import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
 import fzmm.zailer.me.client.gui.textformat.components.ColorListContainer;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Color;
@@ -50,5 +51,20 @@ public class TextFormatGradientTab implements ITextFormatTab {
     @Override
     public boolean hasStyles() {
         return true;
+    }
+
+
+    @Override
+    public IMementoObject createMemento() {
+        return new GradientMementoTab(this.colorListContainer.getColors());
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+        GradientMementoTab memento = (GradientMementoTab) mementoTab;
+        this.colorListContainer.setColors(memento.colors);
+    }
+
+    private record GradientMementoTab(List<Color> colors) implements IMementoObject {
     }
 }

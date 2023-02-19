@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui.components.row;
+package fzmm.zailer.me.client.gui.components.row.image;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
@@ -6,6 +6,8 @@ import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.IImageMode;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
+import fzmm.zailer.me.client.gui.components.row.AbstractRow;
+import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -41,15 +43,15 @@ public class ImageRows extends FlowLayout {
     }
 
     @SuppressWarnings({"ConstantConditions", "UnstableApiUsage"})
-    public static ImageButtonComponent setup(FlowLayout rootComponent, String buttonId, String enumId, Enum<? extends IImageMode> defaultValue) {
+    public static ImageRowsElements setup(FlowLayout rootComponent, String buttonId, String enumId, Enum<? extends IImageMode> defaultValue) {
         ImageButtonRow.setup(rootComponent, buttonId, ((IImageMode) defaultValue).getImageGetter());
         ImageButtonComponent imageWidget = rootComponent.childById(ImageButtonComponent.class, ImageButtonRow.getImageButtonId(buttonId));
+        ConfigTextBox imageValueField = rootComponent.childById(ConfigTextBox.class, ImageButtonRow.getImageValueFieldId(buttonId));
 
-        EnumRow.setup(rootComponent, enumId, defaultValue, true, button -> {
+        EnumWidget enumMode = EnumRow.setup(rootComponent, enumId, defaultValue, true, button -> {
             IImageMode mode = (IImageMode) ((EnumWidget) button).getValue();
             IImageGetter imageGetter = mode.getImageGetter();
             imageWidget.setSourceType(imageGetter);
-            ConfigTextBox imageValueField = rootComponent.childById(ConfigTextBox.class, ImageButtonRow.getImageValueFieldId(buttonId));
 
             if (imageGetter instanceof IImageLoaderFromText imageLoaderFromText)
                 imageValueField.applyPredicate(imageLoaderFromText::predicate);
@@ -57,7 +59,7 @@ public class ImageRows extends FlowLayout {
             imageValueField.visible = imageGetter.hasTextField();
         });
 
-        return imageWidget;
+        return new ImageRowsElements(imageWidget, imageValueField, enumMode);
     }
 
     public static ImageRows parse(Element element) {

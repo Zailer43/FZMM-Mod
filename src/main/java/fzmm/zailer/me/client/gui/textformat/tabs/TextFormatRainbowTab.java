@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui.textformat.tabs;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.textformat.ITextFormatTab;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.config.FzmmConfig;
@@ -74,5 +75,28 @@ public class TextFormatRainbowTab implements ITextFormatTab {
     @Override
     public boolean hasStyles() {
         return true;
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    @Override
+    public IMementoObject createMemento() {
+        return new RainbowMementoTab(
+                (float) this.hue.parsedValue(),
+                (float) this.saturation.parsedValue(),
+                (float) this.brightness.parsedValue(),
+                (float) this.hueStep.parsedValue()
+        );
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+        RainbowMementoTab memento = (RainbowMementoTab) mementoTab;
+        this.hue.setFromDiscreteValue(memento.hue);
+        this.saturation.setFromDiscreteValue(memento.saturation);
+        this.brightness.setFromDiscreteValue(memento.brightness);
+        this.hueStep.setFromDiscreteValue(memento.hueStep);
+    }
+
+    private record RainbowMementoTab(float hue, float saturation, float brightness, float hueStep) implements IMementoObject {
     }
 }

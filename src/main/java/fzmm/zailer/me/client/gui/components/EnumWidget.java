@@ -38,6 +38,11 @@ public class EnumWidget extends ConfigEnumButton {
         return this.backingValues[this.selectedIndex];
     }
 
+    public void setValue(Enum<?> value) {
+        this.select(value.ordinal());
+        this.onPress.onPress(this);
+        this.updateMessage();
+    }
 
     @Override
     public ButtonComponent onPress(Consumer<ButtonComponent> button) {

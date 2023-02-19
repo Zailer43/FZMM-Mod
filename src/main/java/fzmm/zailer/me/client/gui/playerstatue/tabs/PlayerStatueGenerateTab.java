@@ -3,10 +3,12 @@ package fzmm.zailer.me.client.gui.playerstatue.tabs;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
-import fzmm.zailer.me.client.gui.components.row.ImageRows;
+import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
+import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.playerstatue.IPlayerStatueTab;
 import fzmm.zailer.me.client.gui.playerstatue.PlayerStatueScreen;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.playerStatue.PlayerStatue;
 import fzmm.zailer.me.client.toast.status.ImageStatus;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -24,7 +26,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     private static final String SKIN_ID = "skin";
     private static final String SKIN_SOURCE_ID = "skin-source";
     private static Thread CREATE_PLAYER_STATUE_THREAD = null;
-    private ImageButtonComponent skinButton;
+    private ImageRowsElements skinElements;
     private ButtonWidget executeButton;
 
     @Override
@@ -34,14 +36,15 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
 
     @Override
     public void setupComponents(FlowLayout rootComponent) {
-        this.skinButton = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_ID, SkinMode.NAME);
+        this.skinElements = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_ID, SkinMode.NAME);
         this.executeButton = rootComponent.childById(ButtonWidget.class, ButtonRow.getButtonId(PlayerStatueScreen.EXECUTE_ID));
 
-        this.skinButton.setImageLoadedEvent(this::skinCallback);
-        this.skinButton.setButtonCallback(skin -> {
+        ImageButtonComponent skinButton = this.skinElements.imageButton();
+        skinButton.setImageLoadedEvent(this::skinCallback);
+        skinButton.setButtonCallback(skin -> {
             this.executeButton.active = this.canExecute();
             if (skin.getWidth() == 64 && skin.getHeight() == 32)
-                this.skinButton.setImage(ImageUtils.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skin, true));
+                skinButton.setImage(ImageUtils.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skin, true));
         });
     }
 
@@ -51,7 +54,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
         if (!this.canExecute())
             return;
 
-        Optional<BufferedImage> image = this.skinButton.getImage();
+        Optional<BufferedImage> image = this.skinElements.imageButton().getImage();
 
         if (image.isEmpty())
             return;
@@ -76,7 +79,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
 
     @Override
     public boolean canExecute() {
-        return this.canExecute(this.skinButton.hasImage());
+        return this.canExecute(this.skinElements.imageButton().hasImage());
     }
 
     public boolean canExecute(boolean hasImage) {
@@ -91,5 +94,21 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
             return INVALID_SKIN_SIZE;
 
         return ImageStatus.IMAGE_LOADED;
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return new GenerateMementoTab(this.skinElements.valueField().getText(), (SkinMode) this.skinElements.mode().getValue());
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+        GenerateMementoTab memento = (GenerateMementoTab) mementoTab;
+        this.skinElements.valueField().setText(memento.skinRowValue);
+        this.skinElements.valueField().setCursor(0);
+        this.skinElements.mode().setValue(memento.sourceType);
+    }
+
+    private record GenerateMementoTab(String skinRowValue, SkinMode sourceType) implements IMementoObject {
     }
 }

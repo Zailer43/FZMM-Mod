@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.imagetext.tabs;
 
 import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.utils.CopyTextScreen;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -27,5 +28,15 @@ public class ImagetextCopyTab implements IImagetextTab {
     @Override
     public String getId() {
         return "copy";
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return null;
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+
     }
 }

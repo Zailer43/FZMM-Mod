@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.options.LoreOption;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -45,8 +46,24 @@ public class ImagetextLoreTab implements IImagetextTab {
     public String getId() {
         return "lore";
     }
+
     @Override
     public void setupComponents(FlowLayout rootComponent) {
         this.loreModeOption = EnumRow.setup(rootComponent, LORE_MODE_ID, LoreOption.ADD, null);
+    }
+
+
+    @Override
+    public IMementoObject createMemento() {
+        return new LoreMementoTab((LoreOption) this.loreModeOption.getValue());
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+        LoreMementoTab memento = (LoreMementoTab) mementoTab;
+        this.loreModeOption.setValue(memento.mode);
+    }
+
+    private record LoreMementoTab(LoreOption mode) implements IMementoObject {
     }
 }

@@ -6,6 +6,8 @@ import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
+import fzmm.zailer.me.client.gui.utils.IMementoScreen;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
@@ -17,8 +19,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Optional;
+
 @SuppressWarnings("UnstableApiUsage")
-public class PlayerStatueScreen extends BaseFzmmScreen {
+public class PlayerStatueScreen extends BaseFzmmScreen implements IMementoScreen {
     private static final String PLAYER_STATUE_FAQ_LINK = "https://github.com/Zailer43/FZMM-Mod/wiki/FAQ-Player-Statue";
     private static final String HORIZONTAL_DIRECTION_ID = "horizontal-direction";
     private static final String POS_X_ID = "posX";
@@ -27,6 +32,7 @@ public class PlayerStatueScreen extends BaseFzmmScreen {
     private static final String NAME_ID = "name";
     public static final String EXECUTE_ID = "execute";
     private static PlayerStatueTabs selectedTab = PlayerStatueTabs.CREATE;
+    private static PlayerStatueMemento memento = null;
     private EnumWidget directionEnum;
     private ConfigTextBox posX;
     private ConfigTextBox posY;
@@ -89,4 +95,33 @@ public class PlayerStatueScreen extends BaseFzmmScreen {
         this.getTab(selectedTab, IPlayerStatueTab.class).execute(direction, x, y, z, name);
     }
 
+    @Override
+    public void setMemento(IMementoObject memento) {
+        PlayerStatueScreen.memento = (PlayerStatueMemento) memento;
+    }
+
+    @Override
+    public Optional<IMementoObject> getMemento() {
+        return Optional.ofNullable(memento);
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return new PlayerStatueMemento(
+                this.nameField.getText(),
+                this.createMementoTabs()
+        );
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoObject) {
+        PlayerStatueMemento memento = (PlayerStatueMemento) mementoObject;
+        this.nameField.setText(memento.name());
+        this.nameField.setCursor(0);
+        this.restoreMementoTabs(memento.mementoTabHashMap);
+    }
+
+    private record PlayerStatueMemento(String name, HashMap<String, IMementoObject> mementoTabHashMap) implements IMementoObject {
+
+    }
 }

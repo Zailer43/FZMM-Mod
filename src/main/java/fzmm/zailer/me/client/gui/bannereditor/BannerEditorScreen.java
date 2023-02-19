@@ -2,11 +2,12 @@ package fzmm.zailer.me.client.gui.bannereditor;
 
 import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.gui.components.row.BooleanRow;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
-import fzmm.zailer.me.client.gui.utils.containers.VerticalGridLayout;
+import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.config.ui.component.ConfigToggleButton;
 import io.wispforest.owo.ui.component.BoxComponent;
@@ -107,7 +108,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         this.selectScreenTab(rootComponent, selectedTab, selectedTab);
 
         //other
-        ConfigToggleButton isShieldButton = BooleanRow.setup(rootComponent, IS_SHIELD_ID, false, button -> {
+        BooleanButton isShieldButton = BooleanRow.setup(rootComponent, IS_SHIELD_ID, false, button -> {
             boolean isShield = (boolean) ((ConfigToggleButton) button).parsedValue();
             this.updatePreview(this.bannerBuilder.isShield(isShield));
         });

@@ -198,4 +198,17 @@ public class ColorListContainer extends FlowLayout {
             }
         }
     }
+
+    public void setColors(List<Color> colors) {
+        List<Component> colorLayoutChildren = this.colorsLayout.children();
+        while (colors.size() > colorLayoutChildren.size()) {
+            this.addEntry();
+        }
+
+        for (int i = 0; i != colors.size(); i++) {
+            if (colorLayoutChildren.get(i) instanceof ColorListEntry colorEntry) {
+                colorEntry.setColor(colors.get(i));
+            }
+        }
+    }
 }

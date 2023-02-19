@@ -3,12 +3,17 @@ package fzmm.zailer.me.client.gui.headgenerator;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
-import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
 import fzmm.zailer.me.client.gui.components.row.*;
+import fzmm.zailer.me.client.gui.components.row.image.ImageButtonRow;
+import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
+import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
 import fzmm.zailer.me.client.gui.headgenerator.components.HeadComponentEntry;
 import fzmm.zailer.me.client.gui.headgenerator.components.HeadLayerComponentEntry;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
+import fzmm.zailer.me.client.gui.utils.IMementoScreen;
 import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
@@ -16,7 +21,6 @@ import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.ImageUtils;
-import io.wispforest.owo.config.ui.component.ConfigToggleButton;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -51,7 +55,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("UnstableApiUsage")
-public class HeadGeneratorScreen extends BaseFzmmScreen {
+public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScreen {
     private static final String HEAD_GENERATOR_WIKI_LINK = "https://github.com/Zailer43/FZMM-Mod/wiki/Head-Generator-Wiki";
     private static final Path SKIN_SAVE_FOLDER_PATH = Path.of(FabricLoader.getInstance().getGameDir().toString(), FzmmClient.MOD_ID, "skins");
     private static final String SKIN_ID = "skin";
@@ -67,19 +71,20 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     private static final String TOGGLE_FAVORITE_LIST_ID = "toggle-favorite-list";
     private static final String HEAD_GENERATION_METHOD_ID = "head-generation-method";
     private static final String WIKI_BUTTON_ID = "wiki-button";
+    private static HeadGeneratorMemento memento = null;
     private final Set<String> favoritesHeadsOnOpenScreen;
-    private ImageButtonComponent skinButton;
+    private ImageRowsElements skinElements;
     private TextFieldWidget headNameField;
-    private ConfigToggleButton overlapHatLayerButton;
+    private BooleanButton overlapHatLayerButton;
     private TextFieldWidget searchField;
     private FlowLayout headListLayout;
     private FlowLayout layerListLayout;
     private ButtonWidget giveMergedHeadButton;
     private ButtonWidget toggleFavoriteList;
     private EnumWidget headGenerationMethod;
-    private EnumWidget skinMode;
     private boolean showFavorites;
     private BufferedImage baseSkin;
+    private String previousSkinName;
 
     public HeadGeneratorScreen(@Nullable Screen parent) {
         super("head_generator", "headGenerator", parent);
@@ -90,10 +95,10 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     @SuppressWarnings("ConstantConditions")
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
         //general
-        this.skinButton = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, SkinMode.NAME);
-        this.skinButton.setButtonCallback(this::imageCallback);
+        this.skinElements = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, SkinMode.NAME);
+        this.skinElements.imageButton().setButtonCallback(this::imageCallback);
+        this.previousSkinName = "";
         this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "", 512);
-        this.skinMode = rootComponent.childById(EnumWidget.class, EnumRow.getEnumId(SKIN_SOURCE_TYPE_ID));
         rootComponent.childById(TextFieldWidget.class, ImageButtonRow.getImageValueFieldId(SKIN_ID))
                 .setChangedListener(this::onChangeSkinField);
         this.overlapHatLayerButton = BooleanRow.setup(rootComponent, OVERLAP_HAT_LAYER_ID, FzmmClient.CONFIG.headGenerator.defaultOverlapHatLayer(), button -> this.client.execute(this::updatePreviews));
@@ -137,7 +142,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
 
         if (skinBase.getWidth() == 64 && skinBase.getHeight() == 32) {
             skinBase = ImageUtils.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skinBase, false);
-            this.skinButton.setImage(skinBase);
+            this.skinElements.imageButton().setImage(skinBase);
         }
 
         if (ImageUtils.isAlexModel(1, skinBase))
@@ -228,7 +233,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     }
 
     private Optional<BufferedImage> getMergedHead() {
-        Optional<BufferedImage> optionalSkin = this.skinButton.getImage();
+        Optional<BufferedImage> optionalSkin = this.skinElements.imageButton().getImage();
         if (optionalSkin.isEmpty())
             return Optional.empty();
         boolean onlyBaseSkin = this.layerListLayout.children().size() == 1;
@@ -237,7 +242,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
         if (onlyBaseSkin) {
             headGenerator = new HeadGenerator().addTexture(skin);
         } else {
-            headGenerator = new HeadGenerator(skin, (boolean) this.overlapHatLayerButton.parsedValue());
+            headGenerator = new HeadGenerator(skin, this.overlapHatLayerButton.enabled());
         }
 
         for (var entry : this.layerListLayout.children()) {
@@ -347,7 +352,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     }
 
     public boolean overlapHatLayerButton() {
-        return (boolean) this.overlapHatLayerButton.parsedValue();
+        return this.overlapHatLayerButton.enabled();
     }
 
     @Override
@@ -359,10 +364,54 @@ public class HeadGeneratorScreen extends BaseFzmmScreen {
     }
 
     private void onChangeSkinField(String value) {
-        if (this.skinMode == null)
+        EnumWidget mode = this.skinElements.mode();
+        if (mode == null)
             return;
-
-        if (((SkinMode) this.skinMode.getValue()).isHeadName())
+        if (((SkinMode) mode.getValue()).isHeadName() && this.headNameField.getText().equals(this.previousSkinName))
             this.headNameField.setText(value);
+
+        this.previousSkinName = value;
+    }
+
+    @Override
+    public void setMemento(IMementoObject memento) {
+        HeadGeneratorScreen.memento = (HeadGeneratorMemento) memento;
+    }
+
+    @Override
+    public Optional<IMementoObject> getMemento() {
+        return Optional.ofNullable(memento);
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return new HeadGeneratorMemento(
+                this.headNameField.getText(),
+                (SkinMode) this.skinElements.mode().getValue(),
+                this.skinElements.valueField().getText(),
+                this.showFavorites,
+                this.overlapHatLayerButton.enabled(),
+                (HeadGenerationMethod) this.headGenerationMethod.getValue(),
+                this.searchField.getText()
+        );
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoObject) {
+        HeadGeneratorMemento memento = (HeadGeneratorMemento) mementoObject;
+        this.headNameField.setText(memento.headName);
+        this.headNameField.setCursor(0);
+        this.skinElements.mode().setValue(memento.skinMode);
+        this.skinElements.valueField().setText(memento.skinRowValue);
+        this.skinElements.valueField().setCursor(0);
+        if (memento.showFavorites)
+            this.toggleFavoriteListExecute();
+        this.overlapHatLayerButton.enabled(memento.overlapHatLayer);
+        this.headGenerationMethod.setValue(memento.method);
+        this.searchField.setText(memento.search);
+    }
+
+    private record HeadGeneratorMemento(String headName, SkinMode skinMode, String skinRowValue, boolean showFavorites,
+                                        boolean overlapHatLayer, HeadGenerationMethod method, String search) implements IMementoObject {
     }
 }

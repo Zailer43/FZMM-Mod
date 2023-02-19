@@ -7,6 +7,8 @@ import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.NumberRow;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
+import fzmm.zailer.me.client.gui.utils.IMementoScreen;
 import fzmm.zailer.me.client.logic.EncryptbookLogic;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -19,8 +21,10 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 @SuppressWarnings("UnstableApiUsage")
-public class EncryptBookScreen extends BaseFzmmScreen {
+public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen {
     private static final String ENCRYPTBOOK_FAQ_LINK = "https://github.com/Zailer43/FZMM-Mod/wiki/FAQ-Encryptbook";
     private static final String MESSAGE_ID = "message";
     private static final String SEED_ID = "seed";
@@ -31,7 +35,8 @@ public class EncryptBookScreen extends BaseFzmmScreen {
     private static final String GIVE_ID = "give";
     private static final String GET_DECODER_ID = "get-decoder";
     private static final String FAQ_ID = "faq";
-    private static int seed = 0;
+    private static EncryptBookMemento memento = null;
+    private ConfigTextBox seedField;
     private TextFieldWidget messageField;
     private TextFieldWidget paddingCharactersField;
     private TextFieldWidget authorField;
@@ -47,15 +52,7 @@ public class EncryptBookScreen extends BaseFzmmScreen {
         //general
         FzmmConfig.Encryptbook config = FzmmClient.CONFIG.encryptbook;
         this.messageField = TextBoxRow.setup(rootComponent, MESSAGE_ID, config.defaultBookMessage(), config.maxMessageLength());
-        ConfigTextBox seedField = NumberRow.setup(rootComponent, SEED_ID, 0, Integer.class, s -> {
-            try {
-                seed = Integer.parseInt(s);
-            } catch (NumberFormatException ignored) {
-            }
-        });
-
-        seedField.setText(String.valueOf(seed));
-        seedField.setCursor(0);
+        this.seedField = NumberRow.setup(rootComponent, SEED_ID, 0, Integer.class);
         this.paddingCharactersField = TextBoxRow.setup(rootComponent, PADDING_CHARACTERS_ID, config.padding(), 512);
         assert MinecraftClient.getInstance().player != null;
         this.authorField = TextBoxRow.setup(rootComponent, AUTHOR_ID, MinecraftClient.getInstance().player.getName().getString(), 512);
@@ -82,6 +79,7 @@ public class EncryptBookScreen extends BaseFzmmScreen {
         if (paddingChars.isEmpty())
             paddingChars = config.padding();
 
+        int seed = (int) this.seedField.parsedValue();
         String author = this.authorField.getText();
         String title = this.titleField.getText();
         int maxMsgLength = (int) this.maxMessageLengthField.parsedValue();
@@ -91,6 +89,7 @@ public class EncryptBookScreen extends BaseFzmmScreen {
 
     private void getDecoder(ButtonWidget buttonWidget) {
         int maxMsgLength = (int) this.maxMessageLengthField.parsedValue();
+        int seed = (int) this.seedField.parsedValue();
         EncryptbookLogic.showDecryptorInChat(seed, maxMsgLength);
     }
 
@@ -103,5 +102,46 @@ public class EncryptBookScreen extends BaseFzmmScreen {
 
             this.client.setScreen(this);
         }, ENCRYPTBOOK_FAQ_LINK, true));
+    }
+
+    @Override
+    public void setMemento(IMementoObject memento) {
+        EncryptBookScreen.memento = (EncryptBookMemento) memento;
+    }
+
+    @Override
+    public Optional<IMementoObject> getMemento() {
+        return Optional.ofNullable(memento);
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return new EncryptBookMemento((int) this.seedField.parsedValue(),
+                this.messageField.getText(),
+                this.authorField.getText(),
+                this.paddingCharactersField.getText(),
+                (int) this.maxMessageLengthField.parsedValue(),
+                this.titleField.getText()
+        );
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoObject) {
+        EncryptBookMemento memento = (EncryptBookMemento) mementoObject;
+        this.seedField.setText(String.valueOf(memento.seed));
+        this.seedField.setCursor(0);
+        this.messageField.setText(memento.message);
+        this.messageField.setCursor(0);
+        this.authorField.setText(memento.author);
+        this.authorField.setCursor(0);
+        this.paddingCharactersField.setText(memento.paddingCharacters);
+        this.paddingCharactersField.setCursor(0);
+        this.maxMessageLengthField.setFromDiscreteValue(memento.maxMessageLength);
+        this.titleField.setText(memento.title);
+        this.titleField.setCursor(0);
+    }
+
+    private record EncryptBookMemento(int seed, String message, String author, String paddingCharacters,
+                                      int maxMessageLength, String title) implements IMementoObject {
     }
 }

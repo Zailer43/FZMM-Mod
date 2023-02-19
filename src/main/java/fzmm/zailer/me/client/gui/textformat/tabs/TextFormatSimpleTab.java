@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.textformat.tabs;
 
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.textformat.ITextFormatTab;
 import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
@@ -53,5 +54,20 @@ public class TextFormatSimpleTab implements ITextFormatTab {
     @Override
     public boolean hasStyles() {
         return true;
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return new SimpleMementoTab((Color) this.color.parsedValue());
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+        SimpleMementoTab simpleMementoTab = (SimpleMementoTab) mementoTab;
+        this.color.setText(simpleMementoTab.color.asHexString(false));
+        this.color.setCursor(0);
+    }
+
+    private record SimpleMementoTab(Color color) implements IMementoObject {
     }
 }

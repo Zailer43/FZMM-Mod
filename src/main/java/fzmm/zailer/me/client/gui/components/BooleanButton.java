@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui.utils.components;
+package fzmm.zailer.me.client.gui.components;
 
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.Color;
@@ -25,6 +25,14 @@ public class BooleanButton extends ButtonComponent {
         this.updateMessage();
     }
 
+    public BooleanButton(Text enabledText, Text disabledText) {
+        super(Text.empty(), button -> {});
+        this.verticalSizing(Sizing.fixed(20));
+        this.enabledText = enabledText;
+        this.disabledText = disabledText;
+        this.updateMessage();
+    }
+
     @Override
     public void onPress() {
         this.enabled = !this.enabled;
@@ -39,6 +47,7 @@ public class BooleanButton extends ButtonComponent {
     public void enabled(boolean enabled) {
         this.enabled = enabled;
         this.updateMessage();
+        this.onPress.onPress(this);
     }
 
     public boolean enabled() {

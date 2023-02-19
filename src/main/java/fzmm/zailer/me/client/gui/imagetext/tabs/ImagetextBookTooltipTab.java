@@ -7,6 +7,7 @@ import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextBookOption;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.client.toast.BookNbtOverflowToast;
@@ -74,5 +75,24 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
     @Override
     public String getId() {
         return "bookTooltip";
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return new BookTooltipMementoTab((ImagetextBookOption) this.bookTooltipMode.getValue(),
+                this.bookTooltipAuthor.getText(), this.bookTooltipMessage.getText());
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+        BookTooltipMementoTab memento = (BookTooltipMementoTab) mementoTab;
+        this.bookTooltipAuthor.setText(memento.author);
+        this.bookTooltipAuthor.setCursor(0);
+        this.bookTooltipMessage.setText(memento.message);
+        this.bookTooltipMessage.setCursor(0);
+        this.bookTooltipMode.setValue(memento.mode);
+    }
+
+    private record BookTooltipMementoTab(ImagetextBookOption mode, String author, String message) implements IMementoObject {
     }
 }

@@ -7,7 +7,9 @@ import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.utils.CopyTextScreen;
-import fzmm.zailer.me.client.gui.utils.components.BooleanButton;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
+import fzmm.zailer.me.client.gui.utils.IMementoScreen;
+import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -22,9 +24,11 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
-public class TextFormatScreen extends BaseFzmmScreen {
+public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
     public static final Text EMPTY_COLOR_TEXT = Text.translatable("fzmm.gui.textFormat.error.emptyColor").setStyle(Style.EMPTY.withColor(0xF2200D));
     private static final String MESSAGE_PREVIEW_ID = "message-preview";
     private static final String MESSAGE_ID = "message";
@@ -38,6 +42,7 @@ public class TextFormatScreen extends BaseFzmmScreen {
     private static final String SET_NAME_ID = "set-name";
     private static final String COPY_ID = "copy";
     private static final String RANDOM_ID = "random";
+    private static TextFormatMemento memento = null;
     private static TextFormatTabs selectedTab = TextFormatTabs.SIMPLE;
     private LabelComponent messagePreviewLabel;
     private TextFieldWidget messageTextField;
@@ -170,5 +175,46 @@ public class TextFormatScreen extends BaseFzmmScreen {
         booleanButton.onPress(buttonComponent -> this.updateMessagePreview());
         booleanButton.enabled(false);
         return booleanButton;
+    }
+
+    @Override
+    public void setMemento(IMementoObject memento) {
+        TextFormatScreen.memento = (TextFormatMemento) memento;
+    }
+
+    @Override
+    public Optional<IMementoObject> getMemento() {
+        return Optional.ofNullable(memento);
+    }
+
+    @Override
+    public TextFormatMemento createMemento() {
+        return new TextFormatMemento(
+                this.messageTextField.getText(),
+                this.obfuscatedToggle.enabled(),
+                this.boldToggle.enabled(),
+                this.strikethroughToggle.enabled(),
+                this.underlineToggle.enabled(),
+                this.italicToggle.enabled(),
+                this.createMementoTabs()
+        );
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoObject) {
+        TextFormatMemento memento = (TextFormatMemento) mementoObject;
+        this.messageTextField.setText(memento.message);
+        this.messageTextField.setCursor(0);
+        this.obfuscatedToggle.enabled(memento.obfuscated);
+        this.boldToggle.enabled(memento.bold);
+        this.strikethroughToggle.enabled(memento.strikethrough);
+        this.underlineToggle.enabled(memento.underline);
+        this.italicToggle.enabled(memento.italic);
+        this.restoreMementoTabs(memento.mementoTabHashMap);
+    }
+
+    public record TextFormatMemento(String message, boolean obfuscated, boolean bold,
+                                    boolean strikethrough, boolean underline, boolean italic,
+                                    HashMap<String, IMementoObject> mementoTabHashMap) implements IMementoObject {
     }
 }

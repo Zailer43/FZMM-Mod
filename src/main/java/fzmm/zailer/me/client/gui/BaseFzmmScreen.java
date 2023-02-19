@@ -2,18 +2,19 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
-import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
-import fzmm.zailer.me.client.gui.components.tabs.IScreenTabIdentifier;
-import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
-import fzmm.zailer.me.client.gui.components.tabs.ScreenTabContainer;
+import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
+import fzmm.zailer.me.client.gui.components.tabs.*;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.ScreenshotZoneComponent;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.main.components.MainButtonComponent;
 import fzmm.zailer.me.client.gui.textformat.components.ColorListContainer;
-import fzmm.zailer.me.client.gui.utils.components.BooleanButton;
-import fzmm.zailer.me.client.gui.utils.containers.VerticalGridLayout;
+import fzmm.zailer.me.client.gui.utils.IMemento;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
+import fzmm.zailer.me.client.gui.utils.IMementoScreen;
+import fzmm.zailer.me.client.gui.components.BooleanButton;
+import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.compat.CompatMods;
 import fzmm.zailer.me.compat.symbolChat.symbol.CustomSymbolSelectionPanel;
 import fzmm.zailer.me.compat.symbolChat.symbol.SymbolSelectionPanelComponent;
@@ -83,6 +84,9 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         }
 
         this.setupButtonsCallbacks(rootComponent);
+
+        if (FzmmClient.CONFIG.history.automaticallyRecoverScreens() && this instanceof IMementoScreen mementoScreen)
+            mementoScreen.getMemento().ifPresent(mementoScreen::restoreMemento);
     }
 
     protected abstract void setupButtonsCallbacks(FlowLayout rootComponent);
@@ -91,11 +95,32 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     public void close() {
         assert this.client != null;
         this.client.setScreen(this.parent);
+
+        if (FzmmClient.CONFIG.history.automaticallyRecoverScreens() && this instanceof IMementoScreen mementoScreen)
+            mementoScreen.setMemento(mementoScreen.createMemento());
     }
+
 
     protected void setTabs(Enum<? extends ITabsEnum> tabs) {
         for (var tab : tabs.getDeclaringClass().getEnumConstants())
             this.tabs.put(tab.getId(), tab.createTab());
+    }
+
+    protected HashMap<String, IMementoObject> createMementoTabs() {
+        HashMap<String, IMementoObject> tabs = new HashMap<>();
+        for (var tab : this.tabs.values()) {
+            if (tab instanceof IMemento mementoTab)
+                tabs.put(tab.getId(), mementoTab.createMemento());
+
+        }
+        return tabs;
+    }
+
+    protected void restoreMementoTabs(HashMap<String, IMementoObject> mementoTabs) {
+        for (var tab : this.tabs.values()) {
+            if (tab instanceof IMemento mementoTab)
+                mementoTab.restoreMemento(mementoTabs.get(tab.getId()));
+        }
     }
 
     @SuppressWarnings("unchecked")

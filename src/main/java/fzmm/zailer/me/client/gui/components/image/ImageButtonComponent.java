@@ -26,7 +26,8 @@ public class ImageButtonComponent extends ButtonComponent {
     private Consumer<BufferedImage> callback;
 
     public ImageButtonComponent() {
-        super(Text.empty(), button -> {});
+        super(Text.empty(), button -> {
+        });
         this.verticalSizing(Sizing.fixed(20));
         this.image = null;
         this.mode = new ImagePlayerNameSource();
@@ -53,7 +54,7 @@ public class ImageButtonComponent extends ButtonComponent {
     }
 
     public void loadImageFromText(IImageLoaderFromText imageLoaderFromText, String value) {
-        MinecraftClient.getInstance().execute(() ->{
+        MinecraftClient.getInstance().execute(() -> {
             this.active = false;
             LoadingImageToast toast = new LoadingImageToast();
             MinecraftClient.getInstance().getToastManager().add(toast);
@@ -92,7 +93,7 @@ public class ImageButtonComponent extends ButtonComponent {
 
     /**
      * @param callback The event will only fire if the image is loaded successfully,
-     * the callback return will overwrite the status
+     *                 the callback return will overwrite the status
      */
     public void setImageLoadedEvent(Function<BufferedImage, ImageStatus> callback) {
         this.imageLoadEvent = callback;

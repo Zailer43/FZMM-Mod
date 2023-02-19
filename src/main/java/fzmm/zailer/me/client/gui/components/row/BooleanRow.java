@@ -1,11 +1,12 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import io.wispforest.owo.config.ui.component.ConfigToggleButton;
+import fzmm.zailer.me.client.gui.components.BooleanButton;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
@@ -15,44 +16,40 @@ public class BooleanRow extends AbstractRow {
     }
 
     @Override
-    @SuppressWarnings("UnstableApiUsage")
     public Component[] getComponents(String id, String tooltipId) {
-        Component buttonComponent = new ConfigToggleButton()
-                .id(getToggleButtonId(id));
+        Component buttonComponent = new BooleanButton(Text.translatable("text.owo.config.boolean_toggle.enabled"), Text.translatable("text.owo.config.boolean_toggle.disabled"))
+                .id(getBooleanButtonId(id));
 
         return new Component[] {
                 buttonComponent
         };
     }
 
-    public static String getToggleButtonId(String id) {
-        return id + "-toggle-button";
+    public static String getBooleanButtonId(String id) {
+        return id + "-boolean-button";
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    public static ConfigToggleButton setup(FlowLayout rootComponent, String id, boolean defaultValue) {
+    public static BooleanButton setup(FlowLayout rootComponent, String id, boolean defaultValue) {
         return setup(rootComponent, id, defaultValue, null);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    public static ConfigToggleButton setup(FlowLayout rootComponent, String id, boolean defaultValue, @Nullable ButtonComponent.PressAction toggledListener) {
-        ConfigToggleButton toggleButton = rootComponent.childById(ConfigToggleButton.class, getToggleButtonId(id));
+    public static BooleanButton setup(FlowLayout rootComponent, String id, boolean defaultValue, @Nullable ButtonComponent.PressAction toggledListener) {
+        BooleanButton booleanButton = rootComponent.childById(BooleanButton.class, getBooleanButtonId(id));
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
 
-        BaseFzmmScreen.checkNull(toggleButton, "toggle-button", getToggleButtonId(id));
+        BaseFzmmScreen.checkNull(booleanButton, "boolean-button", getBooleanButtonId(id));
         BaseFzmmScreen.checkNull(resetButton, "button", getResetButtonId(id));
 
-        toggleButton.enabled(defaultValue);
-        toggleButton.onPress(button -> {
-            resetButton.active = ((boolean) toggleButton.parsedValue()) != defaultValue;
+        booleanButton.enabled(defaultValue);
+        booleanButton.onPress(button -> {
+            resetButton.active = booleanButton.enabled() != defaultValue;
             if (toggledListener != null)
                 toggledListener.onPress(button);
         });
-        toggleButton.horizontalSizing(Sizing.fixed(NORMAL_WIDTH));
-
-        resetButton.onPress(button -> toggleButton.onPress());
-        resetButton.active = ((boolean) toggleButton.parsedValue()) != defaultValue;
-        return toggleButton;
+        booleanButton.horizontalSizing(Sizing.fixed(NORMAL_WIDTH));
+        resetButton.onPress(button -> booleanButton.onPress());
+        resetButton.active = booleanButton.enabled() != defaultValue;
+        return booleanButton;
     }
 
     public static BooleanRow parse(Element element) {

@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.playerstatue.tabs;
 
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.playerstatue.IPlayerStatueTab;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.playerStatue.PlayerStatue;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -31,5 +32,15 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
     @Override
     public boolean canExecute() {
         return true;
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return null;
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+
     }
 }

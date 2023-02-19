@@ -124,14 +124,7 @@ public class FzmmConfigModel {
         public int maxItemHistory = 100;
         @Hook
         public int maxHeadHistory = 100;
-//        public int maxTotalScreensHistory = 50;
-//        public boolean recoverScreensAutomatically = true;
-//        public boolean historyOfConverters = true;
-//        public boolean historyOfEncryptBook = true;
-//        public boolean historyOfHeadGenerator = true;
-//        public boolean historyOfImagetext = true;
-//        public boolean historyOfPlayerStatue = true;
-//        public boolean historyOfTextFormat = true;
+        public boolean automaticallyRecoverScreens = true;
     }
 
     @SuppressWarnings("unused")

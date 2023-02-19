@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui.utils.components;
+package fzmm.zailer.me.client.gui.components;
 
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.component.ItemComponent;

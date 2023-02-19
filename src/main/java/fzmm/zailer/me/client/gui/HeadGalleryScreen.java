@@ -5,8 +5,10 @@ import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
-import fzmm.zailer.me.client.gui.utils.components.GiveItemComponent;
-import fzmm.zailer.me.client.gui.utils.containers.VerticalGridLayout;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
+import fzmm.zailer.me.client.gui.utils.IMementoScreen;
+import fzmm.zailer.me.client.gui.components.GiveItemComponent;
+import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.client.logic.headGallery.HeadGalleryResources;
 import fzmm.zailer.me.client.logic.headGallery.MinecraftHeadsData;
 import fzmm.zailer.me.config.FzmmConfig;
@@ -36,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HeadGalleryScreen extends BaseFzmmScreen {
+public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen {
 
     private static final int SELECTED_TAG_COLOR = 0x43BCB2;
     private static final String TAG_BUTTON_TEXT = "fzmm.gui.headGallery.button.tags";
@@ -55,6 +57,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
     private static final String TAGS_NBT_KEY = "tags";
     private static final String MINECRAFT_HEADS_BUTTON_ID = "minecraft-heads";
     private static final String ERROR_MESSAGE_ID = "error-message";
+    private static HeadGalleryMemento memento = null;
     private int page;
     private VerticalGridLayout contentGridLayout;
     private LabelComponent currentPageLabel;
@@ -68,6 +71,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
     @Nullable
     private OverlayContainer<?> tagOverlay;
     private LabelComponent errorLabel;
+    private String selectedCategory;
 
     public HeadGalleryScreen(@Nullable Screen parent) {
         super("head_gallery", "headGallery", parent);
@@ -86,8 +90,10 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
         checkNull(categoryList, "flow-layout", CATEGORY_LAYOUT_ID);
 
         this.categoryButtonList = HeadGalleryResources.CATEGORY_LIST.stream()
-                .map(category -> Components.button(Text.translatable("fzmm.gui.headGallery.button.category." + category), buttonComponent -> this.categoryButtonExecute(buttonComponent, category))
+                .map(category -> Components.button(Text.translatable("fzmm.gui.headGallery.button.category." + category),
+                                buttonComponent -> this.categoryButtonExecute(buttonComponent, category, null))
                         .horizontalSizing(Sizing.fill(100))
+                        .id(category)
                 ).collect(Collectors.toList());
 
         categoryList.children(this.categoryButtonList);
@@ -95,7 +101,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
         FlowLayout tagsLayout = rootComponent.childById(FlowLayout.class, TAGS_LAYOUT_ID);
         checkNull(tagsLayout, "flow-layout", TAGS_LAYOUT_ID);
 
-        this.tagButton = Components.button(this.getTagButtonText(), buttonComponent -> this.tagButtonExecute(rootComponent));
+        this.tagButton = Components.button(this.getTagButtonText(), buttonComponent -> this.openTagsExecute(rootComponent));
         this.tagButton.horizontalSizing(Sizing.fill(100));
 
         tagsLayout.child(this.tagButton);
@@ -127,7 +133,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
         this.setPage(1);
     }
 
-    private void categoryButtonExecute(ButtonComponent selectedButton, String category) {
+
+    private void categoryButtonExecute(ButtonComponent selectedButton, String category, @Nullable Runnable callback) {
         assert this.client != null;
 
         this.client.execute(() -> {
@@ -139,6 +146,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
         });
 
         HeadGalleryResources.getCategory(category).thenAccept(categoryData -> this.client.execute(() -> {
+            this.selectedCategory = category;
             this.heads.clear();
             FzmmConfig config = FzmmClient.CONFIG;
             int nameColor = config.colors.headGalleryName().rgb();
@@ -189,8 +197,12 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
 
             this.updateAvailableTagList(categoryData);
 
-            this.applyFilters();
-            this.setPage(1);
+            if (callback == null) {
+                this.applyFilters();
+                this.setPage(1);
+            } else {
+                callback.run();
+            }
         })).whenComplete((unused, throwable) -> {
             if (throwable == null) {
                 this.errorLabel.text(Text.empty());
@@ -223,7 +235,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
         this.tagOverlay = null;
     }
 
-    private void tagButtonExecute(FlowLayout rootComponent) {
+    private void openTagsExecute(FlowLayout rootComponent) {
         // because owo-lib does not let me modify the scroll of the scroll container
         // and I don't want to scroll back to the start
         if (this.tagOverlay == null) {
@@ -372,5 +384,47 @@ public class HeadGalleryScreen extends BaseFzmmScreen {
 
     private Text getSelectedTagText(String value) {
         return Text.literal(value).setStyle(Style.EMPTY.withBold(true).withUnderline(true).withColor(SELECTED_TAG_COLOR));
+    }
+
+    @Override
+    public void setMemento(IMementoObject memento) {
+        HeadGalleryScreen.memento = (HeadGalleryMemento) memento;
+    }
+
+    @Override
+    public Optional<IMementoObject> getMemento() {
+        return Optional.ofNullable(memento);
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return new HeadGalleryMemento(new HashSet<>(this.selectedTags),
+                this.page,
+                this.selectedCategory,
+                this.contentSearchField.getText()
+        );
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoObject) {
+        HeadGalleryMemento memento = (HeadGalleryMemento) mementoObject;
+        this.selectedCategory = memento.category;
+        this.contentSearchField.setText(memento.contentSearch);
+        this.contentSearchField.setCursor(0);
+
+        if (memento.category != null) {
+            List<Component> categoryList = new ArrayList<>(this.categoryButtonList);
+            categoryList.removeIf(component -> !this.selectedCategory.equals(component.id()));
+            categoryList.stream().findAny().ifPresent(component -> this.categoryButtonExecute((ButtonComponent) component, this.selectedCategory, () -> {
+
+                this.selectedTags = memento.selectedTags;
+                this.tagButton.setMessage(this.getTagButtonText());
+                this.applyFilters();
+                this.setPage(memento.page);
+            }));
+        }
+    }
+
+    private record HeadGalleryMemento(Set<String> selectedTags, int page, String category, String contentSearch) implements IMementoObject {
     }
 }

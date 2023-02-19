@@ -5,6 +5,7 @@ import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextBookOption;
+import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
@@ -75,5 +76,19 @@ public class ImagetextBookPageTab implements IImagetextTab {
         }
 
         return width;
+    }
+
+    @Override
+    public IMementoObject createMemento() {
+        return new BookPageMementoTab((ImagetextBookOption) this.bookPageMode.getValue());
+    }
+
+    @Override
+    public void restoreMemento(IMementoObject mementoTab) {
+        BookPageMementoTab memento = (BookPageMementoTab) mementoTab;
+        this.bookPageMode.setValue(memento.mode);
+    }
+
+    private record BookPageMementoTab(ImagetextBookOption mode) implements IMementoObject {
     }
 }
