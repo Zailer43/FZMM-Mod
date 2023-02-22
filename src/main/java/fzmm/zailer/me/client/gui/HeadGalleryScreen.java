@@ -17,7 +17,6 @@ import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.Component;
-import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
@@ -257,8 +256,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
                         for (var availableTag : this.availableTags.stream().sorted().toList()) {
                             Text buttonText = this.selectedTags.contains(availableTag) ? this.getSelectedTagText(availableTag) : Text.literal(availableTag);
                             ButtonComponent button = (ButtonComponent) Components.button(buttonText, buttonComponent -> this.tagButtonExecute(buttonComponent, tagsOverlayLabel))
-                                    .horizontalSizing(Sizing.fixed(200))
-                                    .margins(Insets.of(4));
+                                    .horizontalSizing(Sizing.fixed(200));
                             button.zIndex(buttonsZIndex);
 
                             buttonList.add(button);

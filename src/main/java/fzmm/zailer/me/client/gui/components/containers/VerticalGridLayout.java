@@ -5,13 +5,17 @@ import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.ParentComponent;
 import io.wispforest.owo.ui.core.Size;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import net.minecraft.client.util.math.MatrixStack;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class VerticalGridLayout extends BaseParentComponent {
     private final List<Component> children;
@@ -20,6 +24,7 @@ public class VerticalGridLayout extends BaseParentComponent {
     private final int componentsWidth;
     private final int componentsHeight;
     protected Size contentSize;
+    protected int gap;
 
     protected VerticalGridLayout(Sizing horizontalSizing, Sizing verticalSizing, int maxColumns, int maxChildren, int componentsWidth, int componentsHeight) {
         super(horizontalSizing, verticalSizing);
@@ -29,6 +34,7 @@ public class VerticalGridLayout extends BaseParentComponent {
         this.componentsWidth = componentsWidth;
         this.componentsHeight = componentsHeight;
         this.contentSize = Size.zero();
+        this.gap = 0;
     }
 
     @Override
@@ -52,10 +58,13 @@ public class VerticalGridLayout extends BaseParentComponent {
         int columnSize = Math.min((int) Math.floor(availableWidth / (float) this.componentsWidth), this.maxColumns);
         int rowSize = (int) Math.ceil(childrenSize / (float) columnSize);
         var mountingOffset = this.childMountingOffset();
-        MutableInt layoutX = new MutableInt(this.x + mountingOffset.width());
+        MutableInt layoutX = new MutableInt(this.x + mountingOffset.width() - this.gap);
         MutableInt layoutY = new MutableInt(this.y + mountingOffset.height());
 
-        this.contentSize = Size.of(this.componentsWidth * columnSize, this.componentsHeight * rowSize);
+        int totalGapWidth = Math.max(0, this.gap * columnSize - 1);
+        int totalGapHeight = Math.max(0, this.gap * rowSize - 1);
+
+        this.contentSize = Size.of(this.componentsWidth * columnSize + totalGapWidth, this.componentsHeight * rowSize + totalGapHeight);
         int startX = this.horizontalAlignment().align(this.contentSize.width(), availableWidth);
         int startY = this.verticalAlignment().align(this.contentSize.height(), space.height() - this.padding.get().vertical());
 
@@ -76,10 +85,10 @@ public class VerticalGridLayout extends BaseParentComponent {
                         layoutY.intValue() + startY
                 ));
 
-                layoutX.add(this.componentsWidth);
+                layoutX.add(this.componentsWidth + this.gap);
             }
 
-            layoutY.add(this.componentsHeight);
+            layoutY.add(this.componentsHeight + this.gap);
         }
     }
 
@@ -125,6 +134,26 @@ public class VerticalGridLayout extends BaseParentComponent {
 
     public int getMaxChildren() {
         return this.maxChildren;
+    }
+
+    public VerticalGridLayout gap(int gap) {
+        this.gap = gap;
+        return this;
+    }
+
+    @Override
+    public void parseProperties(UIModel model, Element element, Map<String, Element> children) {
+        super.parseProperties(model, element, children);
+
+        UIParsing.apply(children, "gap", UIParsing::parseSignedInt, this::gap);
+
+        final var components = UIParsing
+                .get(children, "children", e -> UIParsing.<Element>allChildrenOfType(e, Node.ELEMENT_NODE))
+                .orElse(Collections.emptyList());
+
+        for (var child : components) {
+            this.child(model.parseComponent(Component.class, child));
+        }
     }
 
     public static VerticalGridLayout parse(Element element) {

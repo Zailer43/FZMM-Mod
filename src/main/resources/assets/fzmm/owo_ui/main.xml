@@ -9,59 +9,52 @@
                 </label>
 
                 <scroll direction="vertical">
-                    <flow-layout direction="vertical">
+                    <vertical-grid-layout maxColumns="6" componentsWidth="150" componentsHeight="60">
                         <children>
-                            <grid-layout rows="3" columns="3">
-                                <children>
-                                    <template name="main-button-layout" row="0" column="0">
-                                        <name>imagetext</name>
-                                    </template>
-                                    <template name="main-button-layout" row="0" column="1">
-                                        <name>textFormat</name>
-                                    </template>
-                                    <template name="main-button-layout" row="0" column="2">
-                                        <name>playerStatue</name>
-                                    </template>
-                                    <template name="main-button-layout" row="1" column="0">
-                                        <name>encryptbook</name>
-                                    </template>
-                                    <template name="main-button-layout" row="1" column="1">
-                                        <name>headGenerator</name>
-                                    </template>
-                                    <template name="main-button-layout" row="1" column="2">
-                                        <name>converters</name>
-                                    </template>
-                                    <template name="main-button-layout" row="2" column="0">
-                                        <name>history</name>
-                                    </template>
-                                    <template name="main-button-layout" row="2" column="1">
-                                        <name>headGallery</name>
-                                    </template>
-                                    <template name="main-button-layout" row="2" column="2">
-                                        <name>bannerEditor</name>
-                                    </template>
-                                </children>
-
-                            </grid-layout>
+                            <template name="main-button-layout">
+                                <name>imagetext</name>
+                            </template>
+                            <template name="main-button-layout">
+                                <name>textFormat</name>
+                            </template>
+                            <template name="main-button-layout">
+                                <name>playerStatue</name>
+                            </template>
+                            <template name="main-button-layout">
+                                <name>encryptbook</name>
+                            </template>
+                            <template name="main-button-layout">
+                                <name>headGenerator</name>
+                            </template>
+                            <template name="main-button-layout">
+                                <name>converters</name>
+                            </template>
+                            <template name="main-button-layout">
+                                <name>history</name>
+                            </template>
+                            <template name="main-button-layout">
+                                <name>headGallery</name>
+                            </template>
+                            <template name="main-button-layout">
+                                <name>bannerEditor</name>
+                            </template>
                         </children>
 
-                        <vertical-alignment>center</vertical-alignment>
+                        <vertical-alignment>top</vertical-alignment>
                         <horizontal-alignment>center</horizontal-alignment>
 
-                        <sizing>
-                            <horizontal method="fill">100</horizontal>
-                        </sizing>
-                    </flow-layout>
+                        <gap>5</gap>
 
-                    <sizing>
-                        <vertical method="fill">80</vertical>
-                        <horizontal method="fill">80</horizontal>
-                    </sizing>
+                    </vertical-grid-layout>
 
                     <scrollbar>
                         <flat>#FFFFFF</flat>
                     </scrollbar>
 
+                    <sizing>
+                        <vertical method="fill">70</vertical>
+                        <horizontal method="fill">80</horizontal>
+                    </sizing>
                 </scroll>
 
                 <flow-layout direction="vertical">
@@ -119,12 +112,8 @@
         <main-button-layout>
             <main-button id="{{name}}-button">
                 <text translate="true">fzmm.gui.title.{{name}}</text>
-                <margins>
-                    <all>5</all>
-                </margins>
-
                 <sizing>
-                    <horizontal method="fill">25</horizontal>
+                    <horizontal method="fixed">150</horizontal>
                     <vertical method="fixed">60</vertical>
                 </sizing>
 

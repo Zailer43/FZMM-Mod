@@ -517,8 +517,6 @@
   "text.config.fzmm.option.headGenerator.defaultOverlapHatLayer.tooltip": "Default value for overlap hat layer, when activated the second layer\nof the skin overlaps the first, if it is deactivated the second layer is simply removed.",
   "text.config.fzmm.option.history.automaticallyRecoverScreens": "Automatically recover screens",
   "text.config.fzmm.option.history.automaticallyRecoverScreens.tooltip": "Save the data from the last time you closed a screen\nand restore it when you open it.\n\nNote: no images or coordinates are saved.",
-  "text.config.fzmm.option.history.itemGridColumns": "Number of item columns",
-  "text.config.fzmm.option.history.itemGridColumns.tooltip": "Number of columns of items in the grid.",
   "text.config.fzmm.option.history.maxHeadHistory": "Maximum head history",
   "text.config.fzmm.option.history.maxHeadHistory.tooltip": "Maximum number of heads to be saved in the history.",
   "text.config.fzmm.option.history.maxItemHistory": "Maximum item history",

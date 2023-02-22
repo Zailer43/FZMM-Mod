@@ -96,16 +96,27 @@
                 </scroll>
 
                 <scroll direction="vertical">
-                    <flow-layout direction="vertical" id="content">
+                    <flow-layout direction="vertical">
                         <children>
+                            <label id="error-label">
+                                <positioning type="layout">0,0</positioning>
+                            </label>
 
+                            <vertical-grid-layout maxColumns="50" componentsWidth="16" componentsHeight="16" id="content">
+                                <children>
+
+                                </children>
+
+                                <vertical-alignment>top</vertical-alignment>
+                                <horizontal-alignment>center</horizontal-alignment>
+                            </vertical-grid-layout>
                         </children>
+
+                        <horizontal-alignment>center</horizontal-alignment>
 
                         <sizing>
                             <horizontal method="fill">60</horizontal>
                         </sizing>
-
-                        <horizontal-alignment>center</horizontal-alignment>
                     </flow-layout>
 
                     <sizing>

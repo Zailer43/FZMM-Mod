@@ -119,7 +119,6 @@ public class FzmmConfigModel {
     }
 
     public static class HistoryNest {
-        public int itemGridColumns = 15;
         @Hook
         public int maxItemHistory = 100;
         @Hook

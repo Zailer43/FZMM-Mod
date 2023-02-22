@@ -92,11 +92,6 @@
 
                                         <vertical-alignment>top</vertical-alignment>
                                         <horizontal-alignment>center</horizontal-alignment>
-
-                                        <sizing>
-                                            <horizontal method="fill">100</horizontal>
-                                        </sizing>
-
                                     </vertical-grid-layout>
 
 
@@ -291,7 +286,7 @@
                     </button>
 
                     <scroll direction="vertical" id="tag-scroll">
-                        <vertical-grid-layout maxColumns="4" componentsWidth="208" componentsHeight="28" id="minecraft-heads-tags-grid">
+                        <vertical-grid-layout maxColumns="4" componentsWidth="200" componentsHeight="20" id="minecraft-heads-tags-grid">
                             <children>
 
                             </children>
@@ -299,6 +294,7 @@
                             <vertical-alignment>top</vertical-alignment>
                             <horizontal-alignment>center</horizontal-alignment>
 
+                            <gap>4</gap>
                         </vertical-grid-layout>
 
                         <sizing>
