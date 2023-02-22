@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19.4/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
     <components>
         <flow-layout direction="horizontal">
             <children>
@@ -33,48 +33,6 @@
                                         <gap>8</gap>
                                     </flow-layout>
 
-                                    <!--
-                                    <flow-layout direction="vertical" id="screen-history-list">
-                                        <children>
-                                            <label>
-                                                <text translate="true">fzmm.gui.history.label.screenHistory</text>
-                                                <tooltip-text translate="true">fzmm.gui.history.label.screenHistory.tooltip</tooltip-text>
-
-                                                <margins>
-                                                    <vertical>4</vertical>
-                                                </margins>
-                                            </label>
-                                            <template name="option-button">
-                                                <id>convertersScreen</id>
-                                                <translation>screenHistory.converters</translation>
-                                            </template>
-                                            <template name="option-button">
-                                                <id>encryptBookScreen</id>
-                                                <translation>screenHistory.encryptBook</translation>
-                                            </template>
-                                            <template name="option-button">
-                                                <id>headGeneratorScreen</id>
-                                                <translation>screenHistory.headGenerator</translation>
-                                            </template>
-                                            <template name="option-button">
-                                                <id>imagetextScreen</id>
-                                                <translation>screenHistory.imagetext</translation>
-                                            </template>
-                                            <template name="option-button">
-                                                <id>playerStatueScreen</id>
-                                                <translation>screenHistory.playerStatue</translation>
-                                            </template>
-                                            <template name="option-button">
-                                                <id>textFormatScreen</id>
-                                                <translation>screenHistory.textFormat</translation>
-                                            </template>
-                                        </children>
-
-                                        <margins>
-                                            <top>20</top>
-                                        </margins>
-                                    </flow-layout>
-                                    -->
                                 </children>
 
                                 <sizing>
@@ -102,14 +60,18 @@
                                 <positioning type="relative">0,0</positioning>
                             </label>
 
-                            <vertical-grid-layout maxColumns="50" componentsWidth="16" componentsHeight="16" id="content">
+                            <flow-layout direction="ltr-text-flow" id="content">
                                 <children>
 
                                 </children>
 
+                                <sizing>
+                                    <horizontal method="fill">100</horizontal>
+                                </sizing>
+
                                 <vertical-alignment>top</vertical-alignment>
                                 <horizontal-alignment>center</horizontal-alignment>
-                            </vertical-grid-layout>
+                            </flow-layout>
                         </children>
 
                         <horizontal-alignment>center</horizontal-alignment>

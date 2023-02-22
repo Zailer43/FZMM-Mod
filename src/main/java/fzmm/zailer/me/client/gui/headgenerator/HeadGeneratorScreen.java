@@ -4,7 +4,6 @@ import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
-import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
@@ -59,9 +58,9 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     private static final String HEAD_NAME_ID = "headName";
     private static final String SKIN_PRE_EDIT_OPTION_ID = "skinPreEdit";
     private static final String SEARCH_ID = "search";
-    private static final String HEAD_GRID_ID = "head-grid";
+    private static final String CONTENT_ID = "content";
     private static final String HEADS_LAYOUT_ID = "heads-layout";
-    private static final String CONTENT_LAYOUT_ID = "content-layout";
+    private static final String CONTENT_PARENT_LAYOUT_ID = "content-parent-layout";
     private static final String COMPOUND_HEADS_LAYOUT_ID = "compound-heads-layout";
     private static final String OPEN_SKIN_FOLDER_ID = "open-folder";
     private static final String TOGGLE_FAVORITE_LIST_ID = "toggle-favorite-list";
@@ -75,7 +74,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     private TextFieldWidget searchField;
     private List<HeadComponentEntry> headComponentEntries;
     private List<HeadCompoundComponentEntry> headCompoundComponentEntries;
-    private VerticalGridLayout headGridLayout;
+    private FlowLayout contentLayout;
     private FlowLayout compoundHeadsLayout;
     private ButtonWidget toggleFavoriteList;
     private boolean showFavorites;
@@ -106,21 +105,21 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         this.previousSkinName = "";
         this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "", 512);
         this.skinElements.valueField().onChanged().subscribe(this::onChangeSkinField);
-        this.headGridLayout = rootComponent.childById(VerticalGridLayout.class, HEAD_GRID_ID);
-        checkNull(this.headGridLayout, "vertical-grid-layout", HEAD_GRID_ID);
+        this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
+        checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
         this.compoundHeadsLayout = rootComponent.childById(FlowLayout.class, COMPOUND_HEADS_LAYOUT_ID);
         checkNull(this.compoundHeadsLayout, "flow-layout", COMPOUND_HEADS_LAYOUT_ID);
 
-        FlowLayout contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_LAYOUT_ID);
-        checkNull(contentLayout, "flow-layout", CONTENT_LAYOUT_ID);
+        FlowLayout contentParentLayout = rootComponent.childById(FlowLayout.class, CONTENT_PARENT_LAYOUT_ID);
+        checkNull(contentParentLayout, "flow-layout", CONTENT_PARENT_LAYOUT_ID);
         FlowLayout headsLayout = rootComponent.childById(FlowLayout.class, HEADS_LAYOUT_ID);
         checkNull(headsLayout, "flow-layout", HEADS_LAYOUT_ID);
         // owo-lib doesn't let to make Sizing.fill and Sizing.fill animations,
         // so I have to remove the percentage of compoundHeadsWidth on the screen size
         // note: this means that if the screen resolution changes it will be wrongly resized while expanded
         Window window = this.client.getWindow();
-        int contentGap = (int) Math.floor(window.getScaleFactor() * contentLayout.gap());
-        int newHeadsLayoutWidth = 99 - (int) Math.floor(((COMPOUND_HEAD_LAYOUT_WIDTH + contentGap * contentLayout.children().size() - 1) / (float) window.getScaledWidth()) * 100);
+        int contentGap = (int) Math.floor(window.getScaleFactor() * contentParentLayout.gap());
+        int newHeadsLayoutWidth = 99 - (int) Math.floor(((COMPOUND_HEAD_LAYOUT_WIDTH + contentGap * contentParentLayout.children().size() - 1) / (float) window.getScaledWidth()) * 100);
         Animation<Sizing> headsLayoutAnimation = headsLayout.horizontalSizing().animate(800, Easing.CUBIC, Sizing.fill(newHeadsLayoutWidth));
         Animation<Sizing> compoundHeadsLayoutAnimation = this.compoundHeadsLayout.horizontalSizing().animate(800, Easing.CUBIC, Sizing.fixed(COMPOUND_HEAD_LAYOUT_WIDTH));
         this.compoundExpandAnimation = Animation.compose(headsLayoutAnimation, compoundHeadsLayoutAnimation);
@@ -193,7 +192,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     }
 
     private void tryLoadHeadEntries(FlowLayout rootComponent) {
-        if (this.headGridLayout.children().isEmpty()) {
+        if (this.contentLayout.children().isEmpty()) {
             List<AbstractHeadEntry> headEntriesList = HeadResourcesLoader.getPreloaded();
 
             if (headEntriesList.size() == 0) {
@@ -270,7 +269,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     }
 
     private void closeTextures() {
-        if (this.headGridLayout == null)
+        if (this.contentLayout == null)
             return;
 
         assert this.client != null;
@@ -295,10 +294,10 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
             entry.filter(searchValue, this.showFavorites, this.selectedCategory);
         }
 
-        List<HeadComponentEntry> newResults = new ArrayList<>(this.headComponentEntries);
-        newResults.removeIf(HeadComponentEntry::isHide);
-        this.headGridLayout.clearChildren();
-        this.headGridLayout.children(newResults);
+        List<Component> newResults = new ArrayList<>(this.headComponentEntries);
+        newResults.removeIf(component -> component instanceof HeadComponentEntry entry && entry.isHide());
+        this.contentLayout.clearChildren();
+        this.contentLayout.children(newResults);
     }
 
     public void giveHead(BufferedImage image, String textureName) {

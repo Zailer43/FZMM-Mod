@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19.4/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
     <components>
         <flow-layout direction="vertical">
             <children>
@@ -26,7 +26,7 @@
                     </margins>
                 </flow-layout>
 
-                <flow-layout direction="horizontal" id="content-layout">
+                <flow-layout direction="horizontal" id="content-parent-layout">
                     <children>
                         <!-- compound heads -->
                         <scroll direction="vertical">
@@ -72,14 +72,17 @@
                                 </flow-layout>
                                 <!-- heads content -->
                                 <scroll direction="vertical">
-                                    <vertical-grid-layout maxColumns="20" componentsWidth="40" componentsHeight="30"
-                                                          id="head-grid">
+                                    <flow-layout direction="ltr-text-flow" id="content">
                                         <children>
 
                                         </children>
 
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                        </sizing>
+
                                         <horizontal-alignment>center</horizontal-alignment>
-                                    </vertical-grid-layout>
+                                    </flow-layout>
 
                                     <sizing>
                                         <vertical method="fill">100</vertical>

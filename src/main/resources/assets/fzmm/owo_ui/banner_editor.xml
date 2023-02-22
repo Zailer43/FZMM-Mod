@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19.4/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
     <components>
         <flow-layout direction="horizontal">
             <children>
@@ -59,58 +59,74 @@
 
                                     <flow-layout direction="vertical" id="content">
                                         <children>
-                                            <vertical-grid-layout maxColumns="16" componentsWidth="18" componentsHeight="18" id="color-grid">
+                                            <flow-layout direction="ltr-text-flow" id="color-layout">
                                                 <children>
 
                                                 </children>
 
+                                                <sizing>
+                                                    <horizontal method="fill">100</horizontal>
+                                                </sizing>
+
                                                 <vertical-alignment>top</vertical-alignment>
                                                 <horizontal-alignment>center</horizontal-alignment>
 
-                                            </vertical-grid-layout>
+                                            </flow-layout>
 
                                             <screen-tab>
                                                 <id>addPatterns</id>
                                                 <children>
-                                                    <vertical-grid-layout maxColumns="9" componentsWidth="32" componentsHeight="32" id="add-patterns-grid">
+                                                    <flow-layout direction="ltr-text-flow" id="add-patterns-layout">
                                                         <children>
 
                                                         </children>
 
+                                                        <sizing>
+                                                            <horizontal method="fill">100</horizontal>
+                                                        </sizing>
+
                                                         <vertical-alignment>top</vertical-alignment>
                                                         <horizontal-alignment>center</horizontal-alignment>
 
-                                                    </vertical-grid-layout>
+                                                    </flow-layout>
                                                 </children>
                                             </screen-tab>
 
                                             <screen-tab>
                                                 <id>changeColor</id>
                                                 <children>
-                                                    <vertical-grid-layout maxColumns="9" componentsWidth="32" componentsHeight="32" id="change-color-grid">
+                                                    <flow-layout direction="ltr-text-flow" id="change-color-layout">
                                                         <children>
 
                                                         </children>
 
+                                                        <sizing>
+                                                            <horizontal method="fill">100</horizontal>
+                                                        </sizing>
+
                                                         <vertical-alignment>top</vertical-alignment>
                                                         <horizontal-alignment>center</horizontal-alignment>
 
-                                                    </vertical-grid-layout>
+                                                    </flow-layout>
                                                 </children>
                                             </screen-tab>
 
                                             <screen-tab>
                                                 <id>removePatterns</id>
                                                 <children>
-                                                    <vertical-grid-layout maxColumns="9" componentsWidth="32" componentsHeight="32" id="remove-patterns-grid">
+                                                    <flow-layout direction="ltr-text-flow" id="remove-patterns-layout">
                                                         <children>
 
                                                         </children>
 
+                                                        <sizing>
+                                                            <horizontal method="fill">100</horizontal>
+                                                        </sizing>
+
                                                         <vertical-alignment>top</vertical-alignment>
                                                         <horizontal-alignment>center</horizontal-alignment>
 
-                                                    </vertical-grid-layout>
+                                                    </flow-layout>
                                                 </children>
                                             </screen-tab>
                                         </children>

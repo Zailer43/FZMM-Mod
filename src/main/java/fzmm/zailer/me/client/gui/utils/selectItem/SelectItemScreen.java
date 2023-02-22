@@ -2,7 +2,6 @@ package fzmm.zailer.me.client.gui.utils.selectItem;
 
 import com.google.common.collect.ImmutableList;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.logic.FzmmHistory;
@@ -30,14 +29,14 @@ public class SelectItemScreen extends BaseFzmmScreen {
     private static final String DEFAULT_BUTTON_ID = "default-button";
     private static final String HISTORY_BUTTON_ID = "history-button";
     private static final String ALL_BUTTON_ID = "all-button";
-    private static final String ITEM_GRID_ID = "item-grid";
+    private static final String ITEM_LAYOUT_ID = "item-layout";
     private static final String ITEM_SEARCH_ID = "item-search";
     private static final String EXECUTE_BUTTON_ID = "execute";
     private final HashMap<RequestedItem, ItemComponent> requestedItems;
     private final RequestedItem selectedRequestedItem;
     private final List<ItemComponent> itemComponentList;
     private FlowLayout requestedItemsLayout;
-    private VerticalGridLayout itemGridLayout;
+    private FlowLayout itemLayout;
     private TextFieldWidget searchField;
     private List<ButtonComponent> sourceButtons;
     private ButtonComponent executeButton;
@@ -68,8 +67,8 @@ public class SelectItemScreen extends BaseFzmmScreen {
         checkNull(this.requestedItemsLayout, "flow-layout", REQUESTED_ITEMS_LIST_ID);
 
         // right buttons
-        this.itemGridLayout = rootComponent.childById(VerticalGridLayout.class, ITEM_GRID_ID);
-        checkNull(this.itemGridLayout, "vertical-grid-layout", ITEM_GRID_ID);
+        this.itemLayout = rootComponent.childById(FlowLayout.class, ITEM_LAYOUT_ID);
+        checkNull(this.itemLayout, "flow-layout", ITEM_LAYOUT_ID);
 
         this.searchField = TextBoxRow.setup(rootComponent, ITEM_SEARCH_ID, "", 255, str -> this.applyFilter());
         this.searchField.horizontalSizing(Sizing.fill(50));
@@ -226,7 +225,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
         if (this.searchField == null)
             return;
 
-        this.itemGridLayout.clearChildren();
+        this.itemLayout.clearChildren();
         List<Component> resultList = new ArrayList<>();
         String search = this.searchField.getText().toLowerCase();
 
@@ -235,7 +234,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
                 resultList.add(itemComponent);
         }
 
-        this.itemGridLayout.children(resultList);
+        this.itemLayout.children(resultList);
     }
 
     private boolean canExecute() {

@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19.4/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
     <components>
         <flow-layout direction="horizontal">
             <children>
@@ -85,14 +85,18 @@
                                 </label>
 
                                 <scroll direction="vertical">
-                                    <vertical-grid-layout maxChildren="300" maxColumns="25" componentsWidth="16" componentsHeight="16" id="content">
+                                    <flow-layout direction="ltr-text-flow" id="content">
                                         <children>
 
                                         </children>
 
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                        </sizing>
+
                                         <vertical-alignment>top</vertical-alignment>
                                         <horizontal-alignment>center</horizontal-alignment>
-                                    </vertical-grid-layout>
+                                    </flow-layout>
 
 
                                     <sizing>
@@ -286,7 +290,7 @@
                     </button>
 
                     <scroll direction="vertical" id="tag-scroll">
-                        <vertical-grid-layout maxColumns="4" componentsWidth="200" componentsHeight="20" id="minecraft-heads-tags-grid">
+                        <flow-layout direction="ltr-text-flow" id="minecraft-heads-tags-ltr">
                             <children>
 
                             </children>
@@ -295,7 +299,7 @@
                             <horizontal-alignment>center</horizontal-alignment>
 
                             <gap>4</gap>
-                        </vertical-grid-layout>
+                        </flow-layout>
 
                         <sizing>
                             <horizontal method="fill">100</horizontal>
@@ -324,6 +328,8 @@
                 <surface>
                     <panel dark="true"/>
                 </surface>
+
+                <z-index>500</z-index>
             </flow-layout>
         </select-tag>
     </templates>

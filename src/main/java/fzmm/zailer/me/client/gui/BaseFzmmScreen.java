@@ -14,7 +14,6 @@ import fzmm.zailer.me.client.gui.utils.memento.IMemento;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.gui.components.BooleanButton;
-import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.compat.symbolChat.font.FontTextBoxComponent;
 import fzmm.zailer.me.compat.symbolChat.SymbolChatCompat;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -47,9 +46,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     public static final int BUTTON_TEXT_PADDING = 8;
     public static final int COMPONENT_DISTANCE = 8;
     private final SymbolChatCompat symbolChatCompat;
-//    private final CustomSymbolSelectionPanel customSymbolSelectionPanel;
     protected final HashMap<String, IScreenTab> tabs;
-//    private final FontSelectionDropDownComponent fontSelectionDropDown;
 
     public BaseFzmmScreen(String screenPath, String baseScreenTranslationKey, @Nullable Screen parent) {
         super(FlowLayout.class, DataSource.asset(new Identifier(FzmmClient.MOD_ID, screenPath)));
@@ -213,7 +210,6 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         UIParsing.registerFactory("main-button", element -> new MainButtonComponent(Text.empty(), buttonComponent -> {}));
         UIParsing.registerFactory("screenshot-zone", element -> new ScreenshotZoneComponent());
         UIParsing.registerFactory("color-list", ColorListContainer::parse);
-        UIParsing.registerFactory("vertical-grid-layout", VerticalGridLayout::parse);
         UIParsing.registerFactory("font-text-box", element -> new FontTextBoxComponent(Sizing.fixed(100)));
 
     }

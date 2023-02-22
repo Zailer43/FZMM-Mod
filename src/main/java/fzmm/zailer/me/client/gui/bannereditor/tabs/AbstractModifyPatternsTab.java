@@ -3,7 +3,6 @@ package fzmm.zailer.me.client.gui.bannereditor.tabs;
 import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
-import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.ItemComponent;
@@ -24,12 +23,12 @@ import java.util.List;
 
 public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
 
-    protected VerticalGridLayout patternsGrid;
+    protected FlowLayout patternsLayout;
 
     @Override
     public void setupComponents(FlowLayout rootComponent) {
-        this.patternsGrid = rootComponent.childById(VerticalGridLayout.class, this.getGridId());
-        BaseFzmmScreen.checkNull(patternsGrid, "vertical-grid-layout", this.getGridId());
+        this.patternsLayout = rootComponent.childById(FlowLayout.class, this.getGridId());
+        BaseFzmmScreen.checkNull(patternsLayout, "flow-layout", this.getGridId());
     }
 
     protected abstract String getGridId();
@@ -38,7 +37,7 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
 
     @Override
     public void update(BannerEditorScreen parent, BannerBuilder currentBanner, DyeColor color) {
-        this.patternsGrid.clearChildren();
+        this.patternsLayout.clearChildren();
         List<Component> bannerList = new ArrayList<>();
         BannerBuilder builder = currentBanner.copy().clearPatterns();
 
@@ -68,7 +67,7 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
 
             bannerList.add(itemComponent);
         }
-        this.patternsGrid.children(bannerList);
+        this.patternsLayout.children(bannerList);
     }
 
     protected abstract void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color);

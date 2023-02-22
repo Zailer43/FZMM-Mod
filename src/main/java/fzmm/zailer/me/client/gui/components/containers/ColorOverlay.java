@@ -61,7 +61,7 @@ public class ColorOverlay extends OverlayContainer<GridLayout> {
             return layout;
         }
 
-        VerticalGridLayout favoriteColorsComponent = new VerticalGridLayout(Sizing.fill(100), Sizing.content(), 20, 0, boxSize + 2, boxSize + 2);
+        FlowLayout favoriteColorsComponent = Containers.ltrTextFlow(Sizing.fill(100), Sizing.content());
         favoriteColorsComponent.children(config.favoriteColors().stream()
                 .map(color -> {
                     FlowLayout colorLayout = (FlowLayout) this.getFavoriteColorBox(picker, color, boxSize);
@@ -72,7 +72,7 @@ public class ColorOverlay extends OverlayContainer<GridLayout> {
         );
         favoriteColorsComponent.horizontalAlignment(HorizontalAlignment.CENTER);
 
-        ScrollContainer<VerticalGridLayout> favoriteColorsScroll = Containers.verticalScroll(Sizing.content(), Sizing.fill(75), favoriteColorsComponent);
+        ScrollContainer<FlowLayout> favoriteColorsScroll = Containers.verticalScroll(Sizing.content(), Sizing.fill(75), favoriteColorsComponent);
         favoriteColorsScroll.scrollbar(ScrollContainer.Scrollbar.flat(Color.WHITE));
 
         ButtonComponent removeColorButton = Components.button(Text.translatable("fzmm.gui.button.remove"), button -> {

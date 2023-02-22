@@ -9,7 +9,7 @@ import net.minecraft.util.DyeColor;
 
 public class RemovePatternsTab extends AbstractModifyPatternsTab {
 
-    private static final String PATTERNS_GRID = "remove-patterns-grid";
+    private static final String PATTERNS_LAYOUT = "remove-patterns-layout";
     @Override
     public String getId() {
         return "removePatterns";
@@ -17,7 +17,7 @@ public class RemovePatternsTab extends AbstractModifyPatternsTab {
 
     @Override
     protected String getGridId() {
-        return PATTERNS_GRID;
+        return PATTERNS_LAYOUT;
     }
 
     @Override

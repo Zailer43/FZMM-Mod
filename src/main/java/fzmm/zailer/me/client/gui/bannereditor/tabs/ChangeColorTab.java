@@ -15,7 +15,7 @@ import net.minecraft.util.DyeColor;
 
 public class ChangeColorTab extends AbstractModifyPatternsTab {
 
-    private static final String PATTERNS_GRID = "change-color-grid";
+    private static final String PATTERNS_LAYOUT = "change-color-layout";
     @Override
     public String getId() {
         return "changeColor";
@@ -23,7 +23,7 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
 
     @Override
     protected String getGridId() {
-        return PATTERNS_GRID;
+        return PATTERNS_LAYOUT;
     }
 
     @Override

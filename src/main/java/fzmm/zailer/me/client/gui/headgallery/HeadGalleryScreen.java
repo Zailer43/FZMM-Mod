@@ -9,7 +9,6 @@ import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.headgallery.components.HeadGalleryItemComponent;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
-import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.client.logic.headGallery.HeadGalleryResources;
 import fzmm.zailer.me.client.logic.headGallery.MinecraftHeadsData;
 import fzmm.zailer.me.config.FzmmConfig;
@@ -20,7 +19,6 @@ import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -41,7 +39,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     private static final String TAG_LABEL_TEXT = "fzmm.gui.headGallery.label.tags-overlay";
     private static final String CATEGORY_LAYOUT_ID = "minecraft-heads-category-list";
     private static final String TAGS_LAYOUT_ID = "tags-layout";
-    private static final String TAGS_LIST_GRID_ID = "minecraft-heads-tags-grid";
+    private static final String TAGS_LIST_LTR_ID = "minecraft-heads-tags-ltr";
     private static final String TAGS_OVERLAY_LABEL_ID = "tags-overlay-label";
     private static final String TAG_SEARCH_ID = "tag-search";
     private static final String CLEAR_SELECTED_TAGS_ID = "clear-selected-tags";
@@ -54,7 +52,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     private static final String ERROR_MESSAGE_ID = "error-message";
     private static HeadGalleryMemento memento = null;
     private int page;
-    private VerticalGridLayout contentGridLayout;
+    private FlowLayout contentLayout;
     private LabelComponent currentPageLabel;
     private final ObjectArrayList<HeadGalleryItemComponent> heads;
     private final ObjectArrayList<HeadGalleryItemComponent> headsWithFilter;
@@ -101,8 +99,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
         tagsLayout.child(this.tagButton);
 
-        this.contentGridLayout = rootComponent.childById(VerticalGridLayout.class, CONTENT_ID);
-        checkNull(this.contentGridLayout, "vertical-item-grid-layout", CONTENT_ID);
+        this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
+        checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
 
         ButtonComponent previousPageButton = rootComponent.childById(ButtonComponent.class, PAGE_PREVIOUS_BUTTON_ID);
         checkNull(previousPageButton, "button", PAGE_PREVIOUS_BUTTON_ID);
@@ -226,8 +224,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         // and I don't want to scroll back to the start
         if (this.tagOverlay == null) {
             FlowLayout tagSelectPanel = this.getModel().expandTemplate(FlowLayout.class, "select-tag", Map.of()).configure(flowLayout -> {
-                VerticalGridLayout tagListGrid = flowLayout.childById(VerticalGridLayout.class, TAGS_LIST_GRID_ID);
-                checkNull(tagListGrid, "flow-layout", TAGS_LIST_GRID_ID);
+                FlowLayout tagListLayout = flowLayout.childById(FlowLayout.class, TAGS_LIST_LTR_ID);
+                checkNull(tagListLayout, "flow-layout", TAGS_LIST_LTR_ID);
 
                 LabelComponent tagsOverlayLabel = flowLayout.childById(LabelComponent.class, TAGS_OVERLAY_LABEL_ID);
                 checkNull(tagsOverlayLabel, "label", TAGS_OVERLAY_LABEL_ID);
@@ -237,7 +235,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
                 tagsOverlayLabel.text(this.getTagLabelText());
 
-                List<ButtonComponent> buttonList = new ArrayList<>();
+                List<Component> buttonList = new ArrayList<>();
                 for (var availableTag : this.availableTags.stream().sorted().toList()) {
                     Text buttonText = this.selectedTags.contains(availableTag) ? this.getSelectedTagText(availableTag) : Text.literal(availableTag);
                     ButtonComponent button = (ButtonComponent) Components.button(buttonText, buttonComponent -> this.tagButtonExecute(buttonComponent, tagsOverlayLabel))
@@ -246,11 +244,11 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
                     buttonList.add(button);
                 }
 
-                tagListGrid.children(buttonList);
+                tagListLayout.children(buttonList);
 
                 clearSelectedTags.onPress(buttonComponent -> {
-                    for (var buttonTag : buttonList) {
-                        if (this.selectedTags.contains(buttonTag.getMessage().getString()))
+                    for (var component : buttonList) {
+                        if (component instanceof ButtonComponent buttonTag && this.selectedTags.contains(buttonTag.getMessage().getString()))
                             buttonTag.onPress();
                     }
                 });
@@ -262,8 +260,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
                     buttonListCopy.removeIf(tagComponent -> tagComponent instanceof ButtonComponent buttonTag
                             && !buttonTag.getMessage().getString().toLowerCase().contains(valueToLowerCase));
 
-                    tagListGrid.clearChildren();
-                    tagListGrid.children(buttonListCopy);
+                    tagListLayout.clearChildren();
+                    tagListLayout.children(buttonListCopy);
                 });
             });
 
@@ -292,27 +290,31 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     }
 
     public void setPage(int page) {
+        int maxHeadsPerPage = FzmmClient.CONFIG.headGallery.maxHeadsPerPage();
         if (page < 1)
             page = 1;
 
-        int firstElementIndex = (page - 1) * this.contentGridLayout.getMaxChildren();
-        int lastPage = (int) Math.ceil(this.headsWithFilter.size() / (float) this.contentGridLayout.getMaxChildren());
+        int firstElementIndex = (page - 1) * maxHeadsPerPage;
+        int lastPage = (int) Math.ceil(this.headsWithFilter.size() / (float) maxHeadsPerPage);
 
         if (firstElementIndex >= this.headsWithFilter.size()) {
             page = lastPage;
-            firstElementIndex = this.headsWithFilter.isEmpty() ? 0 : (lastPage - 1) * this.contentGridLayout.getMaxChildren();
+            firstElementIndex = this.headsWithFilter.isEmpty() ? 0 : (lastPage - 1) * maxHeadsPerPage;
         }
 
         this.page = page;
         this.currentPageLabel.text(Text.translatable("fzmm.gui.headGallery.label.page", page, lastPage));
 
-        int lastElementIndex = Math.min((page) * this.contentGridLayout.getMaxChildren(), this.headsWithFilter.size());
-        ObjectList<HeadGalleryItemComponent> currentPageHeads = this.headsWithFilter.subList(firstElementIndex, lastElementIndex);
+        int lastElementIndex = Math.min((page) * maxHeadsPerPage, this.headsWithFilter.size());
+        List<Component> currentPageHeads = this.headsWithFilter.subList(firstElementIndex, lastElementIndex)
+                .stream()
+                .map(headGalleryItemComponent -> (Component) headGalleryItemComponent)
+                .toList();
 
         assert this.client != null;
         this.client.execute(() -> {
-            this.contentGridLayout.clearChildren();
-            this.contentGridLayout.children(currentPageHeads);
+            this.contentLayout.clearChildren();
+            this.contentLayout.children(currentPageHeads);
         });
     }
 

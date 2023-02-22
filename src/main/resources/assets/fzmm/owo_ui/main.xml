@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19.4/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
     <components>
         <flow-layout direction="vertical">
             <children>
@@ -9,7 +9,7 @@
                 </label>
 
                 <scroll direction="vertical">
-                    <vertical-grid-layout maxColumns="6" componentsWidth="150" componentsHeight="60">
+                    <flow-layout direction="ltr-text-flow">
                         <children>
                             <template name="main-button-layout">
                                 <name>imagetext</name>
@@ -40,12 +40,16 @@
                             </template>
                         </children>
 
+                        <sizing>
+                            <horizontal method="fill">100</horizontal>
+                        </sizing>
+
                         <vertical-alignment>top</vertical-alignment>
                         <horizontal-alignment>center</horizontal-alignment>
 
                         <gap>5</gap>
 
-                    </vertical-grid-layout>
+                    </flow-layout>
 
                     <scrollbar>
                         <flat>#FFFFFF</flat>
@@ -117,6 +121,9 @@
                     <vertical method="fixed">60</vertical>
                 </sizing>
 
+                <margins>
+                    <bottom>5</bottom>
+                </margins>
             </main-button>
         </main-button-layout>
     </templates>

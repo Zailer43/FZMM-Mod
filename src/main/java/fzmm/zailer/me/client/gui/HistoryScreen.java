@@ -1,12 +1,12 @@
 package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.gui.components.GiveItemComponent;
-import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.logic.FzmmHistory;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -23,7 +23,7 @@ public class HistoryScreen extends BaseFzmmScreen {
     private static final String ERROR_LABEL_ID = "error-label";
     private ButtonComponent itemGenerated;
     private ButtonComponent headGenerated;
-    private VerticalGridLayout contentLayout;
+    private FlowLayout contentLayout;
     private LabelComponent labelError;
 
 
@@ -33,8 +33,8 @@ public class HistoryScreen extends BaseFzmmScreen {
 
     @Override
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
-        this.contentLayout = rootComponent.childById(VerticalGridLayout.class, CONTENT_ID);
-        checkNull(this.contentLayout, "vertical-grid-layout", CONTENT_ID);
+        this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
+        checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
 
         this.itemGenerated = ButtonRow.setup(rootComponent, ITEM_GENERATED_ID, true, this::itemGeneratedExecute);
         this.headGenerated = ButtonRow.setup(rootComponent, HEAD_GENERATED_ID, true, this::headGeneratedExecute);
@@ -62,7 +62,7 @@ public class HistoryScreen extends BaseFzmmScreen {
 
     private void addItems(List<ItemStack> stackList) {
         this.contentLayout.clearChildren();
-        this.contentLayout.children(stackList.stream().map(GiveItemComponent::new).toList());
+        this.contentLayout.children(stackList.stream().map(itemStack -> (Component) new GiveItemComponent(itemStack)).toList());
         this.labelError.text(stackList.isEmpty() ? GENERATED_ITEMS_EMPTY_TEXT : Text.empty());
     }
 

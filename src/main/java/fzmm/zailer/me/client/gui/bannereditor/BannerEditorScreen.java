@@ -9,7 +9,6 @@ import fzmm.zailer.me.client.gui.components.row.BooleanRow;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
-import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import fzmm.zailer.me.client.gui.utils.selectItem.SelectItemScreen;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -31,7 +30,7 @@ import java.util.List;
 
 public class BannerEditorScreen extends BaseFzmmScreen {
     private static final String BANNER_PREVIEW_ID = "banner-preview";
-    private static final String COLOR_GRID_ID = "color-grid";
+    private static final String COLOR_LAYOUT_ID = "color-layout";
     private static final String GIVE_BUTTON_ID = "give-button";
     private static final String SELECT_BANNER_BUTTON_ID = "select-banner-button";
     private static final String IS_SHIELD_ID = "isShield";
@@ -64,9 +63,9 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         FlowLayout contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
         checkNull(contentLayout, "flow-layout", CONTENT_ID);
 
-        VerticalGridLayout colorGrid = rootComponent.childById(VerticalGridLayout.class, COLOR_GRID_ID);
-        checkNull(colorGrid, "vertical-grid-layout", COLOR_GRID_ID);
-        List<FlowLayout> colorList = new ArrayList<>();
+        FlowLayout colorLayout = rootComponent.childById(FlowLayout.class, COLOR_LAYOUT_ID);
+        checkNull(colorLayout, "flow-layout", COLOR_LAYOUT_ID);
+        List<Component> colorList = new ArrayList<>();
         DyeColor[] dyeColorsInOrder = FzmmUtils.getColorsInOrder();
         for (var dyeColor : dyeColorsInOrder) {
             BoxComponent colorBox = Components.box(Sizing.fixed(16), Sizing.fixed(16));
@@ -75,29 +74,30 @@ public class BannerEditorScreen extends BaseFzmmScreen {
             colorBox.fill(true);
             colorBox.cursorStyle(CursorStyle.HAND);
 
-            FlowLayout colorLayout = Containers.horizontalFlow(Sizing.fixed(18), Sizing.fixed(18));
-            colorLayout.padding(Insets.of(1));
-            colorLayout.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+            FlowLayout colorSelectedLayout = Containers.horizontalFlow(Sizing.fixed(18), Sizing.fixed(18));
+            colorSelectedLayout.padding(Insets.of(1));
+            colorSelectedLayout.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
 
             colorBox.mouseDown().subscribe((mouseX, mouseY, button) -> {
                 this.selectedColor = dyeColor;
                 this.updatePreview(this.bannerBuilder);
 
-                for (var layout : colorList) {
-                    layout.surface(Surface.outline(0x00000000));
+                for (var component : colorList) {
+                    if (component instanceof FlowLayout layout)
+                        layout.surface(Surface.outline(0x00000000));
                 }
 
-                colorLayout.surface(Surface.outline(0xFFFFFFFF));
+                colorSelectedLayout.surface(Surface.outline(0xFFFFFFFF));
 
                 return true;
             });
 
-            colorLayout.child(colorBox);
-            colorList.add(colorLayout);
+            colorSelectedLayout.child(colorBox);
+            colorList.add(colorSelectedLayout);
         }
 
         this.selectedColor = dyeColorsInOrder[0];
-        colorGrid.children(colorList);
+        colorLayout.children(colorList);
 
         //tabs
         this.setTabs(selectedTab);

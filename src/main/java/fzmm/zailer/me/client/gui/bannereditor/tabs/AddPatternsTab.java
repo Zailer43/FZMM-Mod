@@ -4,7 +4,6 @@ import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
-import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -21,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddPatternsTab implements IBannerEditorTab {
-    private static final String PATTERNS_GRID = "add-patterns-grid";
-    private VerticalGridLayout patternsGrid;
+    private static final String PATTERNS_LAYOUT = "add-patterns-layout";
+    private FlowLayout patternsLayout;
 
     @Override
     public String getId() {
@@ -31,13 +30,13 @@ public class AddPatternsTab implements IBannerEditorTab {
 
     @Override
     public void setupComponents(FlowLayout rootComponent) {
-        this.patternsGrid = rootComponent.childById(VerticalGridLayout.class, PATTERNS_GRID);
-        BaseFzmmScreen.checkNull(patternsGrid, "vertical-grid-layout", PATTERNS_GRID);
+        this.patternsLayout = rootComponent.childById(FlowLayout.class, PATTERNS_LAYOUT);
+        BaseFzmmScreen.checkNull(patternsLayout, "flow-layout", PATTERNS_LAYOUT);
     }
 
     @Override
     public void update(BannerEditorScreen parent, BannerBuilder currentBanner, DyeColor color) {
-        this.patternsGrid.clearChildren();
+        this.patternsLayout.clearChildren();
         List<Component> bannerList = new ArrayList<>();
         BannerPattern basePattern = Registries.BANNER_PATTERN.get(BannerPatterns.BASE);
         if (basePattern == null) {
@@ -68,6 +67,6 @@ public class AddPatternsTab implements IBannerEditorTab {
 
             bannerList.add(itemComponent);
         }
-        this.patternsGrid.children(bannerList);
+        this.patternsLayout.children(bannerList);
     }
 }
