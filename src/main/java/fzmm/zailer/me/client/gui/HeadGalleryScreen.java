@@ -313,8 +313,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
         if (firstElementIndex >= this.headsWithFilter.size()) {
             page = lastPage;
-            if (this.headsWithFilter.size() != 0)
-                firstElementIndex = (lastPage - 1) * this.contentGridLayout.getMaxChildren();
+            firstElementIndex = this.headsWithFilter.isEmpty() ? 0 : (lastPage - 1) * this.contentGridLayout.getMaxChildren();
         }
 
         this.page = page;
