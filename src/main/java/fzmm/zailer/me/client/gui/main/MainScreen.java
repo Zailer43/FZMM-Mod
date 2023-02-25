@@ -5,7 +5,7 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.EncryptBookScreen;
 import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
 import fzmm.zailer.me.client.gui.converters.ConvertersScreen;
-import fzmm.zailer.me.client.gui.HeadGalleryScreen;
+import fzmm.zailer.me.client.gui.headgallery.HeadGalleryScreen;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.HistoryScreen;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;

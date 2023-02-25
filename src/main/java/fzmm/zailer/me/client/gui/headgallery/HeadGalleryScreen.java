@@ -1,13 +1,14 @@
-package fzmm.zailer.me.client.gui;
+package fzmm.zailer.me.client.gui.headgallery;
 
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
+import fzmm.zailer.me.client.gui.headgallery.components.HeadGalleryItemComponent;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.IMementoScreen;
-import fzmm.zailer.me.client.gui.components.GiveItemComponent;
 import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.client.logic.headGallery.HeadGalleryResources;
 import fzmm.zailer.me.client.logic.headGallery.MinecraftHeadsData;
@@ -25,10 +26,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
@@ -53,15 +50,14 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     private static final String CURRENT_PAGE_LABEL_ID = "current-page-label";
     private static final String NEXT_PAGE_BUTTON_ID = "next-page-button";
     private static final String CONTENT_SEARCH_ID = "content-search";
-    private static final String TAGS_NBT_KEY = "tags";
     private static final String MINECRAFT_HEADS_BUTTON_ID = "minecraft-heads";
     private static final String ERROR_MESSAGE_ID = "error-message";
     private static HeadGalleryMemento memento = null;
     private int page;
     private VerticalGridLayout contentGridLayout;
     private LabelComponent currentPageLabel;
-    private final ObjectArrayList<GiveItemComponent> heads;
-    private final ObjectArrayList<GiveItemComponent> headsWithFilter;
+    private final ObjectArrayList<HeadGalleryItemComponent> heads;
+    private final ObjectArrayList<HeadGalleryItemComponent> headsWithFilter;
     private TextFieldWidget contentSearchField;
     private ButtonComponent tagButton;
     private List<Component> categoryButtonList;
@@ -151,7 +147,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
             int nameColor = config.colors.headGalleryName().rgb();
             int tagsColor = config.colors.headGalleryTags().rgb();
             boolean stylingHeads = config.headGallery.stylingHeads();
-            ObjectArrayList<GiveItemComponent> categoryHeads = categoryData.stream()
+            ObjectArrayList<HeadGalleryItemComponent> categoryHeads = categoryData.stream()
                     .map(minecraftHeadsData -> {
                         ItemStack head = HeadBuilder.builder()
                                 .skinValue(minecraftHeadsData.value())
@@ -174,16 +170,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
                         head = builder.get();
 
-
-                        NbtList tagsNbtList = new NbtList();
-                        tagsNbtList.addAll(minecraftHeadsData.tags().stream()
-                                .map(NbtString::of)
-                                .toList()
-                        );
-
-                        head.setSubNbt(TAGS_NBT_KEY, tagsNbtList);
-
-                        return new GiveItemComponent(head);
+                        return new HeadGalleryItemComponent(head, head.getName().getString(), minecraftHeadsData.tags());
                     }).collect(ObjectArrayList.toList());
             this.heads.addAll(categoryHeads);
 
@@ -320,7 +307,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         this.currentPageLabel.text(Text.translatable("fzmm.gui.headGallery.label.page", page, lastPage));
 
         int lastElementIndex = Math.min((page) * this.contentGridLayout.getMaxChildren(), this.headsWithFilter.size());
-        ObjectList<GiveItemComponent> currentPageHeads = this.headsWithFilter.subList(firstElementIndex, lastElementIndex);
+        ObjectList<HeadGalleryItemComponent> currentPageHeads = this.headsWithFilter.subList(firstElementIndex, lastElementIndex);
 
         assert this.client != null;
         this.client.execute(() -> {
@@ -337,27 +324,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         this.headsWithFilter.addAll(this.heads);
 
         String search = this.contentSearchField.getText().toLowerCase();
-        this.headsWithFilter.removeIf(giveItemComponent -> {
-            ItemStack stack = giveItemComponent.stack();
-            Optional<String> name = DisplayBuilder.of(stack).getName();
-
-            boolean containsSearch = name.map(s -> s.toLowerCase().contains(search)).orElse(false);
-            boolean containsTags = true;
-            if (containsSearch && !this.selectedTags.isEmpty()) {
-                NbtCompound nbt = stack.getOrCreateNbt();
-                NbtList tags = nbt.getList(TAGS_NBT_KEY, NbtElement.STRING_TYPE);
-
-                for (var selectedTag : this.selectedTags) {
-                    containsTags = tags.contains(NbtString.of(selectedTag));
-
-                    if (!containsTags)
-                        break;
-                }
-
-            }
-
-            return !(containsSearch && containsTags);
-        });
+        this.headsWithFilter.removeIf(itemComponent -> !itemComponent.filter(this.selectedTags, search));
     }
 
     private void minecraftHeadsExecute() {
