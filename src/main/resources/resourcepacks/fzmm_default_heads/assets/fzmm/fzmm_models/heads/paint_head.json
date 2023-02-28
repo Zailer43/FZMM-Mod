@@ -1,0 +1,43 @@
+{
+  "paintable": true,
+  "steps": [
+    {
+      "comment": "head texture",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "desaturate",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_color",
+      "color_id": "selected_color"
+    },
+    {
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    }
+  ]
+}

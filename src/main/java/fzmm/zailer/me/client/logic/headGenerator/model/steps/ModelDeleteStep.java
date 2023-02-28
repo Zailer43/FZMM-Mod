@@ -2,11 +2,9 @@ package fzmm.zailer.me.client.logic.headGenerator.model.steps;
 
 import com.google.gson.JsonObject;
 import fzmm.zailer.me.client.logic.headGenerator.model.ModelArea;
+import fzmm.zailer.me.client.logic.headGenerator.model.ModelData;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ModelDeleteStep implements IModelStep {
 
@@ -17,7 +15,8 @@ public class ModelDeleteStep implements IModelStep {
     }
 
     @Override
-    public void apply(Graphics2D graphics, HashMap<String, BufferedImage> textures, AtomicReference<BufferedImage> selectedTexture) {
+    public void apply(ModelData data) {
+        Graphics2D graphics = data.graphics();
         graphics.setBackground(new Color(0, 0, 0, 0));
         graphics.clearRect(this.area.getXWithOffset(), this.area.getYWithOffset(), this.area.width(), this.area.height());
     }

@@ -39,7 +39,7 @@ public class ImageUtils {
     static {
         OLD_FORMAT_TO_NEW_FORMAT = getOldFormatToNewFormatEntry().orElseGet(() -> {
           FzmmClient.LOGGER.error("Error loading ImageUtils.OLD_FORMAT_TO_NEW_FORMAT");
-          return new HeadModelEntry("", "", new ArrayList<>(), new HashMap<>());
+          return new HeadModelEntry("", "", new ArrayList<>(), new HashMap<>(), new HashMap<>());
         });
     }
 

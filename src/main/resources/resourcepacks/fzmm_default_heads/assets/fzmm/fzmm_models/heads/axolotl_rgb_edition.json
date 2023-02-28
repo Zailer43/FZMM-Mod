@@ -1,0 +1,253 @@
+{
+  "paintable": true,
+  "textures": [
+    {
+      "id": "axolotl",
+      "path": "fzmm:textures/model_textures/axolotl.png"
+    }
+  ],
+  "colors": [ {
+      "id": "selected_color",
+      "color_hex": "#f5bddd"
+    }
+  ],
+  "steps": [
+    {
+      "comment": "head texture",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "axolotl"
+    },
+    {
+      "comment": "axolotl",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_color",
+      "color_id": "selected_color"
+    },
+    {
+      "comment": "top sides",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 32,
+        "height": 2
+      }
+    },
+    {
+      "comment": "top",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      }
+    },
+    {
+      "comment": "left",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 10,
+        "width": 9,
+        "height": 1
+      }
+    },
+    {
+      "comment": "right",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 15,
+        "y": 10,
+        "width": 17,
+        "height": 1
+      }
+    },
+    {
+      "comment": "left leg 1",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 1,
+        "y": 11,
+        "width": 1,
+        "height": 5
+      }
+    },
+    {
+      "comment": "left leg 1",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 14,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "comment": "left leg 1",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 2,
+        "y": 14,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "comment": "left leg 2",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 6,
+        "y": 11,
+        "width": 1,
+        "height": 5
+      }
+    },
+    {
+      "comment": "left leg 2",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 5,
+        "y": 14,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "comment": "left leg 2",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 7,
+        "y": 14,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "comment": "right leg 1",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 17,
+        "y": 11,
+        "width": 1,
+        "height": 5
+      }
+    },
+    {
+      "comment": "right leg 1",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 14,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "comment": "right leg 1",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 18,
+        "y": 14,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "comment": "right leg 2",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 22,
+        "y": 11,
+        "width": 1,
+        "height": 5
+      }
+    },
+    {
+      "comment": "right leg 2",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 21,
+        "y": 14,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "comment": "right leg 2",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 23,
+        "y": 14,
+        "width": 1,
+        "height": 1
+      }
+    },
+    {
+      "comment": "hat layer",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 3,
+        "y": 2,
+        "width": 18,
+        "height": 9
+      }
+    }
+  ]
+}

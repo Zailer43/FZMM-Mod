@@ -1,11 +1,10 @@
 package fzmm.zailer.me.client.logic.headGenerator.model.steps;
 
 import com.google.gson.JsonObject;
+import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.logic.headGenerator.model.ModelData;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ModelSelectTextureStep implements IModelStep {
 
@@ -16,8 +15,15 @@ public class ModelSelectTextureStep implements IModelStep {
     }
 
     @Override
-    public void apply(Graphics2D graphics, HashMap<String, BufferedImage> textures, AtomicReference<BufferedImage> selectedTexture) {
-        selectedTexture.set(textures.get(this.textureId));
+    public void apply(ModelData data) {
+        BufferedImage texture = data.textures().get(this.textureId);
+
+        if (texture == null) {
+            texture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+            FzmmClient.LOGGER.error("[ModelSelectColorStep] Could not find texture '{}'", this.textureId);
+        }
+
+        data.selectedTexture().set(texture);
     }
 
     public static ModelSelectTextureStep parse(JsonObject jsonObject) {

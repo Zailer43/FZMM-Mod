@@ -1,0 +1,133 @@
+{
+  "paintable": true,
+  "textures": [
+    {
+      "id": "sun_cap",
+      "path": "fzmm:textures/model_textures/sun_cap.png"
+    }
+  ],
+  "colors": [ {
+      "id": "selected_color",
+      "color_hex": "#75D32C"
+    }
+  ],
+  "steps": [
+    {
+      "comment": "head texture",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "sun_cap"
+    },
+    {
+      "comment": "sun cap",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_color",
+      "color_id": "selected_color"
+    },
+    {
+      "comment": "top sides",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 32,
+        "height": 2
+      }
+    },
+    {
+      "comment": "top",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      }
+    },
+    {
+      "comment": "left",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 10,
+        "width": 10,
+        "height": 1
+      }
+    },
+    {
+      "comment": "right",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 14,
+        "y": 10,
+        "width": 18,
+        "height": 1
+      }
+    },
+    {
+      "comment": "left hat layer",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 7,
+        "y": 9,
+        "width": 3,
+        "height": 2
+      }
+    },
+    {
+      "comment": "right hat layer",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 14,
+        "y": 9,
+        "width": 3,
+        "height": 2
+      }
+    },
+    {
+      "comment": "top hat layer",
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 10,
+        "y": 7,
+        "width": 4,
+        "height": 3
+      }
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "paintable": true,
+  "textures": [
+    {
+      "id": "glass_block",
+      "path": "fzmm:textures/model_textures/glass_block.png"
+    }
+  ],
+  "colors": [
+    {
+      "id": "selected_color",
+      "color_hex": "#355ECA"
+    }
+  ],
+  "steps": [
+    {
+      "comment": "head texture",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "glass_block"
+    },
+    {
+      "comment": "glass block",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_color",
+      "color_id": "selected_color"
+    },
+    {
+      "type": "fill_color",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      }
+    }
+  ]
+}

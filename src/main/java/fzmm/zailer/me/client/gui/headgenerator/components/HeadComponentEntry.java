@@ -2,12 +2,16 @@ package fzmm.zailer.me.client.gui.headgenerator.components;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGenerationMethod;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
+import fzmm.zailer.me.client.logic.headGenerator.model.IPaintableEntry;
 import fzmm.zailer.me.config.FzmmConfig;
+import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -37,6 +41,18 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
         FzmmConfig.HeadGenerator config = FzmmClient.CONFIG.headGenerator;
         this.isFavorite = config.favoriteSkins().contains(this.entry.getKey());
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+
+        if (headData instanceof IPaintableEntry coloredEntry && coloredEntry.isPaintable()) {
+            BoxComponent colorPreview = (BoxComponent) Components.box(Sizing.fixed(15), Sizing.fixed(15))
+                    .fill(true)
+                    .cursorStyle(CursorStyle.HAND)
+                    .id(ColorRow.getColorPreviewId(headData.getKey()));
+            this.buttonsLayout.child(colorPreview);
+            ColorRow.setupColorPreview(headData.getKey(), this.buttonsLayout, false, () -> coloredEntry.getColor("selected_color"), colorPickerComponent -> {
+                coloredEntry.putColor("selected_color", colorPickerComponent.selectedColor());
+                this.update(parent.getBaseSkin(), parent.overlapHatLayerButton());
+            });
+        }
 
         int giveButtonWidth = textRenderer.getWidth(GIVE_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
         this.giveButton = Components.button(GIVE_BUTTON_TEXT, buttonComponent -> this.giveButtonExecute(parent.overlapHatLayerButton()));

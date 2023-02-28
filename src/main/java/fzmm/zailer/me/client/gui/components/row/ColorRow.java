@@ -63,14 +63,6 @@ public class ColorRow extends AbstractRow {
     public static ConfigTextBox setup(FlowLayout rootComponent, String id, Color defaultcolor, boolean withAlpha, @Nullable Consumer<String> changedListener) {
         ConfigTextBox colorField = ConfigTextBoxRow.setup(rootComponent, getColorFieldId(id), id, defaultcolor.asHexString(withAlpha), changedListener);
 
-        if (!(MinecraftClient.getInstance().currentScreen instanceof BaseFzmmScreen baseFzmmScreen))
-            return colorField;
-
-        BoxComponent colorPreview = rootComponent.childById(BoxComponent.class, getColorPreviewId(id));
-        BaseFzmmScreen.checkNull(colorPreview, "box", getColorPreviewId(id));
-
-        UIModel model = baseFzmmScreen.getModel();
-
         colorField.inputPredicate(withAlpha ? s -> s.matches("#[a-zA-Z\\d]{0,8}") : s -> s.matches("#[a-zA-Z\\d]{0,6}"));
         colorField.applyPredicate(withAlpha ? s -> s.matches("#[a-zA-Z\\d]{8}") : s -> s.matches("#[a-zA-Z\\d]{6}"));
         colorField.valueParser(s -> {
@@ -85,9 +77,24 @@ public class ColorRow extends AbstractRow {
         );
 
         Supplier<Color> valueGetter = () -> (Color) colorField.parsedValue();
-        colorPreview.color(valueGetter.get());
+        BoxComponent colorPreview = setupColorPreview(id, rootComponent, withAlpha, valueGetter,
+                (picker) -> colorField.text(picker.selectedColor().asHexString(withAlpha)));
 
         colorField.onChanged().subscribe(value -> colorPreview.color(valueGetter.get()));
+
+        return colorField;
+    }
+
+
+    @SuppressWarnings("ConstantConditions")
+    public static BoxComponent setupColorPreview(String id, FlowLayout rootComponent, boolean withAlpha, Supplier<Color> valueGetter, Consumer<ColorPickerComponent> onPress) {
+        BoxComponent colorPreview = rootComponent.childById(BoxComponent.class, getColorPreviewId(id));
+        BaseFzmmScreen.checkNull(colorPreview, "box", getColorPreviewId(id));
+
+        colorPreview.color(valueGetter.get());
+        if (!(MinecraftClient.getInstance().currentScreen instanceof BaseFzmmScreen baseFzmmScreen))
+            return colorPreview;
+        UIModel model = baseFzmmScreen.getModel();
 
         colorPreview.mouseDown().subscribe((mouseX, mouseY, button) -> {
             ((FlowLayout) colorPreview.root()).child(Containers.overlay(
@@ -102,7 +109,8 @@ public class ColorRow extends AbstractRow {
                         picker.onChanged().subscribe(previewBox::color);
 
                         flowLayout.childById(ButtonComponent.class, "confirm-button").onPress(confirmButton -> {
-                            colorField.text(picker.selectedColor().asHexString(withAlpha));
+                            onPress.accept(picker);
+                            colorPreview.color(picker.selectedColor());
                             flowLayout.parent().remove();
                         });
 
@@ -113,7 +121,7 @@ public class ColorRow extends AbstractRow {
             return true;
         });
 
-        return colorField;
+        return colorPreview;
     }
 
     public static ColorRow parse(Element element) {

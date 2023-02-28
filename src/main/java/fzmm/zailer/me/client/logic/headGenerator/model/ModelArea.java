@@ -24,10 +24,10 @@ public class ModelArea extends ModelPoint {
         return new ModelArea(offset, hat_layer, x, y, width, height);
     }
     public int width() {
-        return width;
+        return this.width;
     }
 
     public int height() {
-        return height;
+        return this.height;
     }
 }

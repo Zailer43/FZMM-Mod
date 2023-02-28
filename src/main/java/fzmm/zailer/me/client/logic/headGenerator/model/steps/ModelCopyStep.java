@@ -2,11 +2,11 @@ package fzmm.zailer.me.client.logic.headGenerator.model.steps;
 
 import com.google.gson.JsonObject;
 import fzmm.zailer.me.client.logic.headGenerator.model.ModelArea;
+import fzmm.zailer.me.client.logic.headGenerator.model.ModelData;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ModelCopyStep implements IModelStep {
@@ -30,7 +30,9 @@ public class ModelCopyStep implements IModelStep {
     }
 
     @Override
-    public void apply(Graphics2D graphics, HashMap<String, BufferedImage> textures, AtomicReference<BufferedImage> selectedTexture) {
+    public void apply(ModelData data) {
+        Graphics2D graphics = data.graphics();
+        AtomicReference<BufferedImage> selectedTexture = data.selectedTexture();
         if (this.addHatLayer) {
             this.apply(graphics, selectedTexture, false, false);
             this.apply(graphics, selectedTexture, true, true);
