@@ -4,15 +4,14 @@ import fzmm.zailer.me.compat.CompatMods;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 
-import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SymbolButtonComponent {
 
-    public static Optional<ButtonComponent> of(AbstractParentElement customSymbolSelectionPanel, Object symbolButtonWidget, TextFieldWidget textFieldWidget) {
+    public static Optional<ButtonComponent> of(CustomSymbolSelectionPanel customSymbolSelectionPanel, Object symbolButtonWidget, TextFieldWidget textFieldWidget) {
         if (!CompatMods.SYMBOL_CHAT_PRESENT)
             return Optional.empty();
 
@@ -20,7 +19,7 @@ public class SymbolButtonComponent {
 
         return Optional.of((ButtonComponent) Components.button(symbolButton.getMessage(), buttonComponent -> {
                     boolean textFieldAlreadyAssigned = setActiveTextField(customSymbolSelectionPanel, textFieldWidget);
-                    boolean visible = isVisible(customSymbolSelectionPanel);
+                    boolean visible = isVisible(customSymbolSelectionPanel.parent());
 
                     // Opens the gui if it is closed and only closes it if you click the same button with which you opened it,
                     // otherwise it changes the text field where it writes
@@ -47,13 +46,13 @@ public class SymbolButtonComponent {
         ((net.replaceitem.symbolchat.gui.SymbolSelectionPanel) symbolSelectionPanel).visible = value;
     }
     
-    public static boolean setActiveTextField(Object customSymbolSelectionPanel, TextFieldWidget textFieldWidget) {
-        try {
-            Method setActiveTextField = customSymbolSelectionPanel.getClass().getMethod("setActiveTextField", TextFieldWidget.class);
-            return (boolean) setActiveTextField.invoke(customSymbolSelectionPanel, textFieldWidget);
-        } catch (Exception e) {
-            return false;
-        }
+    public static boolean setActiveTextField(CustomSymbolSelectionPanel customSymbolSelectionPanel, TextFieldWidget textFieldWidget) {
+        AtomicReference<TextFieldWidget> activeTextFieldReference = customSymbolSelectionPanel.activeTextFieldReference();
+        if (activeTextFieldReference.get() == textFieldWidget)
+            return true;
+
+        activeTextFieldReference.set(textFieldWidget);
+        return false;
     }
 
 }

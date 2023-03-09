@@ -1,34 +1,34 @@
 package fzmm.zailer.me.compat.symbolChat.symbol;
 
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.compat.CompatMods;
 import net.minecraft.client.gui.AbstractParentElement;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import org.jetbrains.annotations.Nullable;
 
-public class CustomSymbolSelectionPanel {
+import java.util.concurrent.atomic.AtomicReference;
 
-    public static AbstractParentElement of(Screen screen, int x, int y) {
+public record CustomSymbolSelectionPanel(AbstractParentElement parent, AtomicReference<TextFieldWidget> activeTextFieldReference) {
+
+    @Nullable
+    public static CustomSymbolSelectionPanel of(int x, int y) {
         if (!CompatMods.SYMBOL_CHAT_PRESENT)
             return null;
 
-        return new net.replaceitem.symbolchat.gui.SymbolSelectionPanel(screen, x, y) {
-            private TextFieldWidget activeTextField;
+        AtomicReference<TextFieldWidget> activeTextField = new AtomicReference<>(null);
+        AbstractParentElement parent;
+        try {
+            parent = new net.replaceitem.symbolchat.gui.SymbolSelectionPanel(symbol -> {
+                if (activeTextField.get() != null)
+                    activeTextField.get().write(symbol);
+            }, x, y);
+        } catch (Throwable e) {
+            FzmmClient.LOGGER.error("Failed to create CustomSymbolSelectionPanel", e);
+            CompatMods.SYMBOL_CHAT_PRESENT = false;
+            return null;
+        }
 
-            public boolean setActiveTextField(TextFieldWidget activeTextField) {
-                if (activeTextField == this.activeTextField)
-                    return true;
-
-                this.activeTextField = activeTextField;
-                return false;
-            }
-
-            @Override
-            public void onSymbolPasted(String symbol) {
-                if (this.activeTextField != null)
-                    this.activeTextField.write(symbol);
-            }
-        };
+        return new CustomSymbolSelectionPanel(parent, activeTextField);
     }
-
 
 }

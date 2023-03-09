@@ -2,8 +2,8 @@ package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.compat.symbolChat.symbol.CustomSymbolSelectionPanel;
 import fzmm.zailer.me.compat.symbolChat.symbol.SymbolButtonComponent;
-import fzmm.zailer.me.compat.symbolChat.symbol.SymbolSelectionPanelComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.TextBoxComponent;
@@ -138,12 +138,12 @@ public class TextBoxRow extends AbstractRow {
     }
 
     public Component addSymbolButton(BaseFzmmScreen screen, TextBoxComponent textBoxComponent) {
-        if (screen.getSymbolSelectionPanel().isPresent()) {
-            SymbolSelectionPanelComponent symbolSelectionPanel = screen.getSymbolSelectionPanel().get();
+        if (screen.getCustomSymbolSelectionPanel().isPresent()) {
+            CustomSymbolSelectionPanel customSymbolSelectionPanel = screen.getCustomSymbolSelectionPanel().get();
 
             net.replaceitem.symbolchat.gui.widget.symbolButton.SymbolButtonWidget button =
-                    new net.replaceitem.symbolchat.gui.widget.symbolButton.OpenSymbolPanelButtonWidget(MinecraftClient.getInstance().currentScreen, 0, 0, 20, 20, (net.replaceitem.symbolchat.gui.SymbolSelectionPanel) symbolSelectionPanel.getSymbolSelectionPanel());
-            Optional<ButtonComponent> component = SymbolButtonComponent.of(symbolSelectionPanel.getSymbolSelectionPanel(), button, textBoxComponent);
+                    new net.replaceitem.symbolchat.gui.widget.symbolButton.OpenSymbolPanelButtonWidget(0, 0, 20, 20, (net.replaceitem.symbolchat.gui.SymbolSelectionPanel) customSymbolSelectionPanel.parent());
+            Optional<ButtonComponent> component = SymbolButtonComponent.of(customSymbolSelectionPanel, button, textBoxComponent);
             if (component.isPresent())
                 return component.get()
                         .tooltip(SYMBOL_BUTTON_TEXT);

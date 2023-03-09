@@ -46,7 +46,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     protected final String baseScreenTranslationKey;
     public static final int BUTTON_TEXT_PADDING = 8;
     public static final int COMPONENT_DISTANCE = 8;
-    private final SymbolSelectionPanelComponent symbolSelectionPanel;
+    private final CustomSymbolSelectionPanel customSymbolSelectionPanel;
     private final HashMap<String, IScreenTab> tabs;
 //    private final FontSelectionDropDownComponent fontSelectionDropDown;
 
@@ -57,7 +57,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         this.tabs = new HashMap<>();
 
         if (CompatMods.SYMBOL_CHAT_PRESENT) {
-                this.symbolSelectionPanel = new SymbolSelectionPanelComponent(CustomSymbolSelectionPanel.of(this, 0, 0));
+                this.customSymbolSelectionPanel = CustomSymbolSelectionPanel.of(0, 0);
 //            this.fontSelectionDropDown = new FontSelectionDropDownComponent(new net.replaceitem.symbolchat.gui.widget.FontSelectionDropDownWidget(0,
 //                    0,
 //                    net.replaceitem.symbolchat.gui.SymbolSelectionPanel.WIDTH,
@@ -66,7 +66,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 //                    net.replaceitem.symbolchat.SymbolChat.selectedFont
 //            ));
         } else {
-            this.symbolSelectionPanel = null;
+            this.customSymbolSelectionPanel = null;
 //            this.fontSelectionDropDown = null;
         }
     }
@@ -79,7 +79,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
             backButton.onPress(button -> this.close());
 
         if (CompatMods.SYMBOL_CHAT_PRESENT) {
-            rootComponent.child(this.symbolSelectionPanel);
+            rootComponent.child(new SymbolSelectionPanelComponent(this.customSymbolSelectionPanel.parent()));
 //            rootComponent.child(this.fontSelectionDropDown);
         }
 
@@ -155,8 +155,8 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         return this.baseScreenTranslationKey;
     }
 
-    public Optional<SymbolSelectionPanelComponent> getSymbolSelectionPanel() {
-        return Optional.ofNullable(this.symbolSelectionPanel);
+    public Optional<CustomSymbolSelectionPanel> getCustomSymbolSelectionPanel() {
+        return Optional.ofNullable(this.customSymbolSelectionPanel);
     }
 
 //    public Optional<FontSelectionDropDownComponent> getFontSelectionDropDown() {
