@@ -2,8 +2,8 @@
   "paintable": true,
   "textures": [
     {
-      "id": "party_hat",
-      "path": "fzmm:textures/model_textures/party_hat.png"
+      "id": "colored_hat",
+      "path": "fzmm:textures/model_textures/colored_hat.png"
     }
   ],
   "colors": [ {
@@ -27,10 +27,10 @@
     },
     {
       "type": "select_texture",
-      "texture_id": "party_hat"
+      "texture_id": "colored_hat"
     },
     {
-      "comment": "party hat",
+      "comment": "colored hat",
       "type": "copy",
       "source": {
         "offset": "HEAD",
