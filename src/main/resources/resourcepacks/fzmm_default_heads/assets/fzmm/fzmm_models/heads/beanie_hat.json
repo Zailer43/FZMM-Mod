@@ -2,13 +2,13 @@
   "paintable": true,
   "textures": [
     {
-      "id": "santa_hat",
-      "path": "fzmm:textures/model_textures/santa_hat.png"
+      "id": "beanie",
+      "path": "fzmm:textures/model_textures/beanie_hat.png"
     }
   ],
   "colors": [ {
       "id": "selected_color",
-      "color_hex": "#D62B29"
+      "color_hex": "#0777b5"
     }
   ],
   "steps": [
@@ -27,10 +27,10 @@
     },
     {
       "type": "select_texture",
-      "texture_id": "santa_hat"
+      "texture_id": "beanie"
     },
     {
-      "comment": "santa hat",
+      "comment": "beanie",
       "type": "copy",
       "source": {
         "offset": "HEAD",
@@ -46,7 +46,7 @@
       "color_id": "selected_color"
     },
     {
-      "comment": "left side",
+      "comment": "top sides",
       "type": "fill_color",
       "algorithm": "multiply",
       "area": {
@@ -54,34 +54,8 @@
         "hat_layer": false,
         "x": 0,
         "y": 8,
-        "width": 4,
+        "width": 32,
         "height": 3
-      }
-    },
-    {
-      "comment": "left side",
-      "type": "fill_color",
-      "algorithm": "multiply",
-      "area": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 0,
-        "y": 11,
-        "width": 3,
-        "height": 1
-      }
-    },
-    {
-      "comment": "left side",
-      "type": "fill_color",
-      "algorithm": "multiply",
-      "area": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 0,
-        "y": 12,
-        "width": 2,
-        "height": 1
       }
     },
     {
@@ -94,110 +68,97 @@
         "x": 8,
         "y": 0,
         "width": 8,
-        "height": 4
+        "height": 8
       }
     },
     {
-      "comment": "top",
+      "comment": "left",
       "type": "fill_color",
       "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
-        "x": 10,
-        "y": 4,
+        "x": 0,
+        "y": 11,
         "width": 4,
         "height": 1
       }
     },
     {
-      "comment": "right/back",
+      "comment": "right",
       "type": "fill_color",
       "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
         "x": 20,
-        "y": 8,
+        "y": 11,
         "width": 12,
+        "height": 1
+      }
+    },
+    {
+      "comment": "left hat",
+      "type": "fill_color",
+      "algorithm": "multiply",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 11,
+        "width": 4,
         "height": 2
       }
     },
     {
-      "comment": "right/back",
+      "comment": "left front hat",
       "type": "fill_color",
       "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
-        "hat_layer": false,
-        "x": 20,
+        "hat_layer": true,
+        "x": 4,
         "y": 10,
-        "width": 6,
-        "height": 1
+        "width": 9,
+        "height": 2
       }
     },
     {
-      "comment": "right/back",
+      "comment": "front hat",
       "type": "fill_color",
       "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
-        "hat_layer": false,
-        "x": 21,
-        "y": 11,
-        "width": 5,
-        "height": 1
-      }
-    },
-    {
-      "comment": "right/back",
-      "type": "fill_color",
-      "algorithm": "multiply",
-      "area": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 22,
-        "y": 12,
-        "width": 5,
-        "height": 1
-      }
-    },
-    {
-      "comment": "back",
-      "type": "fill_color",
-      "algorithm": "multiply",
-      "area": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 26,
-        "y": 13,
-        "width": 4,
-        "height": 1
-      }
-    },
-    {
-      "comment": "back",
-      "type": "fill_color",
-      "algorithm": "multiply",
-      "area": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 29,
-        "y": 12,
-        "width": 3,
-        "height": 1
-      }
-    },
-    {
-      "comment": "back",
-      "type": "fill_color",
-      "algorithm": "multiply",
-      "area": {
-        "offset": "HEAD",
-        "hat_layer": false,
-        "x": 30,
+        "hat_layer": true,
+        "x": 13,
         "y": 10,
         "width": 2,
+        "height": 1
+      }
+    },
+    {
+      "comment": "right front hat",
+      "type": "fill_color",
+      "algorithm": "multiply",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 15,
+        "y": 10,
+        "width": 5,
+        "height": 2
+      }
+    },
+    {
+      "comment": "right hat",
+      "type": "fill_color",
+      "algorithm": "multiply",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 20,
+        "y": 11,
+        "width": 12,
         "height": 2
       }
     }

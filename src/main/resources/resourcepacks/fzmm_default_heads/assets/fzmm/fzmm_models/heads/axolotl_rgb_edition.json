@@ -48,6 +48,7 @@
     {
       "comment": "top sides",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -60,6 +61,7 @@
     {
       "comment": "top",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -72,6 +74,7 @@
     {
       "comment": "left",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -84,6 +87,7 @@
     {
       "comment": "right",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -96,6 +100,7 @@
     {
       "comment": "left leg 1",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -108,6 +113,7 @@
     {
       "comment": "left leg 1",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -120,6 +126,7 @@
     {
       "comment": "left leg 1",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -132,6 +139,7 @@
     {
       "comment": "left leg 2",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -144,6 +152,7 @@
     {
       "comment": "left leg 2",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -156,6 +165,7 @@
     {
       "comment": "left leg 2",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -168,6 +178,7 @@
     {
       "comment": "right leg 1",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -180,6 +191,7 @@
     {
       "comment": "right leg 1",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -192,6 +204,7 @@
     {
       "comment": "right leg 1",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -204,6 +217,7 @@
     {
       "comment": "right leg 2",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -216,6 +230,7 @@
     {
       "comment": "right leg 2",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -228,6 +243,7 @@
     {
       "comment": "right leg 2",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -240,6 +256,7 @@
     {
       "comment": "hat layer",
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": true,

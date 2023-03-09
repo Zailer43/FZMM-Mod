@@ -47,6 +47,7 @@
     },
     {
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": false,
@@ -58,6 +59,7 @@
     },
     {
       "type": "fill_color",
+      "algorithm": "multiply",
       "area": {
         "offset": "HEAD",
         "hat_layer": true,
