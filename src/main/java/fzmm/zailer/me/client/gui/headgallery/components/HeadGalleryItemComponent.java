@@ -16,9 +16,9 @@ public class HeadGalleryItemComponent extends GiveItemComponent {
         this.tags = tags;
     }
 
-    public boolean filter(Set<String> tags, String name) {
+    public boolean filter(Set<String> tags, String toLowerCaseName) {
         boolean hasTag = tags.isEmpty() || this.tags.containsAll(tags);
 
-        return hasTag && this.name.contains(name);
+        return hasTag && this.name.toLowerCase().contains(toLowerCaseName);
     }
 }
