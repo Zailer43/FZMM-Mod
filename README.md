@@ -7,9 +7,9 @@
 
 
 [![Discord invite](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white&style=for-the-badge&logo=appveyor)](https://discord.com/invite/y3GcaUNgCr)
-[![Downloads](https://img.shields.io/github/downloads/Zailer43/FZMM-Mod/total?color=red&logo=github&style=for-the-badge)](https://github.com/Zailer43/FZMM-Mod/actions)
-[![Modrinth](https://modrinth-utils.vercel.app/api/badge/downloads?id=fzmm&logo=true&style=for-the-badge)](https://modrinth.com/mod/fzmm)
-[![CurseForge](https://cf.way2muchnoise.eu/full_787646_downloads.svg?badge_style=for_the_badge)](https://www.curseforge.com/minecraft/mc-mods/fzmm)
+[![Github Downloads](https://img.shields.io/github/downloads/Zailer43/FZMM-Mod/total?color=red&logo=github&style=for-the-badge)](https://github.com/Zailer43/FZMM-Mod/actions)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/fzmm?label=Modrinth&logo=modrinth&style=for-the-badge)](https://modrinth.com/mod/fzmm/)
+[![CurseForge Downloads](https://cf.way2muchnoise.eu/full_787646_downloads.svg?badge_style=for_the_badge)](https://www.curseforge.com/minecraft/mc-mods/fzmm)
 
 A fabric mod that is mainly for editing or creating NBT of items in creative, but it also has a few utilities.
 
@@ -173,6 +173,7 @@ To contribute with the translation of a language or fix a bug in a language othe
 - [owo-lib](https://github.com/wisp-forest/owo-lib) and its contributors for making a fairly complete library
 - [Minecraft heads](https://minecraft-heads.com) for having a great gallery of heads for Head Gallery
 - [Placeholder API](https://github.com/Patbox/TextPlaceholderAPI) for having an easy-to-use format for text formatting
+- [Symbol Chat](https://modrinth.com/mod/symbol-chat) for being a good complement for texts
 - The past, present and future contributors of FZMM mod, including people who report bugs or give me suggestions 
 
 ## Disclaimer
