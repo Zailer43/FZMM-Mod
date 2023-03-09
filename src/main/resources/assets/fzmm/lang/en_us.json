@@ -465,6 +465,8 @@
   "itemGroup.op.nameTag.toast.comment.2": "skin of user xyzen420's girlfriend's missing rabbit.",
   "key.category.fzmm": "FZMM",
   "key.fzmm.mainGui": "Main GUI",
+  "modmenu.descriptionTranslation.fzmm": "A fabric mod that is mainly for editing or creating NBT of items in creative but it also has a few utilities",
+  "modmenu.nameTranslation.fzmm": "FZMM",
   "text.config.fzmm.category.colors": "Colors",
   "text.config.fzmm.category.encryptbook": "Encryptbook",
   "text.config.fzmm.category.general": "General",
