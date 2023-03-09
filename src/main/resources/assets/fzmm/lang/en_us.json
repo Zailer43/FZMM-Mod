@@ -344,7 +344,7 @@
   "fzmm.gui.title.main": "FZMM Gui",
   "fzmm.gui.title.playerStatue": "Player Statue",
   "fzmm.gui.title.textFormat": "Text format",
-  "fzmm.gui.warning.requiresCreative": "* Requires creative mode",
+  "fzmm.item.error.notAllowed": "FZMM: You are not allowed to give items in a non-creative game mode (item was saved in the history).",
   "fzmm.item.headGallery.heads.name": "%s",
   "fzmm.item.headGallery.heads.tags.tag": "  - %s",
   "fzmm.item.headGallery.heads.tags.title": "Tags:",

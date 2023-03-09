@@ -12,6 +12,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -75,7 +76,9 @@ public class FzmmUtils {
         else
             FzmmHistory.addGeneratedItems(stack);
 
-        if (FzmmClient.CONFIG.general.giveClientSide()) {
+        if (!isAllowedToGive()) {
+            mc.player.sendMessage(Text.translatable("fzmm.item.error.notAllowed").setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
+        } else if (FzmmClient.CONFIG.general.giveClientSide()) {
             mc.player.equipStack(EquipmentSlot.MAINHAND, stack);
         } else {
             assert mc.interactionManager != null;
@@ -153,9 +156,10 @@ public class FzmmUtils {
         return Registries.ITEM.getOrEmpty(new Identifier(value)).orElse(Items.STONE);
     }
 
-    public static boolean isCreative() {
-        assert MinecraftClient.getInstance().player != null;
-        return MinecraftClient.getInstance().player.isCreative() || FzmmClient.CONFIG.general.giveClientSide();
+    public static boolean isAllowedToGive() {
+        PlayerEntity player = MinecraftClient.getInstance().player;
+
+        return player != null && (player.isCreative() || FzmmClient.CONFIG.general.giveClientSide());
     }
 
     /**
