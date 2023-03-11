@@ -9,7 +9,6 @@ import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.utils.FzmmUtils;
-import io.wispforest.owo.config.ui.component.ConfigToggleButton;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
@@ -41,7 +40,6 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         super("banner_editor", "bannerEditor", parent);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Override
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
         //general
@@ -109,7 +107,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
 
         //other
         BooleanButton isShieldButton = BooleanRow.setup(rootComponent, IS_SHIELD_ID, false, button -> {
-            boolean isShield = (boolean) ((ConfigToggleButton) button).parsedValue();
+            boolean isShield = ((BooleanButton) button).enabled();
             this.updatePreview(this.bannerBuilder.isShield(isShield));
         });
 
