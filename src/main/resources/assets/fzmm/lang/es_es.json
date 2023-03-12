@@ -280,7 +280,7 @@
   "fzmm.gui.playerStatue.option.skin-source.tooltip": "Nombre: Usuario de una cuenta premium.\nRuta: Ruta de una imagen en tu PC (¡soporta 128x128!).",
   "fzmm.gui.playerStatue.option.skin.tooltip": "Skin que va a tener la estatua.",
   "fzmm.gui.playerStatue.tab.generate": "Generar",
-  "fzmm.gui.playerStatue.tab.generate.tooltip": "Generar la estatua de un jugador, el cual es 26 armaduras\nque tienen en su mano derecha una cabeza con una parte de la skin insertada.\n\nNota: Generar una estatua normalmente tarda unos 2 minutos.",
+  "fzmm.gui.playerStatue.tab.generate.tooltip": "Generar la estatua de un jugador, el cual es 26 soportes de armaduras\nque tienen en su mano derecha una cabeza con una parte de la skin insertada.\n\nNota: Generar una estatua normalmente tarda unos 2 minutos.",
   "fzmm.gui.playerStatue.tab.update": "Actualizar",
   "fzmm.gui.playerStatue.tab.update.tooltip": "Actualizar el contenedor de tu mano con la Estatua de Jugador con nuevos valores,\nevitando que tener que regenerar eso para cambiar el lugar.",
   "fzmm.gui.textFormat.button.addLore": "Añadir descripción",
