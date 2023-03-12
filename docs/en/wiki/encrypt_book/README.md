@@ -7,3 +7,9 @@ Versions are only added when there was a change, if the version you are using do
 
 ## [0.1.2](./0.1.2_encrypt_book.md)
 Wiki added
+
+
+## Other language versions:
+
+- [English](../../../en/wiki/encrypt_book)
+- [Spanish / Español](../../../es/wiki/encrypt_book)

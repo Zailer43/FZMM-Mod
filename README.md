@@ -26,7 +26,7 @@ The default key to use the mod is `Z` (can be changed in controls), there are al
 
 ### Head generator
 Modify heads in seconds and get the skin instantly, with the "textures" option you can add accessories, glasses, hats, masks, beards, etc.
-And with the "models" option you can turn your skin into a plushie/mini version, put a pixel art of your skin on a book cover, decapitated and accessories with the color of your choice.
+and with the "models" option you can turn your skin into a plushie/mini version, put a pixel art of your skin on a book cover, decapitated and add accessories with the color of your choice.
 
 Currently, the default resource pack comes with:
 

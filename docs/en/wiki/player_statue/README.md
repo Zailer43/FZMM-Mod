@@ -7,3 +7,9 @@ Versions are only added when there was a change, if the version you are using do
 
 ## [0.1.2](./0.1.2_player_statue.md)
 Wiki added
+
+
+## Other language versions:
+
+- [English](../../../en/wiki/player_statue)
+- [Spanish / Español](../../../es/wiki/player_statue)
