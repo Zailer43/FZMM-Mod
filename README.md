@@ -39,6 +39,7 @@ Currently, the default resource pack comes with:
 
 <img src="docs/images/head_generator_model_examples.png" alt="Head generator model examples" width="300">
 
+
 <img src="docs/images/head_generator_texture_examples.png" alt="Head generator texture examples" width="300">
 
 <summary>Images</summary>
@@ -178,6 +179,9 @@ A banner editor is easier than having to place a loom and search for items, plus
 
 <img src="docs/images/banner_editor_add_pattern.png" alt="Banner editor add pattern" width="800">
 
+<details>
+<summary>Images</summary>
+
 #### Change color
 
 <img src="docs/images/banner_editor_change_color.png" alt="Banner editor change color" width="800">
@@ -185,12 +189,6 @@ A banner editor is easier than having to place a loom and search for items, plus
 #### Shield
 
 <img src="docs/images/banner_editor_shield.png" alt="Banner editor shield" width="800">
-
-
-<details>
-<summary>Images</summary>
-
-
 
 </details>
 
