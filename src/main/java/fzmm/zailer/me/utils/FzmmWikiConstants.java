@@ -2,7 +2,7 @@ package fzmm.zailer.me.utils;
 
 public class FzmmWikiConstants {
     public static final String CURRENT_BRANCH = "1.19.3/dev";
-    public static final String BASE_LINK = "https://github.com/Zailer43/FZMM-Mod/tree" + CURRENT_BRANCH + "/docs/en/wiki/";
+    public static final String BASE_LINK = "https://github.com/Zailer43/FZMM-Mod/blob/" + CURRENT_BRANCH + "/docs/en/wiki/";
 
     public static final String HEAD_GENERATOR_LAST_CHANGE_VERSION = "0.2.0";
     public static final String HEAD_GENERATOR_WIKI_LINK = BASE_LINK + "head_generator/" + HEAD_GENERATOR_LAST_CHANGE_VERSION + "_head_generator.md";
