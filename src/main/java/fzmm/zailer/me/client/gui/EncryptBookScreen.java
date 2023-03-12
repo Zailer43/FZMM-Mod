@@ -11,6 +11,7 @@ import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.IMementoScreen;
 import fzmm.zailer.me.client.logic.EncryptbookLogic;
 import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.utils.FzmmWikiConstants;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
@@ -25,7 +26,6 @@ import java.util.Optional;
 
 @SuppressWarnings("UnstableApiUsage")
 public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen {
-    private static final String ENCRYPTBOOK_FAQ_LINK = "https://github.com/Zailer43/FZMM-Mod/wiki/FAQ-Encryptbook";
     private static final String MESSAGE_ID = "message";
     private static final String SEED_ID = "seed";
     private static final String PADDING_CHARACTERS_ID = "paddingCharacters";
@@ -98,10 +98,10 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen 
 
         this.client.setScreen(new ConfirmLinkScreen(bool -> {
             if (bool)
-                Util.getOperatingSystem().open(ENCRYPTBOOK_FAQ_LINK);
+                Util.getOperatingSystem().open(FzmmWikiConstants.ENCRYPT_BOOK_WIKI_LINK);
 
             this.client.setScreen(this);
-        }, ENCRYPTBOOK_FAQ_LINK, true));
+        }, FzmmWikiConstants.ENCRYPT_BOOK_WIKI_LINK, true));
     }
 
     @Override

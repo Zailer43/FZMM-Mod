@@ -18,6 +18,7 @@ import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.FzmmWikiConstants;
 import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.component.Components;
@@ -55,7 +56,6 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("UnstableApiUsage")
 public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScreen {
-    private static final String HEAD_GENERATOR_WIKI_LINK = "https://github.com/Zailer43/FZMM-Mod/wiki/Head-Generator-Wiki";
     private static final Path SKIN_SAVE_FOLDER_PATH = Path.of(FabricLoader.getInstance().getGameDir().toString(), FzmmClient.MOD_ID, "skins");
     private static final String SKIN_ID = "skin";
     private static final String SKIN_SOURCE_TYPE_ID = "skinSourceType";
@@ -343,10 +343,10 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
         this.client.setScreen(new ConfirmLinkScreen(bool -> {
             if (bool)
-                Util.getOperatingSystem().open(HEAD_GENERATOR_WIKI_LINK);
+                Util.getOperatingSystem().open(FzmmWikiConstants.HEAD_GENERATOR_WIKI_LINK);
 
             this.client.setScreen(this);
-        }, HEAD_GENERATOR_WIKI_LINK, true));
+        }, FzmmWikiConstants.HEAD_GENERATOR_WIKI_LINK, true));
     }
 
     public boolean overlapHatLayerButton() {

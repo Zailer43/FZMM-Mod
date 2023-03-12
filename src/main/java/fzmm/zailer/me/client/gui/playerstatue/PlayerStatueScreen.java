@@ -8,6 +8,7 @@ import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.IMementoScreen;
+import fzmm.zailer.me.utils.FzmmWikiConstants;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
@@ -24,7 +25,6 @@ import java.util.Optional;
 
 @SuppressWarnings("UnstableApiUsage")
 public class PlayerStatueScreen extends BaseFzmmScreen implements IMementoScreen {
-    private static final String PLAYER_STATUE_FAQ_LINK = "https://github.com/Zailer43/FZMM-Mod/wiki/FAQ-Player-Statue";
     private static final String HORIZONTAL_DIRECTION_ID = "horizontal-direction";
     private static final String POS_X_ID = "posX";
     private static final String POS_Y_ID = "posY";
@@ -79,10 +79,10 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMementoScreen
 
         this.client.setScreen(new ConfirmLinkScreen(bool -> {
             if (bool)
-                Util.getOperatingSystem().open(PLAYER_STATUE_FAQ_LINK);
+                Util.getOperatingSystem().open(FzmmWikiConstants.PLAYER_STATUE_WIKI_LINK);
 
             this.client.setScreen(this);
-        }, PLAYER_STATUE_FAQ_LINK, true));
+        }, FzmmWikiConstants.PLAYER_STATUE_WIKI_LINK, true));
     }
 
     private void execute(ButtonWidget buttonWidget) {
