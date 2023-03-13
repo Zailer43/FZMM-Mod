@@ -38,8 +38,7 @@ Currently, the default resource pack comes with:
 #### Examples
 
 <img src="docs/images/head_generator_model_examples.png" alt="Head generator model examples" width="300">
-
-
+<br>
 <img src="docs/images/head_generator_texture_examples.png" alt="Head generator texture examples" width="300">
 
 <summary>Images</summary>
@@ -153,7 +152,7 @@ It also allows 128x128 skins.
 
 </details>
 
-#### Head gallery
+### Head gallery
 A gallery of 50,000+ heads provided by [Minecraft heads](https://minecraft-heads.com)
 
 <img src="docs/images/head_gallery.png" alt="Head gallery" width="800">
@@ -172,7 +171,7 @@ A gallery of 50,000+ heads provided by [Minecraft heads](https://minecraft-heads
 
 </details>
 
-#### Banner editor
+### Banner editor
 A banner editor is easier than having to place a loom and search for items, plus it is more convenient to use, and you can preview the banners better. It also has the option to change the color of the pattern you click and remove the pattern you want.
 
 #### Add patterns
