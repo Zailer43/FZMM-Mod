@@ -1,6 +1,7 @@
 package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -101,7 +102,7 @@ public class ArmorStandBuilder {
             tags.add(NbtString.of(tag));
         }
 
-        this.entityTag.put("Tags", tags);
+        this.entityTag.put(TagsConstant.ENTITY_TAG_TAGS_ID, tags);
         return this;
     }
 

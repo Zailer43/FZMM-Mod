@@ -31,7 +31,7 @@
   "depends": {
     "fabricloader": ">=0.12.5",
     "fabric": "*",
-    "minecraft": ">=1.19.3",
+    "minecraft": ">=1.19.4",
     "owo": "^0.10.2 <0.11.0"
   },
   "custom": {
@@ -39,7 +39,7 @@
       "links": {
         "modmenu.discord": "https://discord.com/invite/y3GcaUNgCr",
         "modmenu.crowdin": "https://crowdin.com/project/fzmm-mod",
-        "modmenu.wiki": "https://github.com/Zailer43/FZMM-Mod/tree/1.19.3/dev/docs/en/wiki"
+        "modmenu.wiki": "https://github.com/Zailer43/FZMM-Mod/tree/1.19.4/dev/docs/en/wiki"
       }
     }
   }

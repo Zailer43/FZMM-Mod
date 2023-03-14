@@ -1,9 +1,11 @@
 package fzmm.zailer.me.client.logic.imagetext;
 
 import fzmm.zailer.me.utils.FzmmUtils;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,8 @@ public class ImagetextLine {
     private final double percentageOfSimilarityToCompress;
     private final int splitLineEvery;
     private int lineLength;
+    @Nullable
+    private List<MutableText> generatedLine;
 
     public ImagetextLine(String charactersToUse, double percentageOfSimilarityToCompress, int splitLineEvery) {
         this.line = new ArrayList<>();
@@ -24,6 +28,7 @@ public class ImagetextLine {
         this.percentageOfSimilarityToCompress = percentageOfSimilarityToCompress;
         this.splitLineEvery = splitLineEvery;
         this.lineLength = 0;
+        this.generatedLine = null;
     }
 
     public ImagetextLine add(int color) {
@@ -38,7 +43,7 @@ public class ImagetextLine {
         return this;
     }
 
-    public List<MutableText> getLine() {
+    public void generateLine() {
         List<MutableText> lineList = new ArrayList<>();
         MutableText line = Text.empty().setStyle(Style.EMPTY.withItalic(false));
         short lineIndex = 0;
@@ -58,8 +63,29 @@ public class ImagetextLine {
                 lineList.add(line);
             }
         }
-        return lineList;
+        this.generatedLine = lineList;
     }
+
+    public List<MutableText> getLine() {
+        if (this.generatedLine == null)
+            this.generateLine();
+
+        return this.generatedLine;
+    }
+
+    public int getLineWidth() {
+        if (this.generatedLine == null)
+            this.generateLine();
+
+        MutableText lineText = Text.empty();
+
+        for (var lineComponent : this.generatedLine)
+            lineText.append(lineComponent);
+
+        return MinecraftClient.getInstance().textRenderer.getWidth(lineText);
+    }
+
+
 
     private boolean shouldSplitLine(int index) {
         return index != 0 && (index % this.splitLineEvery == 0);

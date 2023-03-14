@@ -81,6 +81,7 @@ public class ColorRow extends AbstractRow {
                 (picker) -> colorField.text(picker.selectedColor().asHexString(withAlpha)));
 
         colorField.onChanged().subscribe(value -> colorPreview.color(valueGetter.get()));
+        colorField.setCursor(0);
 
         return colorField;
     }

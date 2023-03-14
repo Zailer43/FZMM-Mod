@@ -11,20 +11,22 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class SymbolButtonComponent {
 
-    public static Optional<ButtonComponent> of(CustomSymbolSelectionPanel customSymbolSelectionPanel, Object symbolButtonWidget, TextFieldWidget textFieldWidget) {
+    public static Optional<ButtonComponent> of(CustomSymbolSelectionPanel customSymbolSelectionPanel, int x, int y, int width, int height, TextFieldWidget textFieldWidget) {
         if (!CompatMods.SYMBOL_CHAT_PRESENT)
             return Optional.empty();
 
-        net.replaceitem.symbolchat.gui.widget.symbolButton.SymbolButtonWidget symbolButton = (net.replaceitem.symbolchat.gui.widget.symbolButton.SymbolButtonWidget) symbolButtonWidget;
 
-        return Optional.of((ButtonComponent) Components.button(symbolButton.getMessage(), buttonComponent -> {
+        net.replaceitem.symbolchat.gui.widget.symbolButton.SymbolButtonWidget symbolButtonWidget =
+                new net.replaceitem.symbolchat.gui.widget.symbolButton.OpenSymbolPanelButtonWidget(x, y, width, height, (net.replaceitem.symbolchat.gui.SymbolSelectionPanel) customSymbolSelectionPanel.parent());
+
+        return Optional.of((ButtonComponent) Components.button(symbolButtonWidget.getMessage(), buttonComponent -> {
                     boolean textFieldAlreadyAssigned = setActiveTextField(customSymbolSelectionPanel, textFieldWidget);
                     boolean visible = isVisible(customSymbolSelectionPanel.parent());
 
                     // Opens the gui if it is closed and only closes it if you click the same button with which you opened it,
                     // otherwise it changes the text field where it writes
                     if (!visible || textFieldAlreadyAssigned)
-                        symbolButton.onClick(0, 0);
+                        symbolButtonWidget.onClick(0, 0);
 
 //                    Screen screen = MinecraftClient.getInstance().currentScreen;
 //                    if (!(screen instanceof BaseFzmmScreen baseFzmmScreen))

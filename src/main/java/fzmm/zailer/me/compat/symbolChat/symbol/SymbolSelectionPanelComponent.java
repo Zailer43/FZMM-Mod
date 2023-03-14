@@ -14,25 +14,17 @@ public class SymbolSelectionPanelComponent extends BaseComponent {
     public SymbolSelectionPanelComponent(AbstractParentElement symbolSelectionPanel) {
         super();
         this.selectionPanel = symbolSelectionPanel;
+
+        this.mouseDown().subscribe((mouseX, mouseY, button) ->
+                ((net.replaceitem.symbolchat.gui.SymbolSelectionPanel) this.selectionPanel).visible && this.selectionPanel.mouseClicked(mouseX, mouseY, button));
+
+        this.mouseScroll().subscribe((mouseX, mouseY, amount) ->
+                        ((net.replaceitem.symbolchat.gui.SymbolSelectionPanel) this.selectionPanel).visible && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount));
     }
 
     @Override
     public void draw(MatrixStack matrices, int mouseX, int mouseY, float partialTicks, float delta) {
         ((net.replaceitem.symbolchat.gui.SymbolSelectionPanel) this.selectionPanel).render(matrices, mouseX, mouseY, delta);
-    }
-
-    @Override
-    public boolean onMouseDown(double mouseX, double mouseY, int button) {
-        if (((net.replaceitem.symbolchat.gui.SymbolSelectionPanel) this.selectionPanel).visible && this.selectionPanel.mouseClicked(mouseX, mouseY, button))
-            return true;
-        return super.onMouseDown(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean onMouseScroll(double mouseX, double mouseY, double amount) {
-        if (((net.replaceitem.symbolchat.gui.SymbolSelectionPanel) this.selectionPanel).visible && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount))
-            return true;
-        return super.onMouseScroll(mouseX, mouseY, amount);
     }
 
     @Override

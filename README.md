@@ -245,6 +245,7 @@ To contribute with the translation of a language or fix a bug in a language othe
 - [Minecraft heads](https://minecraft-heads.com) for having a great gallery of heads for Head Gallery
 - [Placeholder API](https://github.com/Patbox/TextPlaceholderAPI) for having an easy-to-use format for text formatting
 - [Symbol Chat](https://modrinth.com/mod/symbol-chat) for being a good complement for texts
+- turkeybot69 for having the crazy idea of encrypting messages with translations
 - The past, present and future contributors of FZMM mod, including people who report bugs or give me suggestions 
 
 ## Disclaimer

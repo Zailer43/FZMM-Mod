@@ -9,6 +9,7 @@
     "ChatScreenMixin",
     "HandledScreenAccessor",
     "ItemFrameEntityRendererMixin",
+    "ItemGroupDisplayContextMixin",
     "ItemGroupMixin",
     "ItemStackMixin",
     "LivingEntityMixin",

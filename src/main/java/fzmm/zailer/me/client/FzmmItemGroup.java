@@ -6,88 +6,60 @@ import fzmm.zailer.me.builders.CrossbowBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.minecraft.block.LightBlock;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.item.*;
 import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.registry.tag.PaintingVariantTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.raid.Raid;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FzmmItemGroup {
     public static final String OPERATOR_BASE_TRANSLATION_KEY = "itemGroup.op.";
     public static final String USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY = "itemGroup.fzmm.useful_block_states.";
 
+    @SuppressWarnings("UnstableApiUsage")
     public static void register() {
 
-        ItemGroup oldOperatorItemGroupReference = ItemGroups.OPERATOR;
-        ItemGroups.OPERATOR = ItemGroup.create(ItemGroup.Row.BOTTOM, 5)
-                .displayName(Text.translatable("itemGroup.op"))
-                .icon(() -> new ItemStack(Items.COMMAND_BLOCK))
-                .special()
-                .entries((enabledFeatures, entries, operatorEnabled) -> {
-                    // works correctly if the player has op, but if the player does not have op it works as if using the variable operatorEnabled
-//                    if (!MinecraftClient.getInstance().options.getOperatorItemsTab().getValue())
-//                        return;
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.OPERATOR).register(entries -> {
+            ArrayList<ItemStack> newEntries = new ArrayList<>();
 
-                    entries.add(Items.COMMAND_BLOCK);
-                    entries.add(Items.CHAIN_COMMAND_BLOCK);
-                    entries.add(Items.REPEATING_COMMAND_BLOCK);
-                    entries.add(Items.COMMAND_BLOCK_MINECART);
-                    entries.add(Items.JIGSAW);
-                    entries.add(Items.STRUCTURE_BLOCK);
-                    entries.add(Items.STRUCTURE_VOID);
-                    entries.add(Items.BARRIER);
-                    entries.add(Items.PETRIFIED_OAK_SLAB);
-                    entries.add(Items.DEBUG_STICK);
+            newEntries.add(Items.DRAGON_EGG.getDefaultStack());
+            newEntries.add(Items.FILLED_MAP.getDefaultStack());
+            newEntries.add(Items.WRITTEN_BOOK.getDefaultStack());
+            newEntries.add(Items.ENCHANTED_BOOK.getDefaultStack());
+            newEntries.add(Items.KNOWLEDGE_BOOK.getDefaultStack());
+            newEntries.add(Items.SUSPICIOUS_STEW.getDefaultStack());
+            newEntries.add(Items.POTION.getDefaultStack());
+            newEntries.add(Items.SPLASH_POTION.getDefaultStack());
+            newEntries.add(Items.LINGERING_POTION.getDefaultStack());
+            newEntries.add(Items.TIPPED_ARROW.getDefaultStack());
 
-                    entries.add(Items.DRAGON_EGG);
-                    entries.add(Items.FILLED_MAP);
-                    entries.add(Items.WRITTEN_BOOK);
-                    entries.add(Items.ENCHANTED_BOOK);
-                    entries.add(Items.KNOWLEDGE_BOOK);
-                    entries.add(Items.SUSPICIOUS_STEW);
-                    entries.add(Items.POTION);
-                    entries.add(Items.SPLASH_POTION);
-                    entries.add(Items.LINGERING_POTION);
-                    entries.add(Items.TIPPED_ARROW);
+            addArmorStand(newEntries);
+            addItemFrames(newEntries);
+            addNameTags(newEntries);
+            addCrossbows(newEntries);
+            newEntries.add(Raid.getOminousBanner());
 
-                    addArmorStand(entries);
-                    addItemFrames(entries);
-                    addNameTags(entries);
-                    addCrossbows(entries);
-                    addUnobtainablePaintings(entries);
-                    entries.add(Raid.getOminousBanner());
+            ItemStack elytra = new ItemStack(Items.ELYTRA);
+            elytra.setDamage(elytra.getMaxDamage() - 1);
+            newEntries.add(elytra);
 
-                    ItemStack elytra = new ItemStack(Items.ELYTRA);
-                    elytra.setDamage(elytra.getMaxDamage() - 1);
-                    entries.add(elytra);
-
-                    for (int i = 15; i >= 0; --i)
-                        entries.add(LightBlock.addNbtForLevel(new ItemStack(Items.LIGHT), i));
-                }).build();
-
-        ItemGroup[] itemGroups = new ItemGroup[ItemGroups.GROUPS.size()];
-        for (int i = 0; i != ItemGroups.GROUPS.size(); i++)
-            itemGroups[i] = ItemGroups.GROUPS.get(i) == oldOperatorItemGroupReference ? ItemGroups.OPERATOR : ItemGroups.GROUPS.get(i);
-
-        ItemGroups.GROUPS = ItemGroups.collect(itemGroups);
+            entries.addAfter(Items.DEBUG_STICK, newEntries);
+        });
 
         FabricItemGroup.builder(new Identifier(FzmmClient.MOD_ID, "useful_block_states"))
                 .icon(() -> new ItemStack(Items.REDSTONE_LAMP))
-                .entries((enabledFeatures, entries, operatorEnabled) -> {
+                .entries((displayContext, entries) -> {
 
                     entries.add(new BlockStateItemBuilder(Items.REDSTONE_LAMP, "litRedstoneLamp").add("lit", true).get());
                     entries.add(new BlockStateItemBuilder(Items.FURNACE, "litFurnace").add("lit", true).get());
@@ -156,7 +128,7 @@ public class FzmmItemGroup {
 
         FabricItemGroup.builder(new Identifier(FzmmClient.MOD_ID, "loot_chests"))
                 .icon(() -> new ItemStack(Items.CHEST))
-                .entries((enabledFeatures, entries, operatorEnabled) -> {
+                .entries((displayContext, entries) -> {
                     List<String> lootTablesPath = LootTables.getAll().stream()
                             .map(Identifier::getPath)
                             .sorted()
@@ -178,7 +150,7 @@ public class FzmmItemGroup {
                 }).build();
     }
 
-    private static void addArmorStand(ItemGroup.Entries entries) {
+    private static void addArmorStand(List<ItemStack> entries) {
         String baseTranslation = "armorStand.";
         ItemStack armorStandWithArms = ArmorStandBuilder.builder()
                 .setShowArms()
@@ -197,7 +169,7 @@ public class FzmmItemGroup {
         entries.add(smallArmorStandWithArms);
     }
 
-    private static void addItemFrames(ItemGroup.Entries entries) {
+    private static void addItemFrames(List<ItemStack> entries) {
         ItemStack itemFrame = new ItemStack(Items.ITEM_FRAME);
         ItemStack glowItemFrame = new ItemStack(Items.GLOW_ITEM_FRAME);
         NbtCompound entityTag = new NbtCompound();
@@ -216,7 +188,7 @@ public class FzmmItemGroup {
         entries.add(glowItemFrame);
     }
 
-    private static void addNameTags(ItemGroup.Entries entries) {
+    private static void addNameTags(List<ItemStack> entries) {
         final int LORE_COLOR = 0x1ecbe1;
 
         entries.add(DisplayBuilder.builder().item(Items.NAME_TAG).setName("")
@@ -249,7 +221,7 @@ public class FzmmItemGroup {
         return Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + baseTranslation + value + commentTranslation + line).getString();
     }
 
-    private static void addCrossbows(ItemGroup.Entries entries) {
+    private static void addCrossbows(List<ItemStack> entries) {
         CrossbowBuilder crossbowArrow = CrossbowBuilder.builder()
                 .setCharged(true)
                 .putProjectile(new ItemStack(Items.ARROW));
@@ -324,40 +296,6 @@ public class FzmmItemGroup {
             if (contains(item, ItemTags.SLABS))
                 entries.add(new BlockStateItemBuilder(item, "waterloggedBlock", item).add("type", "double").add("waterlogged", true).get());
         }
-    }
-
-    private static void addUnobtainablePaintings(ItemGroup.Entries entries) {
-        // the server is lower than 1.18, the tag does not exist
-        if (!Registries.PAINTING_VARIANT.iterateEntries(PaintingVariantTags.PLACEABLE).iterator().hasNext())
-            return;
-
-        for (var painting : Registries.PAINTING_VARIANT) {
-            if (!contains(painting)) {
-                // if there is no translation in the mod of that painting, the id of the variant is used,
-                // to prevent a translation key from appearing if a mod that adds non-placeable paintings is used
-                String variantName = Registries.PAINTING_VARIANT.getId(painting).getPath();
-                String translationKey = "entity.minecraft.painting." + variantName;
-                String translation = Text.translatable(translationKey).getString();
-                String name = variantName;
-                if (!translation.equals(translationKey))
-                    name = translation;
-
-                ItemStack paintingStack = DisplayBuilder.builder().item(Items.PAINTING).setName(name).get();
-                NbtCompound entityTag = new NbtCompound();
-                entityTag.put("variant", NbtString.of(variantName));
-                paintingStack.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
-
-                entries.add(paintingStack);
-            }
-        }
-    }
-
-    private static boolean contains(PaintingVariant paintingVariant) {
-        for (RegistryEntry<PaintingVariant> paintingVariantEntry : Registries.PAINTING_VARIANT.iterateEntries(PaintingVariantTags.PLACEABLE)) {
-            if (paintingVariantEntry.value().equals(paintingVariant))
-                return true;
-        }
-        return false;
     }
 
     private static boolean contains(Item item, TagKey<Item> tag) {

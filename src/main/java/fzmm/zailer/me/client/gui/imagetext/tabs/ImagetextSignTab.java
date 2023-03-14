@@ -18,6 +18,7 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HangingSignBlock;
 import net.minecraft.block.SignBlock;
+import net.minecraft.block.WoodType;
 import net.minecraft.block.entity.HangingSignBlockEntity;
 import net.minecraft.block.entity.SignBlockEntity;
 import net.minecraft.client.MinecraftClient;
@@ -29,7 +30,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
-import net.minecraft.util.SignType;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
@@ -180,13 +180,13 @@ public class ImagetextSignTab implements IImagetextTab {
     }
 
     public Item getItem() {
-        SignType type = ((SignTypeOption) this.signTypeEnum.getValue()).getType();
+        WoodType type = ((SignTypeOption) this.signTypeEnum.getValue()).getType();
         boolean isHangingSign = this.isHangingSignButton.enabled();
 
         for (var block : Registries.BLOCK.stream().toList()) {
-            if (isHangingSign && block instanceof HangingSignBlock hangingSignBlock && hangingSignBlock.getSignType() == type)
+            if (isHangingSign && block instanceof HangingSignBlock hangingSignBlock && hangingSignBlock.getWoodType() == type)
                 return hangingSignBlock.asItem();
-            else if (!isHangingSign && block instanceof SignBlock signBlock && signBlock.getSignType() == type)
+            else if (!isHangingSign && block instanceof SignBlock signBlock && signBlock.getWoodType() == type)
                 return signBlock.asItem();
 
         }

@@ -9,8 +9,9 @@ public enum ImagetextTabs implements ITabsEnum {
     LORE(ImagetextLoreTab::new),
     BOOK_PAGE(ImagetextBookPageTab::new),
     BOOK_TOOLTIP(ImagetextBookTooltipTab::new),
-    HOLOGRAM(ImagetextHolgoramTab::new),
+    TEXT_DISPLAY(ImagetextTextDisplayTab::new),
     SIGN(ImagetextSignTab::new),
+    HOLOGRAM(ImagetextHolgoramTab::new),
     COPY(ImagetextCopyTab::new);
 
     private final Supplier<IImagetextTab> tabSupplier;

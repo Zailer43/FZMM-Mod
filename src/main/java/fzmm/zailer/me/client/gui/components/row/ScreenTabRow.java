@@ -3,17 +3,21 @@ package fzmm.zailer.me.client.gui.components.row;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTabIdentifier;
 import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import org.w3c.dom.Element;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ScreenTabRow extends AbstractRow {
     public ScreenTabRow(String baseTranslationKey, String id) {
         super(baseTranslationKey);
         this.id(id);
-        this.sizing(Sizing.fill(100), Sizing.fixed(28));
+        this.sizing(Sizing.content(), Sizing.fixed(28));
         this.surface(Surface.VANILLA_TRANSLUCENT);
         this.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
         this.margins(Insets.bottom(4));
@@ -42,6 +46,7 @@ public class ScreenTabRow extends AbstractRow {
     }
 
     public void setup(Enum<? extends IScreenTabIdentifier> defaultTab) {
+        List<Component> componentList = new ArrayList<>();
         for (var tab : defaultTab.getClass().getEnumConstants()) {
             IScreenTabIdentifier screenTab = (IScreenTabIdentifier) tab;
             boolean active = tab != defaultTab;
@@ -52,8 +57,19 @@ public class ScreenTabRow extends AbstractRow {
             button.id(getScreenTabButtonId(screenTab.getId()));
             button.active = active;
 
-            this.child(button);
+            componentList.add(button);
         }
+
+        Component flowLayoutComponent = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+                .children(componentList)
+                .gap(this.gap())
+                .margins(Insets.vertical(4));
+        Component scrollComponent = Containers.horizontalScroll(Sizing.fill(100), Sizing.fill(100), flowLayoutComponent)
+                .alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
+                .margins(Insets.horizontal(20));
+
+        this.child(scrollComponent);
+
     }
 
     public static ScreenTabRow parse(Element element) {

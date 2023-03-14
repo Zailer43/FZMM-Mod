@@ -141,9 +141,7 @@ public class TextBoxRow extends AbstractRow {
         if (screen.getCustomSymbolSelectionPanel().isPresent()) {
             CustomSymbolSelectionPanel customSymbolSelectionPanel = screen.getCustomSymbolSelectionPanel().get();
 
-            net.replaceitem.symbolchat.gui.widget.symbolButton.SymbolButtonWidget button =
-                    new net.replaceitem.symbolchat.gui.widget.symbolButton.OpenSymbolPanelButtonWidget(0, 0, 20, 20, (net.replaceitem.symbolchat.gui.SymbolSelectionPanel) customSymbolSelectionPanel.parent());
-            Optional<ButtonComponent> component = SymbolButtonComponent.of(customSymbolSelectionPanel, button, textBoxComponent);
+           Optional<ButtonComponent> component = SymbolButtonComponent.of(customSymbolSelectionPanel, 0, 0, 20, 20, textBoxComponent);
             if (component.isPresent())
                 return component.get()
                         .tooltip(SYMBOL_BUTTON_TEXT);

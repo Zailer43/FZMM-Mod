@@ -1,42 +1,44 @@
 package fzmm.zailer.me.client.gui.options;
 
 import fzmm.zailer.me.client.gui.components.IMode;
-import net.minecraft.util.SignType;
+import net.minecraft.block.WoodType;
 
-//TODO: look for a better way to do this without hardcoding the sign types
+//TODO: look for a better way to do this without hardcoding the wood types
 public enum SignTypeOption implements IMode {
-    OAK(SignType.OAK),
+    OAK(WoodType.OAK),
     @SuppressWarnings("unused")
-    SPRUCE(SignType.SPRUCE),
+    SPRUCE(WoodType.SPRUCE),
     @SuppressWarnings("unused")
-    BIRCH(SignType.BIRCH),
+    BIRCH(WoodType.BIRCH),
     @SuppressWarnings("unused")
-    ACACIA(SignType.ACACIA),
+    ACACIA(WoodType.ACACIA),
     @SuppressWarnings("unused")
-    JUNGLE(SignType.JUNGLE),
+    CHERRY(WoodType.CHERRY),
     @SuppressWarnings("unused")
-    DARK_OAK(SignType.DARK_OAK),
+    JUNGLE(WoodType.JUNGLE),
     @SuppressWarnings("unused")
-    CRIMSON(SignType.CRIMSON),
+    DARK_OAK(WoodType.DARK_OAK),
     @SuppressWarnings("unused")
-    WARPED(SignType.WARPED),
+    CRIMSON(WoodType.CRIMSON),
     @SuppressWarnings("unused")
-    MANGROVE(SignType.MANGROVE),
+    WARPED(WoodType.WARPED),
     @SuppressWarnings("unused")
-    BAMBOO(SignType.BAMBOO);
+    MANGROVE(WoodType.MANGROVE),
+    @SuppressWarnings("unused")
+    BAMBOO(WoodType.BAMBOO);
 
-    private final SignType type;
+    private final WoodType type;
 
-    SignTypeOption(SignType type) {
+    SignTypeOption(WoodType type) {
         this.type = type;
     }
 
     @Override
     public String getTranslationKey() {
-        return "block.minecraft." + this.type.getName() + "_sign";
+        return "block.minecraft." + this.type.name() + "_sign";
     }
 
-    public SignType getType() {
+    public WoodType getType() {
         return this.type;
     }
 }

@@ -86,18 +86,14 @@ public class EncryptbookLogic {
                 .title(bookTitle)
                 .author(author);
 
+        Text encryptMessageTooltip = Text.literal(
+                Text.translatable("fzmm.item.encryptbook.encryptMessage.tooltip", translationKeyPrefix + seed, config.asymmetricEncryptKey() != 0).getString()
+        );
+
         bookBuilder.addPage(
-                        Text.translatable(translationKeyPrefix + seed, encryptMessage.toArray())
-                                .setStyle(Style.EMPTY
-                                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("You probably need the decryptor to see this message")))
-                                ))
-                .addPage(Text.literal(Formatting.BLUE + "Idea by: " + Formatting.BLACK + "turkeybot69\n" +
-                                Formatting.BLUE + "Key: " + Formatting.BLACK + translationKeyPrefix + seed + "\n" +
-                                Formatting.BLUE + "Asymmetric: " + Formatting.BLACK + (config.asymmetricEncryptKey() != 0) + "\n" +
-                                Formatting.BLUE + "Encrypted message: " + Formatting.BLACK + "Hover over here")
-                        .setStyle(Style.EMPTY
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(encryptMessageString)))
-                        ));
+                Text.translatableWithFallback(translationKeyPrefix + seed, encryptMessageString, encryptMessage.toArray())
+                        .setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, encryptMessageTooltip)))
+        );
 
         return bookBuilder.get();
     }

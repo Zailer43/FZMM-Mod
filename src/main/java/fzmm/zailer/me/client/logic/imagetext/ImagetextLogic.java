@@ -18,12 +18,14 @@ public class ImagetextLogic {
     private int width;
     private int height;
     private String characters;
+    private int lineWidth;
 
     public ImagetextLogic() {
         this.imagetext = new NbtList();
         this.width = 0;
         this.height = 0;
         this.characters = ImagetextLine.DEFAULT_TEXT;
+        this.lineWidth = 0;
     }
 
     public void generateImagetext(ImagetextData data) {
@@ -38,6 +40,7 @@ public class ImagetextLogic {
         if (this.characters == null || this.characters.isBlank())
             this.characters = ImagetextLine.DEFAULT_TEXT;
         NbtList linesList = new NbtList();
+        ImagetextLine firstLine = null;
 
         for (int y = 0; y != height; y++) {
             ImagetextLine line = new ImagetextLine(this.characters, data.percentageOfSimilarityToCompress(), lineSplitInterval);
@@ -47,7 +50,12 @@ public class ImagetextLogic {
 
             for (var lineText : line.getLine())
                 linesList.add(FzmmUtils.toNbtString(lineText, false));
+
+            if (firstLine == null)
+                firstLine = line;
         }
+
+        this.lineWidth = firstLine == null ? 0 : firstLine.getLineWidth();
         this.imagetext = linesList;
     }
 
@@ -126,5 +134,9 @@ public class ImagetextLogic {
 
     public String getCharacters() {
         return this.characters;
+    }
+
+    public int getLineWidth() {
+        return this.lineWidth;
     }
 }

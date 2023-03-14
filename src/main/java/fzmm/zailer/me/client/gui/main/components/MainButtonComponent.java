@@ -32,7 +32,7 @@ public class MainButtonComponent extends ButtonComponent {
         int centerX = this.getX() + this.width / 2;
 
         if (this.textShadow) {
-            Drawer.drawCenteredText(matrices, textRenderer, this.getMessage(), centerX, this.getY() + 10, color);
+            Drawer.drawCenteredTextWithShadow(matrices, textRenderer, this.getMessage(), centerX, this.getY() + 10, color);
         } else {
             textRenderer.draw(matrices, this.getMessage(), this.getX() + this.width / 2f - textRenderer.getWidth(this.getMessage()) / 2f, this.getY() + 10, color);
         }
