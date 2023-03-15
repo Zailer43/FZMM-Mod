@@ -15,7 +15,6 @@ import java.util.Set;
 @Config(name = "fzmm", wrapperName = "FzmmConfig")
 public class FzmmConfigModel {
 
-
     @Nest
     public GeneralNest general = new GeneralNest();
     @Nest
@@ -42,6 +41,7 @@ public class FzmmConfigModel {
         public boolean forceInvisibleItemFrame = false;
         public boolean giveClientSide = false;
         public boolean showSymbolButton = true;
+        public boolean showItemSize = true;
     }
 
     public static class MineskinNest {

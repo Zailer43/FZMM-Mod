@@ -1,15 +1,14 @@
 package fzmm.zailer.me.mixin;
 
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.Formatting;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,41 +20,32 @@ import java.util.List;
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
 
-    @Shadow @Nullable public abstract NbtCompound getNbt();
+    @Shadow
+    public abstract ItemStack copy();
 
-    @Shadow public abstract boolean hasNbt();
-
-    @Shadow public abstract ItemStack copy();
-
-    @Inject(method = "getTooltip", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getTooltip", at = @At("RETURN"))
     public void getTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
-        if (this.hasNbt() && context.isAdvanced()) {
-            NbtCompound nbt = this.getNbt();
-            assert nbt != null;
-            List<String> tags = nbt.getKeys().stream().toList();
-            int tagsSize = tags.size();
-            MutableText loreText = Text.literal("Tags: ");
-            List<Text> list = cir.getReturnValue();
+        if (!FzmmClient.CONFIG.general.showItemSize())
+            return;
 
-
-            list.remove(list.size() - 1);
-
-            for (int i = 0; i != tagsSize; i++) {
-                loreText.append(tags.get(i) + (i == tagsSize - 1 ? "" : ", "));
-                if (i % 3 == 2) {
-                    list.add(loreText.setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
-                    loreText = Text.empty();
-                }
+        List<Text> tooltipList = cir.getReturnValue();
+        for (int i = tooltipList.size() - 1; i > 0; i--) {
+            Text tooltipLine = tooltipList.get(i);
+            if (tooltipLine.getContent() instanceof TranslatableTextContent translatableTooltipText && translatableTooltipText.getKey().equals("item.nbt_tags")) {
+                tooltipList.add( i + 1, this.getSizeMessage());
+                return;
             }
-
-            if (!loreText.getString().isEmpty())
-                list.add(loreText.setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY)));
-
-            ItemStack stack = this.copy();
-            MutableText lengthText = Text.literal(FzmmUtils.getLengthInKB(stack));
-            list.add(lengthText.setStyle(Style.EMPTY.withColor(Formatting.GRAY)));
-
-            cir.setReturnValue(list);
         }
+    }
+
+    public Text getSizeMessage() {
+        ItemStack stack = this.copy();
+
+        long itemSizeInBytes = FzmmUtils.getLengthInBytes(stack);
+
+        return (itemSizeInBytes > 1023 ?
+                Text.translatable("fzmm.item.tooltip.size.kilobytes", FzmmUtils.getLengthInKB(itemSizeInBytes)) :
+                Text.translatable("fzmm.item.tooltip.size.bytes", itemSizeInBytes)
+        ).setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY));
     }
 }

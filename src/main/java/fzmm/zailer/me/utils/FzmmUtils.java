@@ -108,8 +108,8 @@ public class FzmmUtils {
         return message;
     }
 
-    public static String getLengthInKB(ItemStack stack) {
-        return new DecimalFormat("#,##0.0").format(getLengthInBytes(stack) / 1024f) + "KB";
+    public static String getLengthInKB(long length) {
+        return new DecimalFormat("#,##0.0").format(length / 1024f);
     }
 
     public static long getLengthInBytes(ItemStack stack) {

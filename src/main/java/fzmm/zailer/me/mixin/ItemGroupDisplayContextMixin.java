@@ -1,6 +1,5 @@
 package fzmm.zailer.me.mixin;
 
-import fzmm.zailer.me.client.FzmmClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.registry.RegistryWrapper;
