@@ -30,4 +30,7 @@ public class TagsConstant {
     public static final String TEXT_DISPLAY_SEE_THROUGH = "see_through";
     public static final String TEXT_DISPLAY_ALIGNMENT = "alignment";
 
+    public static final String HEAD_PROPERTIES = "Properties";
+    public static final String HEAD_PROPERTIES_TEXTURES = "textures";
+
 }

@@ -7,10 +7,13 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import fzmm.zailer.me.builders.DisplayBuilder;
-import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.InventoryUtils;
 import fzmm.zailer.me.utils.TagsConstant;
+import fzmm.zailer.me.utils.skin.GetSkinDecorator;
+import fzmm.zailer.me.utils.skin.GetSkinFromCache;
+import fzmm.zailer.me.utils.skin.GetSkinFromMineskin;
+import fzmm.zailer.me.utils.skin.GetSkinFromMojang;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
@@ -27,6 +30,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -35,12 +39,13 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
+import java.util.Optional;
+
 public class FzmmCommand {
 
     private static final CommandException ERROR_WITHOUT_NBT = new CommandException(Text.translatable("commands.fzmm.item.withoutNbt"));
     private static final String BASE_COMMAND_ALIAS = "fzmm";
     private static final String BASE_COMMAND = "/" + BASE_COMMAND_ALIAS;
-    private static final MinecraftClient MC = MinecraftClient.getInstance();
 
     public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
         LiteralArgumentBuilder<FabricClientCommandSource> fzmmCommand = ClientCommandManager.literal(BASE_COMMAND_ALIAS);
@@ -161,15 +166,37 @@ public class FzmmCommand {
         );
 
         fzmmCommand.then(ClientCommandManager.literal("skull")
-                .executes(ctx -> sendHelpMessage("commands.fzmm.skull.help", BASE_COMMAND + " skull <skull owner>"))
-                .then(ClientCommandManager.argument("skull owner", StringArgumentType.greedyString()).suggests(FzmmUtils.SUGGESTION_PLAYER)
+                .executes(ctx -> sendHelpMessage("commands.fzmm.skull.help", BASE_COMMAND + " skull <skull owner> cache/mineskin/mojang"))
+                .then(ClientCommandManager.argument("skull owner", StringArgumentType.word()).suggests(FzmmUtils.SUGGESTION_PLAYER)
                         .executes(ctx -> {
 
                             String skullOwner = ctx.getArgument("skull owner", String.class);
-                            getHead(skullOwner);
+                            getHead(new GetSkinFromCache(new GetSkinFromMojang()), skullOwner);
                             return 1;
 
-                        }))
+                        }).then(ClientCommandManager.literal("cache")
+                            .executes(ctx -> {
+
+                                String skullOwner = ctx.getArgument("skull owner", String.class);
+                                getHead(new GetSkinFromCache(), skullOwner);
+
+                                return 1;
+                            })).then(ClientCommandManager.literal("mineskin")
+                            .executes(ctx -> {
+
+                                String skullOwner = ctx.getArgument("skull owner", String.class);
+                                getHead(new GetSkinFromMineskin().setCacheSkin(skullOwner), skullOwner);
+
+                                return 1;
+                            })).then(ClientCommandManager.literal("mojang")
+                            .executes(ctx -> {
+
+                                String skullOwner = ctx.getArgument("skull owner", String.class);
+                                getHead(new GetSkinFromMojang(), skullOwner);
+
+                                return 1;
+                            }))
+                )
         );
 
         fzmmCommand.then(ClientCommandManager.literal("fullcontainer")
@@ -226,18 +253,15 @@ public class FzmmCommand {
     }
 
     private static void giveItem(ItemStackArgument item, int amount) throws CommandSyntaxException {
-        assert MC.player != null;
-
         ItemStack itemStack = item.createStack(amount, false);
         FzmmUtils.giveItem(itemStack);
     }
 
     private static void addEnchant(Enchantment enchant, short level) {
-        assert MC.player != null;
-
         //{Enchantments:[{message:"minecraft:aqua_affinity",lvl:1s}]}
 
-        ItemStack stack = MC.player.getInventory().getMainHandStack();
+        assert MinecraftClient.getInstance().player != null;
+        ItemStack stack = MinecraftClient.getInstance().player.getInventory().getMainHandStack();
         NbtCompound tag = stack.getOrCreateNbt();
         NbtList enchantments = new NbtList();
 
@@ -252,8 +276,8 @@ public class FzmmCommand {
     }
 
     private static void addFakeEnchant(Enchantment enchant, int level) {
-        assert MC.player != null;
-        ItemStack stack = MC.player.getInventory().getMainHandStack();
+        assert MinecraftClient.getInstance().player != null;
+        ItemStack stack = MinecraftClient.getInstance().player.getInventory().getMainHandStack();
         MutableText enchantMessage = (MutableText) enchant.getName(level);
 
         Style style = enchantMessage.getStyle().withItalic(false);
@@ -275,8 +299,9 @@ public class FzmmCommand {
     }
 
     private static void showNbt() {
-        assert MC.player != null;
-        ItemStack stack = MC.player.getInventory().getMainHandStack();
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client.player != null;
+        ItemStack stack = client.player.getInventory().getMainHandStack();
 
         if (!stack.hasNbt()) {
             throw ERROR_WITHOUT_NBT;
@@ -296,32 +321,40 @@ public class FzmmCommand {
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("Click to copy")))
                 );
 
-        ChatHud chatHud = MC.inGameHud.getChatHud();
+        ChatHud chatHud = client.inGameHud.getChatHud();
         chatHud.addMessage(message);
         chatHud.addMessage(length);
     }
 
     private static void amount(int amount) {
-        assert MC.player != null;
+        assert MinecraftClient.getInstance().player != null;
 
-        ItemStack stack = MC.player.getInventory().getMainHandStack();
+        ItemStack stack = MinecraftClient.getInstance().player.getInventory().getMainHandStack();
 
         stack.setCount(amount);
 
         FzmmUtils.updateHand(stack);
     }
 
-    private static void getHead(String skullOwner) {
-        FzmmUtils.giveItem(HeadBuilder.of(skullOwner));
+    private static void getHead(GetSkinDecorator skinDecorator, String playerName) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client.player != null;
+
+        Optional<ItemStack> optionalStack = skinDecorator.getHead(playerName);
+        FzmmUtils.giveItem(optionalStack.orElseGet(() -> {
+            FzmmClient.LOGGER.warn("[FzmmCommand] Could not get head for {}", playerName);
+            return Items.PLAYER_HEAD.getDefaultStack();
+        }));
     }
 
     private static void fullContainer(int slotsToFill, int firstSlots) {
-        assert MC.player != null;
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client.player != null;
 
         //{BlockEntityTag:{Items:[{Slot:0b,id:"minecraft:stone",Count:1b}]}}
 
-        ItemStack containerItemStack = MC.player.getInventory().getMainHandStack();
-        ItemStack itemStack = MC.player.getOffHandStack();
+        ItemStack containerItemStack = client.player.getInventory().getMainHandStack();
+        ItemStack itemStack = client.player.getOffHandStack();
 
         NbtCompound tag = new NbtCompound();
         NbtCompound blockEntityTag = new NbtCompound();
@@ -352,12 +385,13 @@ public class FzmmCommand {
     }
 
     private static void lockContainer(String key) {
-        assert MC.player != null;
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client.player != null;
 
         //{BlockEntityTag:{Lock:"abc"}}
 
-        ItemStack containerItemStack = MC.player.getInventory().getMainHandStack();
-        ItemStack itemStack = MC.player.getOffHandStack();
+        ItemStack containerItemStack = client.player.getInventory().getMainHandStack();
+        ItemStack itemStack = client.player.getOffHandStack();
 
         NbtCompound tag = new NbtCompound();
         NbtCompound blockEntityTag = new NbtCompound();
@@ -379,13 +413,13 @@ public class FzmmCommand {
         itemStack.setCustomName(Text.literal(key));
 
         FzmmUtils.giveItem(containerItemStack);
-        assert MC.interactionManager != null;
-        MC.interactionManager.clickCreativeStack(itemStack, PlayerInventory.OFF_HAND_SLOT + PlayerInventory.getHotbarSize());
+        assert client.interactionManager != null;
+        client.interactionManager.clickCreativeStack(itemStack, PlayerInventory.OFF_HAND_SLOT + PlayerInventory.getHotbarSize());
     }
 
     private static void removeLore() {
-        assert MC.player != null;
-        ItemStack stack = MC.player.getMainHandStack();
+        assert MinecraftClient.getInstance().player != null;
+        ItemStack stack = MinecraftClient.getInstance().player.getMainHandStack();
 
         NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
         if (display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE)) {
@@ -394,11 +428,11 @@ public class FzmmCommand {
     }
 
     private static void removeLore(int lineToRemove) {
-        assert MC.player != null;
+        assert MinecraftClient.getInstance().player != null;
 
         //{display:{Lore:['{"text":"1"}','{"text":"2"}','[{"text":"3"},{"text":"4"}]']}}
 
-        ItemStack itemStack = MC.player.getMainHandStack();
+        ItemStack itemStack = MinecraftClient.getInstance().player.getMainHandStack();
 
         NbtCompound display = itemStack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
 

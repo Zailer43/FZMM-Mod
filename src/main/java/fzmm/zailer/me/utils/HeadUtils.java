@@ -26,11 +26,13 @@ public class HeadUtils {
     private static final Identifier HEADS_WATER_MARK = new Identifier(FzmmClient.MOD_ID, "textures/watermark/heads_watermark.png");
     private static final String BOUNDARY = UUID.randomUUID().toString();
     private String skinValue;
+    private String url;
     private boolean skinGenerated;
     private int delayForNextInMillis;
 
     public HeadUtils() {
         this.skinValue = "";
+        this.url = "";
         this.skinGenerated = false;
         this.delayForNextInMillis = 6000;
     }
@@ -42,6 +44,10 @@ public class HeadUtils {
 
     public String getSkinValue() {
         return this.skinValue;
+    }
+
+    public String getUrl() {
+        return this.url;
     }
 
     public boolean isSkinGenerated() {
@@ -110,7 +116,9 @@ public class HeadUtils {
     private void useResponse(String reply) {
         //https://rest.wiki/?https://api.mineskin.org/openapi.yml
         JsonObject json = (JsonObject) JsonParser.parseString(reply);
-        this.skinValue = json.getAsJsonObject("data").getAsJsonObject("texture").get("value").getAsString();
+        JsonObject texture = json.getAsJsonObject("data").getAsJsonObject("texture");
+        this.skinValue = texture.get("value").getAsString();
+        this.url = texture.get("url").getAsString();
         this.skinGenerated = true;
         this.delayForNextInMillis = (short) this.getDelay(json.getAsJsonObject("delayInfo").get("millis").getAsInt());
     }

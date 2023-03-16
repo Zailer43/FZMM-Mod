@@ -3,6 +3,7 @@ package fzmm.zailer.me.builders;
 import com.mojang.authlib.GameProfile;
 import fzmm.zailer.me.client.gui.converters.tabs.ConverterUuidToArrayTab;
 import fzmm.zailer.me.client.logic.FzmmHistory;
+import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.SkullItem;
@@ -47,8 +48,8 @@ public class HeadBuilder {
 
         value.putString("Value", this.skinValue);
         textures.add(value);
-        properties.put("textures", textures);
-        skullOwner.put("Properties", properties);
+        properties.put(TagsConstant.HEAD_PROPERTIES_TEXTURES, textures);
+        skullOwner.put(TagsConstant.HEAD_PROPERTIES, properties);
         skullOwner.put("Id", this.id);
 
         if (this.headName != null)
