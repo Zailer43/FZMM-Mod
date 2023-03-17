@@ -26,6 +26,7 @@ public abstract class AbstractHeadListEntry extends FlowLayout {
     protected final AbstractHeadEntry entry;
     private final EntityComponent<CustomHeadEntity> previewComponent;
     protected FlowLayout buttonsLayout;
+    private NativeImageBackedTexture previewTexture;
 
     public AbstractHeadListEntry(AbstractHeadEntry entry) {
         super(Sizing.fill(100), Sizing.fixed(28), Algorithm.HORIZONTAL);
@@ -73,17 +74,23 @@ public abstract class AbstractHeadListEntry extends FlowLayout {
         TextureManager textureManager = client.getTextureManager();
 
         client.execute(() -> {
+            this.close();
             CustomHeadEntity customHeadEntity = this.previewComponent.entity();
-            if (customHeadEntity.getCustomHeadTexture() != null)
-                textureManager.destroyTexture(customHeadEntity.getCustomHeadTexture());
 
             BufferedImage previewSkin = this.entry.getHeadSkin(skinBase, overlapHatLayer);
             ImageUtils.toNativeImage(previewSkin).ifPresent(nativeImage -> {
-                NativeImageBackedTexture preview = new NativeImageBackedTexture(nativeImage);
-                customHeadEntity.setCustomHeadTexture(textureManager.registerDynamicTexture("fzmm_head", preview));
+                this.previewTexture = new NativeImageBackedTexture(nativeImage);
+                customHeadEntity.setCustomHeadTexture(textureManager.registerDynamicTexture("fzmm_head", this.previewTexture));
             });
 
             textureManager.bindTexture(customHeadEntity.getCustomHeadTexture());
         });
+    }
+
+    public void close() {
+        if (this.previewTexture != null) {
+            this.previewTexture.close();
+            this.previewTexture = null;
+        }
     }
 }

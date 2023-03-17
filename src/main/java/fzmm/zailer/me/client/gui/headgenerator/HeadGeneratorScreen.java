@@ -6,17 +6,20 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
-import fzmm.zailer.me.client.gui.components.row.*;
+import fzmm.zailer.me.client.gui.components.row.BooleanRow;
+import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
+import fzmm.zailer.me.client.gui.headgenerator.components.AbstractHeadListEntry;
 import fzmm.zailer.me.client.gui.headgenerator.components.HeadComponentEntry;
 import fzmm.zailer.me.client.gui.headgenerator.components.HeadLayerComponentEntry;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.IMementoScreen;
-import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
+import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
-import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
+import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.FzmmWikiConstants;
 import fzmm.zailer.me.utils.HeadUtils;
@@ -49,7 +52,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -188,14 +190,33 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     }
 
     private void updatePreviews() {
-        for (var component : this.headListLayout.children()) {
-            if (component instanceof HeadComponentEntry headEntry)
+        assert this.client != null;
+
+        this.client.execute(() -> {
+            this.updatePreviews(this.headListLayout.children());
+            this.updatePreviews(this.layerListLayout.children());
+        });
+    }
+
+    private void updatePreviews(List<Component> entries) {
+        for (var component : entries) {
+            if (component instanceof AbstractHeadListEntry headEntry)
                 headEntry.update(this.baseSkin, this.overlapHatLayerButton());
         }
+    }
 
-        for (var component : this.layerListLayout.children()) {
-            if (component instanceof HeadLayerComponentEntry layerEntry)
-                layerEntry.update(this.baseSkin, this.overlapHatLayerButton());
+    private void closeTextures() {
+        assert this.client != null;
+        this.client.execute(() -> {
+            this.closeTextures(this.headListLayout.children());
+            this.closeTextures(this.layerListLayout.children());
+        });
+    }
+
+    private void closeTextures(List<Component> entries) {
+        for (var component : entries) {
+            if (component instanceof AbstractHeadListEntry headEntry)
+                headEntry.close();
         }
     }
 
@@ -356,6 +377,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     @Override
     public void close() {
         super.close();
+        this.closeTextures();
 
         if (!this.favoritesHeadsOnOpenScreen.equals(FzmmClient.CONFIG.headGenerator.favoriteSkins()))
             FzmmClient.CONFIG.save();
@@ -413,6 +435,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     }
 
     private record HeadGeneratorMemento(String headName, SkinMode skinMode, String skinRowValue, boolean showFavorites,
-                                        boolean overlapHatLayer, HeadGenerationMethod method, String search) implements IMementoObject {
+                                        boolean overlapHatLayer, HeadGenerationMethod method,
+                                        String search) implements IMementoObject {
     }
 }
