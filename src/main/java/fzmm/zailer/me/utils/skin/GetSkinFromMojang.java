@@ -48,11 +48,11 @@ public class GetSkinFromMojang extends GetSkinDecorator {
 
             InputStream inputStream = resEntity.getContent();
             JsonObject obj = (JsonObject) JsonParser.parseReader(new InputStreamReader(inputStream));
-            JsonObject properties = (JsonObject) obj.getAsJsonArray(TagsConstant.HEAD_PROPERTIES).get(0);
+            JsonObject properties = (JsonObject) obj.getAsJsonArray("properties").get(0);
 
             String valueJsonStr = new String(Base64.getDecoder().decode(properties.get("value").getAsString()));
             obj = (JsonObject) JsonParser.parseString(valueJsonStr);
-            String skinUrl = obj.getAsJsonObject(TagsConstant.HEAD_PROPERTIES_TEXTURES).getAsJsonObject("SKIN").get("url").getAsString();
+            String skinUrl = obj.getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
 
             return ImageUtils.getImageFromUrl(skinUrl);
         }
