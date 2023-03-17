@@ -225,51 +225,53 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         // because owo-lib does not let me modify the scroll of the scroll container
         // and I don't want to scroll back to the start
         if (this.tagOverlay == null) {
-            this.tagOverlay = Containers.overlay(
-                    this.getModel().expandTemplate(FlowLayout.class, "select-tag", Map.of()).<FlowLayout>configure(flowLayout -> {
-                        int buttonsZIndex = 200;
-                        VerticalGridLayout tagListGrid = flowLayout.childById(VerticalGridLayout.class, TAGS_LIST_GRID_ID);
-                        checkNull(tagListGrid, "flow-layout", TAGS_LIST_GRID_ID);
+            FlowLayout tagSelectPanel = this.getModel().expandTemplate(FlowLayout.class, "select-tag", Map.of()).configure(flowLayout -> {
+                int buttonsZIndex = 200;
+                VerticalGridLayout tagListGrid = flowLayout.childById(VerticalGridLayout.class, TAGS_LIST_GRID_ID);
+                checkNull(tagListGrid, "flow-layout", TAGS_LIST_GRID_ID);
 
-                        LabelComponent tagsOverlayLabel = flowLayout.childById(LabelComponent.class, TAGS_OVERLAY_LABEL_ID);
-                        checkNull(tagsOverlayLabel, "label", TAGS_OVERLAY_LABEL_ID);
+                LabelComponent tagsOverlayLabel = flowLayout.childById(LabelComponent.class, TAGS_OVERLAY_LABEL_ID);
+                checkNull(tagsOverlayLabel, "label", TAGS_OVERLAY_LABEL_ID);
 
-                        ButtonComponent clearSelectedTags = flowLayout.childById(ButtonComponent.class, CLEAR_SELECTED_TAGS_ID);
-                        checkNull(clearSelectedTags, "button", CLEAR_SELECTED_TAGS_ID);
+                ButtonComponent clearSelectedTags = flowLayout.childById(ButtonComponent.class, CLEAR_SELECTED_TAGS_ID);
+                checkNull(clearSelectedTags, "button", CLEAR_SELECTED_TAGS_ID);
 
-                        tagsOverlayLabel.text(this.getTagLabelText());
+                tagsOverlayLabel.text(this.getTagLabelText());
 
-                        List<ButtonComponent> buttonList = new ArrayList<>();
-                        for (var availableTag : this.availableTags.stream().sorted().toList()) {
-                            Text buttonText = this.selectedTags.contains(availableTag) ? this.getSelectedTagText(availableTag) : Text.literal(availableTag);
-                            ButtonComponent button = (ButtonComponent) Components.button(buttonText, buttonComponent -> this.tagButtonExecute(buttonComponent, tagsOverlayLabel))
-                                    .horizontalSizing(Sizing.fixed(200));
-                            button.zIndex(buttonsZIndex);
+                List<ButtonComponent> buttonList = new ArrayList<>();
+                for (var availableTag : this.availableTags.stream().sorted().toList()) {
+                    Text buttonText = this.selectedTags.contains(availableTag) ? this.getSelectedTagText(availableTag) : Text.literal(availableTag);
+                    ButtonComponent button = (ButtonComponent) Components.button(buttonText, buttonComponent -> this.tagButtonExecute(buttonComponent, tagsOverlayLabel))
+                            .horizontalSizing(Sizing.fixed(200));
+                    button.zIndex(buttonsZIndex);
 
-                            buttonList.add(button);
-                        }
+                    buttonList.add(button);
+                }
 
-                        tagListGrid.children(buttonList);
+                tagListGrid.children(buttonList);
 
-                        clearSelectedTags.onPress(buttonComponent -> {
-                            for (var buttonTag : buttonList) {
-                                if (this.selectedTags.contains(buttonTag.getMessage().getString()))
-                                    buttonTag.onPress();
-                            }
-                        });
-                        clearSelectedTags.zIndex(buttonsZIndex);
+                clearSelectedTags.onPress(buttonComponent -> {
+                    for (var buttonTag : buttonList) {
+                        if (this.selectedTags.contains(buttonTag.getMessage().getString()))
+                            buttonTag.onPress();
+                    }
+                });
+                clearSelectedTags.zIndex(buttonsZIndex);
 
-                        TextBoxRow.setup(flowLayout, TAG_SEARCH_ID, "", 100, value -> {
-                            List<Component> buttonListCopy = new ArrayList<>(buttonList);
+                TextBoxRow.setup(flowLayout, TAG_SEARCH_ID, "", 100, value -> {
+                    List<Component> buttonListCopy = new ArrayList<>(buttonList);
 
-                            String valueToLowerCase = value.toLowerCase();
-                            buttonListCopy.removeIf(tagComponent -> tagComponent instanceof ButtonComponent buttonTag
-                                    && !buttonTag.getMessage().getString().toLowerCase().contains(valueToLowerCase));
+                    String valueToLowerCase = value.toLowerCase();
+                    buttonListCopy.removeIf(tagComponent -> tagComponent instanceof ButtonComponent buttonTag
+                            && !buttonTag.getMessage().getString().toLowerCase().contains(valueToLowerCase));
 
-                            tagListGrid.clearChildren();
-                            tagListGrid.children(buttonListCopy);
-                        });
-                    }));
+                    tagListGrid.clearChildren();
+                    tagListGrid.children(buttonListCopy);
+                });
+            });
+
+            tagSelectPanel.mouseDown().subscribe((mouseX, mouseY, button) -> true);
+            this.tagOverlay = Containers.overlay(tagSelectPanel);
         }
 
         rootComponent.child(this.tagOverlay);

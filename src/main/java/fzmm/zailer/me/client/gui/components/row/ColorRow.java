@@ -98,26 +98,28 @@ public class ColorRow extends AbstractRow {
         UIModel model = baseFzmmScreen.getModel();
 
         colorPreview.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            ((FlowLayout) colorPreview.root()).child(Containers.overlay(
-                    model.expandTemplate(
-                            FlowLayout.class,
-                            "color-picker-panel",
-                            Map.of("color", valueGetter.get().asHexString(withAlpha), "with-alpha", String.valueOf(withAlpha))
-                    ).<FlowLayout>configure(flowLayout -> {
-                        var picker = flowLayout.childById(ColorPickerComponent.class, "color-picker");
-                        var previewBox = flowLayout.childById(BoxComponent.class, "current-color");
+            FlowLayout colorPreviewPanel =  model.expandTemplate(
+                    FlowLayout.class,
+                    "color-picker-panel",
+                    Map.of("color", valueGetter.get().asHexString(withAlpha), "with-alpha", String.valueOf(withAlpha))
+            ).configure(flowLayout -> {
+                var picker = flowLayout.childById(ColorPickerComponent.class, "color-picker");
+                var previewBox = flowLayout.childById(BoxComponent.class, "current-color");
 
-                        picker.onChanged().subscribe(previewBox::color);
+                picker.onChanged().subscribe(previewBox::color);
 
-                        flowLayout.childById(ButtonComponent.class, "confirm-button").onPress(confirmButton -> {
-                            onPress.accept(picker);
-                            colorPreview.color(picker.selectedColor());
-                            flowLayout.parent().remove();
-                        });
+                flowLayout.childById(ButtonComponent.class, "confirm-button").onPress(confirmButton -> {
+                    onPress.accept(picker);
+                    colorPreview.color(picker.selectedColor());
+                    flowLayout.parent().remove();
+                });
 
-                        flowLayout.childById(ButtonComponent.class, "cancel-button").onPress(cancelButton -> flowLayout.parent().remove());
-                    })
-            ));
+                flowLayout.childById(ButtonComponent.class, "cancel-button").onPress(cancelButton -> flowLayout.parent().remove());
+            });
+
+            colorPreviewPanel.mouseDown().subscribe((mouseX1, mouseY1, button1) -> true);
+
+            ((FlowLayout) colorPreview.root()).child(Containers.overlay(colorPreviewPanel));
 
             return true;
         });
