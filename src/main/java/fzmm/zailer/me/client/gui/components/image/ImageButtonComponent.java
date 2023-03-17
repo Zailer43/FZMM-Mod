@@ -15,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -54,11 +56,15 @@ public class ImageButtonComponent extends ButtonComponent {
     }
 
     public void loadImageFromText(IImageLoaderFromText imageLoaderFromText, String value) {
-        MinecraftClient.getInstance().execute(() -> {
-            this.active = false;
-            LoadingImageToast toast = new LoadingImageToast();
-            MinecraftClient.getInstance().getToastManager().add(toast);
-            ImageStatus status = imageLoaderFromText.loadImage(value);
+        MinecraftClient.getInstance().execute(() -> this.active = false);
+        AtomicReference<LoadingImageToast> toast = new AtomicReference<>();
+
+        CompletableFuture.supplyAsync(() -> {
+            toast.set(new LoadingImageToast());
+            MinecraftClient.getInstance().getToastManager().add(toast.get());
+
+            return imageLoaderFromText.loadImage(value);
+        }).thenApply(status -> {
             Optional<BufferedImage> image = imageLoaderFromText.getImage();
 
             if (status.statusType() == ImageStatus.StatusType.SUCCESSFUL) {
@@ -66,15 +72,17 @@ public class ImageButtonComponent extends ButtonComponent {
                     assert image.isPresent();
                     status = this.imageLoadEvent.apply(image.get());
                 }
-                FzmmClient.LOGGER.info("[ImageButtonComponent] image loaded successfully");
+                FzmmClient.LOGGER.info("[ImageButtonComponent] Image loaded successfully");
             } else {
-                FzmmClient.LOGGER.error("[ImageButtonComponent] failed to load image");
+                FzmmClient.LOGGER.warn("[ImageButtonComponent] Failed to load image");
             }
 
-            this.active = true;
-            toast.setResponse(status);
+            MinecraftClient.getInstance().execute(() -> this.active = true);
+            toast.get().setResponse(status);
 
             this.image = image.orElse(null);
+            return status;
+        }).thenAccept(status -> {
             if (this.callback != null)
                 this.callback.accept(this.image);
         });
