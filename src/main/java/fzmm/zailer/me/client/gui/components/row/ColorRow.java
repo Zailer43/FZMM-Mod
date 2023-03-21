@@ -1,21 +1,17 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.ColorOverlay;
 import io.wispforest.owo.config.ui.OptionComponentFactory;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.BoxComponent;
-import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.ColorPickerComponent;
 import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
-import io.wispforest.owo.ui.parsing.UIModel;
-import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -93,33 +89,10 @@ public class ColorRow extends AbstractRow {
         BaseFzmmScreen.checkNull(colorPreview, "box", getColorPreviewId(id));
 
         colorPreview.color(valueGetter.get());
-        if (!(MinecraftClient.getInstance().currentScreen instanceof BaseFzmmScreen baseFzmmScreen))
-            return colorPreview;
-        UIModel model = baseFzmmScreen.getModel();
 
         colorPreview.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            FlowLayout colorPreviewPanel =  model.expandTemplate(
-                    FlowLayout.class,
-                    "color-picker-panel",
-                    Map.of("color", valueGetter.get().asHexString(withAlpha), "with-alpha", String.valueOf(withAlpha))
-            ).configure(flowLayout -> {
-                var picker = flowLayout.childById(ColorPickerComponent.class, "color-picker");
-                var previewBox = flowLayout.childById(BoxComponent.class, "current-color");
-
-                picker.onChanged().subscribe(previewBox::color);
-
-                flowLayout.childById(ButtonComponent.class, "confirm-button").onPress(confirmButton -> {
-                    onPress.accept(picker);
-                    colorPreview.color(picker.selectedColor());
-                    flowLayout.parent().remove();
-                });
-
-                flowLayout.childById(ButtonComponent.class, "cancel-button").onPress(cancelButton -> flowLayout.parent().remove());
-            });
-
-            colorPreviewPanel.mouseDown().subscribe((mouseX1, mouseY1, button1) -> true);
-
-            ((FlowLayout) colorPreview.root()).child(Containers.overlay(colorPreviewPanel));
+            ColorOverlay colorOverlay = new ColorOverlay(valueGetter.get(), withAlpha, onPress, colorPreview);
+            ((FlowLayout) colorPreview.root()).child(colorOverlay);
 
             return true;
         });

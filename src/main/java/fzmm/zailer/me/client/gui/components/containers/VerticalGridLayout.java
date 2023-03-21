@@ -26,7 +26,7 @@ public class VerticalGridLayout extends BaseParentComponent {
     protected Size contentSize;
     protected int gap;
 
-    protected VerticalGridLayout(Sizing horizontalSizing, Sizing verticalSizing, int maxColumns, int maxChildren, int componentsWidth, int componentsHeight) {
+    public VerticalGridLayout(Sizing horizontalSizing, Sizing verticalSizing, int maxColumns, int maxChildren, int componentsWidth, int componentsHeight) {
         super(horizontalSizing, verticalSizing);
         this.children = new ArrayList<>();
         this.maxColumns = maxColumns;

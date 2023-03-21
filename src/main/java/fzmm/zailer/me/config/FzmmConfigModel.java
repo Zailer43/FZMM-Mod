@@ -1,14 +1,18 @@
 package fzmm.zailer.me.config;
 
 import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
+import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.config.annotation.*;
 import io.wispforest.owo.ui.core.Color;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @Modmenu(modId = "fzmm")
@@ -105,6 +109,8 @@ public class FzmmConfigModel {
         public Color usefulBlockStates = Color.ofRgb(Integer.parseInt("66F5B7", 16));
         public Color headGalleryName = Color.ofRgb(Integer.parseInt("50AF70", 16));
         public Color headGalleryTags = Color.ofRgb(Integer.parseInt("74D02F", 16));
+        @ExcludeFromScreen // owo-lib won't let me make Color lists
+        public List<Color> favoriteColors = Arrays.stream(FzmmUtils.getColorsInOrder()).map(Color::ofDye).collect(Collectors.toList());
     }
 
     public static class HeadGalleryNest {
