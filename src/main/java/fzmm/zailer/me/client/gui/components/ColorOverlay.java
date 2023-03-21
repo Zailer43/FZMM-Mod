@@ -10,6 +10,7 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -114,9 +115,7 @@ public class ColorOverlay extends OverlayContainer<GridLayout> {
                 .zIndex(300)
                 .id("add-favorite-button");
 
-        FlowLayout buttonsLayout = Containers.horizontalFlow(Sizing.content(), Sizing.content())
-                .children(List.of(removeColorButton, addColorButton))
-                .gap(10);
+        FlowLayout buttonsLayout = this.getButtonsLayout(removeColorButton, addColorButton);
 
         layout.children(List.of(labelComponent, favoriteColorsScroll, buttonsLayout));
 
@@ -225,9 +224,7 @@ public class ColorOverlay extends OverlayContainer<GridLayout> {
                 .zIndex(300)
                 .id("confirm-button");
 
-        FlowLayout buttonsLayout = Containers.horizontalFlow(Sizing.content(), Sizing.content())
-                .children(List.of(cancelButton, confirmButton))
-                .gap(10);
+        FlowLayout buttonsLayout = this.getButtonsLayout(cancelButton, confirmButton);
 
         picker.onChanged().subscribe(selectedColor -> {
             this.selectedColor = selectedColor;
@@ -238,5 +235,13 @@ public class ColorOverlay extends OverlayContainer<GridLayout> {
         layout.children(components);
 
         return layout;
+    }
+
+    private FlowLayout getButtonsLayout(Component... components) {
+        return (FlowLayout) Containers.horizontalFlow(Sizing.fill(100), Sizing.content())
+                .children(Arrays.asList(components))
+                .gap(10)
+                .horizontalAlignment(HorizontalAlignment.CENTER)
+                .positioning(Positioning.relative(0, 98));
     }
 }
