@@ -94,7 +94,8 @@ public class ImageUtils {
     }
 
     private static BufferedImage convertInSteveModel(BufferedImage playerSkin, SkinPart skinPart, int scale) {
-        return convertInSteveModel(playerSkin, skinPart.x(), skinPart.y(), scale);
+        BufferedImage modifiedSkin = convertInSteveModel(playerSkin, skinPart.x(), skinPart.y(), scale);
+        return convertInSteveModel(modifiedSkin, skinPart.hatX(), skinPart.hatY(), scale);
     }
 
     private static BufferedImage convertInSteveModel(BufferedImage skin, int x, int y, int scale) {
