@@ -5,12 +5,7 @@ import com.google.gson.JsonParser;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ImageUtils;
-import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SkullItem;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -58,17 +53,9 @@ public class GetSkinFromMojang extends GetSkinDecorator {
         }
     }
 
+    // TODO: use super.getHead(playerName) if no skin or premium player is found with that user
     @Override
     public Optional<ItemStack> getHead(String playerName) {
-        ItemStack stack = HeadBuilder.of(playerName);
-
-        NbtCompound nbt = stack.getOrCreateSubNbt(SkullItem.SKULL_OWNER_KEY);
-        nbt = nbt.getCompound(TagsConstant.HEAD_PROPERTIES);
-        NbtList textures = nbt.getList(TagsConstant.HEAD_PROPERTIES_TEXTURES, NbtElement.COMPOUND_TYPE);
-        if (textures.isEmpty())
-            return super.getHead(playerName);
-
-
         return Optional.of(HeadBuilder.of(playerName));
     }
 }
