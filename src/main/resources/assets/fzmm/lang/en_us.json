@@ -11,6 +11,8 @@
   "commands.fzmm.lore.add.help": "Add a lore line at the end of the item",
   "commands.fzmm.lore.help": "Modify the lore of the item in your hand\nadd: Add a lore line at the end of the item\nremove: Removes a line of lore from the item, if the line is not specified the last one is removed, the lines are counted from top to bottom",
   "commands.fzmm.name.help": "Change the name of the item in your hand",
+  "commands.fzmm.nbt.click": "Click to copy",
+  "commands.fzmm.nbt.length": "Length: %s",
   "commands.fzmm.skull.help": "Get a player's head by their username",
   "fzmm.giveItem.exceedLimit": "The item exceeds the 2MB limit",
   "fzmm.gui.bannerEditor.button.give": "Give banner",

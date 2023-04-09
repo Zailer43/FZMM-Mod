@@ -18,7 +18,6 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandRegistryAccess;
@@ -33,11 +32,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.*;
-import net.minecraft.util.Formatting;
 
 import java.util.Optional;
 
@@ -303,27 +302,28 @@ public class FzmmCommand {
         assert client.player != null;
         ItemStack stack = client.player.getInventory().getMainHandStack();
 
-        if (!stack.hasNbt()) {
+        if (!stack.hasNbt())
             throw ERROR_WITHOUT_NBT;
-        }
+
         assert stack.getNbt() != null;
-        String nbt = stack.getNbt().toString();//.replaceAll("§", "\\\\u00a7");
+        Text nbtMessage = NbtHelper.toPrettyPrintedText(stack.getNbt());
+        String nbtString = nbtMessage.getString();
+        Text clickToCopyMessage = Text.translatable("commands.fzmm.nbt.click");
 
-        MutableText message = Text.literal(stack + ": " + nbt)
-                .setStyle(Style.EMPTY
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, nbt))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("Click to copy")))
-                );
+        MutableText message = Text.empty()
+                .append(Text.literal(stack.getItem().toString())
+                        .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR))
+                ).append(nbtMessage.copy().setStyle(Style.EMPTY
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, nbtString))
+                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, clickToCopyMessage))
+                ));
 
-        MutableText length = Text.literal(Formatting.BLUE + "Length: " + Formatting.DARK_AQUA + nbt.length())
-                .setStyle(Style.EMPTY
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, String.valueOf(nbt.length())))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of("Click to copy")))
-                );
+        Text length = Text.literal(String.valueOf(nbtString.length()))
+                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
+        MutableText lengthMessage = Text.translatable("commands.fzmm.nbt.length", length)
+                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
 
-        ChatHud chatHud = client.inGameHud.getChatHud();
-        chatHud.addMessage(message);
-        chatHud.addMessage(length);
+        client.inGameHud.getChatHud().addMessage(message.append("\n").append(lengthMessage));
     }
 
     private static void amount(int amount) {
