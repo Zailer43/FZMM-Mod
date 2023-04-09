@@ -96,8 +96,13 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         assert this.client != null;
         this.client.setScreen(this.parent);
 
-        if (FzmmClient.CONFIG.history.automaticallyRecoverScreens() && this instanceof IMementoScreen mementoScreen)
-            mementoScreen.setMemento(mementoScreen.createMemento());
+        if (FzmmClient.CONFIG.history.automaticallyRecoverScreens() && this instanceof IMementoScreen mementoScreen) {
+            try {
+                mementoScreen.setMemento(mementoScreen.createMemento());
+            } catch (NullPointerException e) {
+                FzmmClient.LOGGER.error("Failed to create memento", e);
+            }
+        }
     }
 
 

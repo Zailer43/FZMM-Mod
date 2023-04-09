@@ -1,0 +1,78 @@
+{
+  "paintable": true,
+  "textures": [
+    {
+      "id": "bed",
+      "path": "fzmm:textures/model_textures/paint_bed_hat.png",
+      "requested": false
+    }
+  ],
+  "colors": [
+    {
+      "id": "selected_color",
+      "color_hex": "#B23029",
+      "requested": true
+    }
+  ],
+  "steps": [
+    {
+      "comment": "base skin",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "bed"
+    },
+    {
+      "comment": "add bed",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_color",
+      "color_id": "selected_color"
+    },
+    {
+      "comment": "sides",
+      "type": "fill_color",
+      "algorithm": "multiply",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 2,
+        "y": 8,
+        "width": 20,
+        "height": 2
+      }
+    },
+    {
+      "comment": "top",
+      "type": "fill_color",
+      "algorithm": "multiply",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 8,
+        "y": 2,
+        "width": 8,
+        "height": 6
+      }
+    }
+  ]
+}

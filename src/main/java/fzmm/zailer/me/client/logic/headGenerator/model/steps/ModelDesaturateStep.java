@@ -7,6 +7,7 @@ import fzmm.zailer.me.client.logic.headGenerator.model.ModelData;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 public class ModelDesaturateStep implements IModelStep {
 
@@ -18,7 +19,11 @@ public class ModelDesaturateStep implements IModelStep {
 
     @Override
     public void apply(ModelData data) {
-        BufferedImage texture = data.textures().get("destination_skin");
+        Optional<BufferedImage> optionalTexture = data.getTexture("destination_skin");
+        if (optionalTexture.isEmpty())
+            return;
+
+        BufferedImage texture = optionalTexture.get();
         Graphics2D graphics = data.graphics();
 
         int posX = this.area.getXWithOffset();

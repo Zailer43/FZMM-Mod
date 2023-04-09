@@ -3,7 +3,8 @@
   "textures": [
     {
       "id": "glass_block",
-      "path": "fzmm:textures/model_textures/glass_block.png"
+      "path": "fzmm:textures/model_textures/glass_block.png",
+      "requested": false
     }
   ],
   "colors": [

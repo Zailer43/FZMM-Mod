@@ -1,0 +1,116 @@
+{
+  "steps": [
+    {
+      "comment": "source left",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 24,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "source front",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "source right",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "source back",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 24,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "source top",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true,
+      "degrees": 90
+    },
+    {
+      "comment": "source bottom",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true,
+      "degrees": 90
+    }
+  ]
+}

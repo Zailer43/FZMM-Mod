@@ -5,11 +5,9 @@ import com.google.gson.JsonParser;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -17,13 +15,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class HeadUtils {
     public static final String MINESKIN_API = "https://api.mineskin.org/";
-    private static final Identifier HEADS_WATER_MARK = new Identifier(FzmmClient.MOD_ID, "textures/watermark/heads_watermark.png");
     private static final String BOUNDARY = UUID.randomUUID().toString();
     private String skinValue;
     private String url;
@@ -61,8 +57,6 @@ public class HeadUtils {
     public CompletableFuture<HeadUtils> uploadHead(BufferedImage headSkin, String skinName) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                if (this.shouldApplyWatermark(headSkin))
-                    this.applyWatermark(headSkin);
                 FzmmConfig.Mineskin config = FzmmClient.CONFIG.mineskin;
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ImageIO.write(headSkin, "png", baos);
@@ -125,31 +119,5 @@ public class HeadUtils {
 
     private int getDelay(int delay) {
         return MathHelper.clamp(delay, 2000, 6000);
-    }
-
-    private void applyWatermark(BufferedImage headSkin) {
-        Optional<BufferedImage> optionalWatermark = ImageUtils.getImageFromIdentifier(HEADS_WATER_MARK);
-        optionalWatermark.ifPresent(watermark -> {
-            Graphics2D g2d = headSkin.createGraphics();
-            g2d.drawImage(watermark, 0, 16, 64, 64, 0, 16, 64, 64, null);
-            g2d.dispose();
-        });
-    }
-
-    private boolean shouldApplyWatermark(BufferedImage headSkin) {
-        int width = headSkin.getWidth();
-        int height = headSkin.getHeight();
-        if (height < 16)
-            return false;
-
-        for (int x = 0; x != width; x++) {
-            for (int y = 16; y != height; y++) {
-                int alpha = (headSkin.getRGB(x, y) >> 24) & 0xFF;
-                if (alpha != 0)
-                    return false;
-            }
-        }
-
-        return true;
     }
 }

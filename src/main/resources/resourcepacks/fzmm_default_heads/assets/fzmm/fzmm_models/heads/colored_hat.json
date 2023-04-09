@@ -3,7 +3,8 @@
   "textures": [
     {
       "id": "colored_hat",
-      "path": "fzmm:textures/model_textures/colored_hat.png"
+      "path": "fzmm:textures/model_textures/colored_hat.png",
+      "requested": false
     }
   ],
   "colors": [ {

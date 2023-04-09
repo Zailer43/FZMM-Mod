@@ -9,6 +9,7 @@ import io.wispforest.owo.ui.core.Color;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 public class ModelFillColorStep implements IModelStep {
 
@@ -22,8 +23,12 @@ public class ModelFillColorStep implements IModelStep {
 
     @Override
     public void apply(ModelData data) {
+        Optional<BufferedImage> optionalTexture = data.getTexture("destination_skin");
+        if (optionalTexture.isEmpty())
+            return;
+
+        BufferedImage texture = optionalTexture.get();
         Color selectedColor = data.selectedColor().get();
-        BufferedImage texture = data.textures().get("destination_skin");
         Graphics2D graphics = data.graphics();
 
         int posX = this.area.getXWithOffset();

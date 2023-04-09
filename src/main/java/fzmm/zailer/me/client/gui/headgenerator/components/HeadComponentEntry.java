@@ -2,98 +2,65 @@ package fzmm.zailer.me.client.gui.headgenerator.components;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.row.ColorRow;
-import fzmm.zailer.me.client.gui.headgenerator.HeadGenerationMethod;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
+import fzmm.zailer.me.client.gui.headgenerator.category.IHeadCategory;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
-import fzmm.zailer.me.client.logic.headGenerator.model.IPaintableEntry;
 import fzmm.zailer.me.config.FzmmConfig;
-import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.core.CursorStyle;
+import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
 
-import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.Set;
 
 public class HeadComponentEntry extends AbstractHeadListEntry {
-    public static final Text GIVE_BUTTON_TEXT = Text.translatable("fzmm.gui.button.giveHead");
     private static final Text ADD_LAYER_BUTTON_TEXT = Text.translatable("fzmm.gui.button.add");
     public static final Text FAVORITE_ENABLED_TEXT = Text.translatable("fzmm.gui.button.favorite.enabled").setStyle(Style.EMPTY.withColor(0xECC709));
     private static final Text FAVORITE_ENABLED_EASTER_EGG_TEXT = Text.translatable("fzmm.gui.button.favorite.enabled_easter_egg").setStyle(Style.EMPTY.withColor(0xF4300B));
     public static final Text FAVORITE_DISABLED_TEXT = Text.translatable("fzmm.gui.button.favorite.disabled").setStyle(Style.EMPTY.withColor(0xECC709));
-    private final ButtonComponent giveButton;
     private final ButtonComponent favoriteButton;
     private boolean isFavorite;
     private boolean hide;
-    private final Sizing originalVerticalSizing;
-    private final HeadGeneratorScreen parentScreen;
 
     public HeadComponentEntry(AbstractHeadEntry headData, HeadGeneratorScreen parent) {
-        super(headData);
+        super(headData, Sizing.fixed(40), Sizing.fixed(30), parent);
         FzmmConfig.HeadGenerator config = FzmmClient.CONFIG.headGenerator;
         this.isFavorite = config.favoriteSkins().contains(this.entry.getKey());
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
-        if (headData instanceof IPaintableEntry coloredEntry && coloredEntry.isPaintable()) {
-            BoxComponent colorPreview = (BoxComponent) Components.box(Sizing.fixed(15), Sizing.fixed(15))
-                    .fill(true)
-                    .cursorStyle(CursorStyle.HAND)
-                    .id(ColorRow.getColorPreviewId(headData.getKey()));
-            this.buttonsLayout.child(colorPreview);
-            ColorRow.setupColorPreview(headData.getKey(), this.buttonsLayout, false, () -> coloredEntry.getColor("selected_color"), colorPickerComponent -> {
-                coloredEntry.putColor("selected_color", colorPickerComponent.selectedColor());
-                this.update(parent.getBaseSkin(), parent.overlapHatLayerButton());
-            });
-        }
-
-        int giveButtonWidth = textRenderer.getWidth(GIVE_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
-        this.giveButton = Components.button(GIVE_BUTTON_TEXT, buttonComponent -> this.giveButtonExecute(parent.overlapHatLayerButton()));
-        this.giveButton.sizing(Sizing.fixed(giveButtonWidth), Sizing.fixed(20));
-
-        int favoriteButtonWidth = Math.max(textRenderer.getWidth(FAVORITE_ENABLED_TEXT), textRenderer.getWidth(FAVORITE_DISABLED_TEXT)) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
         this.favoriteButton = Components.button(Text.empty(), this::favoriteButtonExecute);
-        this.favoriteButton.sizing(Sizing.fixed(Math.max(20, favoriteButtonWidth)), Sizing.fixed(20));
-        this.updateFavoriteText();
+        this.setupFavoriteButton(this.favoriteButton);
+        this.favoriteButton.positioning(Positioning.relative(100, 0));
+        this.updateFavoriteText(this.favoriteButton, false);
+        this.favoriteButton.visible = false;
 
-        this.buttonsLayout.child(this.giveButton);
+        this.mouseEnter().subscribe(() -> this.favoriteButton.visible = true);
+        this.mouseLeave().subscribe(() -> this.favoriteButton.visible = false);
 
-        if (this.entry.canOverlap()) {
-            int addLayerButtonWidth = textRenderer.getWidth(ADD_LAYER_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
-            ButtonComponent addLayerButton = Components.button(ADD_LAYER_BUTTON_TEXT, this::addLayerButtonExecute);
-            addLayerButton.sizing(Sizing.fixed(Math.max(20, addLayerButtonWidth)), Sizing.fixed(20));
-
-            this.buttonsLayout.child(addLayerButton);
-        }
-
-        this.buttonsLayout.child(this.favoriteButton);
+        this.child(this.favoriteButton);
 
         this.hide = false;
-        this.originalVerticalSizing = this.verticalSizing().get();
-        this.parentScreen = parent;
     }
 
-    @Override
-    public void draw(MatrixStack matrices, int mouseX, int mouseY, float partialTicks, float delta) {
-        if (!this.hide)
-            super.draw(matrices, mouseX, mouseY, partialTicks, delta);
-    }
+    private void setupFavoriteButton(ButtonComponent favoriteButton) {
+        favoriteButton.onPress(this::favoriteButtonExecute);
+        favoriteButton.renderer(ButtonComponent.Renderer.flat(0x00000000, 0x00000000, 0x00000000));
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        int width = Math.max(
+                15,
+                Math.max(
+                        textRenderer.getWidth(FAVORITE_ENABLED_TEXT),
+                        textRenderer.getWidth(FAVORITE_DISABLED_TEXT)
+                ) + BaseFzmmScreen.BUTTON_TEXT_PADDING
+        );
 
-    private void giveButtonExecute(boolean overlapHatLayer) {
-        BufferedImage image = this.entry.getHeadSkin(this.parentScreen.getBaseSkin(), overlapHatLayer);
-
-        this.parentScreen.giveHead(image, this.getDisplayName());
-    }
-
-    private void addLayerButtonExecute(ButtonComponent button) {
-        this.parentScreen.addLayer(this.entry);
+        favoriteButton.horizontalSizing(Sizing.fixed(width));
     }
 
     private void favoriteButtonExecute(ButtonComponent button) {
@@ -107,14 +74,10 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
 
         config.favoriteSkins(favorites);
         this.isFavorite = !this.isFavorite;
-        this.updateFavoriteText(true);
+        this.updateFavoriteText(button, true);
     }
 
-    private void updateFavoriteText() {
-        this.updateFavoriteText(false);
-    }
-
-    private void updateFavoriteText(boolean easterEgg) {
+    private void updateFavoriteText(ButtonComponent favoriteButton, boolean easterEgg) {
         Text message;
         if (this.isFavorite) {
             int number = easterEgg ? Random.create().nextBetween(0, 40) : 0;
@@ -123,25 +86,38 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
             message = FAVORITE_DISABLED_TEXT;
         }
 
-        this.favoriteButton.setMessage(message);
+        favoriteButton.setMessage(message);
     }
 
-    public void filter(String searchValue, boolean toggledFavorites, HeadGenerationMethod generationMethod) {
-        if (!this.isFavorite && toggledFavorites || this.entry.getGenerationMethod() != generationMethod) {
-            this.setHide(true);
+    public void filter(String searchValue, boolean toggledFavorites, IHeadCategory headCategory) {
+        if (!this.isFavorite && toggledFavorites || !headCategory.isCategory(this.entry.getCategoryId())) {
+            this.hide = true;
             return;
         }
 
-        this.setHide(!searchValue.isBlank() && !this.getDisplayName().toLowerCase().contains(searchValue));
+        this.hide = (!searchValue.isBlank() && !this.getDisplayName().toLowerCase().contains(searchValue));
     }
 
-    public void setHide(boolean value) {
-        this.hide = value;
-        this.verticalSizing(value ? Sizing.fixed(0) : this.originalVerticalSizing);
+    public boolean isHide() {
+        return this.hide;
     }
 
-    public void updateGiveButton(boolean active, Text text) {
-        this.giveButton.active = active;
-        this.giveButton.setMessage(text);
+    @Override
+    protected void addTopRightButtons(FlowLayout panel, FlowLayout layout) {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+
+        ButtonComponent overlayFavoriteButton = Components.button(Text.empty(), buttonComponent -> {});
+        overlayFavoriteButton.setMessage(this.favoriteButton.getMessage());
+        this.setupFavoriteButton(overlayFavoriteButton);
+
+        int addLayerButtonWidth = textRenderer.getWidth(ADD_LAYER_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
+        ButtonComponent addCompoundButton = Components.button(ADD_LAYER_BUTTON_TEXT, this::addCompoundButtonExecute);
+        addCompoundButton.horizontalSizing(Sizing.fixed(Math.max(20, addLayerButtonWidth)));
+
+        layout.children(List.of(overlayFavoriteButton, addCompoundButton));
+    }
+
+    private void addCompoundButtonExecute(ButtonComponent button) {
+        this.parentScreen.addCompound(this.entry);
     }
 }

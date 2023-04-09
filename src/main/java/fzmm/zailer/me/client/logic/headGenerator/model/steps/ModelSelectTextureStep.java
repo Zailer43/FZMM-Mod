@@ -3,8 +3,10 @@ package fzmm.zailer.me.client.logic.headGenerator.model.steps;
 import com.google.gson.JsonObject;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.logic.headGenerator.model.ModelData;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.ModelParameter;
 
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 public class ModelSelectTextureStep implements IModelStep {
 
@@ -16,14 +18,26 @@ public class ModelSelectTextureStep implements IModelStep {
 
     @Override
     public void apply(ModelData data) {
-        BufferedImage texture = data.textures().get(this.textureId);
+        ModelParameter<BufferedImage> textureParameter = null;
 
-        if (texture == null) {
-            texture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-            FzmmClient.LOGGER.error("[ModelSelectColorStep] Could not find texture '{}'", this.textureId);
+        for (ModelParameter<BufferedImage> parameter : data.textures()) {
+            if (parameter.id().equals(this.textureId)) {
+                textureParameter = parameter;
+                break;
+            }
         }
 
-        data.selectedTexture().set(texture);
+        if (textureParameter == null) {
+            FzmmClient.LOGGER.warn("[ModelSelectTextureStep] Could not find texture parameter '{}'", this.textureId);
+        } else {
+            Optional<BufferedImage> textureOptional = textureParameter.value();
+            if (!textureParameter.isRequested() && textureOptional.isEmpty()) {
+                //FzmmClient.LOGGER.warn("[ModelSelectTextureStep] Could not find texture '{}'", this.textureId);
+                return;
+            }
+
+            data.selectedTexture().set(textureOptional.orElse(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB)));
+        }
     }
 
     public static ModelSelectTextureStep parse(JsonObject jsonObject) {

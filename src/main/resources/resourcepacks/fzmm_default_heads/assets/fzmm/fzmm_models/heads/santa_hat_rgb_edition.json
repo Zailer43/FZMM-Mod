@@ -3,10 +3,12 @@
   "textures": [
     {
       "id": "santa_hat",
-      "path": "fzmm:textures/model_textures/santa_hat.png"
+      "path": "fzmm:textures/model_textures/santa_hat.png",
+      "requested": false
     }
   ],
-  "colors": [ {
+  "colors": [
+    {
       "id": "selected_color",
       "color_hex": "#D62B29"
     }

@@ -3,7 +3,8 @@
   "textures": [
     {
       "id": "colored_glasses",
-      "path": "fzmm:textures/model_textures/colored_glasses.png"
+      "path": "fzmm:textures/model_textures/colored_glasses.png",
+      "requested": false
     }
   ],
   "colors": [ {

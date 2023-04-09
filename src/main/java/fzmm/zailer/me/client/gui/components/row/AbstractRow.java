@@ -25,18 +25,25 @@ public abstract class AbstractRow extends FlowLayout {
     protected final String baseTranslationKey;
     private boolean hasHoveredBackground;
     private String id;
+    private final boolean translate;
 
     public AbstractRow(String baseTranslationKey) {
         super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT), Algorithm.HORIZONTAL);
         this.baseTranslationKey = baseTranslationKey;
         this.hasHoveredBackground = true;
+        this.translate = true;
     }
 
     public AbstractRow(String baseTranslationKey, String id, String tooltipId, boolean hasResetButton) {
+        this(baseTranslationKey, id, tooltipId, hasResetButton, true);
+    }
+
+    public AbstractRow(String baseTranslationKey, String id, String tooltipId, boolean hasResetButton, boolean translate) {
         super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT), Algorithm.HORIZONTAL);
         this.baseTranslationKey = baseTranslationKey;
         this.hasHoveredBackground = true;
         this.id = id;
+        this.translate = translate;
         Component[] components = this.getComponents(id, tooltipId);
 
         FlowLayout rowLayout = (FlowLayout) Containers
@@ -87,16 +94,18 @@ public abstract class AbstractRow extends FlowLayout {
 
     public Component getLabel(String id, String tooltipId, boolean isOption) {
         String baseTranslationKey = isOption ? BaseFzmmScreen.getOptionBaseTranslationKey(this.baseTranslationKey) : BaseFzmmScreen.getTabTranslationKey(this.baseTranslationKey);
-        return getLabel(id, tooltipId, baseTranslationKey);
+        return getLabel(id, tooltipId, baseTranslationKey, this.translate);
     }
 
-    public static Component getLabel(String id, String tooltipId, String baseTranslationKey) {
-        return Components
-                .label(Text.translatable(baseTranslationKey + id))
-                .tooltip(Text.translatable(baseTranslationKey + tooltipId + ".tooltip"))
+    public static Component getLabel(String id, String tooltipId, String baseTranslationKey, boolean translate) {
+        LabelComponent label = (LabelComponent) Components.label(translate ? Text.translatable(baseTranslationKey + id) : Text.literal(id))
                 .margins(Insets.left(20))
                 .id(getLabelId(id));
 
+        if (translate)
+            label.tooltip(Text.translatable(baseTranslationKey + tooltipId + ".tooltip"));
+
+        return label;
     }
 
     public static String getRowContainerId(String id) {

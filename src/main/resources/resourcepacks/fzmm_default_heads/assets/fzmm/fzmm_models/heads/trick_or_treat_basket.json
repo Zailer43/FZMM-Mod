@@ -2,7 +2,8 @@
   "textures": [
     {
       "id": "trick_or_treat_basket",
-      "path": "fzmm:textures/model_textures/trick_or_treat_basket.png"
+      "path": "fzmm:textures/model_textures/trick_or_treat_basket.png",
+      "requested": false
     }
   ],
   "steps": [

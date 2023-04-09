@@ -1,7 +1,6 @@
-package fzmm.zailer.me.client.gui.components;
+package fzmm.zailer.me.client.gui.components.containers;
 
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.ui.component.*;
 import io.wispforest.owo.ui.container.*;
@@ -29,6 +28,7 @@ public class ColorOverlay extends OverlayContainer<GridLayout> {
 
         this.addComponents(color, withAlpha, onConfirm, colorPreview);
         this.child.alignment(HorizontalAlignment.CENTER, VerticalAlignment.TOP);
+        this.zIndex(300);
     }
 
     protected void addComponents(Color color, boolean withAlpha, Consumer<ColorPickerComponent> onConfirm, BoxComponent colorPreview) {

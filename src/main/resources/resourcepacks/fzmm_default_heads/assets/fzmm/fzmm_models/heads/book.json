@@ -2,7 +2,8 @@
   "textures": [
     {
       "id": "book",
-      "path": "fzmm:textures/model_textures/book.png"
+      "path": "fzmm:textures/model_textures/book.png",
+      "requested": false
     }
   ],
   "steps": [

@@ -13,11 +13,12 @@ public final class HeadGenerator {
 
     public HeadGenerator(@NotNull BufferedImage skin, boolean overlapHatLayer) {
         Graphics2D g2d = this.image.createGraphics();
-        //head
+        // base layer
         g2d.drawImage(skin, 0, 0, 32, 16, 0, 0, 32, 16, null);
-        //hat
+        // hat layer
         if (overlapHatLayer)
             g2d.drawImage(skin, 0, 0, 32, 16, 32, 0, 64, 16, null);
+
         this.addBody(g2d, skin);
         g2d.dispose();
     }

@@ -2,7 +2,8 @@
   "textures": [
     {
       "id": "boat",
-      "path": "fzmm:textures/model_textures/oak_boat.png"
+      "path": "fzmm:textures/model_textures/oak_boat.png",
+      "requested": false
     }
   ],
   "steps": [

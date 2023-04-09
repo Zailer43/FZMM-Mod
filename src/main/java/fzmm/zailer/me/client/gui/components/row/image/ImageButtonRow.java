@@ -16,8 +16,8 @@ import net.minecraft.text.Text;
 
 public class ImageButtonRow extends AbstractRow {
 
-    public ImageButtonRow(String baseTranslationKey, String id, String tooltipId) {
-        super(baseTranslationKey, id, tooltipId, false);
+    public ImageButtonRow(String baseTranslationKey, String id, String tooltipId, boolean translate) {
+        super(baseTranslationKey, id, tooltipId, false, translate);
     }
 
     @Override

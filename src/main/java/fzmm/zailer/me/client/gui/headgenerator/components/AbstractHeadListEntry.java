@@ -1,54 +1,76 @@
 package fzmm.zailer.me.client.gui.headgenerator.components;
 
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
+import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
+import fzmm.zailer.me.client.gui.components.row.ColorRow;
+import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
+import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
+import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
+import fzmm.zailer.me.client.gui.headgenerator.category.IHeadCategory;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.IParametersEntry;
 import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntity;
 import fzmm.zailer.me.utils.ImageUtils;
+import fzmm.zailer.me.utils.list.IListEntry;
+import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.EntityComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.util.Drawer;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.hud.ChatHud;
+import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureManager;
+import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.Nullable;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.util.Optional;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
-public abstract class AbstractHeadListEntry extends FlowLayout {
+public abstract class AbstractHeadListEntry extends FlowLayout implements IListEntry<AbstractHeadEntry> {
     public static final int PLAYER_SKIN_SIZE = 24;
-    protected final AbstractHeadEntry entry;
+    private static final int OVERLAY_WIDGETS_WIDTH = 75;
+    public static final Text GIVE_BUTTON_TEXT = Text.translatable("fzmm.gui.button.giveHead");
+    public static final Text GIVE_WAITING_UNDEFINED_TEXT = Text.translatable("fzmm.gui.headGenerator.wait");
+    public static final String GIVE_WAITING_SECONDS_KEY = "fzmm.gui.headGenerator.wait_seconds";
+    protected AbstractHeadEntry entry;
     private final EntityComponent<CustomHeadEntity> previewComponent;
-    protected FlowLayout buttonsLayout;
     private NativeImageBackedTexture previewTexture;
+    protected final HeadGeneratorScreen parentScreen;
+    protected OverlayContainer<FlowLayout> overlayContainer;
 
-    public AbstractHeadListEntry(AbstractHeadEntry entry) {
-        super(Sizing.fill(100), Sizing.fixed(28), Algorithm.HORIZONTAL);
-        this.entry = entry;
+    public AbstractHeadListEntry(AbstractHeadEntry entry, Sizing horizontalSizing, Sizing verticalSizing, HeadGeneratorScreen parent) {
+        super(horizontalSizing, verticalSizing, Algorithm.VERTICAL);
 
-        this.previewComponent = Components.entity(Sizing.fixed(PLAYER_SKIN_SIZE), new CustomHeadEntity(MinecraftClient.getInstance().world))
-                .allowMouseRotation(true);
+        this.previewComponent = Components.entity(Sizing.fixed(PLAYER_SKIN_SIZE), new CustomHeadEntity(MinecraftClient.getInstance().world));
+        this.previewComponent.cursorStyle(CursorStyle.HAND);
+        this.setValue(entry);
 
-        LabelComponent label = Components.label(Text.literal(entry.getDisplayName()));
-
-        this.buttonsLayout = Containers.horizontalFlow(Sizing.content(), this.verticalSizing().get());
-        this.buttonsLayout.alignment(HorizontalAlignment.RIGHT, VerticalAlignment.CENTER);
-        this.buttonsLayout.positioning(Positioning.relative(100, 0));
-        this.buttonsLayout.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
-
-        this.verticalAlignment(VerticalAlignment.CENTER);
-        this.margins(Insets.horizontal(4));
+        this.horizontalAlignment(HorizontalAlignment.LEFT);
         this.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
         this.child(this.previewComponent);
-        this.child(label);
-        this.child(this.buttonsLayout);
-        this.update(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB), false);
+        this.update(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
+        this.cursorStyle(CursorStyle.HAND);
+
+        this.parentScreen = parent;
+
+        this.mouseDown().subscribe((mouseX, mouseY, button) -> this.addOverlay(parent));
     }
 
     @Override
@@ -63,34 +85,187 @@ public abstract class AbstractHeadListEntry extends FlowLayout {
         return this.entry.getDisplayName();
     }
 
-    public Optional<BufferedImage> getHeadSkin() {
-        if (this.entry instanceof HeadTextureEntry textureEntry)
-            return Optional.of(textureEntry.getHeadSkin());
-        return Optional.empty();
+    public String getCategoryId() {
+        return this.entry.getCategoryId();
     }
 
-    public void update(BufferedImage skinBase, boolean overlapHatLayer) {
+    public void update(BufferedImage baseSkin, boolean overlapHatLayerButton) {
+        this.update(this.entry.getHeadSkin(baseSkin, overlapHatLayerButton));
+    }
+
+    public void update(BufferedImage previewSkin) {
         MinecraftClient client = MinecraftClient.getInstance();
         TextureManager textureManager = client.getTextureManager();
 
-        client.execute(() -> {
-            this.close();
-            CustomHeadEntity customHeadEntity = this.previewComponent.entity();
+//        client.execute(() -> {
+        this.close();
+        CustomHeadEntity customHeadEntity = this.previewComponent.entity();
 
-            BufferedImage previewSkin = this.entry.getHeadSkin(skinBase, overlapHatLayer);
-            ImageUtils.toNativeImage(previewSkin).ifPresent(nativeImage -> {
-                this.previewTexture = new NativeImageBackedTexture(nativeImage);
-                customHeadEntity.setCustomHeadTexture(textureManager.registerDynamicTexture("fzmm_head", this.previewTexture));
-            });
-
-            textureManager.bindTexture(customHeadEntity.getCustomHeadTexture());
+        ImageUtils.toNativeImage(previewSkin).ifPresent(nativeImage -> {
+            this.previewTexture = new NativeImageBackedTexture(nativeImage);
+            customHeadEntity.setCustomHeadTexture(textureManager.registerDynamicTexture("fzmm_head", this.previewTexture));
         });
+
+        textureManager.bindTexture(customHeadEntity.getCustomHeadTexture());
+//        });
+    }
+
+    protected EntityComponent<CustomHeadEntity> cloneCustomHeadEntity() {
+        return Components.entity(Sizing.fixed(PLAYER_SKIN_SIZE), this.previewComponent.entity());
     }
 
     public void close() {
-        if (this.previewTexture != null) {
-            this.previewTexture.close();
-            this.previewTexture = null;
+        if (this.previewTexture == null)
+            return;
+
+        this.previewTexture.close();
+        this.previewTexture = null;
+    }
+
+    public BufferedImage getPreview() {
+        NativeImage nativeImage = this.previewTexture.getImage();
+        if (nativeImage == null) {
+            FzmmClient.LOGGER.warn("[AbstractHeadListEntry] Failed to get preview image for {}", this.entry.getDisplayName());
+            return new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
         }
+
+        return ImageUtils.getBufferedImgFromNativeImg(nativeImage);
+    }
+
+
+    protected boolean addOverlay(HeadGeneratorScreen parent) {
+        Map<String, String> parameters = Map.of("name", this.getDisplayName());
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        int giveButtonWidth = Math.max(
+                Math.max(
+                        textRenderer.getWidth(GIVE_BUTTON_TEXT.getString()),
+                        textRenderer.getWidth(GIVE_WAITING_UNDEFINED_TEXT.getString())
+                ),
+                textRenderer.getWidth(Text.translatable(GIVE_WAITING_SECONDS_KEY, 1).getString())
+        ) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
+
+        FlowLayout headOverlay = parent.getModel().expandTemplate(FlowLayout.class, "head-overlay", parameters).configure(panel -> {
+            panel.mouseDown().subscribe((mouseX1, mouseY1, button1) -> true);
+
+            FlowLayout previewLayout = panel.childById(FlowLayout.class, "preview");
+            BaseFzmmScreen.checkNull(previewLayout, "flow-layout", "preview");
+            previewLayout.child(this.cloneCustomHeadEntity().allowMouseRotation(true).cursorStyle(CursorStyle.MOVE));
+
+            LabelComponent categoryLabel = panel.childById(LabelComponent.class, "category-label");
+            BaseFzmmScreen.checkNull(categoryLabel, "label", "category-label");
+            categoryLabel.text(IHeadCategory.getCategory(this.getCategoryId()).getText());
+
+            ButtonComponent giveButton = panel.childById(ButtonComponent.class, "give-button");
+            BaseFzmmScreen.checkNull(giveButton, "button", "give-button");
+            giveButton.onPress((button) -> this.giveButtonExecute());
+            giveButton.horizontalSizing(Sizing.fixed(giveButtonWidth));
+            parent.setCurrentGiveButton(giveButton);
+
+            ButtonComponent saveButton = panel.childById(ButtonComponent.class, "save-button");
+            BaseFzmmScreen.checkNull(saveButton, "button", "save-button");
+            saveButton.onPress(buttonComponent -> this.saveSkinExecute(this.getPreview()));
+
+            this.addParameters(panel, parent);
+
+            FlowLayout topRightButtonsLayout = panel.childById(FlowLayout.class, "top-right-buttons");
+            BaseFzmmScreen.checkNull(topRightButtonsLayout, "flow-layout", "top-right-buttons");
+            this.addTopRightButtons(panel, topRightButtonsLayout);
+        });
+
+        this.overlayContainer = Containers.overlay(headOverlay);
+        ((FlowLayout) this.root()).child(this.overlayContainer);
+        return true;
+    }
+
+    private void addParameters(FlowLayout panel, HeadGeneratorScreen parent) {
+        if (!(this.entry instanceof IParametersEntry parametersEntry))
+            return;
+
+        FlowLayout parametersLayout = panel.childById(FlowLayout.class, "parameters");
+        BaseFzmmScreen.checkNull(parametersLayout, "flow-layout", "parameters");
+        if (parametersEntry.hasParameters()) {
+            LabelComponent parametersLabel = Components.label(Text.translatable("fzmm.gui.headGenerator.label.parameters"));
+            parametersLayout.child(parametersLabel);
+        }
+
+        for (var texture : parametersEntry.getTextures()) {
+            if (!texture.isRequested())
+                continue;
+            String buttonId = texture.id() + "-texture";
+            String enumButtonId = texture.id() + "-texture-mode";
+            ImageRows imageRows = new ImageRows(parent.getBaseScreenTranslationKey(), buttonId, buttonId, enumButtonId, enumButtonId, false);
+            parametersLayout.child(imageRows);
+
+            ImageRowsElements elements = ImageRows.setup(parametersLayout, buttonId, enumButtonId, SkinMode.NAME);
+            elements.imageButton().setButtonCallback(bufferedImage -> {
+                parametersEntry.putTexture(texture.id(), bufferedImage);
+                this.update();
+            });
+
+            elements.valueField().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
+            elements.mode().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
+        }
+
+        for (var colorParameter : parametersEntry.getColors()) {
+            if (!colorParameter.isRequested())
+                continue;
+            String id = colorParameter.id() + "-color";
+            ColorRow colorRow = new ColorRow(parent.getBaseScreenTranslationKey(), id, id, false, false);
+            parametersLayout.child(colorRow);
+
+            ColorRow.setup(parametersLayout, id, colorParameter.value().orElse(Color.WHITE), false, s -> {
+                parametersEntry.putColor(colorParameter.id(), colorRow.getValue());
+                this.update();
+            });
+
+            colorRow.getWidget().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
+        }
+    }
+
+    protected abstract void addTopRightButtons(FlowLayout panel, FlowLayout layout);
+
+    private void update() {
+        this.update(this.parentScreen.getGridBaseSkin(), this.parentScreen.overlapHatLayerButton());
+    }
+
+    public void saveSkinExecute(@Nullable BufferedImage skin) {
+        ChatHud chatHud = MinecraftClient.getInstance().inGameHud.getChatHud();
+        if (skin == null) {
+            chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.thereIsNoSkin")
+                    .setStyle(Style.EMPTY.withColor(Formatting.RED)));
+            return;
+        }
+
+        File skinFolder = HeadGeneratorScreen.SKIN_SAVE_FOLDER_PATH.toFile();
+        if (skinFolder.mkdirs())
+            FzmmClient.LOGGER.info("Skin save folder created");
+
+        File file = ScreenshotRecorder.getScreenshotFilename(skinFolder);
+        try {
+            ImageIO.write(skin, "png", file);
+            MutableText fileMessage = Text.literal(file.getName())
+                    .setStyle(Style.EMPTY.withUnderline(true).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath())));
+            chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.saved", fileMessage)
+                    .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
+        } catch (IOException e) {
+            FzmmClient.LOGGER.error("Unexpected error saving the skin", e);
+            chatHud.addMessage(Text.translatable("fzmm.gui.headGenerator.saveSkin.saveError")
+                    .setStyle(Style.EMPTY.withColor(Formatting.RED)));
+        }
+    }
+
+    private void giveButtonExecute() {
+        this.parentScreen.giveHead(this.getPreview(), this.getDisplayName());
+    }
+
+    @Override
+    public AbstractHeadEntry getValue() {
+        return this.entry;
+    }
+
+    @Override
+    public void setValue(AbstractHeadEntry value) {
+        this.entry = value;
+        this.previewComponent.tooltip(Text.literal(value.getDisplayName()));
     }
 }

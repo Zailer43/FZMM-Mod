@@ -38,17 +38,22 @@ public class BooleanRow extends AbstractRow {
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
 
         BaseFzmmScreen.checkNull(booleanButton, "boolean-button", getBooleanButtonId(id));
-        BaseFzmmScreen.checkNull(resetButton, "button", getResetButtonId(id));
 
         booleanButton.enabled(defaultValue);
         booleanButton.onPress(button -> {
-            resetButton.active = booleanButton.enabled() != defaultValue;
+            if (resetButton != null)
+                resetButton.active = booleanButton.enabled() != defaultValue;
+
             if (toggledListener != null)
                 toggledListener.onPress(button);
         });
         booleanButton.horizontalSizing(Sizing.fixed(NORMAL_WIDTH));
-        resetButton.onPress(button -> booleanButton.onPress());
-        resetButton.active = booleanButton.enabled() != defaultValue;
+
+        if (resetButton != null) {
+            resetButton.onPress(button -> booleanButton.onPress());
+            resetButton.active = booleanButton.enabled() != defaultValue;
+        }
+
         return booleanButton;
     }
 

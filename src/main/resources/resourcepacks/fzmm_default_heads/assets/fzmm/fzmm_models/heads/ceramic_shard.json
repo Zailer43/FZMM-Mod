@@ -2,7 +2,8 @@
   "textures": [
     {
       "id": "ceramic_shard",
-      "path": "fzmm:textures/model_textures/ceramic_shard.png"
+      "path": "fzmm:textures/model_textures/ceramic_shard.png",
+      "requested": false
     }
   ],
   "steps": [

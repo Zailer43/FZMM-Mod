@@ -11,8 +11,8 @@ import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
 public class EnumRow extends AbstractRow {
-    public EnumRow(String baseTranslationKey, String id, String tooltipId) {
-        super(baseTranslationKey, id, tooltipId, true);
+    public EnumRow(String baseTranslationKey, String id, String tooltipId, boolean translate) {
+        super(baseTranslationKey, id, tooltipId, true, translate);
     }
 
     @Override
@@ -63,6 +63,6 @@ public class EnumRow extends AbstractRow {
         String id = getId(element);
         String tooltipId = getTooltipId(element, id);
 
-        return new EnumRow(baseTranslationKey, id, tooltipId);
+        return new EnumRow(baseTranslationKey, id, tooltipId, true);
     }
 }

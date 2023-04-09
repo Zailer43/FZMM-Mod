@@ -3,6 +3,8 @@ package fzmm.zailer.me.client.gui.textformat.components;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.row.AbstractRow;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
+import fzmm.zailer.me.utils.list.IListEntry;
+import fzmm.zailer.me.utils.list.ListUtils;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
@@ -37,7 +39,7 @@ public class ColorListContainer extends FlowLayout {
 
         FlowLayout topLayout = Containers.horizontalFlow(Sizing.fill(100), Sizing.fixed(AbstractRow.TOTAL_HEIGHT));
         topLayout.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
-        Component labelComponent = AbstractRow.getLabel(id, tooltipId, BaseFzmmScreen.getOptionBaseTranslationKey(baseTranslationKey));
+        Component labelComponent = AbstractRow.getLabel(id, tooltipId, BaseFzmmScreen.getOptionBaseTranslationKey(baseTranslationKey), true);
         this.colorsLayout = Containers.verticalFlow(Sizing.fill(100), Sizing.content());
         this.colorAmountLabel = Components.label(Text.translatable(COLOR_AMOUNT_TRANSLATION_KEY, this.colorsLayout.children().size()));
 
@@ -95,7 +97,7 @@ public class ColorListContainer extends FlowLayout {
     public void setRandomColors() {
         for (var component : this.colorsLayout.children()) {
             if (component instanceof ColorListEntry colorEntry) {
-                colorEntry.setColor(this.getRandomColor());
+                colorEntry.setValue(this.getRandomColor());
             }
         }
     }
@@ -105,7 +107,7 @@ public class ColorListContainer extends FlowLayout {
 
         for (var component : this.colorsLayout.children()) {
             if (component instanceof ColorListEntry colorEntry) {
-                colorList.add(colorEntry.getColor());
+                colorList.add(colorEntry.getValue());
             }
         }
 
@@ -125,43 +127,24 @@ public class ColorListContainer extends FlowLayout {
         this.callback.accept("");
     }
 
-    private void moveEntry(int entryIndex, int direction) {
-        List<Component> colorLayoutChildren = new ArrayList<>(this.colorsLayout.children());
-
-        if (direction == -1 && entryIndex > 0)
-            Collections.swap(colorLayoutChildren, entryIndex, entryIndex - 1);
-        else if (direction == 1 && entryIndex < colorLayoutChildren.size() - 1)
-            Collections.swap(colorLayoutChildren, entryIndex, entryIndex + 1);
-
-        // this resets the scroll, it's very annoying
-//        this.colorsLayout.clearChildren();
-//        this.colorsLayout.children(colorLayoutChildren);
-
-        List<Color> colors = new ArrayList<>();
-        for (var entry : colorLayoutChildren) {
-            if (entry instanceof ColorListEntry colorEntry)
-                colors.add(colorEntry.getColor());
-        }
-
-        for (int i = 0; i != colorLayoutChildren.size(); i++) {
-            Component component = this.colorsLayout.children().get(i);
+    public void upEntry(ColorListEntry entry) {
+        List<IListEntry<Color>> list = new ArrayList<>();
+        for (var component : this.colorsLayout.children()) {
             if (component instanceof ColorListEntry colorEntry) {
-                colorEntry.setColor(colors.get(i));
+                list.add(colorEntry);
             }
         }
-
-        this.updateMoveButtons();
-        this.callback.accept("");
-    }
-
-    public void upEntry(ColorListEntry entry) {
-        int entryIndex = this.colorsLayout.children().indexOf(entry);
-        this.moveEntry(entryIndex, -1);
+        ListUtils.upEntry(list, entry, () -> this.callback.accept(""));
     }
 
     public void downEntry(ColorListEntry entry) {
-        int entryIndex = this.colorsLayout.children().indexOf(entry);
-        this.moveEntry(entryIndex, 1);
+        List<IListEntry<Color>> list = new ArrayList<>();
+        for (var component : this.colorsLayout.children()) {
+            if (component instanceof ColorListEntry colorEntry) {
+                list.add(colorEntry);
+            }
+        }
+        ListUtils.downEntry(list, entry, () -> this.callback.accept(""));
     }
 
     public void updateDisplay() {
@@ -207,7 +190,7 @@ public class ColorListContainer extends FlowLayout {
 
         for (int i = 0; i != colors.size(); i++) {
             if (colorLayoutChildren.get(i) instanceof ColorListEntry colorEntry) {
-                colorEntry.setColor(colors.get(i));
+                colorEntry.setValue(colors.get(i));
             }
         }
     }

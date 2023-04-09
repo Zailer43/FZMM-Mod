@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.logic.headGenerator.model.*;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.ModelParameter;
 import fzmm.zailer.me.client.logic.headGenerator.model.steps.*;
 import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
 import fzmm.zailer.me.utils.ImageUtils;
@@ -95,8 +96,8 @@ public class HeadGeneratorResources {
         String fileName = path.substring(HEADS_MODELS_FOLDER.length() + 1, path.length() - ".json".length());
 
         JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
-        HashMap<String, BufferedImage> textures = getHeadModelTextures(jsonObject);
-        HashMap<String, Color> colors = getHeadModelColors(jsonObject);
+        List<ModelParameter<BufferedImage>> textures = getHeadModelTextures(jsonObject);
+        List<ModelParameter<Color>> colors = getHeadModelColors(jsonObject);
         boolean isPaintableModel = jsonObject.has("paintable") && jsonObject.get("paintable").getAsBoolean();
 
         JsonArray stepsArray = jsonObject.getAsJsonArray("steps");
@@ -123,26 +124,33 @@ public class HeadGeneratorResources {
         return entry;
     }
 
-    private static HashMap<String, BufferedImage> getHeadModelTextures(JsonObject jsonObject) {
-        HashMap<String, BufferedImage> result = new HashMap<>();
+    private static List<ModelParameter<BufferedImage>> getHeadModelTextures(JsonObject jsonObject) {
+        List<ModelParameter<BufferedImage>> result = new ArrayList<>();
         if (!jsonObject.has("textures"))
-            return result;
+            return new ArrayList<>();
 
         JsonArray texturesArray = jsonObject.get("textures").getAsJsonArray();
 
         for (var textureElement : texturesArray) {
             JsonObject textureObject = textureElement.getAsJsonObject();
-            String path = textureObject.get("path").getAsString();
-            Identifier textureIdentifier = new Identifier(textureObject.get("path").getAsString());
-            BufferedImage texture = ImageUtils.getImageFromIdentifier(textureIdentifier).orElseThrow(() -> new NoSuchElementException(path));
-            result.put(textureObject.get("id").getAsString(), texture);
+            String id = textureObject.get("id").getAsString();
+            boolean requested = !textureObject.has("requested") || textureObject.get("requested").getAsBoolean();
+
+            BufferedImage texture = null;
+            if (textureObject.has("path")) {
+                String path = textureObject.get("path").getAsString();
+                Identifier textureIdentifier = new Identifier(textureObject.get("path").getAsString());
+                texture = ImageUtils.getBufferedImgFromIdentifier(textureIdentifier).orElseThrow(() -> new NoSuchElementException(path));
+            }
+
+            result.add(new ModelParameter<>(id, texture, requested));
         }
 
         return result;
     }
 
-    private static HashMap<String, Color> getHeadModelColors(JsonObject jsonObject) {
-        HashMap<String, Color> result = new HashMap<>();
+    private static List<ModelParameter<Color>> getHeadModelColors(JsonObject jsonObject) {
+        List<ModelParameter<Color>> result = new ArrayList<>();
         if (!jsonObject.has("colors"))
             return result;
 
@@ -150,9 +158,16 @@ public class HeadGeneratorResources {
 
         for (var colorElement : colorsArray) {
             JsonObject colorObject = colorElement.getAsJsonObject();
-            String colorHex = colorObject.get("color_hex").getAsString();
-            Color color = Color.ofRgb(Integer.decode(colorHex));
-            result.put(colorObject.get("id").getAsString(), color);
+            String id = colorObject.get("id").getAsString();
+            boolean requested = !colorObject.has("requested") || colorObject.get("requested").getAsBoolean();
+
+            Color color = Color.WHITE;
+            if (colorObject.has("color_hex")) {
+                String colorHex = colorObject.get("color_hex").getAsString();
+                color = Color.ofRgb(Integer.decode(colorHex));
+            }
+
+            result.add(new ModelParameter<>(id, color, requested));
         }
 
         return result;

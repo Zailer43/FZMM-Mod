@@ -2,7 +2,8 @@
   "textures": [
     {
       "id": "potato_bag",
-      "path": "fzmm:textures/model_textures/potato_bag.png"
+      "path": "fzmm:textures/model_textures/potato_bag.png",
+      "requested": false
     }
   ],
   "steps": [

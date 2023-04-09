@@ -3,10 +3,12 @@
   "textures": [
     {
       "id": "axolotl",
-      "path": "fzmm:textures/model_textures/axolotl.png"
+      "path": "fzmm:textures/model_textures/axolotl.png",
+      "requested": false
     }
   ],
-  "colors": [ {
+  "colors": [
+    {
       "id": "selected_color",
       "color_hex": "#f5bddd"
     }

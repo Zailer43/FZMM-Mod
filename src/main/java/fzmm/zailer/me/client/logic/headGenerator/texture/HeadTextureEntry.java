@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client.logic.headGenerator.texture;
 
-import fzmm.zailer.me.client.gui.headgenerator.HeadGenerationMethod;
+import fzmm.zailer.me.client.gui.headgenerator.category.HeadTextureCategory;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
 
@@ -30,9 +30,10 @@ public class HeadTextureEntry extends AbstractHeadEntry {
     }
 
     @Override
-    public HeadGenerationMethod getGenerationMethod() {
-        return HeadGenerationMethod.TEXTURE;
+    public String getCategoryId() {
+        return HeadTextureCategory.CATEGORY_ID;
     }
+
 
     public BufferedImage getHeadSkin() {
         return this.headSkin;

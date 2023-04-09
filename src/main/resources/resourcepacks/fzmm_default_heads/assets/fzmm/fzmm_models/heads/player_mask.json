@@ -1,0 +1,90 @@
+{
+  "textures": [
+    {
+      "id": "mask",
+      "path": "fzmm:textures/model_textures/player_mask.png",
+      "requested": false
+    },
+    {
+      "id": "player",
+      "requested": true
+    }
+  ],
+  "steps": [
+    {
+      "comment": "head",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      },
+      "add_hat_layer": false
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "mask"
+    },
+    {
+      "comment": "add mask",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "player"
+    },
+    {
+      "comment": "lateral part",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 6,
+        "y": 8,
+        "width": 12,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 6,
+        "y": 8,
+        "width": 12,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "top and bottom part",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 8,
+        "y": 6,
+        "width": 16,
+        "height": 2
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 6,
+        "width": 16,
+        "height": 2
+      },
+      "overlap_source_hat": true
+    }
+  ]
+}

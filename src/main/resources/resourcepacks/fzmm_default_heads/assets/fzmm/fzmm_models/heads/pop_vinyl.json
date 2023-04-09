@@ -2,7 +2,8 @@
   "textures": [
     {
       "id": "pop_vinyl",
-      "path": "fzmm:textures/model_textures/pop_vinyl.png"
+      "path": "fzmm:textures/model_textures/pop_vinyl.png",
+      "requested": false
     }
   ],
   "steps": [

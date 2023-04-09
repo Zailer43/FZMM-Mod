@@ -1,7 +1,8 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.ColorOverlay;
+import fzmm.zailer.me.client.gui.components.containers.ColorOverlay;
+import fzmm.zailer.me.utils.list.IListEntry;
 import io.wispforest.owo.config.ui.OptionComponentFactory;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.BoxComponent;
@@ -9,19 +10,20 @@ import io.wispforest.owo.ui.component.ColorPickerComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class ColorRow extends AbstractRow {
+public class ColorRow extends AbstractRow implements IListEntry<Color> {
     public ColorRow(String baseTranslationKey, String id, String tooltipId) {
-        this(baseTranslationKey, id, tooltipId, true);
+        this(baseTranslationKey, id, tooltipId, true, true);
     }
 
-    public ColorRow(String baseTranslationKey, String id, String tooltipId, boolean hasResetButton) {
-        super(baseTranslationKey, id, tooltipId, hasResetButton);
+    public ColorRow(String baseTranslationKey, String id, String tooltipId, boolean hasResetButton, boolean translate) {
+        super(baseTranslationKey, id, tooltipId, hasResetButton, translate);
     }
 
     @Override
@@ -108,16 +110,22 @@ public class ColorRow extends AbstractRow {
         return new ColorRow(baseTranslationKey, id, tooltipId);
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    public void setColor(Color color) {
-        ConfigTextBox colorField = this.childById(ConfigTextBox.class, getColorFieldId(this.getId()));
-        if (colorField != null)
-            colorField.setText(color.asHexString(color.alpha() < 1f));
+    public TextFieldWidget getWidget() {
+        return this.childById(TextFieldWidget.class, getColorFieldId(this.getId()));
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public Color getColor() {
+    @Override
+    public Color getValue() {
         ConfigTextBox colorField = this.childById(ConfigTextBox.class, getColorFieldId(this.getId()));
         return colorField == null ? Color.ofArgb(0) : (Color) colorField.parsedValue();
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    @Override
+    public void setValue(Color value) {
+        ConfigTextBox colorField = this.childById(ConfigTextBox.class, getColorFieldId(this.getId()));
+        if (colorField != null)
+            colorField.setText(value.asHexString(value.alpha() < 1f));
     }
 }

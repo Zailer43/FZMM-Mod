@@ -1,7 +1,5 @@
 package fzmm.zailer.me.client.logic.headGenerator;
 
-import fzmm.zailer.me.client.gui.headgenerator.HeadGenerationMethod;
-
 import java.awt.image.BufferedImage;
 
 public abstract class AbstractHeadEntry {
@@ -26,5 +24,5 @@ public abstract class AbstractHeadEntry {
 
     public abstract boolean canOverlap();
 
-    public abstract HeadGenerationMethod getGenerationMethod();
+    public abstract String getCategoryId();
 }

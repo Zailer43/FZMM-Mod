@@ -2,7 +2,8 @@
   "textures": [
     {
       "id": "cube",
-      "path": "fzmm:textures/model_textures/cube.png"
+      "path": "fzmm:textures/model_textures/cube.png",
+      "requested": false
     }
   ],
   "steps": [

@@ -3,7 +3,8 @@
   "textures": [
     {
       "id": "beanie",
-      "path": "fzmm:textures/model_textures/beanie_hat.png"
+      "path": "fzmm:textures/model_textures/beanie_hat.png",
+      "requested": false
     }
   ],
   "colors": [ {

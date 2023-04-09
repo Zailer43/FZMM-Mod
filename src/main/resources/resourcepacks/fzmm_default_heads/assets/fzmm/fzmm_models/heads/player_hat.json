@@ -1,0 +1,116 @@
+{
+  "textures": [
+    {
+      "id": "hat",
+      "path": "fzmm:textures/model_textures/player_hat.png",
+      "requested": false
+    },
+    {
+      "id": "player",
+      "requested": true
+    }
+  ],
+  "steps": [
+    {
+      "comment": "head lateral",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 12,
+        "width": 32,
+        "height": 4
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "head bottom",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "hat"
+    },
+    {
+      "comment": "add hat",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "player"
+    },
+    {
+      "comment": "top hat part",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 8,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "lateral hat part",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 8,
+        "width": 32,
+        "height": 4
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 32,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "bottom hat part",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 11,
+        "width": 32,
+        "height": 1
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 15,
+        "width": 32,
+        "height": 1
+      },
+      "overlap_source_hat": true
+    }
+  ]
+}

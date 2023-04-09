@@ -21,14 +21,14 @@ import java.util.List;
 public class ImageRows extends FlowLayout {
     public static int TOTAL_HEIGHT = AbstractRow.TOTAL_HEIGHT * 2;
 
-    public ImageRows(String baseTranslationKey, String buttonId, String buttonTooltipId, String enumId, String enumTooltipId) {
+    public ImageRows(String baseTranslationKey, String buttonId, String buttonTooltipId, String enumId, String enumTooltipId, boolean translate) {
         super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT), Algorithm.HORIZONTAL);
 
         FlowLayout rowsLayout = Containers.verticalFlow(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
 
         rowsLayout.children(List.of(
-                new ImageButtonRow(baseTranslationKey, buttonId, buttonTooltipId).setHasHoveredBackground(false),
-                new EnumRow(baseTranslationKey, enumId, enumTooltipId).setHasHoveredBackground(false)
+                new ImageButtonRow(baseTranslationKey, buttonId, buttonTooltipId, translate).setHasHoveredBackground(false),
+                new EnumRow(baseTranslationKey, enumId, enumTooltipId, translate).setHasHoveredBackground(false)
         ));
 
         this.child(rowsLayout);
@@ -71,6 +71,6 @@ public class ImageRows extends FlowLayout {
         String enumId = AbstractRow.getId(element, "enumId");
         String enumTooltipId = AbstractRow.getTooltipId(element, enumId, "enumTooltipId");
 
-        return new ImageRows(baseTranslationKey, buttonId, buttonTooltipId, enumId, enumTooltipId);
+        return new ImageRows(baseTranslationKey, buttonId, buttonTooltipId, enumId, enumTooltipId, true);
     }
 }

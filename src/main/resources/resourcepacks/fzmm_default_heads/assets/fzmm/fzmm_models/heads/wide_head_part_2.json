@@ -1,0 +1,111 @@
+{
+  "steps": [
+    {
+      "comment": "half face",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 12,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "left side",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "half back",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 24,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "half top",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 12,
+        "y": 0,
+        "width": 4,
+        "height": 8
+      },
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 10,
+        "y": -2,
+        "width": 8,
+        "height": 8
+      },
+      "degrees": 90,
+      "add_hat_layer": true
+    },
+    {
+      "comment": "half bottom",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 20,
+        "y": 0,
+        "width": 4,
+        "height": 8
+      },
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 18,
+        "y": -2,
+        "width": 8,
+        "height": 8
+      },
+      "degrees": 90,
+      "add_hat_layer": true
+    }
+  ]
+}

@@ -1,24 +1,27 @@
 package fzmm.zailer.me.client.logic.headGenerator.model;
 
-import fzmm.zailer.me.client.gui.headgenerator.HeadGenerationMethod;
+import fzmm.zailer.me.client.gui.headgenerator.category.HeadModelCategory;
+import fzmm.zailer.me.client.gui.headgenerator.category.HeadPaintableCategory;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.IParametersEntry;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.ModelParameter;
 import fzmm.zailer.me.client.logic.headGenerator.model.steps.IModelStep;
 import io.wispforest.owo.ui.core.Color;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class HeadModelEntry extends AbstractHeadEntry implements IPaintableEntry {
+public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntry {
 
     private final List<IModelStep> steps;
-    private final HashMap<String, BufferedImage> textures;
-    private final HashMap<String, Color> colors;
+    private final List<ModelParameter<BufferedImage>> textures;
+    private final List<ModelParameter<Color>> colors;
     private boolean isPaintable;
 
-    public HeadModelEntry(String displayName, String key, List<IModelStep> steps, HashMap<String, BufferedImage> textures, HashMap<String, Color> colors) {
+    public HeadModelEntry(String displayName, String key, List<IModelStep> steps, List<ModelParameter<BufferedImage>> textures, List<ModelParameter<Color>> colors) {
         super(displayName, key);
         this.steps = steps;
         this.textures = textures;
@@ -33,14 +36,11 @@ public class HeadModelEntry extends AbstractHeadEntry implements IPaintableEntry
         Graphics2D graphics = headSkin.createGraphics();
         AtomicReference<BufferedImage> selectedTexture = new AtomicReference<>(baseSkin);
         AtomicReference<Color> selectedColor = new AtomicReference<>(Color.WHITE);
-        HashMap<String, BufferedImage> texturesCopy = new HashMap<>(this.textures);
-        HashMap<String, Color> colorsCopy = new HashMap<>(this.colors);
+        List<ModelParameter<BufferedImage>> texturesCopy = new ArrayList<>(this.textures);
+        List<ModelParameter<Color>> colorsCopy = new ArrayList<>(this.colors);
 
-        texturesCopy.put("base_skin", baseSkin);
-        texturesCopy.put("destination_skin", headSkin);
-        if (this.isPaintable() && !colorsCopy.containsKey("selected_color")) {
-            colorsCopy.put("selected_color", Color.WHITE);
-        }
+        texturesCopy.add(new ModelParameter<>("base_skin", baseSkin, false));
+        texturesCopy.add(new ModelParameter<>("destination_skin", headSkin, false));
 
         ModelData modelData = new ModelData(graphics, texturesCopy, colorsCopy, selectedTexture, selectedColor);
 
@@ -57,28 +57,50 @@ public class HeadModelEntry extends AbstractHeadEntry implements IPaintableEntry
         return false;
     }
 
+    @Override
+    public String getCategoryId() {
+        return this.isPaintable ? HeadPaintableCategory.CATEGORY_ID : HeadModelCategory.CATEGORY_ID;
+    }
+
     public void isPaintable(boolean value) {
         this.isPaintable = value;
     }
 
-    @Override
     public boolean isPaintable() {
         return this.isPaintable;
     }
 
     @Override
+    public List<ModelParameter<Color>> getColors() {
+        return this.colors;
+    }
+
+    @Override
     public void putColor(String key, Color color) {
-        this.colors.put(key, color);
+        for (var colorEntry : this.colors) {
+            if (colorEntry.id().equals(key)) {
+                colorEntry.setValue(color);
+                return;
+            }
+        }
     }
 
     @Override
-    public Color getColor(String key) {
-        Color color = this.colors.get(key);
-        return color == null ? Color.WHITE : color;
+    public List<ModelParameter<BufferedImage>> getTextures() {
+        return this.textures;
+    }
+
+    public void putTexture(String key, BufferedImage texture) {
+        for (var textureEntry : this.textures) {
+            if (textureEntry.id().equals(key)) {
+                textureEntry.setValue(texture);
+                return;
+            }
+        }
     }
 
     @Override
-    public HeadGenerationMethod getGenerationMethod() {
-        return HeadGenerationMethod.MODEL;
+    public boolean hasParameters() {
+        return this.getColors().stream().anyMatch(ModelParameter::isRequested) || this.getTextures().stream().anyMatch(ModelParameter::isRequested);
     }
 }

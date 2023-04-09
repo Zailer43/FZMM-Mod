@@ -16,7 +16,7 @@ public class ModelSelectColorStep implements IModelStep {
 
     @Override
     public void apply(ModelData data) {
-        Color color = data.colors().get(this.colorId);
+        Color color = data.getColor(this.colorId);
 
         if (color == null) {
             color = Color.WHITE;

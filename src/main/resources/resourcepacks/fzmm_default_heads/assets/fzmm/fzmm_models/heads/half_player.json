@@ -1,0 +1,126 @@
+{
+  "textures": [
+    {
+      "id": "half",
+      "path": "fzmm:textures/model_textures/half_player.png",
+      "requested": false
+    },
+    {
+      "id": "player",
+      "requested": true
+    }
+  ],
+  "steps": [
+    {
+      "comment": "head left and front",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 12,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "head top",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 4,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "head bottom",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 0,
+        "width": 4,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "head back",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 28,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "half"
+    },
+    {
+      "comment": "add half",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "player"
+    },
+    {
+      "comment": "head right, front and back",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 12,
+        "y": 8,
+        "width": 16,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "head top",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 12,
+        "y": 0,
+        "width": 4,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "head bottom",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 20,
+        "y": 0,
+        "width": 4,
+        "height": 8
+      },
+      "add_hat_layer": true
+    }
+  ]
+}

@@ -3,10 +3,12 @@
   "textures": [
     {
       "id": "sun_cap",
-      "path": "fzmm:textures/model_textures/sun_cap.png"
+      "path": "fzmm:textures/model_textures/sun_cap.png",
+      "requested": false
     }
   ],
-  "colors": [ {
+  "colors": [
+    {
       "id": "selected_color",
       "color_hex": "#75D32C"
     }

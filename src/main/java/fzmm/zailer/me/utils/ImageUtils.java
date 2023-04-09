@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Optional;
 
 public class ImageUtils {
@@ -33,12 +32,12 @@ public class ImageUtils {
     static {
         OLD_FORMAT_TO_NEW_FORMAT = getOldFormatToNewFormatEntry().orElseGet(() -> {
           FzmmClient.LOGGER.error("Error loading ImageUtils.OLD_FORMAT_TO_NEW_FORMAT");
-          return new HeadModelEntry("", "", new ArrayList<>(), new HashMap<>(), new HashMap<>());
+          return new HeadModelEntry("", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         });
     }
 
 
-    public static Optional<BufferedImage> getImageFromIdentifier(Identifier identifier) {
+    public static Optional<BufferedImage> getBufferedImgFromIdentifier(Identifier identifier) {
         try {
             Optional<Resource> imageResource = MinecraftClient.getInstance().getResourceManager().getResource(identifier);
             return imageResource.isEmpty() ? Optional.empty() : Optional.of(ImageIO.read(imageResource.get().getInputStream()));
@@ -46,6 +45,23 @@ public class ImageUtils {
             return Optional.empty();
         }
     }
+
+    public static BufferedImage getBufferedImgFromNativeImg(NativeImage nativeImage) {
+        int width = nativeImage.getWidth();
+        int height = nativeImage.getHeight();
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int color = nativeImage.getColor(x, y);//ABGR (wtff?????)
+
+                bufferedImage.setRGB(x, y, ((color >> 16) & 0xFF) | ((color & 0xFF) << 16) | (color & 0xFF00FF00));//ARGB
+            }
+        }
+
+        return bufferedImage;
+    }
+
 
     public static Optional<BufferedImage> getPlayerSkin(String name) throws NullPointerException, JsonIOException, IOException {
         GetSkinDecorator getSkinDecorator = new GetSkinFromCache(new GetSkinFromMojang());

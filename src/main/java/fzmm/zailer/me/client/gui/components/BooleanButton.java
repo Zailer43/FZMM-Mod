@@ -1,10 +1,13 @@
 package fzmm.zailer.me.client.gui.components;
 
+import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.w3c.dom.Element;
@@ -54,11 +57,23 @@ public class BooleanButton extends ButtonComponent {
         return this.enabled;
     }
 
+    public void setContentHorizontalSizing() {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        int maxWidth = Math.max(textRenderer.getWidth(this.enabledText), textRenderer.getWidth(this.disabledText)) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
+        this.horizontalSizing(Sizing.fixed(maxWidth));
+    }
+
     public static BooleanButton parse(Element element) {
         Map<String, Element> children = UIParsing.childElements(element);
-        Text text = UIParsing.parseText(children.get("text"));
-        Color enabledColor = Color.parse(children.get("enabled-color"));
-        return new BooleanButton(text, enabledColor);
+
+        if (children.containsKey("text")) {
+            Text text = UIParsing.parseText(children.get("text"));
+            Color enabledColor = Color.parse(children.get("enabled-color"));
+            return new BooleanButton(text, enabledColor);
+        }
+        Text enabledText = UIParsing.parseText(children.get("enabled-text"));
+        Text disabledText = UIParsing.parseText(children.get("disabled-text"));
+        return new BooleanButton(enabledText, disabledText);
     }
     @Override
     public void parseProperties(UIModel model, Element element, Map<String, Element> children) {

@@ -1,5 +1,11 @@
 {
   "paintable": true,
+  "colors": [
+    {
+      "id": "selected_color",
+      "requested": true
+    }
+  ],
   "steps": [
     {
       "comment": "head texture",
@@ -10,7 +16,7 @@
         "x": 0,
         "y": 0,
         "width": 64,
-        "height": 16
+        "height": 64
       }
     },
     {
@@ -21,7 +27,7 @@
         "x": 0,
         "y": 0,
         "width": 64,
-        "height": 16
+        "height": 64
       }
     },
     {
@@ -37,7 +43,7 @@
         "x": 0,
         "y": 0,
         "width": 64,
-        "height": 16
+        "height": 64
       }
     }
   ]

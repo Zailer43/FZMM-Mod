@@ -2,6 +2,7 @@ package fzmm.zailer.me.utils.skin;
 
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.mixin.PlayerSkinTextureAccessor;
+import fzmm.zailer.me.utils.ImageUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.PlayerListEntry;
@@ -14,8 +15,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-
-import static fzmm.zailer.me.utils.ImageUtils.getImageFromPath;
 
 public class GetSkinFromCache extends GetSkinDecorator {
 
@@ -44,7 +43,7 @@ public class GetSkinFromCache extends GetSkinDecorator {
 
         File skinFile = ((PlayerSkinTextureAccessor) skinTexture).getCacheFile();
 
-        return Optional.of(getImageFromPath(skinFile.getPath()));
+        return Optional.of(ImageUtils.getImageFromPath(skinFile.getPath()));
     }
 
     @Override

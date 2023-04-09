@@ -2,7 +2,8 @@
   "textures": [
     {
       "id": "decapitated_bold",
-      "path": "fzmm:textures/model_textures/decapitated.png"
+      "path": "fzmm:textures/model_textures/decapitated.png",
+      "requested": false
     }
   ],
   "steps": [
@@ -54,8 +55,7 @@
         "height": 8
       },
       "add_hat_layer": true,
-      "degrees": 270,
-      "mirror_horizontal": true
+      "degrees": 270
     },
     {
       "comment": "source top",
@@ -121,8 +121,9 @@
         "width": 8,
         "height": 8
       },
-      "degrees": 270,
-      "overlap_source_hat": true
+      "degrees": 90,
+      "mirror_vertical": true,
+      "add_hat_layer": false
     },
     {
       "type": "select_texture",

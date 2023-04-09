@@ -2,7 +2,8 @@
   "textures": [
     {
       "id": "minecart",
-      "path": "fzmm:textures/model_textures/minecart.png"
+      "path": "fzmm:textures/model_textures/minecart.png",
+      "requested": false
     }
   ],
   "steps": [

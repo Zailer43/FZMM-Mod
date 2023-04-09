@@ -51,15 +51,15 @@ public class ConfigTextBoxRow extends AbstractRow {
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
 
         BaseFzmmScreen.checkNull(textBox, "text-option", textBoxId);
-
+        
+        textBox.setText(defaultValue);
+        textBox.setCursor(0);
         textBox.onChanged().subscribe(s -> {
             if (resetButton != null)
                 resetButton.active = !defaultPredicate.test(s);
             if (changedListener != null)
                 changedListener.accept(s);
         });
-        textBox.setText(defaultValue);
-        textBox.setCursor(0);
 
         if (resetButton != null)
             resetButton.onPress(button -> textBox.setText(defaultValue));
