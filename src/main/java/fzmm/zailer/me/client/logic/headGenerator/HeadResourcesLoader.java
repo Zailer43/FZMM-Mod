@@ -4,15 +4,16 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.logic.headGenerator.model.*;
+import fzmm.zailer.me.client.logic.headGenerator.model.HeadModelEntry;
 import fzmm.zailer.me.client.logic.headGenerator.model.parameters.ModelParameter;
 import fzmm.zailer.me.client.logic.headGenerator.model.steps.*;
 import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.core.Color;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.resource.ResourceType;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.SynchronousResourceReloader;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -23,37 +24,48 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.List;
 
-public class HeadGeneratorResources {
+public class HeadResourcesLoader implements SynchronousResourceReloader, IdentifiableResourceReloadListener {
+
+    private static final Set<AbstractHeadEntry> LOADED_RESOURCES = new HashSet<>();
     public static final String HEADS_TEXTURES_FOLDER = "textures/heads";
     public static final String FZMM_MODELS_FOLDER = "fzmm_models";
     public static final String HEADS_MODELS_FOLDER = FZMM_MODELS_FOLDER + "/heads";
 
-    public static Set<HeadTextureEntry> loadHeadsTextures() {
+    public static Set<AbstractHeadEntry> getPreloaded() {
+        return Set.copyOf(LOADED_RESOURCES);
+    }
+
+    @Override
+    public Identifier getFabricId() {
+        return new Identifier(FzmmClient.MOD_ID, "head-resources-loader");
+    }
+
+    @Override
+    public void reload(ResourceManager manager) {
+        LOADED_RESOURCES.clear();
+
+        LOADED_RESOURCES.addAll(loadHeadsModels(manager));
+        LOADED_RESOURCES.addAll(loadHeadsTextures(manager));
+    }
+
+    private static Set<HeadTextureEntry> loadHeadsTextures(ResourceManager manager) {
         Set<HeadTextureEntry> entries = new HashSet<>();
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        List<ResourcePackProfile> resourcePackProfileList = minecraftClient.getResourcePackManager().getEnabledProfiles().stream().toList();
 
-        for (var resourcePackProfile : resourcePackProfileList) {
-            try (var resourcePack = resourcePackProfile.createResourcePack()) {
+        manager.findResources(HEADS_TEXTURES_FOLDER, identifier -> identifier.getPath().endsWith(".png")).forEach(((identifier, resource) -> {
+            try {
+                InputStream inputStream = resource.getInputStream();
+                BufferedImage nativeImage = ImageIO.read(inputStream);
+                String path = identifier.getPath();
+                String fileName = path.substring(HEADS_TEXTURES_FOLDER.length() + 1, path.length() - ".png".length());
 
-                resourcePack.findResources(ResourceType.CLIENT_RESOURCES, FzmmClient.MOD_ID, HEADS_TEXTURES_FOLDER, (identifier, inputStreamInputSupplier) -> {
-                    try {
-                        InputStream inputStream = inputStreamInputSupplier.get();
-                        BufferedImage nativeImage = ImageIO.read(inputStream);
-                        String path = identifier.getPath();
-                        String fileName = path.substring(HEADS_TEXTURES_FOLDER.length() + 1, path.length() - ".png".length());
+                entries.add(new HeadTextureEntry(nativeImage, toDisplayName(fileName), fileName));
 
-                        entries.add(new HeadTextureEntry(nativeImage, toDisplayName(fileName), fileName));
-
-                        inputStream.close();
-                    } catch (IOException ignored) {
-                    }
-
-                });
+                inputStream.close();
+            } catch (IOException e) {
+                FzmmClient.LOGGER.error("[HeadResourcesLoader] Error loading head generator texture", e);
             }
-        }
+        }));
         return entries;
     }
 
@@ -63,31 +75,25 @@ public class HeadGeneratorResources {
         return displayName.replaceFirst(firstCharacter, firstCharacter.toUpperCase());
     }
 
-    public static Set<HeadModelEntry> loadHeadsModels() {
+    private static Set<HeadModelEntry> loadHeadsModels(ResourceManager manager) {
         Set<HeadModelEntry> entries = new HashSet<>();
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        List<ResourcePackProfile> resourcePackProfileList = minecraftClient.getResourcePackManager().getEnabledProfiles().stream().toList();
 
-        for (var resourcePackProfile : resourcePackProfileList) {
-            try (var resourcePack = resourcePackProfile.createResourcePack()) {
 
-                resourcePack.findResources(ResourceType.CLIENT_RESOURCES, FzmmClient.MOD_ID, HEADS_MODELS_FOLDER,
-                        (identifier, inputStreamInputSupplier) -> {
-                            try {
-                                InputStream inputStream = inputStreamInputSupplier.get();
-                                entries.add(getHeadModel(identifier, inputStream));
-                                inputStream.close();
-                            } catch (Exception e) {
-                                FzmmClient.LOGGER.error("Error loading head generator model", e);
-                                assert MinecraftClient.getInstance().player != null;
-                                Text message = Text.translatable("fzmm.gui.headGenerator.model.error.loadingModel", identifier.getPath())
-                                        .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
+        manager.findResources(HEADS_MODELS_FOLDER, identifier -> identifier.getPath().endsWith(".json")).forEach(((identifier, resource) -> {
+            try {
+                InputStream inputStream = resource.getInputStream();
+                entries.add(getHeadModel(identifier, inputStream));
+                inputStream.close();
+            } catch (Exception e) {
+                FzmmClient.LOGGER.error("[HeadResourcesLoader] Error loading head generator model", e);
+                assert MinecraftClient.getInstance().player != null;
+                Text message = Text.translatable("fzmm.gui.headGenerator.model.error.loadingModel", identifier.getPath())
+                        .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
 
-                                MinecraftClient.getInstance().player.sendMessage(message);
-                            }
-                        });
+                MinecraftClient.getInstance().player.sendMessage(message);
             }
-        }
+        }));
+
         return entries;
     }
 

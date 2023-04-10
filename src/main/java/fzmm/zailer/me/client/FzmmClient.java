@@ -3,6 +3,7 @@ package fzmm.zailer.me.client;
 import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
 import fzmm.zailer.me.client.gui.main.MainScreen;
 import fzmm.zailer.me.client.logic.FzmmHistory;
+import fzmm.zailer.me.client.logic.headGenerator.HeadResourcesLoader;
 import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntity;
 import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntityModel;
 import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntityRenderer;
@@ -22,6 +23,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
@@ -74,5 +76,7 @@ public class FzmmClient implements ClientModInitializer {
         EntityRendererRegistry.register(CustomHeadEntity.CUSTOM_HEAD_ENTITY_TYPE, CustomHeadEntityRenderer::new);
         FabricDefaultAttributeRegistry.register(CustomHeadEntity.CUSTOM_HEAD_ENTITY_TYPE, CustomHeadEntity.createMobAttributes());
         EntityModelLayerRegistry.registerModelLayer(MODEL_CUSTOM_HEAD_LAYER, CustomHeadEntityModel::getTexturedModelData);
+
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new HeadResourcesLoader());
     }
 }

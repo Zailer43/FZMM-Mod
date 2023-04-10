@@ -19,7 +19,7 @@ import fzmm.zailer.me.client.gui.headgenerator.components.HeadCompoundComponentE
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.IMementoScreen;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
-import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
+import fzmm.zailer.me.client.logic.headGenerator.HeadResourcesLoader;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.FzmmWikiConstants;
 import fzmm.zailer.me.utils.HeadUtils;
@@ -29,7 +29,6 @@ import fzmm.zailer.me.utils.list.ListUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.DropdownComponent;
-import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.CollapsibleContainer;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
@@ -181,9 +180,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
     private void tryLoadHeadEntries(FlowLayout rootComponent) {
         if (this.headGridLayout.children().isEmpty()) {
-            Set<AbstractHeadEntry> headDataSet = new HashSet<>();
-            headDataSet.addAll(HeadGeneratorResources.loadHeadsTextures());
-            headDataSet.addAll(HeadGeneratorResources.loadHeadsModels());
+            Set<AbstractHeadEntry> headDataSet = HeadResourcesLoader.getPreloaded();
 
             if (headDataSet.size() == 0) {
                 this.addNoResultsMessage(rootComponent);

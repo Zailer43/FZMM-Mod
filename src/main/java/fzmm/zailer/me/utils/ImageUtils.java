@@ -2,7 +2,7 @@ package fzmm.zailer.me.utils;
 
 import com.google.gson.JsonIOException;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.logic.headGenerator.HeadGeneratorResources;
+import fzmm.zailer.me.client.logic.headGenerator.HeadResourcesLoader;
 import fzmm.zailer.me.client.logic.headGenerator.model.HeadModelEntry;
 import fzmm.zailer.me.utils.skin.GetSkinDecorator;
 import fzmm.zailer.me.utils.skin.GetSkinFromCache;
@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class ImageUtils {
-    private static final Identifier OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER = new Identifier(FzmmClient.MOD_ID, HeadGeneratorResources.FZMM_MODELS_FOLDER + "/skins/old_format_to_new_format.json");
+    private static final Identifier OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER = new Identifier(FzmmClient.MOD_ID, HeadResourcesLoader.FZMM_MODELS_FOLDER + "/skins/old_format_to_new_format.json");
     public static final HeadModelEntry OLD_FORMAT_TO_NEW_FORMAT;
 
     static {
@@ -158,7 +158,7 @@ public class ImageUtils {
 
         try {
             InputStream inputStream = resource.getInputStream();
-            HeadModelEntry result = HeadGeneratorResources.getHeadModel(OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER, inputStream);
+            HeadModelEntry result = HeadResourcesLoader.getHeadModel(OLD_FORMAT_TO_NEW_FORMAT_IDENTIFIER, inputStream);
             inputStream.close();
             return Optional.of(result);
         } catch (IOException e) {

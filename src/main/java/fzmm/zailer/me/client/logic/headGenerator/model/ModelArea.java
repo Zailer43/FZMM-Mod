@@ -4,13 +4,13 @@ import com.google.gson.JsonObject;
 import fzmm.zailer.me.utils.SkinPart;
 
 public class ModelArea extends ModelPoint {
-    private final int width;
-    private final int height;
+    private final byte width;
+    private final byte height;
 
     public ModelArea(SkinPart offset, boolean hatLayer, int x, int y, int width, int height) {
         super(offset, hatLayer, x, y);
-        this.width = width;
-        this.height = height;
+        this.width = (byte) width;
+        this.height = (byte) height;
     }
 
     public static ModelArea parse(JsonObject areaObject) {

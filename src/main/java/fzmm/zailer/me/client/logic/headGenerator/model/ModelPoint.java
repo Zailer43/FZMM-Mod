@@ -6,14 +6,14 @@ import fzmm.zailer.me.utils.SkinPart;
 public class ModelPoint {
     private final SkinPart offset;
     private final boolean hatLayer;
-    private final int x;
-    private final int y;
+    private final byte x;
+    private final byte y;
 
     public ModelPoint(SkinPart offset, boolean hatLayer, int x, int y) {
         this.offset = offset;
         this.hatLayer = hatLayer;
-        this.x = x;
-        this.y = y;
+        this.x = (byte) x;
+        this.y = (byte) y;
     }
 
     public static ModelPoint parse(JsonObject areaObject) {
