@@ -65,7 +65,6 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
         this.horizontalAlignment(HorizontalAlignment.LEFT);
         this.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
         this.child(this.previewComponent);
-        this.update(new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
         this.cursorStyle(CursorStyle.HAND);
 
         this.parentScreen = parent;
@@ -81,8 +80,12 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
         super.draw(matrices, mouseX, mouseY, partialTicks, delta);
     }
 
-    public String getDisplayName() {
+    public Text getDisplayName() {
         return this.entry.getDisplayName();
+    }
+
+    public String getFilterValue() {
+        return this.entry.getFilterValue();
     }
 
     public String getCategoryId() {
@@ -97,7 +100,6 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
         MinecraftClient client = MinecraftClient.getInstance();
         TextureManager textureManager = client.getTextureManager();
 
-//        client.execute(() -> {
         this.close();
         CustomHeadEntity customHeadEntity = this.previewComponent.entity();
 
@@ -107,7 +109,6 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
         });
 
         textureManager.bindTexture(customHeadEntity.getCustomHeadTexture());
-//        });
     }
 
     protected EntityComponent<CustomHeadEntity> cloneCustomHeadEntity() {
@@ -125,7 +126,7 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
     public BufferedImage getPreview() {
         NativeImage nativeImage = this.previewTexture.getImage();
         if (nativeImage == null) {
-            FzmmClient.LOGGER.warn("[AbstractHeadListEntry] Failed to get preview image for {}", this.entry.getDisplayName());
+            FzmmClient.LOGGER.warn("[AbstractHeadListEntry] Failed to get preview image for {}", this.entry.getDisplayName().getString());
             return new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
         }
 
@@ -134,7 +135,7 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
 
 
     protected boolean addOverlay(HeadGeneratorScreen parent) {
-        Map<String, String> parameters = Map.of("name", this.getDisplayName());
+        Map<String, String> parameters = Map.of("name", this.getDisplayName().getString());
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         int giveButtonWidth = Math.max(
                 Math.max(
@@ -255,7 +256,7 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
     }
 
     private void giveButtonExecute() {
-        this.parentScreen.giveHead(this.getPreview(), this.getDisplayName());
+        this.parentScreen.giveHead(this.getPreview(), this.getDisplayName().getString());
     }
 
     @Override
@@ -266,6 +267,6 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
     @Override
     public void setValue(AbstractHeadEntry value) {
         this.entry = value;
-        this.previewComponent.tooltip(Text.literal(value.getDisplayName()));
+        this.previewComponent.tooltip(value.getDisplayName());
     }
 }

@@ -53,11 +53,6 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     }
 
     @Override
-    public boolean canOverlap() {
-        return false;
-    }
-
-    @Override
     public String getCategoryId() {
         return this.isPaintable ? HeadPaintableCategory.CATEGORY_ID : HeadModelCategory.CATEGORY_ID;
     }

@@ -25,6 +25,7 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     public static final Text FAVORITE_ENABLED_TEXT = Text.translatable("fzmm.gui.button.favorite.enabled").setStyle(Style.EMPTY.withColor(0xECC709));
     private static final Text FAVORITE_ENABLED_EASTER_EGG_TEXT = Text.translatable("fzmm.gui.button.favorite.enabled_easter_egg").setStyle(Style.EMPTY.withColor(0xF4300B));
     public static final Text FAVORITE_DISABLED_TEXT = Text.translatable("fzmm.gui.button.favorite.disabled").setStyle(Style.EMPTY.withColor(0xECC709));
+    private static final int FAVORITE_BUTTON_WIDTH = getFavoriteButtonWidth();
     private final ButtonComponent favoriteButton;
     private boolean isFavorite;
     private boolean hide;
@@ -51,16 +52,19 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     private void setupFavoriteButton(ButtonComponent favoriteButton) {
         favoriteButton.onPress(this::favoriteButtonExecute);
         favoriteButton.renderer(ButtonComponent.Renderer.flat(0x00000000, 0x00000000, 0x00000000));
+        favoriteButton.horizontalSizing(Sizing.fixed(FAVORITE_BUTTON_WIDTH));
+    }
+
+    private static int getFavoriteButtonWidth() {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        int width = Math.max(
+
+        return Math.max(
                 15,
                 Math.max(
                         textRenderer.getWidth(FAVORITE_ENABLED_TEXT),
                         textRenderer.getWidth(FAVORITE_DISABLED_TEXT)
                 ) + BaseFzmmScreen.BUTTON_TEXT_PADDING
         );
-
-        favoriteButton.horizontalSizing(Sizing.fixed(width));
     }
 
     private void favoriteButtonExecute(ButtonComponent button) {
@@ -95,7 +99,12 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
             return;
         }
 
-        this.hide = (!searchValue.isBlank() && !this.getDisplayName().toLowerCase().contains(searchValue));
+        if (searchValue.isEmpty()) {
+            this.hide = false;
+            return;
+        }
+
+        this.hide = (!searchValue.isBlank() && !this.getFilterValue().contains(searchValue));
     }
 
     public boolean isHide() {

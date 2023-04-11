@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 public class VerticalGridLayout extends BaseParentComponent {
-    private final List<Component> children;
+    protected final List<Component> children = new ArrayList<>();
+    protected final List<Component> childrenView = Collections.unmodifiableList(this.children);
     private final int maxColumns;
     private final int maxChildren;
     private final int componentsWidth;
@@ -28,7 +29,6 @@ public class VerticalGridLayout extends BaseParentComponent {
 
     public VerticalGridLayout(Sizing horizontalSizing, Sizing verticalSizing, int maxColumns, int maxChildren, int componentsWidth, int componentsHeight) {
         super(horizontalSizing, verticalSizing);
-        this.children = new ArrayList<>();
         this.maxColumns = maxColumns;
         this.maxChildren = maxChildren;
         this.componentsWidth = componentsWidth;
@@ -124,7 +124,7 @@ public class VerticalGridLayout extends BaseParentComponent {
 
     @Override
     public List<Component> children() {
-        return new ArrayList<>(this.children);
+        return this.childrenView;
     }
 
     public void clearChildren() {

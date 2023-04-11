@@ -27,13 +27,13 @@ import java.util.*;
 
 public class HeadResourcesLoader implements SynchronousResourceReloader, IdentifiableResourceReloadListener {
 
-    private static final Set<AbstractHeadEntry> LOADED_RESOURCES = new HashSet<>();
+    private static final List<AbstractHeadEntry> LOADED_RESOURCES = new ArrayList<>();
     public static final String HEADS_TEXTURES_FOLDER = "textures/heads";
     public static final String FZMM_MODELS_FOLDER = "fzmm_models";
     public static final String HEADS_MODELS_FOLDER = FZMM_MODELS_FOLDER + "/heads";
 
-    public static Set<AbstractHeadEntry> getPreloaded() {
-        return Set.copyOf(LOADED_RESOURCES);
+    public static List<AbstractHeadEntry> getPreloaded() {
+        return List.copyOf(LOADED_RESOURCES);
     }
 
     @Override
@@ -47,6 +47,8 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
 
         LOADED_RESOURCES.addAll(loadHeadsModels(manager));
         LOADED_RESOURCES.addAll(loadHeadsTextures(manager));
+
+        LOADED_RESOURCES.sort(Comparator.comparing(AbstractHeadEntry::getKey));
     }
 
     private static Set<HeadTextureEntry> loadHeadsTextures(ResourceManager manager) {

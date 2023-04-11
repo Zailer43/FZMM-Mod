@@ -180,17 +180,17 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
     private void tryLoadHeadEntries(FlowLayout rootComponent) {
         if (this.headGridLayout.children().isEmpty()) {
-            Set<AbstractHeadEntry> headDataSet = HeadResourcesLoader.getPreloaded();
+            List<AbstractHeadEntry> headEntriesList = HeadResourcesLoader.getPreloaded();
 
-            if (headDataSet.size() == 0) {
+            if (headEntriesList.size() == 0) {
                 this.addNoResultsMessage(rootComponent);
                 return;
             }
 
-            List<HeadComponentEntry> headEntries = headDataSet.stream()
-                    .sorted(Comparator.comparing(AbstractHeadEntry::getDisplayName))
-                    .map(entry -> new HeadComponentEntry(entry, this))
-                    .toList();
+            List<HeadComponentEntry> headEntries = new ArrayList<>(headEntriesList.size());
+            for (AbstractHeadEntry entry : headEntriesList) {
+                headEntries.add(new HeadComponentEntry(entry, this));
+            }
 
             this.headComponentEntries.addAll(headEntries);
             this.applyFilters();

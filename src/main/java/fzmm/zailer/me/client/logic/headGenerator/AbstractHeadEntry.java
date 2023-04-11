@@ -1,19 +1,27 @@
 package fzmm.zailer.me.client.logic.headGenerator;
 
+import net.minecraft.text.Text;
+
 import java.awt.image.BufferedImage;
 
 public abstract class AbstractHeadEntry {
 
-    private final String displayName;
+    private final Text displayName;
+    private final String filterValue;
     private final String key;
 
     public AbstractHeadEntry(String displayName, String key) {
-        this.displayName = displayName;
+        this.displayName = Text.literal(displayName);
         this.key = key;
+        this.filterValue = displayName.toLowerCase();
     }
 
-    public String getDisplayName() {
+    public Text getDisplayName() {
         return this.displayName;
+    }
+
+    public String getFilterValue() {
+        return this.filterValue;
     }
 
     public String getKey() {
@@ -21,8 +29,6 @@ public abstract class AbstractHeadEntry {
     }
 
     public abstract BufferedImage getHeadSkin(BufferedImage baseSkin, boolean overlapHatLayer);
-
-    public abstract boolean canOverlap();
 
     public abstract String getCategoryId();
 }

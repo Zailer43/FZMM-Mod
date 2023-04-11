@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.logic.headGenerator.texture;
 
 import fzmm.zailer.me.client.gui.headgenerator.category.HeadTextureCategory;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
-import fzmm.zailer.me.client.logic.headGenerator.HeadGenerator;
+import fzmm.zailer.me.client.logic.headGenerator.TextureOverlap;
 
 import java.awt.image.BufferedImage;
 
@@ -21,12 +21,7 @@ public class HeadTextureEntry extends AbstractHeadEntry {
 
     @Override
     public BufferedImage getHeadSkin(BufferedImage baseSkin, boolean overlapHatLayer) {
-        return new HeadGenerator(baseSkin, overlapHatLayer).addTexture(this.headSkin).getHeadTexture();
-    }
-
-    @Override
-    public boolean canOverlap() {
-        return true;
+        return new TextureOverlap(baseSkin, overlapHatLayer).addTexture(this.headSkin).getHeadTexture();
     }
 
     @Override
@@ -34,8 +29,4 @@ public class HeadTextureEntry extends AbstractHeadEntry {
         return HeadTextureCategory.CATEGORY_ID;
     }
 
-
-    public BufferedImage getHeadSkin() {
-        return this.headSkin;
-    }
 }

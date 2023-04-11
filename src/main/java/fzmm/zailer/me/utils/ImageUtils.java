@@ -14,6 +14,8 @@ import net.minecraft.util.Identifier;
 import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -31,8 +33,8 @@ public class ImageUtils {
 
     static {
         OLD_FORMAT_TO_NEW_FORMAT = getOldFormatToNewFormatEntry().orElseGet(() -> {
-          FzmmClient.LOGGER.error("Error loading ImageUtils.OLD_FORMAT_TO_NEW_FORMAT");
-          return new HeadModelEntry("", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+            FzmmClient.LOGGER.error("Error loading ImageUtils.OLD_FORMAT_TO_NEW_FORMAT");
+            return new HeadModelEntry("", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         });
     }
 
@@ -84,9 +86,15 @@ public class ImageUtils {
     }
 
     public static Optional<NativeImage> toNativeImage(BufferedImage image) {
+
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", stream);
+            ImageWriter writer = ImageIO.getImageWritersByFormatName("png").next();
+            ImageOutputStream ios = ImageIO.createImageOutputStream(stream);
+            writer.setOutput(ios);
+            writer.write(image);
+            ios.close();
+            writer.dispose();
             byte[] bytes = stream.toByteArray();
 
             ByteBuffer data = BufferUtils.createByteBuffer(bytes.length).put(bytes);
