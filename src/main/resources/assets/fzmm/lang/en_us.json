@@ -167,8 +167,6 @@
   "fzmm.gui.headGenerator.option.generationMethod.texture": "Texture",
   "fzmm.gui.headGenerator.option.headName": "Head name",
   "fzmm.gui.headGenerator.option.headName.tooltip": "The name of the player the head belongs to (or so it will say)\n\nThis value is simply aesthetic.",
-  "fzmm.gui.headGenerator.option.overlapHatLayer": "Overlap hat layer",
-  "fzmm.gui.headGenerator.option.overlapHatLayer.tooltip": "When activated the second layer of the skin overlaps the first,\nif it is deactivated the second layer is simply removed.",
   "fzmm.gui.headGenerator.option.search": "Search",
   "fzmm.gui.headGenerator.option.search.tooltip": "Search for a head by name among those available.",
   "fzmm.gui.headGenerator.option.skin": "Skin",
