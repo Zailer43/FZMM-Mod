@@ -20,8 +20,8 @@ public class HeadTextureEntry extends AbstractHeadEntry {
     }
 
     @Override
-    public BufferedImage getHeadSkin(BufferedImage baseSkin, boolean overlapHatLayer) {
-        return new TextureOverlap(baseSkin, overlapHatLayer).addTexture(this.headSkin).getHeadTexture();
+    public BufferedImage getHeadSkin(BufferedImage baseSkin) {
+        return new TextureOverlap(baseSkin, true).addTexture(this.headSkin, false).getHeadTexture();
     }
 
     @Override

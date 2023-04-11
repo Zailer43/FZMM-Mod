@@ -94,13 +94,10 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
         return this.entry.getCategoryId();
     }
 
-    public void update(BufferedImage baseSkin, boolean overlapHatLayerButton) {
-        this.update(this.entry.getHeadSkin(baseSkin, overlapHatLayerButton));
-    }
-
-    public void update(BufferedImage previewSkin) {
+    public void update(BufferedImage baseSkin) {
         MinecraftClient client = MinecraftClient.getInstance();
         TextureManager textureManager = client.getTextureManager();
+        BufferedImage previewSkin = this.entry.getHeadSkin(baseSkin);
 
         this.close();
         CustomHeadEntity customHeadEntity = this.previewComponent.entity();
@@ -244,7 +241,7 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
     protected abstract void addTopRightButtons(FlowLayout panel, FlowLayout layout);
 
     private void update() {
-        this.update(this.parentScreen.getGridBaseSkin(), this.parentScreen.overlapHatLayerButton());
+        this.update(this.parentScreen.getGridBaseSkin());
     }
 
     public void saveSkinExecute(@Nullable BufferedImage skin) {

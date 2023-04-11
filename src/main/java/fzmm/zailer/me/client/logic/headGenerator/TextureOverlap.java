@@ -12,41 +12,40 @@ public final class TextureOverlap {
     }
 
     public TextureOverlap(@NotNull BufferedImage skin, boolean overlapHatLayer) {
-        Graphics2D g2d = this.image.createGraphics();
-
-        this.addTexture(skin, !overlapHatLayer);
-        if (!overlapHatLayer)
-            g2d.drawImage(skin, 0, 0, 32, 16, 32, 0, 64, 16, null);
-
-        g2d.dispose();
+        this.addTexture(skin, overlapHatLayer);
     }
 
-    public TextureOverlap addTexture(BufferedImage texture) {
-        return this.addTexture(texture, true);
-    }
-
-    public TextureOverlap addTexture(BufferedImage texture, boolean hatLayer) {
-        if (texture == null)
-            return this;
-
+    public TextureOverlap removeHatLayer() {
         Graphics2D g2d = this.image.createGraphics();
-        this.addLayer(g2d, texture, hatLayer);
+
+        g2d.setBackground(new Color(0, 0, 0, 0));
+        g2d.clearRect(32, 0, 64, 16);
+
         g2d.dispose();
         return this;
     }
 
-    private void addLayer(Graphics2D finalImageGraphics, BufferedImage newLayer, boolean hatLayer) {
-        boolean newLayerHasBody = newLayer.getHeight() == 64;
 
-        if (hatLayer && newLayerHasBody) {
-            finalImageGraphics.drawImage(newLayer, 0, 0, 64, 64, 0, 0, 64, 64, null);
-            return;
+    public TextureOverlap addTexture(BufferedImage texture, boolean overlapHatLayer) {
+        if (texture == null)
+            return this;
+
+        Graphics2D g2d = this.image.createGraphics();
+        this.addLayer(g2d, texture, overlapHatLayer);
+        g2d.dispose();
+        return this;
+    }
+
+    private void addLayer(Graphics2D finalImageGraphics, BufferedImage newLayer, boolean overlapHatLayer) {
+        finalImageGraphics.drawImage(newLayer, 0, 0, 32, 16, 0, 0, 32, 16, null);
+
+        if (overlapHatLayer) {
+            finalImageGraphics.drawImage(newLayer, 0, 0, 32, 16, 32, 0, 64, 16, null);
+        } else {
+            finalImageGraphics.drawImage(newLayer, 32, 0, 64, 16, 32, 0, 64, 16, null);
         }
 
-        int width = hatLayer ? 64 : 32;
-        finalImageGraphics.drawImage(newLayer, 0, 0, width, 16, 0, 0, width, 16, null);
-
-        if (newLayerHasBody)
+        if (newLayer.getHeight() == 64)
             this.addBody(finalImageGraphics, newLayer);
     }
 

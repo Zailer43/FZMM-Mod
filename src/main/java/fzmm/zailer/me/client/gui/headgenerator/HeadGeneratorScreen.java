@@ -20,6 +20,7 @@ import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.IMementoScreen;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.headGenerator.HeadResourcesLoader;
+import fzmm.zailer.me.client.logic.headGenerator.TextureOverlap;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.FzmmWikiConstants;
 import fzmm.zailer.me.utils.HeadUtils;
@@ -165,7 +166,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
 
         if (skinBase.getWidth() == 64 && skinBase.getHeight() == 32) {
-            skinBase = ImageUtils.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skinBase, false);
+            skinBase = ImageUtils.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skinBase);
             this.skinElements.imageButton().setImage(skinBase);
         }
 
@@ -215,15 +216,20 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         assert this.client != null;
 
         this.client.execute(() -> {
-            BufferedImage previousPreview = this.baseSkin;
+            TextureOverlap textureOverlap = new TextureOverlap(this.baseSkin, this.overlapHatLayer());
+            if (!this.overlapHatLayer())
+                textureOverlap.removeHatLayer();
+
+            BufferedImage previousPreview  = textureOverlap.getHeadTexture();
+
             for (var headEntry : this.headCompoundComponentEntries) {
-                headEntry.update(previousPreview, this.overlapHatLayerButton());
+                headEntry.update(previousPreview);
                 previousPreview = headEntry.getPreview();
             }
             this.gridBaseSkin = previousPreview;
 
             for (var headEntry : this.headComponentEntries) {
-                headEntry.update(this.gridBaseSkin, this.overlapHatLayerButton());
+                headEntry.update(this.gridBaseSkin);
             }
         });
 
@@ -370,7 +376,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         }, FzmmWikiConstants.HEAD_GENERATOR_WIKI_LINK, true));
     }
 
-    public boolean overlapHatLayerButton() {
+    public boolean overlapHatLayer() {
         return this.overlapHatLayerButton.enabled();
     }
 

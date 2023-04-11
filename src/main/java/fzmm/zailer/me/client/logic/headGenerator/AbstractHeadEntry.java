@@ -28,7 +28,7 @@ public abstract class AbstractHeadEntry {
         return this.key;
     }
 
-    public abstract BufferedImage getHeadSkin(BufferedImage baseSkin, boolean overlapHatLayer);
+    public abstract BufferedImage getHeadSkin(BufferedImage baseSkin);
 
     public abstract String getCategoryId();
 }

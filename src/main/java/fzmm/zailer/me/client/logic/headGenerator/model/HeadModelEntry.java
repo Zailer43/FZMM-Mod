@@ -37,7 +37,7 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     }
 
     @Override
-    public BufferedImage getHeadSkin(BufferedImage baseSkin, boolean overlapHatLayer) {
+    public BufferedImage getHeadSkin(BufferedImage baseSkin) {
         BufferedImage headSkin = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D graphics = headSkin.createGraphics();
