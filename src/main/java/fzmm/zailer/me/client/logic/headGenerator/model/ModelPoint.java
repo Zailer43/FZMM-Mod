@@ -4,10 +4,10 @@ import com.google.gson.JsonObject;
 import fzmm.zailer.me.utils.SkinPart;
 
 public class ModelPoint {
-    private final SkinPart offset;
-    private final boolean hatLayer;
-    private final byte x;
-    private final byte y;
+    protected final SkinPart offset;
+    protected final boolean hatLayer;
+    protected byte x;
+    protected byte y;
 
     public ModelPoint(SkinPart offset, boolean hatLayer, int x, int y) {
         this.offset = offset;

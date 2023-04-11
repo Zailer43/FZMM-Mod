@@ -5,6 +5,7 @@ import fzmm.zailer.me.client.gui.headgenerator.category.HeadPaintableCategory;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.headGenerator.model.parameters.IParametersEntry;
 import fzmm.zailer.me.client.logic.headGenerator.model.parameters.ModelParameter;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.OffsetParameter;
 import fzmm.zailer.me.client.logic.headGenerator.model.steps.IModelStep;
 import io.wispforest.owo.ui.core.Color;
 
@@ -19,13 +20,19 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     private final List<IModelStep> steps;
     private final List<ModelParameter<BufferedImage>> textures;
     private final List<ModelParameter<Color>> colors;
+    private final List<ModelParameter<OffsetParameter>> offsets;
     private boolean isPaintable;
 
-    public HeadModelEntry(String displayName, String key, List<IModelStep> steps, List<ModelParameter<BufferedImage>> textures, List<ModelParameter<Color>> colors) {
+    public HeadModelEntry() {
+        this("", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    }
+
+    public HeadModelEntry(String displayName, String key, List<IModelStep> steps, List<ModelParameter<BufferedImage>> textures, List<ModelParameter<Color>> colors, List<ModelParameter<OffsetParameter>> offsets) {
         super(displayName, key);
         this.steps = steps;
         this.textures = textures;
         this.colors = colors;
+        this.offsets = offsets;
         this.isPaintable = false;
     }
 
@@ -38,14 +45,18 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
         AtomicReference<Color> selectedColor = new AtomicReference<>(Color.WHITE);
         List<ModelParameter<BufferedImage>> texturesCopy = new ArrayList<>(this.textures);
         List<ModelParameter<Color>> colorsCopy = new ArrayList<>(this.colors);
+        List<ModelParameter<OffsetParameter>> offsetsCopy = new ArrayList<>(this.offsets);
 
         texturesCopy.add(new ModelParameter<>("base_skin", baseSkin, false));
         texturesCopy.add(new ModelParameter<>("destination_skin", headSkin, false));
 
-        ModelData modelData = new ModelData(graphics, texturesCopy, colorsCopy, selectedTexture, selectedColor);
+        ModelData modelData = new ModelData(graphics, texturesCopy, colorsCopy, offsetsCopy, selectedTexture, selectedColor);
 
         for (var step : this.steps)
             step.apply(modelData);
+
+        for (var offset : this.offsets)
+            offset.value().ifPresent(OffsetParameter::reset);
 
         graphics.dispose();
 
@@ -95,7 +106,14 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     }
 
     @Override
+    public List<ModelParameter<OffsetParameter>> getOffsets() {
+        return this.offsets;
+    }
+
+    @Override
     public boolean hasParameters() {
-        return this.getColors().stream().anyMatch(ModelParameter::isRequested) || this.getTextures().stream().anyMatch(ModelParameter::isRequested);
+        return this.getColors().stream().anyMatch(ModelParameter::isRequested)
+                || this.getTextures().stream().anyMatch(ModelParameter::isRequested)
+                || this.getOffsets().stream().anyMatch(ModelParameter::isRequested);
     }
 }

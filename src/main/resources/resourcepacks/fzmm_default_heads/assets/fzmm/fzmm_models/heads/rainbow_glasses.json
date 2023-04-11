@@ -1,15 +1,9 @@
 {
-  "paintable": true,
   "textures": [
     {
       "id": "glasses",
-      "path": "fzmm:textures/model_textures/colored_glasses.png",
+      "path": "fzmm:textures/model_textures/rainbow_glasses.png",
       "requested": false
-    }
-  ],
-  "colors": [ {
-      "id": "selected_color",
-      "color_hex": "#202020"
     }
   ],
   "offsets": [
@@ -25,7 +19,7 @@
   ],
   "steps": [
     {
-      "comment": "head texture",
+      "comment": "source head",
       "type": "copy",
       "source": {
         "offset": "HEAD",
@@ -38,6 +32,18 @@
       "overlap_source_hat": true
     },
     {
+      "comment": "source body",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 16,
+        "width": 64,
+        "height": 48
+      }
+    },
+    {
       "type": "select_texture",
       "texture_id": "glasses"
     },
@@ -47,30 +53,13 @@
       "enabled": true
     },
     {
-      "comment": "colored glasses",
       "type": "copy",
       "source": {
         "offset": "HEAD",
         "hat_layer": true,
         "x": 3,
         "y": 8,
-        "width": 19,
-        "height": 2
-      }
-    },
-    {
-      "type": "select_color",
-      "color_id": "selected_color"
-    },
-    {
-      "type": "fill_color",
-      "algorithm": "multiply",
-      "area": {
-        "offset": "HEAD",
-        "hat_layer": true,
-        "x": 3,
-        "y": 8,
-        "width": 19,
+        "width": 18,
         "height": 2
       }
     }

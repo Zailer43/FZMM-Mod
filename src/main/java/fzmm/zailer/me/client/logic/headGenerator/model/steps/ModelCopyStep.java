@@ -33,20 +33,23 @@ public class ModelCopyStep implements IModelStep {
     public void apply(ModelData data) {
         Graphics2D graphics = data.graphics();
         AtomicReference<BufferedImage> selectedTexture = data.selectedTexture();
+
+        ModelArea destination = this.destination.copyWithOffset(data.offsets());
         if (this.addHatLayer) {
-            this.apply(graphics, selectedTexture, false, false);
-            this.apply(graphics, selectedTexture, true, true);
+            this.apply(graphics, destination, selectedTexture, false, false);
+            this.apply(graphics, destination, selectedTexture, true, true);
         } else if (this.overlapSourceHat) {
-            this.apply(graphics, selectedTexture, false, this.destination.hatLayer());
-            this.apply(graphics, selectedTexture, true, this.destination.hatLayer());
+            this.apply(graphics, destination, selectedTexture, false, this.destination.hatLayer());
+            this.apply(graphics, destination, selectedTexture, true, this.destination.hatLayer());
         } else {
-            this.apply(graphics, selectedTexture, this.source.hatLayer(), this.destination.hatLayer());
+            this.apply(graphics, destination, selectedTexture, this.source.hatLayer(), this.destination.hatLayer());
         }
     }
 
-    private void apply(Graphics2D graphics, AtomicReference<BufferedImage> selectedTexture, boolean sourceHatLayer, boolean destinationHatLayer) {
-        int destinationX = this.destination.getXWithOffset(destinationHatLayer);
-        int destinationY = this.destination.getYWithOffset(destinationHatLayer);
+
+    private void apply(Graphics2D graphics, ModelArea destination, AtomicReference<BufferedImage> selectedTexture, boolean sourceHatLayer, boolean destinationHatLayer) {
+        int destinationX = destination.getXWithOffset(destinationHatLayer);
+        int destinationY = destination.getYWithOffset(destinationHatLayer);
         int sourceX = this.source.getXWithOffset(sourceHatLayer);
         int sourceY = this.source.getYWithOffset(sourceHatLayer);
 
@@ -58,14 +61,14 @@ public class ModelCopyStep implements IModelStep {
         );
         graphics.setTransform(transform);
 
-        int destinationX2 = destinationX + this.destination.width();
+        int destinationX2 = destinationX + destination.width();
         if (this.mirrorHorizontal) {
             int aux = destinationX;
             destinationX = destinationX2;
             destinationX2 = aux;
         }
 
-        int destinationY2 = destinationY + this.destination.height();
+        int destinationY2 = destinationY + destination.height();
         if (this.mirrorVertical) {
             int aux = destinationY;
             destinationY = destinationY2;

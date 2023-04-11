@@ -1,0 +1,115 @@
+{
+  "paintable": true,
+  "textures": [
+    {
+      "id": "glasses",
+      "path": "fzmm:textures/model_textures/sunglasses3.png",
+      "requested": false
+    }
+  ],
+  "colors": [
+    {
+      "id": "glass_color",
+      "color_hex": "#3e3e3e"
+    }
+  ],
+  "offsets": [
+    {
+      "id": "y_offset",
+      "value": 0,
+      "min_value": 0,
+      "max_value": 5,
+      "axis": "Y",
+      "requested": true,
+      "enabled": false
+    }
+  ],
+  "steps": [
+    {
+      "comment": "source head",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "source body",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 16,
+        "width": 64,
+        "height": 48
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "glasses"
+    },
+    {
+      "type": "toggle_offset",
+      "offset_id": "y_offset",
+      "enabled": true
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 5,
+        "y": 8,
+        "width": 14,
+        "height": 3
+      }
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 7,
+        "y": 9,
+        "width": 10,
+        "height": 2
+      }
+    },
+    {
+      "type": "select_color",
+      "color_id": "glass_color"
+    },
+    {
+      "comment": "glass color",
+      "type": "fill_color",
+      "algorithm": "multiply",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 9,
+        "y": 9,
+        "width": 2,
+        "height": 1
+      }
+    },
+    {
+      "comment": "glass color",
+      "type": "fill_color",
+      "algorithm": "multiply",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 13,
+        "y": 9,
+        "width": 2,
+        "height": 1
+      }
+    }
+  ]
+}

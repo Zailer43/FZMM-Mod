@@ -4,12 +4,14 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
+import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.headgenerator.category.IHeadCategory;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.headGenerator.model.parameters.IParametersEntry;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.OffsetParameter;
 import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntity;
 import fzmm.zailer.me.utils.ImageUtils;
 import fzmm.zailer.me.utils.list.IListEntry;
@@ -220,6 +222,22 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
             });
 
             colorRow.getWidget().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
+        }
+
+        for (var offset : parametersEntry.getOffsets()) {
+            if (!offset.isRequested() && offset.value().isEmpty())
+                continue;
+            OffsetParameter offsetParameter = offset.value().get();
+            String id = offset.id() + "-offset";
+            SliderRow sliderRow = new SliderRow(parent.getBaseScreenTranslationKey(), id, id, false);
+            parametersLayout.child(sliderRow);
+
+            SliderRow.setup(parametersLayout, id, offsetParameter.value(), offsetParameter.minValue(), offsetParameter.maxValue(), Byte.class, 0, d -> {
+                offsetParameter.setValue(d.byteValue());
+                this.update();
+            });
+
+            sliderRow.getWidget().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
         }
     }
 

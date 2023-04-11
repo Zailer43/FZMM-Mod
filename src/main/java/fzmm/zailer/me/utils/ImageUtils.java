@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class ImageUtils {
@@ -34,7 +33,7 @@ public class ImageUtils {
     static {
         OLD_FORMAT_TO_NEW_FORMAT = getOldFormatToNewFormatEntry().orElseGet(() -> {
             FzmmClient.LOGGER.error("Error loading ImageUtils.OLD_FORMAT_TO_NEW_FORMAT");
-            return new HeadModelEntry("", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+            return new HeadModelEntry();
         });
     }
 

@@ -12,8 +12,8 @@ import org.w3c.dom.Element;
 import java.util.function.Consumer;
 
 public class SliderRow extends AbstractRow {
-    public SliderRow(String baseTranslationKey, String id, String tooltipId) {
-        super(baseTranslationKey, id, tooltipId, true);
+    public SliderRow(String baseTranslationKey, String id, String tooltipId, boolean translation) {
+        super(baseTranslationKey, id, tooltipId, true, translation);
     }
 
     @Override
@@ -58,11 +58,15 @@ public class SliderRow extends AbstractRow {
         return numberSlider;
     }
 
+    public SliderWidget getWidget() {
+        return this.childById(SliderWidget.class, getSliderId(this.getId()));
+    }
+
     public static SliderRow parse(Element element) {
         String baseTranslationKey = BaseFzmmScreen.getBaseTranslationKey(element);
         String id = getId(element);
         String tooltipId = getTooltipId(element, id);
 
-        return new SliderRow(baseTranslationKey, id, tooltipId);
+        return new SliderRow(baseTranslationKey, id, tooltipId, true);
     }
 }

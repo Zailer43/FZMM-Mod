@@ -16,9 +16,10 @@ public class ModelDeleteStep implements IModelStep {
 
     @Override
     public void apply(ModelData data) {
+        ModelArea area = this.area.copyWithOffset(data.offsets());
         Graphics2D graphics = data.graphics();
         graphics.setBackground(new Color(0, 0, 0, 0));
-        graphics.clearRect(this.area.getXWithOffset(), this.area.getYWithOffset(), this.area.width(), this.area.height());
+        graphics.clearRect(area.getXWithOffset(), area.getYWithOffset(), area.width(), area.height());
     }
 
     public static ModelDeleteStep parse(JsonObject jsonObject) {

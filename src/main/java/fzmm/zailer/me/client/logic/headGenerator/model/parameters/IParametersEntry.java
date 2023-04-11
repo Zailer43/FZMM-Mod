@@ -15,5 +15,7 @@ public interface IParametersEntry {
 
     void putTexture(String key, BufferedImage image);
 
+    List<ModelParameter<OffsetParameter>> getOffsets();
+
     boolean hasParameters();
 }

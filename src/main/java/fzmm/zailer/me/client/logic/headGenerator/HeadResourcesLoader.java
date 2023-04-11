@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.logic.headGenerator.model.HeadModelEntry;
 import fzmm.zailer.me.client.logic.headGenerator.model.parameters.ModelParameter;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.OffsetParameter;
 import fzmm.zailer.me.client.logic.headGenerator.model.steps.*;
 import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
 import fzmm.zailer.me.utils.ImageUtils;
@@ -87,12 +88,14 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
                 entries.add(getHeadModel(identifier, inputStream));
                 inputStream.close();
             } catch (Exception e) {
-                FzmmClient.LOGGER.error("[HeadResourcesLoader] Error loading head generator model", e);
-                assert MinecraftClient.getInstance().player != null;
-                Text message = Text.translatable("fzmm.gui.headGenerator.model.error.loadingModel", identifier.getPath())
-                        .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
+                FzmmClient.LOGGER.error("[HeadResourcesLoader] Error loading head generator model: {}", identifier.getPath(),  e);
 
-                MinecraftClient.getInstance().player.sendMessage(message);
+                if (MinecraftClient.getInstance().player != null) {
+                    Text message = Text.translatable("fzmm.gui.headGenerator.model.error.loadingModel", identifier.getPath())
+                            .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
+
+                    MinecraftClient.getInstance().player.sendMessage(message);
+                }
             }
         }));
 
@@ -106,6 +109,7 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
         JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
         List<ModelParameter<BufferedImage>> textures = getHeadModelTextures(jsonObject);
         List<ModelParameter<Color>> colors = getHeadModelColors(jsonObject);
+        List<ModelParameter<OffsetParameter>> offsets = getHeadModelOffsets(jsonObject);
         boolean isPaintableModel = jsonObject.has("paintable") && jsonObject.get("paintable").getAsBoolean();
 
         JsonArray stepsArray = jsonObject.getAsJsonArray("steps");
@@ -115,16 +119,17 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
             JsonObject stepObject = element.getAsJsonObject();
 
             switch (stepObject.get("type").getAsString()) {
-                case "select_texture" -> steps.add(ModelSelectTextureStep.parse(stepObject));
-                case "select_color" -> steps.add(ModelSelectColorStep.parse(stepObject));
                 case "copy" -> steps.add(ModelCopyStep.parse(stepObject));
                 case "delete" -> steps.add(ModelDeleteStep.parse(stepObject));
-                case "fill_color" -> steps.add(ModelFillColorStep.parse(stepObject));
                 case "desaturate" -> steps.add(ModelDesaturateStep.parse(stepObject));
+                case "fill_color" -> steps.add(ModelFillColorStep.parse(stepObject));
+                case "select_color" -> steps.add(ModelSelectColorStep.parse(stepObject));
+                case "select_texture" -> steps.add(ModelSelectTextureStep.parse(stepObject));
+                case "toggle_offset" -> steps.add(ModelToggleOffsetStep.parse(stepObject));
             }
         }
 
-        HeadModelEntry entry = new HeadModelEntry(toDisplayName(fileName), fileName, steps, textures, colors);
+        HeadModelEntry entry = new HeadModelEntry(toDisplayName(fileName), fileName, steps, textures, colors, offsets);
 
         if (isPaintableModel)
             entry.isPaintable(true);
@@ -176,6 +181,29 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
             }
 
             result.add(new ModelParameter<>(id, color, requested));
+        }
+
+        return result;
+    }
+
+    private static List<ModelParameter<OffsetParameter>> getHeadModelOffsets(JsonObject jsonObject) {
+        List<ModelParameter<OffsetParameter>> result = new ArrayList<>();
+        if (!jsonObject.has("offsets"))
+            return result;
+
+        JsonArray offsetsArray = jsonObject.get("offsets").getAsJsonArray();
+
+        for (var offsetElement : offsetsArray) {
+            JsonObject offsetObject = offsetElement.getAsJsonObject();
+            String id = offsetObject.get("id").getAsString();
+            boolean requested = !offsetObject.has("requested") || offsetObject.get("requested").getAsBoolean();
+            byte value = offsetObject.has("value") ? offsetObject.get("value").getAsByte() : 0;
+            byte minValue = offsetObject.has("min_value") ? offsetObject.get("min_value").getAsByte() : 0;
+            byte maxValue = offsetObject.has("max_value") ? offsetObject.get("max_value").getAsByte() : 8;
+            boolean isXAxis = offsetObject.has("axis") && offsetObject.get("axis").getAsString().equalsIgnoreCase("X");
+            boolean enabled = offsetObject.has("enabled") && offsetObject.get("enabled").getAsBoolean();
+
+            result.add(new ModelParameter<>(id, new OffsetParameter(value, minValue, maxValue, isXAxis, enabled), requested));
         }
 
         return result;
