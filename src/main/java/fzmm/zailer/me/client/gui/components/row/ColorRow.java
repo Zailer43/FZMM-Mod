@@ -125,7 +125,9 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
     @Override
     public void setValue(Color value) {
         ConfigTextBox colorField = this.childById(ConfigTextBox.class, getColorFieldId(this.getId()));
-        if (colorField != null)
+        if (colorField != null) {
             colorField.setText(value.asHexString(value.alpha() < 1f));
+            colorField.setCursor(0);
+        }
     }
 }
