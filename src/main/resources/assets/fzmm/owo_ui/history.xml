@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19.3/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19.4/owo-ui.xsd">
     <components>
         <flow-layout direction="horizontal">
             <children>
@@ -99,7 +99,7 @@
                     <flow-layout direction="vertical">
                         <children>
                             <label id="error-label">
-                                <positioning type="layout">0,0</positioning>
+                                <positioning type="relative">0,0</positioning>
                             </label>
 
                             <vertical-grid-layout maxColumns="50" componentsWidth="16" componentsHeight="16" id="content">

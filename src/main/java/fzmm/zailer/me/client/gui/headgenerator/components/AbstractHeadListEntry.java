@@ -24,6 +24,7 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.util.Drawer;
+import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.ChatHud;
@@ -71,7 +72,11 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
 
         this.parentScreen = parent;
 
-        this.mouseDown().subscribe((mouseX, mouseY, button) -> this.addOverlay(parent));
+        this.mouseDown().subscribe((mouseX, mouseY, button) -> {
+            this.addOverlay(parent);
+            UISounds.playInteractionSound();
+            return true;
+        });
     }
 
     @Override
@@ -133,7 +138,7 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
     }
 
 
-    protected boolean addOverlay(HeadGeneratorScreen parent) {
+    protected void addOverlay(HeadGeneratorScreen parent) {
         Map<String, String> parameters = Map.of("name", this.getDisplayName().getString());
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         int giveButtonWidth = Math.max(
@@ -174,7 +179,6 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
 
         this.overlayContainer = Containers.overlay(headOverlay);
         ((FlowLayout) this.root()).child(this.overlayContainer);
-        return true;
     }
 
     private void addParameters(FlowLayout panel, HeadGeneratorScreen parent) {

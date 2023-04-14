@@ -144,7 +144,9 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         }
         this.selectedCategory = IHeadCategory.NATURAL_CATEGORIES[0];
         headCategoryCollapsible.child(headCategoryDropdown);
-        headCategoryDropdown.zIndex(1000);
+        headCategoryDropdown.zIndex(300);
+        headCategoryDropdown.children().get(0).mouseDown().subscribe((mouseX, mouseY, button) -> true);
+
 
         this.toggleFavoriteList = ButtonRow.setup(rootComponent, TOGGLE_FAVORITE_LIST_ID, true, buttonComponent -> this.toggleFavoriteListExecute());
         checkNull(this.toggleFavoriteList, "button", TOGGLE_FAVORITE_LIST_ID);
