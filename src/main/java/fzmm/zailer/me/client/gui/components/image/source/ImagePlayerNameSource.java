@@ -1,13 +1,15 @@
 package fzmm.zailer.me.client.gui.components.image.source;
 
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.toast.status.ImageStatus;
+import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
-public class ImagePlayerNameSource implements IImageLoaderFromText {
+public class ImagePlayerNameSource implements IImageLoaderFromText, IImageSuggestion {
     private static final String REGEX = "^[a-zA-Z0-9_]{2,16}$";
     private BufferedImage image;
 
@@ -46,5 +48,10 @@ public class ImagePlayerNameSource implements IImageLoaderFromText {
     @Override
     public boolean hasTextField() {
         return true;
+    }
+
+    @Override
+    public SuggestionProvider<?> getSuggestionProvider() {
+        return FzmmUtils.SUGGESTION_PLAYER;
     }
 }

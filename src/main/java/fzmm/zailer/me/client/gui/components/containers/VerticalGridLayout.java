@@ -47,6 +47,7 @@ public class VerticalGridLayout extends BaseParentComponent {
         return this.contentSize.height() + this.padding.get().bottom();
     }
 
+    @Override
     public void layout(Size space) {
         int childrenSize = this.children.size();
         var childSpace = this.calculateChildSpace(space);

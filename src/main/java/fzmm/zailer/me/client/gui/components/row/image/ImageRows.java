@@ -2,13 +2,12 @@ package fzmm.zailer.me.client.gui.components.row.image;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
+import fzmm.zailer.me.client.gui.components.SuggestionTextBox;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.IImageMode;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
-import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
 import fzmm.zailer.me.client.gui.components.row.AbstractRow;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
-import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Sizing;
@@ -27,8 +26,10 @@ public class ImageRows extends FlowLayout {
         FlowLayout rowsLayout = Containers.verticalFlow(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
 
         rowsLayout.children(List.of(
-                new ImageButtonRow(baseTranslationKey, buttonId, buttonTooltipId, translate).setHasHoveredBackground(false),
-                new EnumRow(baseTranslationKey, enumId, enumTooltipId, translate).setHasHoveredBackground(false)
+                new ImageButtonRow(baseTranslationKey, buttonId, buttonTooltipId, translate)
+                        .setHasHoveredBackground(false),
+                new EnumRow(baseTranslationKey, enumId, enumTooltipId, translate)
+                        .setHasHoveredBackground(false)
         ));
 
         this.child(rowsLayout);
@@ -42,24 +43,21 @@ public class ImageRows extends FlowLayout {
         super.draw(matrices, mouseX, mouseY, partialTicks, delta);
     }
 
-    @SuppressWarnings({"ConstantConditions", "UnstableApiUsage"})
+    @SuppressWarnings("ConstantConditions")
     public static ImageRowsElements setup(FlowLayout rootComponent, String buttonId, String enumId, Enum<? extends IImageMode> defaultValue) {
         ImageButtonRow.setup(rootComponent, buttonId, ((IImageMode) defaultValue).getImageGetter());
         ImageButtonComponent imageWidget = rootComponent.childById(ImageButtonComponent.class, ImageButtonRow.getImageButtonId(buttonId));
-        ConfigTextBox imageValueField = rootComponent.childById(ConfigTextBox.class, ImageButtonRow.getImageValueFieldId(buttonId));
+        SuggestionTextBox suggestionTextBox = rootComponent.childById(SuggestionTextBox.class, ImageButtonRow.getImageValueFieldId(buttonId));
 
         EnumWidget enumMode = EnumRow.setup(rootComponent, enumId, defaultValue, true, button -> {
             IImageMode mode = (IImageMode) ((EnumWidget) button).getValue();
             IImageGetter imageGetter = mode.getImageGetter();
             imageWidget.setSourceType(imageGetter);
 
-            if (imageGetter instanceof IImageLoaderFromText imageLoaderFromText)
-                imageValueField.applyPredicate(imageLoaderFromText::predicate);
-
-            imageValueField.visible = imageGetter.hasTextField();
+            ImageButtonRow.setupSuggestionTextBox(suggestionTextBox, imageGetter);
         });
 
-        return new ImageRowsElements(imageWidget, imageValueField, enumMode);
+        return new ImageRowsElements(imageWidget, suggestionTextBox.getTextBox(), enumMode, suggestionTextBox);
     }
 
     public static ImageRows parse(Element element) {
