@@ -63,7 +63,7 @@ public class ImageButtonRow extends AbstractRow {
         SuggestionTextBox suggestionTextBox = rootComponent.childById(SuggestionTextBox.class, getImageValueFieldId(id));
 
         BaseFzmmScreen.checkNull(imageButtonComponent, "image-option", getImageButtonId(id));
-        BaseFzmmScreen.checkNull(suggestionTextBox, "text-option", getImageValueFieldId(id));
+        BaseFzmmScreen.checkNull(suggestionTextBox, "suggestion-text-option", getImageValueFieldId(id));
 
         imageButtonComponent.onPress(button -> imageButtonComponent.loadImage(suggestionTextBox.getTextBox().getText()));
         imageButtonComponent.setSourceType(defaultMode);

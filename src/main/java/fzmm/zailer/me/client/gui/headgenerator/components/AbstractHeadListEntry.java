@@ -181,7 +181,7 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
         ((FlowLayout) this.root()).child(this.overlayContainer);
     }
 
-    private void addParameters(FlowLayout panel, HeadGeneratorScreen parent) {
+    private void addParameters(FlowLayout panel, BaseFzmmScreen parent) {
         if (!(this.entry instanceof IParametersEntry parametersEntry))
             return;
 
@@ -192,6 +192,12 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
             parametersLayout.child(parametersLabel);
         }
 
+        this.addTextureParameters(parametersLayout, parametersEntry, parent);
+        this.addColorParameters(parametersLayout, parametersEntry, parent);
+        this.addOffsetsParameters(parametersLayout, parametersEntry, parent);
+    }
+
+    private void addTextureParameters(FlowLayout parametersLayout, IParametersEntry parametersEntry, BaseFzmmScreen parent) {
         for (var texture : parametersEntry.getTextures()) {
             if (!texture.isRequested())
                 continue;
@@ -206,10 +212,12 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
                 this.update();
             });
 
-            elements.valueField().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
+            elements.suggestionTextBox().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
             elements.mode().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
         }
+    }
 
+    private void addColorParameters(FlowLayout parametersLayout, IParametersEntry parametersEntry, BaseFzmmScreen parent) {
         for (var colorParameter : parametersEntry.getColors()) {
             if (!colorParameter.isRequested())
                 continue;
@@ -224,7 +232,9 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
 
             colorRow.getWidget().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
         }
+    }
 
+    private void addOffsetsParameters(FlowLayout parametersLayout, IParametersEntry parametersEntry, BaseFzmmScreen parent) {
         for (var offset : parametersEntry.getOffsets()) {
             if (!offset.isRequested() && offset.value().isEmpty())
                 continue;

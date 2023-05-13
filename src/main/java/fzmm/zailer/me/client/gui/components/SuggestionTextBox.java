@@ -9,6 +9,7 @@ import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.MinecraftClient;
@@ -18,6 +19,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class SuggestionTextBox extends FlowLayout {
@@ -41,7 +43,7 @@ public class SuggestionTextBox extends FlowLayout {
         this.textBox = new ConfigTextBox();
         this.mouseHoverSuggestion = false;
         this.textBox.horizontalSizing(Sizing.fill(100));
-        this.suggestionsLayout = Containers.verticalFlow(horizontalSizing, Sizing.content());
+        this.suggestionsLayout = Containers.verticalFlow(Sizing.fill(100), Sizing.content());
         this.suggestionsContainer = Containers.verticalScroll(horizontalSizing, Sizing.fixed(0), this.suggestionsLayout);
         this.suggestionsContainer.scrollbar(ScrollContainer.Scrollbar.flat(Color.WHITE));
         this.child(this.textBox);
@@ -57,7 +59,12 @@ public class SuggestionTextBox extends FlowLayout {
 
     private void removeSuggestionOnLostFocusEvents() {
         this.textBox.focusGained().subscribe(source -> {
-            ((FlowLayout) this.root()).child(this.suggestionsContainer);
+            // if you put the suggestionContainer in the root when there is a container everything seems
+            // to work correctly, but it does not let you write in the text field of SuggestionTextBox,
+            // so you have to do black magic, and if I do not put the suggestionContainer in the root
+            // it overlaps other components making it not visible or selectable
+            this.getSuggestionsContainerParent().ifPresent(flowLayout -> flowLayout.child(this.suggestionsContainer));
+
             // is necessary because otherwise the suggestion stays in the
             // wrong position because a memento was executed too early
             this.updateSuggestionsPos();
@@ -72,6 +79,19 @@ public class SuggestionTextBox extends FlowLayout {
         });
         this.suggestionsContainer.mouseEnter().subscribe(() -> this.mouseHoverSuggestion = true);
         this.suggestionsContainer.mouseLeave().subscribe(() -> this.mouseHoverSuggestion = false);
+        this.suggestionsContainer.focusGained().subscribe(source -> this.onClickSuggestion());
+    }
+
+    private Optional<FlowLayout> getSuggestionsContainerParent() {
+        FlowLayout root = (FlowLayout) this.root();
+        if (root == null)
+            return Optional.empty();
+
+        for (var child : root.children()) {
+            if (child instanceof OverlayContainer<?> overlayContainer && overlayContainer.child() instanceof FlowLayout flowLayout)
+                return Optional.of(flowLayout);
+        }
+        return Optional.of(root);
     }
 
     private void onTextChanged(String newMessage) {
@@ -132,19 +152,23 @@ public class SuggestionTextBox extends FlowLayout {
                 );
     }
 
+    // we live in a society where if you click on a component first the focusLost is
+    // sent and then the mouseDown so if that focusLost removes your component with
+    // mouseDown it will never be called
+    private void onClickSuggestion() {
+        this.update(0, 0, 0);
+        this.mouseHoverSuggestion = false;
+        this.suggestionsLayout.clearChildren();
+        this.textBox.onFocusLost();
+    }
+
     private Component getSuggestionComponent(String suggestion, Text suggestionText) {
         // ButtonComponent does not allow the text to be left aligned
         LabelComponent labelComponent = Components.label(suggestionText);
         FlowLayout layout = Containers.verticalFlow(Sizing.fill(100), Sizing.fixed(SUGGESTION_HEIGHT));
         layout.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            // we live in a society where if you click on a component first the focusLost is
-            // sent and then the mouseDown so if that focusLost removes your component with
-            // mouseDown it will never be called
             this.textBox.text(suggestion);
-            this.update(0, 0, 0);
-            this.mouseHoverSuggestion = false;
-            this.suggestionsLayout.clearChildren();
-            this.textBox.onFocusLost();
+            this.onClickSuggestion();
             return true;
         });
 
@@ -176,7 +200,12 @@ public class SuggestionTextBox extends FlowLayout {
             case BOTTOM -> TEXT_BOX_HEIGHT;
         };
 
-        this.suggestionsContainer.positioning(Positioning.absolute(this.x, this.y + offset));
+        this.getSuggestionsContainerParent().ifPresent(flowLayout -> {
+            Insets padding =  flowLayout.padding().get();
+            int x = this.x - flowLayout.x() - padding.left();
+            int y = this.y - flowLayout.y() - padding.top();
+            this.suggestionsContainer.positioning(Positioning.absolute(x, y + offset));
+        });
     }
 
 
@@ -212,6 +241,12 @@ public class SuggestionTextBox extends FlowLayout {
     @SuppressWarnings("UnstableApiUsage")
     public ConfigTextBox getTextBox() {
         return this.textBox;
+    }
+
+    @Override
+    public Component horizontalSizing(Sizing horizontalSizing) {
+        this.suggestionsContainer.horizontalSizing(horizontalSizing);
+        return super.horizontalSizing(horizontalSizing);
     }
 
     public void visible(boolean visible) {
