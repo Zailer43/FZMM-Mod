@@ -59,8 +59,8 @@
                             </padding>
                         </scroll>
 
-                        <!-- heads content + nav var -->
                         <flow-layout direction="vertical" id="heads-layout">
+                            <!-- errors layout -->
                             <children>
                                 <flow-layout direction="horizontal" id="no-results-label-layout">
                                     <children>
@@ -71,6 +71,7 @@
 
                                     <positioning type="relative">0,0</positioning>
                                 </flow-layout>
+                                <!-- heads content -->
                                 <scroll direction="vertical">
                                     <vertical-grid-layout maxColumns="20" componentsWidth="40" componentsHeight="30"
                                                           id="head-grid">
@@ -97,6 +98,7 @@
                                     </padding>
                                 </scroll>
 
+                                <!-- nav var -->
                                 <flow-layout direction="horizontal">
                                     <children>
 
@@ -303,7 +305,6 @@
                         <positioning type="relative">100,0</positioning>
 
                         <vertical-alignment>center</vertical-alignment>
-
                     </flow-layout>
 
                     <button id="save-button">
@@ -347,7 +348,7 @@
                     <all>12</all>
                 </padding>
 
-                <z-index>300</z-index>
+                <z-index>600</z-index>
 
                 <gap>8</gap>
 

@@ -218,7 +218,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         assert this.client != null;
 
         this.client.execute(() -> {
-            TextureOverlap textureOverlap = new TextureOverlap(this.baseSkin, this.overlapHatLayer());
+            TextureOverlap textureOverlap = new TextureOverlap(this.baseSkin, false);
             if (!this.overlapHatLayer())
                 textureOverlap.removeHatLayer();
 
