@@ -27,6 +27,7 @@ import net.minecraft.command.argument.RegistryEntryArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -40,6 +41,7 @@ import net.minecraft.text.*;
 
 import java.util.Optional;
 
+// I want to remove all the commands so that the mod can be used only through gui
 public class FzmmCommand {
 
     private static final CommandException ERROR_WITHOUT_NBT = new CommandException(Text.translatable("commands.fzmm.item.withoutNbt"));
@@ -224,6 +226,23 @@ public class FzmmCommand {
                     lockContainer(key);
                     return 1;
 
+                }))
+        );
+
+        fzmmCommand.then(ClientCommandManager.literal("equip")
+                .executes(ctx -> sendHelpMessage("commands.fzmm.equip.help", BASE_COMMAND + " equip <armor>"))
+                .then(ClientCommandManager.literal("head").executes(ctx -> {
+                    swapItemWithHand(EquipmentSlot.HEAD);
+                    return 1;
+                })).then(ClientCommandManager.literal("chest").executes(ctx -> {
+                    swapItemWithHand(EquipmentSlot.CHEST);
+                    return 1;
+                })).then(ClientCommandManager.literal("legs").executes(ctx -> {
+                    swapItemWithHand(EquipmentSlot.LEGS);
+                    return 1;
+                })).then(ClientCommandManager.literal("feet").executes(ctx -> {
+                    swapItemWithHand(EquipmentSlot.FEET);
+                    return 1;
                 }))
         );
 
@@ -448,5 +467,29 @@ public class FzmmCommand {
 
         itemStack.setSubNbt(ItemStack.DISPLAY_KEY, display);
         FzmmUtils.giveItem(itemStack);
+    }
+
+    private static void swapItemWithHand(EquipmentSlot slot) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client.player != null;
+        assert client.interactionManager != null;
+        ClientPlayerEntity player = client.player;
+
+        if (!player.isCreative()) {
+            FzmmClient.LOGGER.warn("[FzmmCommand] Creative mode is necessary to swap items");
+            client.inGameHud.getChatHud().addMessage(Text.translatable("fzmm.item.error.actionNotAllowed").setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
+            return;
+        }
+
+        PlayerInventory inventory = player.getInventory();
+        ItemStack handStack = player.getMainHandStack();
+        ItemStack armorStack = player.getEquippedStack(slot);
+        // I don't know why but at least with ClientPlayerInteractionManager#clickCreativeStack
+        // they are placed in the reverse order
+        int armorSlotId = Math.abs(slot.getOffsetEntitySlotId(0) - 3) + 5;
+
+        // 5 = crafting slot + crafting result result slot
+        client.interactionManager.clickCreativeStack(handStack, armorSlotId);
+        client.interactionManager.clickCreativeStack(armorStack, PlayerInventory.MAIN_SIZE + inventory.selectedSlot);
     }
 }

@@ -12,7 +12,6 @@
     "ItemGroupDisplayContextMixin",
     "ItemGroupMixin",
     "ItemStackMixin",
-    "LivingEntityMixin",
     "PlayerSkinTextureAccessor",
     "SocialInteractionsPlayerListEntryMixin"
   ],

@@ -1,6 +1,7 @@
 {
   "commands.fzmm.amount.help": "Changes the amount of items you have in your hand, useful to have 64 items of something not stackable in 64",
   "commands.fzmm.enchant.help": "Adds an enchantment to the item in your hand, max level 255",
+  "commands.fzmm.equip.help": "Swap the item in your hand with the one in your armor",
   "commands.fzmm.fakeenchant.help": "Adds fake enchantments to the item in your hand, they are simply enchantment glow and a line in the lore with the enchantment translation",
   "commands.fzmm.fullcontainer.help": "Fill the container of your main hand with the item from your off hand, \"slots to fill\" is the number of times the item is going to be placed in the container, by default the first slot in which it is filled is 0",
   "commands.fzmm.give.help": "Get an item, similar to the vanilla give command",
@@ -350,6 +351,7 @@
   "fzmm.gui.title.playerStatue": "Player Statue",
   "fzmm.gui.title.textFormat": "Text format",
   "fzmm.item.encryptbook.encryptMessage.tooltip": "Key: %s\nIs Asymmetric: %s",
+  "fzmm.item.error.actionNotAllowed": "FZMM: This action is not allowed if you are not in creative mode.",
   "fzmm.item.error.notAllowed": "FZMM: You are not allowed to give items in a non-creative game mode (item was saved in the history).",
   "fzmm.item.headGallery.heads.name": "%s",
   "fzmm.item.headGallery.heads.tags.tag": "  - %s",
