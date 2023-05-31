@@ -243,7 +243,7 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
             SliderRow sliderRow = new SliderRow(parent.getBaseScreenTranslationKey(), id, id, false);
             parametersLayout.child(sliderRow);
 
-            SliderRow.setup(parametersLayout, id, offsetParameter.value(), offsetParameter.minValue(), offsetParameter.maxValue(), Byte.class, 0, d -> {
+            SliderRow.setup(parametersLayout, id, offsetParameter.value(), offsetParameter.minValue(), offsetParameter.maxValue(), Byte.class, 0, 1, d -> {
                 offsetParameter.setValue(d.byteValue());
                 this.update();
             });

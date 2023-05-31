@@ -4,7 +4,7 @@ import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
-import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.LoreOption;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
@@ -20,8 +20,8 @@ public class ImagetextLoreTab implements IImagetextTab {
     private EnumWidget loreModeOption;
 
     @Override
-    public void generate(ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        logic.generateImagetext(data);
+    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.generateImagetext(algorithm, data);
     }
 
     @Override

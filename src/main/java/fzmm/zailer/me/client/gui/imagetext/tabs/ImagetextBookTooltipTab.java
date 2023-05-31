@@ -5,8 +5,8 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
-import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextBookOption;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
@@ -31,8 +31,8 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
     private TextFieldWidget bookTooltipMessage;
 
     @Override
-    public void generate(ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        logic.generateImagetext(data);
+    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.generateImagetext(algorithm, data);
     }
 
     @Override

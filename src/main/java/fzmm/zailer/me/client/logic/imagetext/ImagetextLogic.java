@@ -1,7 +1,9 @@
 package fzmm.zailer.me.client.logic.imagetext;
 
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.utils.FzmmUtils;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -17,49 +19,36 @@ public class ImagetextLogic {
     private NbtList imagetext;
     private int width;
     private int height;
-    private String characters;
     private int lineWidth;
 
     public ImagetextLogic() {
         this.imagetext = new NbtList();
         this.width = 0;
         this.height = 0;
-        this.characters = ImagetextLine.DEFAULT_TEXT;
         this.lineWidth = 0;
     }
 
-    public void generateImagetext(ImagetextData data) {
-        this.generateImagetext(data, Integer.MAX_VALUE);
+    public void generateImagetext(IImagetextAlgorithm algorithm, ImagetextData data) {
+        this.generateImagetext(algorithm, data, Integer.MAX_VALUE);
     }
 
-    public void generateImagetext(ImagetextData data, int lineSplitInterval) {
-        BufferedImage image = this.resizeImage(data.image(), data.width(), data.height(), data.smoothRescaling());
+    public void generateImagetext(IImagetextAlgorithm algorithm, ImagetextData data, int lineSplitInterval) {
         this.width = data.width();
         this.height = data.height();
-        this.characters = data.characters();
-        if (this.characters == null || this.characters.isBlank())
-            this.characters = ImagetextLine.DEFAULT_TEXT;
+
         NbtList linesList = new NbtList();
-        ImagetextLine firstLine = null;
+        List<MutableText> rawLinesList = algorithm.get(this, data, lineSplitInterval);
+        linesList.addAll(rawLinesList.stream()
+                .map(mutableText -> FzmmUtils.toNbtString(mutableText, false))
+                .toList()
+        );
 
-        for (int y = 0; y != height; y++) {
-            ImagetextLine line = new ImagetextLine(this.characters, data.percentageOfSimilarityToCompress(), lineSplitInterval);
-            for (int x = 0; x != width; x++) {
-                line.add(image.getRGB(x, y));
-            }
-
-            for (var lineText : line.getLine())
-                linesList.add(FzmmUtils.toNbtString(lineText, false));
-
-            if (firstLine == null)
-                firstLine = line;
-        }
-
-        this.lineWidth = firstLine == null ? 0 : firstLine.getLineWidth();
+        Text firstLine = linesList.isEmpty() ? Text.empty() : Text.Serializer.fromJson(linesList.get(0).asString());
+        this.lineWidth = MinecraftClient.getInstance().textRenderer.getWidth(firstLine);
         this.imagetext = linesList;
     }
 
-    private BufferedImage resizeImage(BufferedImage image, int width, int height, boolean smoothRescaling) {
+    public BufferedImage resizeImage(BufferedImage image, int width, int height, boolean smoothRescaling) {
         Image tmp = image.getScaledInstance(width, height, smoothRescaling ? Image.SCALE_SMOOTH : Image.SCALE_REPLICATE);
         BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
@@ -130,10 +119,6 @@ public class ImagetextLogic {
 
     public boolean isEmpty() {
         return this.imagetext.isEmpty();
-    }
-
-    public String getCharacters() {
-        return this.characters;
     }
 
     public int getLineWidth() {

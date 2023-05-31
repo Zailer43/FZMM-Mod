@@ -6,6 +6,8 @@ import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
+import fzmm.zailer.me.client.gui.playerstatue.tabs.IPlayerStatueTab;
+import fzmm.zailer.me.client.gui.playerstatue.tabs.PlayerStatueTabs;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.IMementoScreen;
 import fzmm.zailer.me.utils.FzmmWikiConstants;

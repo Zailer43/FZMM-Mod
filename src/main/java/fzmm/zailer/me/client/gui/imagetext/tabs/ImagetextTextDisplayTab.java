@@ -8,7 +8,7 @@ import fzmm.zailer.me.client.gui.components.row.BooleanRow;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
-import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.DisplayEntityBillboardOption;
 import fzmm.zailer.me.client.gui.options.TextDisplayAlignmentOption;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
@@ -53,8 +53,8 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
     }
 
     @Override
-    public void generate(ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        logic.generateImagetext(data);
+    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.generateImagetext(algorithm, data);
     }
 
     @Override
@@ -92,13 +92,13 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
     public void setupComponents(FlowLayout rootComponent) {
         assert MinecraftClient.getInstance().player != null;
 
-        this.textOpacity = SliderRow.setup(rootComponent, TEXT_OPACITY_ID, 255, 0, 255, Integer.class, 0, null);
+        this.textOpacity = SliderRow.setup(rootComponent, TEXT_OPACITY_ID, 255, 0, 255, Integer.class, 0, 1, null);
         this.backgroundColor = ColorRow.setup(rootComponent, BACKGROUND_COLOR_ID, Color.ofArgb(DisplayEntity.TextDisplayEntity.INITIAL_BACKGROUND), true, null);
         this.textShadow = BooleanRow.setup(rootComponent, TEXT_SHADOW_ID, false, null);
         this.textSeeThrough = BooleanRow.setup(rootComponent, TEXT_SEE_THROUGH_ID, false, null);
         this.textAlignment = EnumRow.setup(rootComponent, TEXT_ALIGNMENT_ID, TextDisplayAlignmentOption.LEFT, null);
         this.billboard = EnumRow.setup(rootComponent, BILLBOARD_ID, DisplayEntityBillboardOption.FIXED, null);
-        this.rotation = SliderRow.setup(rootComponent, ROTATION_ID, MathHelper.wrapDegrees(MinecraftClient.getInstance().player.getYaw()), -180, 180, Float.class, 1, null);
+        this.rotation = SliderRow.setup(rootComponent, ROTATION_ID, MathHelper.wrapDegrees(MinecraftClient.getInstance().player.getYaw()), -180, 180, Float.class, 1, 0.25d, null);
     }
 
     @Override

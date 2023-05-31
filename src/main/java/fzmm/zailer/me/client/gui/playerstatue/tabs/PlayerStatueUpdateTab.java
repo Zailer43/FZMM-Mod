@@ -1,7 +1,6 @@
 package fzmm.zailer.me.client.gui.playerstatue.tabs;
 
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
-import fzmm.zailer.me.client.gui.playerstatue.IPlayerStatueTab;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.playerStatue.PlayerStatue;
 import fzmm.zailer.me.utils.FzmmUtils;

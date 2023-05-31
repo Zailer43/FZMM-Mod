@@ -3,7 +3,6 @@ package fzmm.zailer.me.client.gui.textformat.tabs;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
-import fzmm.zailer.me.client.gui.textformat.ITextFormatTab;
 import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
 import fzmm.zailer.me.client.gui.textformat.components.ColorListContainer;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
@@ -38,7 +37,7 @@ public class TextFormatInterleavedColorsTab implements ITextFormatTab {
 
     @Override
     public void setupComponents(FlowLayout rootComponent) {
-        this.distanceField = SliderRow.setup(rootComponent, DISTANCE_ID, 1, 1, 25, Integer.class, 0, this.callback::accept);
+        this.distanceField = SliderRow.setup(rootComponent, DISTANCE_ID, 1, 1, 25, Integer.class, 0, 1, this.callback::accept);
         this.colorListContainer = rootComponent.childById(ColorListContainer.class, COLOR_LIST_ID);
         assert this.colorListContainer != null;
         this.colorListContainer.setCallback(this.callback::accept);

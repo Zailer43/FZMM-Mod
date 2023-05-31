@@ -5,7 +5,7 @@ import fzmm.zailer.me.builders.ContainerBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.row.NumberRow;
-import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
@@ -35,8 +35,8 @@ public class ImagetextHolgoramTab implements IImagetextTab {
     private ConfigTextBox posZ;
 
     @Override
-    public void generate(ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        logic.generateImagetext(data);
+    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.generateImagetext(algorithm, data);
     }
 
     @Override

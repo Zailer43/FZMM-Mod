@@ -1,10 +1,7 @@
-package fzmm.zailer.me.client.gui.converters;
+package fzmm.zailer.me.client.gui.converters.tabs;
 
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
-import fzmm.zailer.me.client.gui.converters.tabs.ConverterArrayToUuidTab;
-import fzmm.zailer.me.client.gui.converters.tabs.ConverterBase64Tab;
-import fzmm.zailer.me.client.gui.converters.tabs.ConverterUuidToArrayTab;
 
 import java.util.function.Supplier;
 

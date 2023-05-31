@@ -3,8 +3,8 @@ package fzmm.zailer.me.client.gui.imagetext.tabs;
 import fzmm.zailer.me.builders.BookBuilder;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
-import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextBookOption;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
@@ -21,16 +21,15 @@ public class ImagetextBookPageTab implements IImagetextTab {
     private EnumWidget bookPageMode;
 
     @Override
-    public void generate(ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
         ImagetextData modifiedData = new ImagetextData(data.image(),
-                data.characters(),
-                this.getMaxImageWidthForBookPage(data.characters()),
+                this.getMaxImageWidthForBookPage(algorithm.getCharacters()),
                 15,
                 data.smoothRescaling(),
                 data.percentageOfSimilarityToCompress()
         );
 
-        logic.generateImagetext(modifiedData);
+        logic.generateImagetext(algorithm, modifiedData);
     }
 
     @Override

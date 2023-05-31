@@ -4,6 +4,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
+import java.awt.*;
 import java.util.List;
 
 public final class ImagetextLineComponent {
@@ -27,19 +28,29 @@ public final class ImagetextLineComponent {
         if (this.pixelColor == color)
             return true;
 
-        int a1 = (this.pixelColor >> 24) & 0xff;
-        int r1 = (this.pixelColor >> 16) & 0xff;
-        int g1 = (this.pixelColor >> 8) & 0xff;
-        int b1 = this.pixelColor & 0xff;
+        Color pixelColor = new Color(this.pixelColor, true);
+        int a1 = pixelColor.getAlpha();
+        int r1 = pixelColor.getRed();
+        int g1 = pixelColor.getGreen();
+        int b1 = pixelColor.getBlue();
 
-        int a2 = (color >> 24) & 0xff;
-        int r2 = (color >> 16) & 0xff;
-        int g2 = (color >> 8) & 0xff;
-        int b2 = color & 0xff;
+        Color colorObj = new Color(color, true);
+        int a2 = colorObj.getAlpha();
+        int r2 = colorObj.getRed();
+        int g2 = colorObj.getGreen();
+        int b2 = colorObj.getBlue();
 
-        int colorsDifference = Math.abs(r1 - r2) + Math.abs(g1 - g2) + Math.abs(b1 - b2) + Math.abs(a1 - a2);
+        int colorsDifference = this.getDifference(r1, r2) +
+                this.getDifference(g1, g2) +
+                this.getDifference(b1,  b2) +
+                this.getDifference(a1, a2);
+
         int colorSum = a1 + r1 + g1 + b1;
         return (colorsDifference * 100.0 / colorSum) < percentageOfSimilarity;
+    }
+
+    private int getDifference(int n, int n2) {
+        return Math.abs(n - n2);
     }
 
     public int getColor() {
@@ -63,10 +74,7 @@ public final class ImagetextLineComponent {
 
     private Text getText(List<String> charactersToUse, int lineIndex) {
         StringBuilder textStrBuilder = new StringBuilder();
-        int red = (this.pixelColor >> 16) & 0xff;
-        int green = (this.pixelColor >> 8) & 0xff;
-        int blue = this.pixelColor & 0xff;
-        int colorRGB = (red << 16) + (green << 8) + blue;
+        int colorRGB = this.pixelColor & 0x00FFFFFF;
 
         for (int x = 0; x != this.repetitions; x++)
             textStrBuilder.append(this.getCharacter(charactersToUse, lineIndex++));

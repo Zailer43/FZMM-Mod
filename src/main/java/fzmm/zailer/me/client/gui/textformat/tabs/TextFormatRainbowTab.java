@@ -4,7 +4,6 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
-import fzmm.zailer.me.client.gui.textformat.ITextFormatTab;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -45,10 +44,10 @@ public class TextFormatRainbowTab implements ITextFormatTab {
     @Override
     public void setupComponents(FlowLayout rootComponent) {
         FzmmConfig.TextFormat config = FzmmClient.CONFIG.textFormat;
-        this.hue = SliderRow.setup(rootComponent, HUE_ID, 1d, 0d, 1d, Float.class, 3, d -> this.callback.accept(""));
-        this.brightness = SliderRow.setup(rootComponent, BRIGHTNESS_ID, 0.8d, 0d, 1d, Float.class, 3, d -> this.callback.accept(""));
-        this.saturation = SliderRow.setup(rootComponent, SATURATION_ID, 1d, 0d, 1d, Float.class, 3, d -> this.callback.accept(""));
-        this.hueStep = SliderRow.setup(rootComponent, HUE_STEP_ID, 0.05d, config.minRainbowHueStep(), config.maxRainbowHueStep(), Float.class, 3, d -> this.callback.accept(""));
+        this.hue = SliderRow.setup(rootComponent, HUE_ID, 1d, 0d, 1d, Float.class, 3, 0.001d, d -> this.callback.accept(""));
+        this.brightness = SliderRow.setup(rootComponent, BRIGHTNESS_ID, 0.8d, 0d, 1d, Float.class, 3, 0.001d, d -> this.callback.accept(""));
+        this.saturation = SliderRow.setup(rootComponent, SATURATION_ID, 1d, 0d, 1d, Float.class, 3, 0.001d, d -> this.callback.accept(""));
+        this.hueStep = SliderRow.setup(rootComponent, HUE_STEP_ID, 0.05d, config.minRainbowHueStep(), config.maxRainbowHueStep(), Float.class, 3, 0.001d, d -> this.callback.accept(""));
     }
 
     @Override

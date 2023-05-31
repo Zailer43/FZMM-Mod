@@ -1,6 +1,7 @@
-package fzmm.zailer.me.client.gui.bannereditor;
+package fzmm.zailer.me.client.gui.bannereditor.tabs;
 
 import fzmm.zailer.me.builders.BannerBuilder;
+import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import net.minecraft.util.DyeColor;
 

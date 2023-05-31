@@ -4,7 +4,6 @@ import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
-import fzmm.zailer.me.client.gui.bannereditor.IBannerEditorTab;
 import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;

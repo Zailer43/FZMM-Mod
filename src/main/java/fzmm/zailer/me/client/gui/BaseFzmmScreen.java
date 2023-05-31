@@ -47,7 +47,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     public static final int BUTTON_TEXT_PADDING = 8;
     public static final int COMPONENT_DISTANCE = 8;
     private final CustomSymbolSelectionPanel customSymbolSelectionPanel;
-    private final HashMap<String, IScreenTab> tabs;
+    protected final HashMap<String, IScreenTab> tabs;
 //    private final FontSelectionDropDownComponent fontSelectionDropDown;
 
     public BaseFzmmScreen(String screenPath, String baseScreenTranslationKey, @Nullable Screen parent) {
@@ -107,13 +107,21 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 
 
     protected void setTabs(Enum<? extends ITabsEnum> tabs) {
+        this.setTabs(this.tabs, tabs);
+    }
+
+    protected void setTabs(HashMap<String, IScreenTab> hashMap, Enum<? extends ITabsEnum> tabs) {
         for (var tab : tabs.getDeclaringClass().getEnumConstants())
-            this.tabs.put(tab.getId(), tab.createTab());
+            hashMap.put(tab.getId(), tab.createTab());
     }
 
     protected HashMap<String, IMementoObject> createMementoTabs() {
+        return this.createMementoTabs(this.tabs);
+    }
+
+    protected HashMap<String, IMementoObject> createMementoTabs(HashMap<String, IScreenTab> tabsHashMap) {
         HashMap<String, IMementoObject> tabs = new HashMap<>();
-        for (var tab : this.tabs.values()) {
+        for (var tab : tabsHashMap.values()) {
             if (tab instanceof IMemento mementoTab)
                 tabs.put(tab.getId(), mementoTab.createMemento());
 
@@ -122,15 +130,23 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     }
 
     protected void restoreMementoTabs(HashMap<String, IMementoObject> mementoTabs) {
-        for (var tab : this.tabs.values()) {
+        this.restoreMementoTabs(mementoTabs, this.tabs);
+    }
+
+    protected void restoreMementoTabs(HashMap<String, IMementoObject> mementoTabs, HashMap<String, IScreenTab> tabsHashMap) {
+        for (var tab : tabsHashMap.values()) {
             if (tab instanceof IMemento mementoTab)
                 mementoTab.restoreMemento(mementoTabs.get(tab.getId()));
         }
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends Enum<? extends IScreenTabIdentifier>> T selectScreenTab(FlowLayout rootComponent, IScreenTabIdentifier selectedTab, T tabs) {
-        for (var tabId : this.tabs.keySet()) {
+        return this.selectScreenTab(rootComponent, selectedTab, tabs, this.tabs);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Enum<? extends IScreenTabIdentifier>> T selectScreenTab(FlowLayout rootComponent, IScreenTabIdentifier selectedTab, T tabs, HashMap<String, IScreenTab> tabsHashMap) {
+        for (var tabId : tabsHashMap.keySet()) {
             ScreenTabContainer screenTabContainer = rootComponent.childById(ScreenTabContainer.class, ScreenTabContainer.getScreenTabId(tabId));
             ButtonWidget screenTabButton = rootComponent.childById(ButtonWidget.class, ScreenTabRow.getScreenTabButtonId(tabId));
             boolean isSelectedTab = selectedTab.getId().equals(tabId);
@@ -151,9 +167,13 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         return result.get();
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends IScreenTab> T getTab(IScreenTabIdentifier tab, Class<T> ignored) {
-        return (T) this.tabs.get(tab.getId());
+        return this.getTab(tab, ignored, this.tabs);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends IScreenTab> T getTab(IScreenTabIdentifier tab, Class<T> ignored, HashMap<String, IScreenTab> tabsHashMap) {
+        return (T) tabsHashMap.get(tab.getId());
     }
 
     public String getBaseScreenTranslationKey() {

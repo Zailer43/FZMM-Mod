@@ -6,6 +6,8 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
+import fzmm.zailer.me.client.gui.textformat.tabs.ITextFormatTab;
+import fzmm.zailer.me.client.gui.textformat.tabs.TextFormatTabs;
 import fzmm.zailer.me.client.gui.utils.CopyTextScreen;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.IMementoScreen;

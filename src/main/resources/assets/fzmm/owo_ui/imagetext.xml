@@ -24,11 +24,6 @@
                                 <id>height</id>
                                 <tooltipId>resolution</tooltipId>
                             </slider-row>
-                            <text-box-row>
-                                <id>characters</id>
-                                <symbolButton>true</symbolButton>
-                                <fontButton>true</fontButton>
-                            </text-box-row>
                             <boolean-row>
                                 <id>preserveImageAspectRatio</id>
                             </boolean-row>
@@ -41,6 +36,34 @@
                             <slider-row>
                                 <id>percentageOfSimilarityToCompress</id>
                             </slider-row>
+
+                            <screen-tab-row>
+                                <id>algorithms</id>
+                            </screen-tab-row>
+
+                            <screen-tab>
+                                <id>algorithm.characters</id>
+                                <children>
+                                    <text-box-row>
+                                        <id>characters</id>
+                                        <symbolButton>true</symbolButton>
+                                        <fontButton>true</fontButton>
+                                    </text-box-row>
+                                </children>
+                            </screen-tab>
+
+                            <screen-tab>
+                                <id>algorithm.braille</id>
+                                <children>
+                                    <slider-row>
+                                        <id>edgeThreshold</id>
+                                    </slider-row>
+                                    <slider-row>
+                                        <id>edgeDistance</id>
+                                    </slider-row>
+                                </children>
+                            </screen-tab>
+
                             <screen-tab-row>
                                 <id>tabs</id>
                             </screen-tab-row>

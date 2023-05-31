@@ -33,7 +33,7 @@ public class SliderRow extends AbstractRow {
 
     @SuppressWarnings("UnstableApiUsage")
     public static SliderWidget setup(FlowLayout rootComponent, String id, double defaultValue, double min,
-                                     double max, Class<? extends Number> numberType, int decimalPlaces, @Nullable Consumer<Double> callback) {
+                                     double max, Class<? extends Number> numberType, int decimalPlaces, double scrollStep, @Nullable Consumer<Double> callback) {
         SliderWidget numberSlider = rootComponent.childById(SliderWidget.class, getSliderId(id));
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
 
@@ -52,6 +52,7 @@ public class SliderRow extends AbstractRow {
         numberSlider.max(max);
         numberSlider.setFromDiscreteValue(defaultValue);
         numberSlider.updateMessage();
+        numberSlider.scrollStep(scrollStep);
 
         resetButton.onPress(button -> numberSlider.setFromDiscreteValue(defaultValue));
         resetButton.active = false;

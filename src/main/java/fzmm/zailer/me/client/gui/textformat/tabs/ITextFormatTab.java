@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui.textformat;
+package fzmm.zailer.me.client.gui.textformat.tabs;
 
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.utils.IMemento;

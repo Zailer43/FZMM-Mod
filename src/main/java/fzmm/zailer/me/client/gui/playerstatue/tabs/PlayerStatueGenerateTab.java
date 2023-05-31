@@ -6,7 +6,6 @@ import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
-import fzmm.zailer.me.client.gui.playerstatue.IPlayerStatueTab;
 import fzmm.zailer.me.client.gui.playerstatue.PlayerStatueScreen;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.playerStatue.PlayerStatue;

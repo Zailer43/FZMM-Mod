@@ -1,6 +1,5 @@
 package fzmm.zailer.me.client.gui.textformat.tabs;
 
-import fzmm.zailer.me.client.gui.textformat.ITextFormatTab;
 import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
 import fzmm.zailer.me.client.gui.textformat.components.ColorListContainer;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;

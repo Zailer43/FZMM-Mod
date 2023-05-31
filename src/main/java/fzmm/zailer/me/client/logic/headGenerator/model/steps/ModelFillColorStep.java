@@ -43,9 +43,9 @@ public class ModelFillColorStep implements IModelStep {
         for (int y = posY; y < posY2; y++) {
             for (int x = posX; x < posX2; x++) {
                 int pixelColor = texture.getRGB(x, y);
-                java.awt.Color color = this.algorithm.getColor(selectedColor, pixelColor);
+                int colorArgb  = this.algorithm.getColor(selectedColor, pixelColor);
 
-                texture.setRGB(x, y, color.getRGB());
+                texture.setRGB(x, y, colorArgb);
             }
         }
     }

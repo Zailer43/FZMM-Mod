@@ -1,8 +1,5 @@
-package fzmm.zailer.me.client.gui.bannereditor;
+package fzmm.zailer.me.client.gui.bannereditor.tabs;
 
-import fzmm.zailer.me.client.gui.bannereditor.tabs.AddPatternsTab;
-import fzmm.zailer.me.client.gui.bannereditor.tabs.ChangeColorTab;
-import fzmm.zailer.me.client.gui.bannereditor.tabs.RemovePatternsTab;
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 
 import java.util.function.Supplier;

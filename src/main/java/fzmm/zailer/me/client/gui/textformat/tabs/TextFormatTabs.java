@@ -1,7 +1,6 @@
-package fzmm.zailer.me.client.gui.textformat;
+package fzmm.zailer.me.client.gui.textformat.tabs;
 
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
-import fzmm.zailer.me.client.gui.textformat.tabs.*;
 
 import java.util.function.Supplier;
 

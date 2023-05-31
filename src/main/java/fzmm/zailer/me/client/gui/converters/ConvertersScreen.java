@@ -4,6 +4,7 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
+import fzmm.zailer.me.client.gui.converters.tabs.ConvertersTabs;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.gui.screen.Screen;
 import org.jetbrains.annotations.Nullable;

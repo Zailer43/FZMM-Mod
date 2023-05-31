@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.2-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -17,10 +17,6 @@ repositories {
 
     maven { url = "https://api.modrinth.com/maven" }
 
-    maven {
-        name = "Nucleoid"
-        url = "https://maven.nucleoid.xyz/"
-    }
 }
 
 dependencies {
@@ -57,7 +53,7 @@ dependencies {
     modImplementation "maven.modrinth:symbol-chat:${project.symbol_chat_version}"
 
     // PlacerholderAPI
-    modImplementation(include("eu.pb4:placeholder-api:${project.placeholder_api_version}"))
+    modImplementation(include("maven.modrinth:placeholder-api:${project.placeholder_api_version}"))
 
 }
 

@@ -10,22 +10,26 @@ import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.mode.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.*;
+import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.ImagetextAlgorithms;
+import fzmm.zailer.me.client.gui.imagetext.tabs.IImagetextTab;
+import fzmm.zailer.me.client.gui.imagetext.tabs.ImagetextTabs;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.IMementoScreen;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
-import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.util.math.Vec2f;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
@@ -36,12 +40,12 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     private static final String IMAGE_SOURCE_TYPE_ID = "imageSourceType";
     private static final String WIDTH_ID = "width";
     private static final String HEIGHT_ID = "height";
-    private static final String CHARACTERS_ID = "characters";
     private static final String PRESERVE_IMAGE_ASPECT_RATIO_ID = "preserveImageAspectRatio";
     private static final String SHOW_RESOLUTION_ID = "showResolution";
     private static final String SMOOTH_IMAGE_ID = "smoothImage";
     private static final String PERCENTAGE_OF_SIMILARITY_TO_COMPRESS_ID = "percentageOfSimilarityToCompress";
     private static ImagetextTabs selectedTab = ImagetextTabs.LORE;
+    private static ImagetextAlgorithms selectedAlgorithm = ImagetextAlgorithms.CHARACTERS;
     private static ImagetextMemento memento = null;
     private final ImagetextLogic imagetextLogic;
     private ImageRowsElements imageElements;
@@ -51,12 +55,13 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     private SliderWidget widthSlider;
     private SliderWidget heightSlider;
     private SliderWidget percentageOfSimilarityToCompress;
-    private TextFieldWidget charactersTextField;
+    private final HashMap<String, IScreenTab> algorithmsTabs;
 
 
     public ImagetextScreen(@Nullable Screen parent) {
         super("imagetext", "imagetext", parent);
         this.imagetextLogic = new ImagetextLogic();
+        this.algorithmsTabs = new HashMap<>();
     }
 
     @Override
@@ -69,26 +74,18 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         SliderWidget widthSlider = rootComponent.childById(SliderWidget.class, SliderRow.getSliderId(WIDTH_ID));
         SliderWidget heightSlider = rootComponent.childById(SliderWidget.class, SliderRow.getSliderId(HEIGHT_ID));
         ButtonWidget.PressAction onWidthChange = button -> this.onResolutionChanged(imageButton, this.preserveImageAspectRatioToggle, widthSlider, heightSlider, true);
-        this.widthSlider = SliderRow.setup(rootComponent, WIDTH_ID, DEFAULT_SIZE_VALUE, 2, config.maxResolution(), Integer.class, 0,
+        this.widthSlider = SliderRow.setup(rootComponent, WIDTH_ID, DEFAULT_SIZE_VALUE, 2, config.maxResolution(), Integer.class, 0, 1,
                 aDouble -> onWidthChange.onPress(null)
         );
-        this.heightSlider = SliderRow.setup(rootComponent, HEIGHT_ID, DEFAULT_SIZE_VALUE, 2, config.maxResolution(), Integer.class, 0,
+        this.heightSlider = SliderRow.setup(rootComponent, HEIGHT_ID, DEFAULT_SIZE_VALUE, 2, config.maxResolution(), Integer.class, 0, 1,
                 aDouble -> this.onResolutionChanged(imageButton, this.preserveImageAspectRatioToggle, heightSlider, widthSlider, false)
         );
-        this.charactersTextField = TextBoxRow.setup(rootComponent, CHARACTERS_ID, ImagetextLine.DEFAULT_TEXT, config.maxResolution());
         this.showResolutionToggle = BooleanRow.setup(rootComponent, SHOW_RESOLUTION_ID, false);
         this.smoothImageToggle = BooleanRow.setup(rootComponent, SMOOTH_IMAGE_ID, true);
-        this.percentageOfSimilarityToCompress = SliderRow.setup(rootComponent, PERCENTAGE_OF_SIMILARITY_TO_COMPRESS_ID, config.defaultPercentageOfSimilarityToCompress(), 0d, MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS, Double.class, 1, null);
+        this.percentageOfSimilarityToCompress = SliderRow.setup(rootComponent, PERCENTAGE_OF_SIMILARITY_TO_COMPRESS_ID, config.defaultPercentageOfSimilarityToCompress(), 0d, MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS, Double.class, 1, 0.05d, null);
         //tabs
-        this.setTabs(selectedTab);
-        ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
-        for (var imagetextTab : ImagetextTabs.values()) {
-            IScreenTab tab = this.getTab(imagetextTab, IImagetextTab.class);
-            tab.setupComponents(rootComponent);
-            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button ->
-                    selectedTab = this.selectScreenTab(rootComponent, tab, selectedTab));
-        }
-        this.selectScreenTab(rootComponent, selectedTab, selectedTab);
+        this.setTabs(rootComponent, selectedTab, ImagetextTabs.values(), "tabs", anEnum -> selectedTab = (ImagetextTabs) anEnum, this.tabs);
+        this.setTabs(rootComponent, selectedAlgorithm, ImagetextAlgorithms.values(), "algorithms", anEnum -> selectedAlgorithm = (ImagetextAlgorithms) anEnum, this.algorithmsTabs);
         //bottom buttons
         ButtonWidget executeButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId("execute"), false, button -> this.execute());
         ButtonWidget previewButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId("preview"), false, button -> {
@@ -104,6 +101,20 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
             if (hasImage)
                 this.updateAspectRatio(image);
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setTabs(FlowLayout rootComponent, ITabsEnum selectedTab, ITabsEnum[] enumValues, String tabId, Consumer<Enum<? extends ITabsEnum>> setter, HashMap<String, IScreenTab> tabsHashMap) {
+        Enum<? extends ITabsEnum> selectedTabEnum = (Enum<? extends ITabsEnum>) selectedTab;
+        this.setTabs(tabsHashMap, selectedTabEnum);
+        ScreenTabRow.setup(rootComponent, tabId, selectedTabEnum);
+        for (var imagetextTab : enumValues) {
+            IScreenTab tab = this.getTab(imagetextTab, IImagetextTab.class, tabsHashMap);
+            tab.setupComponents(rootComponent);
+            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button ->
+                    setter.accept(this.selectScreenTab(rootComponent, tab, selectedTabEnum, tabsHashMap)));
+        }
+        this.selectScreenTab(rootComponent, selectedTab, selectedTabEnum, tabsHashMap);
     }
 
     private void onResolutionChanged(ImageButtonComponent imageWidget, BooleanButton preserveImageAspectRatioButton,
@@ -142,14 +153,14 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         if (image.isEmpty())
             return;
 
-        String characters = this.charactersTextField.getText();
         int width = (int) this.widthSlider.parsedValue();
         int height = (int) this.heightSlider.parsedValue();
         boolean smoothScaling = this.smoothImageToggle.enabled();
         boolean showResolution = this.showResolutionToggle.enabled();
         double percentageOfSimilarityToCompress = (double) this.percentageOfSimilarityToCompress.parsedValue();
 
-        this.getTab(selectedTab, IImagetextTab.class).generate(this.imagetextLogic, new ImagetextData(image.get(), characters, width, height, smoothScaling, percentageOfSimilarityToCompress), isExecute);
+        IImagetextAlgorithm algorithm = (IImagetextAlgorithm) this.algorithmsTabs.get(selectedAlgorithm.getId());
+        this.getTab(selectedTab, IImagetextTab.class).generate(algorithm, this.imagetextLogic, new ImagetextData(image.get(), width, height, smoothScaling, percentageOfSimilarityToCompress), isExecute);
 
         if (showResolution)
             this.imagetextLogic.addResolution();
@@ -182,14 +193,14 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     public IMementoObject createMemento() {
         return new ImagetextMemento(this.imageElements.valueField().getText(),
                 (ImageMode) this.imageElements.mode().getValue(),
-                this.charactersTextField.getText(),
                 (int) this.widthSlider.parsedValue(),
                 (int) this.heightSlider.parsedValue(),
                 this.smoothImageToggle.enabled(),
                 this.showResolutionToggle.enabled(),
                 this.preserveImageAspectRatioToggle.enabled(),
                 (double) this.percentageOfSimilarityToCompress.parsedValue(),
-                this.createMementoTabs()
+                this.createMementoTabs(this.tabs),
+                this.createMementoTabs(this.algorithmsTabs)
         );
     }
 
@@ -199,20 +210,19 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         this.imageElements.valueField().setText(memento.imageRowValue);
         this.imageElements.valueField().setCursor(0);
         this.imageElements.mode().setValue(memento.imageGetter);
-        this.charactersTextField.setText(memento.characters);
-        this.charactersTextField.setCursor(0);
         this.widthSlider.setFromDiscreteValue(memento.width);
         this.heightSlider.setFromDiscreteValue(memento.height);
         this.smoothImageToggle.enabled(memento.smoothScaling);
         this.showResolutionToggle.enabled(memento.showResolution);
         this.preserveImageAspectRatioToggle.enabled(memento.preserveImageAspectRatio);
         this.percentageOfSimilarityToCompress.setFromDiscreteValue(memento.percentageOfSimilarityToCompress);
-        this.restoreMementoTabs(memento.mementoTabHashMap);
-
+        this.restoreMementoTabs(memento.mementoTabHashMap, this.tabs);
+        this.restoreMementoTabs(memento.mementoAlgorithmTabHashMap, this.algorithmsTabs);
     }
 
-    private record ImagetextMemento(String imageRowValue, ImageMode imageGetter, String characters, int width, int height,
+    private record ImagetextMemento(String imageRowValue, ImageMode imageGetter, int width, int height,
                                     boolean smoothScaling, boolean showResolution, boolean preserveImageAspectRatio,
-                                    double percentageOfSimilarityToCompress, HashMap<String, IMementoObject> mementoTabHashMap) implements IMementoObject {
+                                    double percentageOfSimilarityToCompress, HashMap<String, IMementoObject> mementoTabHashMap,
+                                    HashMap<String, IMementoObject> mementoAlgorithmTabHashMap) implements IMementoObject {
     }
 }

@@ -8,7 +8,7 @@ import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.row.BooleanRow;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
-import fzmm.zailer.me.client.gui.imagetext.IImagetextTab;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.SignTypeOption;
 import fzmm.zailer.me.client.gui.utils.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
@@ -42,14 +42,16 @@ public class ImagetextSignTab implements IImagetextTab {
     private static final String IS_HANGING_ID = "isHangingSign";
     private EnumWidget signTypeEnum;
     private BooleanButton isHangingSignButton;
+    private String characters;
 
 
     @Override
-    public void generate(ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        this.characters = algorithm.getCharacters();
         if (isExecute)
-            logic.generateImagetext(data, this.getLineSplitInterval(data.characters()));
+            logic.generateImagetext(algorithm, data, this.getLineSplitInterval(this.characters));
         else
-            logic.generateImagetext(data);
+            logic.generateImagetext(algorithm, data);
     }
 
     @Override
@@ -72,7 +74,7 @@ public class ImagetextSignTab implements IImagetextTab {
                                 .item(Items.PAPER)
                                 .setName(
                                         Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "details.name",
-                                                this.getHorizontalSigns(logic.getWidth(), this.getLineSplitInterval(logic.getCharacters())),
+                                                this.getHorizontalSigns(logic.getWidth(), this.getLineSplitInterval(this.characters)),
                                                 this.getVerticalSigns(logic.getHeight())
                                         ), color)
                                 .get()
@@ -104,7 +106,7 @@ public class ImagetextSignTab implements IImagetextTab {
         int width = logic.getWidth();
         int height = logic.getHeight();
 
-        int lineSplitInterval = this.getLineSplitInterval(logic.getCharacters());
+        int lineSplitInterval = this.getLineSplitInterval(this.characters);
         int horizontalSigns = this.getHorizontalSigns(width, lineSplitInterval);
         int verticalSigns = this.getVerticalSigns(height);
         int maxTextWidth = this.getMaxTextWidth();

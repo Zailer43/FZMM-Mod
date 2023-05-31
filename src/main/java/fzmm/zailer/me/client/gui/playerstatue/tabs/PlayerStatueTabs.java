@@ -1,8 +1,6 @@
-package fzmm.zailer.me.client.gui.playerstatue;
+package fzmm.zailer.me.client.gui.playerstatue.tabs;
 
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
-import fzmm.zailer.me.client.gui.playerstatue.tabs.PlayerStatueGenerateTab;
-import fzmm.zailer.me.client.gui.playerstatue.tabs.PlayerStatueUpdateTab;
 
 import java.util.function.Supplier;
 

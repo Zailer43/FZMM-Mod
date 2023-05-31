@@ -2,6 +2,8 @@ package fzmm.zailer.me.client.gui.bannereditor;
 
 import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.bannereditor.tabs.BannerEditorTabs;
+import fzmm.zailer.me.client.gui.bannereditor.tabs.IBannerEditorTab;
 import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.gui.components.row.BooleanRow;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;

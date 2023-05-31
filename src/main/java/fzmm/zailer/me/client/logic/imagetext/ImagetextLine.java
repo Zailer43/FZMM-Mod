@@ -1,7 +1,6 @@
 package fzmm.zailer.me.client.logic.imagetext;
 
 import fzmm.zailer.me.utils.FzmmUtils;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -66,26 +65,12 @@ public class ImagetextLine {
         this.generatedLine = lineList;
     }
 
-    public List<MutableText> getLine() {
+    public List<MutableText> getLineComponents() {
         if (this.generatedLine == null)
             this.generateLine();
 
         return this.generatedLine;
     }
-
-    public int getLineWidth() {
-        if (this.generatedLine == null)
-            this.generateLine();
-
-        MutableText lineText = Text.empty();
-
-        for (var lineComponent : this.generatedLine)
-            lineText.append(lineComponent);
-
-        return MinecraftClient.getInstance().textRenderer.getWidth(lineText);
-    }
-
-
 
     private boolean shouldSplitLine(int index) {
         return index != 0 && (index % this.splitLineEvery == 0);

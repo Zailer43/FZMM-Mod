@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui.playerstatue;
+package fzmm.zailer.me.client.gui.playerstatue.tabs;
 
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
