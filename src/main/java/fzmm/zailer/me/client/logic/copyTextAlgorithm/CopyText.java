@@ -13,7 +13,8 @@ public class CopyText {
                 new CopyTextAsConsole(),
                 new CopyTextAsMOTD(),
                 new CopyTextAsXml(),
-                new CopyTextAsBBCode()
+                new CopyTextAsBBCode(),
+                new CopyTextAsString()
         };
     }
 

@@ -16,7 +16,7 @@ public abstract class AbstractCopyTextGeneric extends AbstractCopyTextAlgorithm 
                     .append(this.getUnderline(baseStyle))
                     .append(this.getStrikethrough(baseStyle))
                     .append(this.getObfuscated(baseStyle))
-                    .append(value.getString());
+                    .append(value.copyContentOnly().getString());
 
             if (!value.getSiblings().isEmpty())
                 this.getStringRecursive(stringBuilder, baseStyle, value.getSiblings());

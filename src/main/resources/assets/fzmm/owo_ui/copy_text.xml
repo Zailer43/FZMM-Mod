@@ -33,6 +33,9 @@
                             <button-row>
                                 <id>bbcode</id>
                             </button-row>
+                            <button-row>
+                                <id>string</id>
+                            </button-row>
                         </children>
                     </flow-layout>
 
