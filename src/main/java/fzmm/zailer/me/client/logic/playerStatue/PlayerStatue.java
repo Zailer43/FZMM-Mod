@@ -180,16 +180,19 @@ public class PlayerStatue {
         int color = FzmmClient.CONFIG.colors.playerStatue().rgb();
         Style colorStyle = Style.EMPTY.withColor(color);
 
-        ItemStack container = ContainerBuilder.builder()
+        List<ItemStack> containerList = ContainerBuilder.builder()
                 .containerItem(FzmmUtils.getItem(FzmmClient.CONFIG.playerStatue.defaultContainer()))
                 //.maxItemByContainer(FzmmClient.CONFIG.playerStatue.defaultContainer())//todo
                 .addAll(statueList)
                 .setNameStyleToItems(colorStyle)
                 .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.item.playerStatue.lore.1").getString(), color)
                 .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.item.playerStatue.lore.2").getString(), color)
-                .getAsList()
-                .get(0);
+                .getAsList();
 
+        if (containerList.isEmpty())
+            return ItemStack.EMPTY;
+
+        ItemStack container = containerList.get(0);
         container = DisplayBuilder.of(container)
                 .setName(Text.translatable("fzmm.item.playerStatue.container.name").setStyle(colorStyle.withBold(true)))
                 .addLore(Text.translatable("fzmm.item.playerStatue.container.lore.1", x, y, z), color)
