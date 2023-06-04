@@ -1,0 +1,191 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.19.4/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <label id="title">
+                    <positioning type="absolute">20,20</positioning>
+                    <text translate="true">fzmm.gui.title.selectItem</text>
+                </label>
+
+                <flow-layout direction="horizontal">
+                    <children>
+                        <scroll direction="vertical">
+
+                            <flow-layout direction="vertical" id="requested-items-list">
+                                <children>
+
+                                </children>
+
+                                <sizing>
+                                    <horizontal method="fill">40</horizontal>
+                                </sizing>
+
+                                <surface>
+                                    <flat>#40000000</flat>
+                                </surface>
+                            </flow-layout>
+
+                            <sizing>
+                                <vertical method="fill">70</vertical>
+                            </sizing>
+
+                            <scrollbar>
+                                <flat>#FFFFFF</flat>
+                            </scrollbar>
+                        </scroll>
+
+                        <flow-layout direction="vertical">
+                            <children>
+                                <flow-layout direction="vertical" id="source-buttons">
+                                    <children>
+                                        <template name="source-buttons">
+                                            <left-button>inventory</left-button>
+                                            <right-button>default</right-button>
+                                        </template>
+                                        <template name="source-buttons">
+                                            <left-button>history</left-button>
+                                            <right-button>all</right-button>
+                                        </template>
+                                    </children>
+
+                                    <gap>4</gap>
+                                </flow-layout>
+
+                                <scroll direction="vertical">
+                                    <vertical-grid-layout maxColumns="25" componentsWidth="16" componentsHeight="16"
+                                                          id="item-grid">
+                                        <children>
+
+                                        </children>
+
+                                    </vertical-grid-layout>
+
+                                    <sizing>
+                                        <vertical method="fill">55</vertical>
+                                    </sizing>
+
+                                    <scrollbar>
+                                        <flat>#FFFFFF</flat>
+                                    </scrollbar>
+
+                                    <margins>
+                                        <vertical>8</vertical>
+                                    </margins>
+
+                                </scroll>
+
+                                <text-box-row>
+                                    <id>item-search</id>
+                                    <removeResetButton>true</removeResetButton>
+                                    <removeHorizontalMargins>true</removeHorizontalMargins>
+                                </text-box-row>
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fill">45</horizontal>
+                                <vertical method="fill">70</vertical>
+                            </sizing>
+
+                        </flow-layout>
+
+                    </children>
+
+                    <gap>8</gap>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="back-button">
+                            <text translate="true">fzmm.gui.button.back</text>
+
+                            <margins>
+                                <right>20</right>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="execute-button">
+                            <text translate="true">fzmm.gui.button.execute</text>
+
+                            <margins>
+                                <left>20</left>
+                                <bottom>20</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">0,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>left</horizontal-alignment>
+                </flow-layout>
+            </children>
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+
+    <templates>
+        <source-buttons>
+            <flow-layout direction="horizontal">
+                <children>
+                    <button id="{{left-button}}-button">
+                        <text translate="true">fzmm.gui.selectItem.button.source.{{left-button}}</text>
+
+                        <sizing>
+                            <horizontal method="fill">49</horizontal>
+                        </sizing>
+                    </button>
+                    <button id="{{right-button}}-button">
+                        <text translate="true">fzmm.gui.selectItem.button.source.{{right-button}}</text>
+
+                        <sizing>
+                            <horizontal method="fill">49</horizontal>
+                        </sizing>
+                    </button>
+                </children>
+
+                <gap>4</gap>
+            </flow-layout>
+        </source-buttons>
+
+        <requested-item>
+            <flow-layout direction="horizontal">
+                <children>
+                    <item id="{{id}}-requested-item-item">
+                    </item>
+
+                    <label id="{{id}}-requested-item-label">
+                    </label>
+                </children>
+
+                <gap>8</gap>
+
+                <margins>
+                    <all>2</all>
+                </margins>
+
+                <vertical-alignment>center</vertical-alignment>
+            </flow-layout>
+        </requested-item>
+    </templates>
+</owo-ui>

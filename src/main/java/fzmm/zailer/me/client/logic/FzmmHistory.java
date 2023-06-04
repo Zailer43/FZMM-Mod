@@ -6,6 +6,7 @@ import fzmm.zailer.me.config.FzmmConfig;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FzmmHistory {
@@ -53,5 +54,12 @@ public class FzmmHistory {
 
         while (max < stacks.size())
             stacks.removeLast();
+    }
+
+    public static List<ItemStack> getAllItems() {
+        List<ItemStack> result = new ArrayList<>();
+        result.addAll(GENERATED_ITEMS);
+        result.addAll(GENERATED_HEADS);
+        return result;
     }
 }

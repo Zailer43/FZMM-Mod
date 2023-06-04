@@ -3,7 +3,7 @@ package fzmm.zailer.me.client.gui.textformat.tabs;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
-import fzmm.zailer.me.client.gui.utils.IMementoObject;
+import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.config.FzmmConfig;
 import io.wispforest.owo.ui.container.FlowLayout;

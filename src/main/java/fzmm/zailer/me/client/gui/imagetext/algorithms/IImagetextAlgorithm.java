@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.imagetext.algorithms;
 
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
-import fzmm.zailer.me.client.gui.utils.IMemento;
+import fzmm.zailer.me.client.gui.utils.memento.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import net.minecraft.text.MutableText;

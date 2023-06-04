@@ -2,19 +2,24 @@ package fzmm.zailer.me.utils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.SkullItem;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.util.math.MathHelper;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -119,5 +124,23 @@ public class HeadUtils {
 
     private int getDelay(int delay) {
         return MathHelper.clamp(delay, 2000, 6000);
+    }
+
+    public static Optional<BufferedImage> getSkin(ItemStack stack) throws IOException {
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client.player != null;
+
+        NbtCompound nbt = stack.getOrCreateNbt();
+        NbtCompound skullOwnerTag = nbt.getCompound(SkullItem.SKULL_OWNER_KEY);
+        GameProfile gameProfile = NbtHelper.toGameProfile(skullOwnerTag);
+        if (gameProfile == null)
+            return Optional.empty();
+
+        MinecraftProfileTexture texture = MinecraftClient.getInstance()
+                .getSkinProvider()
+                .getTextures(gameProfile)
+                .get(MinecraftProfileTexture.Type.SKIN);
+
+        return ImageUtils.getImageFromUrl(texture.getUrl());
     }
 }

@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui.imagetext.algorithms;
 
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
-import fzmm.zailer.me.client.gui.utils.IMementoObject;
+import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;

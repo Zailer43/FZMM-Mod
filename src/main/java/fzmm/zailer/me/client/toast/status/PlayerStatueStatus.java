@@ -6,6 +6,7 @@ import net.minecraft.text.Text;
 
 public class PlayerStatueStatus implements IStatus {
     private static final String BASE_TRANSLATION_KEY = "fzmm.toast.playerStatue.";
+    public static final PlayerStatueStatus UPDATED = new PlayerStatueStatus("updated", StatusType.SUCCESSFUL);
     public static final PlayerStatueStatus SUCCESSFUL = new PlayerStatueStatus("successful", StatusType.SUCCESSFUL);
     public static final PlayerStatueStatus LOADING = new PlayerStatueStatus("loading", StatusType.LOADING);
     public static final PlayerStatueStatus LOADING_SECOND_TRY = new PlayerStatueStatus("secondTry", StatusType.LOADING);

@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui.utils;
+package fzmm.zailer.me.client.gui.utils.memento;
 
 public interface IMemento {
 

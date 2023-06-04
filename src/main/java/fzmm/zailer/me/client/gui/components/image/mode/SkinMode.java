@@ -3,11 +3,14 @@ package fzmm.zailer.me.client.gui.components.image.mode;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.ImageFileSource;
 import fzmm.zailer.me.client.gui.components.image.source.ImagePlayerNameSource;
+import fzmm.zailer.me.client.gui.components.image.source.PlayerHeadSource;
 
 import java.util.function.Supplier;
 
 public enum SkinMode implements IImageMode {
     NAME("name", ImagePlayerNameSource::new, true),
+    @SuppressWarnings("unused")
+    HEAD("head", PlayerHeadSource::new, false),
     @SuppressWarnings("unused")
     PATH("path", ImageFileSource::new, false);
 

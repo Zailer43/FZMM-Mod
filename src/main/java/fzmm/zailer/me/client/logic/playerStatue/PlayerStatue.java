@@ -224,6 +224,15 @@ public class PlayerStatue {
         return getStatueInContainer(statueList, pos);
     }
 
+    public static boolean containsStatuePart(ItemStack container) {
+        for (ItemStack stack : InventoryUtils.getItemsFromContainer(container)) {
+            if (StatuePart.isStatue(stack) || isNameTag(stack))
+                return true;
+        }
+
+        return false;
+    }
+
     private int getSkinScale() {
         return this.playerSkin.getHeight() == 128 && this.playerSkin.getWidth() == 128 ? 2 : 1;
     }

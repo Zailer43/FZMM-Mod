@@ -13,7 +13,7 @@ public class CopyTextScreen extends BaseFzmmScreen {
     private final Text textToCopy;
 
     public CopyTextScreen(@Nullable Screen parent, Text textToCopy) {
-        super("copy_text", "copyText", parent);
+        super("utils/copy_text", "copyText", parent);
         this.textToCopy = textToCopy;
     }
 

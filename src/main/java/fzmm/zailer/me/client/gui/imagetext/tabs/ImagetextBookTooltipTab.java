@@ -7,7 +7,7 @@ import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextBookOption;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
-import fzmm.zailer.me.client.gui.utils.IMementoObject;
+import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.client.toast.BookNbtOverflowToast;

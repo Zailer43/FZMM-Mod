@@ -33,8 +33,21 @@
 
                                             <button id="give-button">
                                                 <text translate="true">fzmm.gui.bannerEditor.button.give</text>
+
+                                                <sizing>
+                                                    <horizontal method="fixed">95</horizontal>
+                                                </sizing>
+                                            </button>
+
+                                            <button id="select-banner-button">
+                                                <text translate="true">fzmm.gui.bannerEditor.button.select</text>
+
+                                                <sizing>
+                                                    <horizontal method="fixed">95</horizontal>
+                                                </sizing>
                                             </button>
                                         </children>
+                                        <gap>4</gap>
 
                                         <sizing>
                                             <vertical method="fixed">200</vertical>
