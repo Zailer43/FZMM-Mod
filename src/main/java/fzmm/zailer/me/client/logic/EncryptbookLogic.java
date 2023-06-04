@@ -98,21 +98,21 @@ public class EncryptbookLogic {
         return bookBuilder.get();
     }
 
-    public static void showDecryptorInChat(final int SEED, final int MAX_MESSAGE_LENGTH) {
+    public static void showDecryptorInChat(int seed, int maxMessageLength) {
         MinecraftClient mc = MinecraftClient.getInstance();
         String translationKeyPrefix = FzmmClient.CONFIG.encryptbook.translationKeyPrefix();
         StringBuilder decryptorString = new StringBuilder();
-        List<Short> encryptedKey = encryptKey(getKey(SEED), MAX_MESSAGE_LENGTH);
+        List<Short> encryptedKey = encryptKey(getKey(seed), maxMessageLength);
 
         assert mc.player != null;
 
-        for (int i = 0; i < MAX_MESSAGE_LENGTH; i++) {
+        for (int i = 0; i < maxMessageLength; i++) {
             decryptorString.append("%").append(encryptedKey.get(i) + 1).append("$s");
         }
 
-        MutableText decryptorMessage = Text.literal(Formatting.GREEN + translationKeyPrefix + SEED)
+        MutableText decryptorMessage = Text.literal(Formatting.GREEN + translationKeyPrefix + seed)
                 .setStyle(Style.EMPTY
-                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "\"" + translationKeyPrefix + SEED + "\": \"" + decryptorString + "\""))
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "\"" + translationKeyPrefix + seed + "\": \"" + decryptorString + "\""))
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(decryptorString.toString())))
                 );
 
@@ -121,6 +121,12 @@ public class EncryptbookLogic {
 
     private static long getKey(long seed) {
         int asymmetricEncryptKey = FzmmClient.CONFIG.encryptbook.asymmetricEncryptKey();
-        return seed * (asymmetricEncryptKey != 0 ? (long) asymmetricEncryptKey + 0x19429630 : 1);
+        if (asymmetricEncryptKey != 0) {
+            if (seed == 0)
+                seed = 1;
+            seed *= asymmetricEncryptKey + 0x19429630;
+        }
+
+        return seed;
     }
 }
