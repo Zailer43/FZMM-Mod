@@ -40,21 +40,26 @@ public class EnumRow extends AbstractRow {
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
 
         BaseFzmmScreen.checkNull(enumButton, "enum-option", getEnumId(id));
-        BaseFzmmScreen.checkNull(resetButton, "button", getResetButtonId(id));
 
         enumButton.setShowTooltip(showTooltip);
         enumButton.init(defaultValue);
         enumButton.onPress(button -> {
             if (callback != null)
                 callback.onPress(button);
-            resetButton.active = enumButton.parsedValue() != defaultValue;
+            if (resetButton != null)
+                resetButton.active = enumButton.parsedValue() != defaultValue;
         });
 
-        resetButton.onPress(button -> {
+        if (resetButton != null) {
+            resetButton.onPress(button -> {
+                enumButton.select(defaultValue.ordinal());
+                resetButton.active = false;
+            });
+
+            resetButton.onPress();
+        } else {
             enumButton.select(defaultValue.ordinal());
-            resetButton.active = false;
-        });
-        resetButton.onPress();
+        }
         return enumButton;
     }
 

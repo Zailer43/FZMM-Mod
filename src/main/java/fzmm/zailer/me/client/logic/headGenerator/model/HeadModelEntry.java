@@ -22,6 +22,7 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     private final List<ModelParameter<Color>> colors;
     private final List<ModelParameter<OffsetParameter>> offsets;
     private boolean isPaintable;
+    private boolean isEditingSkinBody;
 
     public HeadModelEntry() {
         this("", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
@@ -34,6 +35,7 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
         this.colors = colors;
         this.offsets = offsets;
         this.isPaintable = false;
+        this.isEditingSkinBody = false;
     }
 
     @Override
@@ -66,6 +68,15 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     @Override
     public String getCategoryId() {
         return this.isPaintable ? HeadPaintableCategory.CATEGORY_ID : HeadModelCategory.CATEGORY_ID;
+    }
+
+    @Override
+    public boolean isEditingSkinBody() {
+        return this.isEditingSkinBody;
+    }
+
+    public void isEditingSkinBody(boolean value) {
+        this.isEditingSkinBody = value;
     }
 
     public void isPaintable(boolean value) {

@@ -1,0 +1,711 @@
+{
+  "is_editing_skin_body": true,
+  "textures": [
+    {
+      "id": "block",
+      "path": "fzmm:textures/model_textures/chest.png",
+      "requested": true
+    }
+  ],
+  "steps": [
+    {
+      "type": "select_texture",
+      "texture_id": "block"
+    },
+    {
+      "comment": "block",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "base_skin"
+    },
+    {
+      "comment": "left head",
+      "type": "copy",
+      "destination": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "front head",
+      "type": "copy",
+      "destination": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right head",
+      "type": "copy",
+      "destination": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "back head",
+      "type": "copy",
+      "destination": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 16,
+        "y": 4,
+        "width": 8,
+        "height": 8
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 24,
+        "y": 8,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "top head",
+      "type": "copy",
+      "destination": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 4,
+        "y": 0,
+        "width": 8,
+        "height": 4
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "left body top part",
+      "type": "copy",
+      "destination": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 0,
+        "y": 12,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "front body top part",
+      "type": "copy",
+      "destination": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 4,
+        "y": 12,
+        "width": 8,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 8,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right body top part",
+      "type": "copy",
+      "destination": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 12,
+        "y": 12,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "back body top part",
+      "type": "copy",
+      "destination": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 16,
+        "y": 12,
+        "width": 8,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 16,
+        "y": 4,
+        "width": 8,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "left body bottom part left_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 0,
+        "y": 10,
+        "width": 4,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "front body bottom part left_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 4,
+        "y": 10,
+        "width": 4,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right body bottom part left_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 8,
+        "y": 4,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 12,
+        "y": 10,
+        "width": 4,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "back body bottom part left_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 20,
+        "y": 10,
+        "width": 4,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "left body bottom part right_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 0,
+        "y": 10,
+        "width": 4,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "front body bottom part right_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 8,
+        "y": 10,
+        "width": 4,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right body bottom part right_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 8,
+        "y": 4,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 12,
+        "y": 10,
+        "width": 4,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "back body bottom part right_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 16,
+        "y": 10,
+        "width": 4,
+        "height": 6
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "left left_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "front left_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 4,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right left_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 8,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 8,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "back left_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 12,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "bottom left_leg",
+      "type": "copy",
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "left right_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "front right_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 4,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right right_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 8,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 8,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "back right_leg",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 12,
+        "y": 8,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "bottom right_leg",
+      "type": "copy",
+      "source": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "lateral left_arm",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 16,
+        "height": 12
+      },
+      "source": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 16,
+        "height": 12
+      },
+      "add_hat_layer": true,
+      "mirror_vertical": true
+    },
+    {
+      "comment": "bottom left_arm",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 4,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "top left_arm",
+      "type": "copy",
+      "destination": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 4,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "lateral right_arm",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 16,
+        "height": 12
+      },
+      "source": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 16,
+        "height": 12
+      },
+      "add_hat_layer": true,
+      "mirror_vertical": true
+    },
+    {
+      "comment": "bottom right_arm",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 4,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "top right_arm",
+      "type": "copy",
+      "destination": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 4,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "source": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "add_hat_layer": true
+    }
+  ]
+}

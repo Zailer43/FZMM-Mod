@@ -31,4 +31,6 @@ public abstract class AbstractHeadEntry {
     public abstract BufferedImage getHeadSkin(BufferedImage baseSkin);
 
     public abstract String getCategoryId();
+
+    public abstract boolean isEditingSkinBody();
 }

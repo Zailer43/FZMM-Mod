@@ -120,14 +120,11 @@
                                                 <button id="toggle-favorite-list">
                                                 </button>
 
-                                                <boolean-button id="overlapHatLayer-boolean-button">
-                                                    <enabled-text translate="true">fzmm.gui.headGenerator.button.overlapHatLayer.enabled</enabled-text>
-                                                    <disabled-text translate="true">fzmm.gui.headGenerator.button.overlapHatLayer.disabled</disabled-text>
-
+                                                <enum-option id="skinPreEdit-enum-option">
                                                     <sizing>
                                                         <horizontal method="content">0</horizontal>
                                                     </sizing>
-                                                </boolean-button>
+                                                </enum-option>
                                             </children>
 
                                             <horizontal-alignment>left</horizontal-alignment>

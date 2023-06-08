@@ -12,7 +12,9 @@ import fzmm.zailer.me.client.gui.headgenerator.category.IHeadCategory;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.headGenerator.model.parameters.IParametersEntry;
 import fzmm.zailer.me.client.logic.headGenerator.model.parameters.OffsetParameter;
-import fzmm.zailer.me.client.renderer.customHead.CustomHeadEntity;
+import fzmm.zailer.me.client.renderer.customSkin.CustomHeadEntity;
+import fzmm.zailer.me.client.renderer.customSkin.CustomPlayerSkinEntity;
+import fzmm.zailer.me.client.renderer.customSkin.ISkinMutable;
 import fzmm.zailer.me.utils.ImageUtils;
 import fzmm.zailer.me.utils.list.IListEntry;
 import io.wispforest.owo.ui.component.ButtonComponent;
@@ -33,6 +35,7 @@ import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -47,27 +50,28 @@ import java.io.IOException;
 import java.util.Map;
 
 public abstract class AbstractHeadListEntry extends FlowLayout implements IListEntry<AbstractHeadEntry> {
-    public static final int PLAYER_SKIN_SIZE = 24;
+    public static final int HEAD_PREVIEW_SIZE = 24;
+    public static final int BODY_PREVIEW_SIZE = 12;
+    public static final int BODY_PREVIEW_OVERLAY_SIZE = 24;
     private static final int OVERLAY_WIDGETS_WIDTH = 75;
     public static final Text GIVE_BUTTON_TEXT = Text.translatable("fzmm.gui.button.giveHead");
     public static final Text GIVE_WAITING_UNDEFINED_TEXT = Text.translatable("fzmm.gui.headGenerator.wait");
     public static final String GIVE_WAITING_SECONDS_KEY = "fzmm.gui.headGenerator.wait_seconds";
     protected AbstractHeadEntry entry;
-    private final EntityComponent<CustomHeadEntity> previewComponent;
+    private EntityComponent<Entity> previewComponent;
     private NativeImageBackedTexture previewTexture;
     protected final HeadGeneratorScreen parentScreen;
     protected OverlayContainer<FlowLayout> overlayContainer;
+    private boolean isBodyPreview;
 
     public AbstractHeadListEntry(AbstractHeadEntry entry, Sizing horizontalSizing, Sizing verticalSizing, HeadGeneratorScreen parent) {
         super(horizontalSizing, verticalSizing, Algorithm.VERTICAL);
 
-        this.previewComponent = Components.entity(Sizing.fixed(PLAYER_SKIN_SIZE), new CustomHeadEntity(MinecraftClient.getInstance().world));
-        this.previewComponent.cursorStyle(CursorStyle.HAND);
+        this.setBodyPreview(entry.isEditingSkinBody());
         this.setValue(entry);
 
-        this.horizontalAlignment(HorizontalAlignment.LEFT);
+        this.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
         this.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
-        this.child(this.previewComponent);
         this.cursorStyle(CursorStyle.HAND);
 
         this.parentScreen = parent;
@@ -87,6 +91,24 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
         super.draw(matrices, mouseX, mouseY, partialTicks, delta);
     }
 
+    private void setBodyPreview(boolean value) {
+        this.isBodyPreview = value;
+        Entity previewEntity;
+        int size;
+        if (value) {
+            previewEntity = new CustomPlayerSkinEntity(MinecraftClient.getInstance().world);
+            size = BODY_PREVIEW_SIZE;
+        } else {
+            previewEntity = new CustomHeadEntity(MinecraftClient.getInstance().world);
+            size = HEAD_PREVIEW_SIZE;
+        }
+
+        this.removeChild(this.previewComponent);
+        this.previewComponent = Components.entity(Sizing.fixed(size), previewEntity);
+        this.previewComponent.cursorStyle(CursorStyle.HAND);
+        this.child(this.previewComponent);
+    }
+
     public Text getDisplayName() {
         return this.entry.getDisplayName();
     }
@@ -99,24 +121,27 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
         return this.entry.getCategoryId();
     }
 
-    public void update(BufferedImage baseSkin) {
+    public void update(BufferedImage baseSkin, boolean isSlim) {
         MinecraftClient client = MinecraftClient.getInstance();
         TextureManager textureManager = client.getTextureManager();
         BufferedImage previewSkin = this.entry.getHeadSkin(baseSkin);
 
         this.close();
-        CustomHeadEntity customHeadEntity = this.previewComponent.entity();
+        if (!(this.previewComponent.entity() instanceof ISkinMutable previewEntity)) {
+            FzmmClient.LOGGER.error("[AbstractHeadListEntry] Failed to update preview entity");
+            return;
+        }
 
         ImageUtils.toNativeImage(previewSkin).ifPresent(nativeImage -> {
             this.previewTexture = new NativeImageBackedTexture(nativeImage);
-            customHeadEntity.setCustomHeadTexture(textureManager.registerDynamicTexture("fzmm_head", this.previewTexture));
+            previewEntity.setSkin(textureManager.registerDynamicTexture("fzmm_head", this.previewTexture), isSlim);
         });
 
-        textureManager.bindTexture(customHeadEntity.getCustomHeadTexture());
+        textureManager.bindTexture(previewEntity.getSkin());
     }
 
-    protected EntityComponent<CustomHeadEntity> cloneCustomHeadEntity() {
-        return Components.entity(Sizing.fixed(PLAYER_SKIN_SIZE), this.previewComponent.entity());
+    protected EntityComponent<Entity> cloneCustomHeadEntity() {
+        return Components.entity(this.previewComponent.horizontalSizing().get(), this.previewComponent.entity());
     }
 
     public void close() {
@@ -154,11 +179,19 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
 
             FlowLayout previewLayout = panel.childById(FlowLayout.class, "preview");
             BaseFzmmScreen.checkNull(previewLayout, "flow-layout", "preview");
-            previewLayout.child(this.cloneCustomHeadEntity().allowMouseRotation(true).cursorStyle(CursorStyle.MOVE));
+            previewLayout.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
+
+            EntityComponent<Entity> previewEntity = this.cloneCustomHeadEntity().allowMouseRotation(true);
+            previewEntity.cursorStyle(CursorStyle.MOVE);
+            if (this.isBodyPreview) {
+                previewEntity.sizing(Sizing.fixed(BODY_PREVIEW_OVERLAY_SIZE));
+                previewLayout.sizing(Sizing.content(8), Sizing.fixed((int) (BODY_PREVIEW_OVERLAY_SIZE * 2.5)));
+            }
+            previewLayout.child(previewEntity);
 
             LabelComponent categoryLabel = panel.childById(LabelComponent.class, "category-label");
             BaseFzmmScreen.checkNull(categoryLabel, "label", "category-label");
-            categoryLabel.text(IHeadCategory.getCategory(this.getCategoryId()).getText());
+            categoryLabel.text(IHeadCategory.getCategory(this.entry, this.getCategoryId()).getText());
 
             ButtonComponent giveButton = panel.childById(ButtonComponent.class, "give-button");
             BaseFzmmScreen.checkNull(giveButton, "button", "give-button");
@@ -255,7 +288,8 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
     protected abstract void addTopRightButtons(FlowLayout panel, FlowLayout layout);
 
     private void update() {
-        this.update(this.parentScreen.getGridBaseSkin());
+        BufferedImage baseSkin = this.parentScreen.getGridBaseSkin(this.getValue().isEditingSkinBody());
+        this.update(baseSkin, ImageUtils.isAlexModel(1, baseSkin));
     }
 
     public void saveSkinExecute(@Nullable BufferedImage skin) {

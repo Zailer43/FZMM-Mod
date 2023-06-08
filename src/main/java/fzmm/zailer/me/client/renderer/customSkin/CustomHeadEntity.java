@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.renderer.customHead;
+package fzmm.zailer.me.client.renderer.customSkin;
 
 import fzmm.zailer.me.client.FzmmClient;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -11,7 +11,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
-public class CustomHeadEntity extends MobEntity {
+public class CustomHeadEntity extends MobEntity implements ISkinMutable {
     public static final EntityType<CustomHeadEntity> CUSTOM_HEAD_ENTITY_TYPE = Registry.register(
             Registries.ENTITY_TYPE,
             FzmmClient.CUSTOM_HEAD_ENTITY,
@@ -31,11 +31,13 @@ public class CustomHeadEntity extends MobEntity {
         super(CUSTOM_HEAD_ENTITY_TYPE, world);
     }
 
-    public Identifier getCustomHeadTexture() {
+    @Override
+    public Identifier getSkin() {
         return this.customHeadTexture;
     }
 
-    public void setCustomHeadTexture(Identifier customHeadTexture) {
-        this.customHeadTexture = customHeadTexture;
+    @Override
+    public void setSkin(Identifier skin, boolean isSlim) {
+        this.customHeadTexture = skin;
     }
 }

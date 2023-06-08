@@ -94,7 +94,7 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
     }
 
     public void filter(String searchValue, boolean toggledFavorites, IHeadCategory headCategory) {
-        if (!this.isFavorite && toggledFavorites || !headCategory.isCategory(this.entry.getCategoryId())) {
+        if (!this.isFavorite && toggledFavorites || !headCategory.isCategory(this.entry, this.entry.getCategoryId())) {
             this.hide = true;
             return;
         }

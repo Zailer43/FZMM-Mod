@@ -3,12 +3,11 @@ package fzmm.zailer.me.client.gui.headgenerator;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
-import fzmm.zailer.me.client.gui.components.row.BooleanRow;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
@@ -16,15 +15,13 @@ import fzmm.zailer.me.client.gui.headgenerator.category.IHeadCategory;
 import fzmm.zailer.me.client.gui.headgenerator.components.AbstractHeadListEntry;
 import fzmm.zailer.me.client.gui.headgenerator.components.HeadComponentEntry;
 import fzmm.zailer.me.client.gui.headgenerator.components.HeadCompoundComponentEntry;
+import fzmm.zailer.me.client.gui.headgenerator.options.SkinPreEditOption;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.headGenerator.HeadResourcesLoader;
 import fzmm.zailer.me.client.logic.headGenerator.TextureOverlap;
-import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.FzmmWikiConstants;
-import fzmm.zailer.me.utils.HeadUtils;
-import fzmm.zailer.me.utils.ImageUtils;
+import fzmm.zailer.me.utils.*;
 import fzmm.zailer.me.utils.list.IListEntry;
 import fzmm.zailer.me.utils.list.ListUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
@@ -33,6 +30,8 @@ import io.wispforest.owo.ui.component.DropdownComponent;
 import io.wispforest.owo.ui.container.CollapsibleContainer;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.Insets;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -47,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.image.BufferedImage;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -56,7 +56,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     private static final String SKIN_ID = "skin";
     private static final String SKIN_SOURCE_TYPE_ID = "skinSourceType";
     private static final String HEAD_NAME_ID = "headName";
-    private static final String OVERLAP_HAT_LAYER_ID = "overlapHatLayer";
+    private static final String SKIN_PRE_EDIT_OPTION_ID = "skinPreEdit";
     private static final String SEARCH_ID = "search";
     private static final String HEAD_GRID_ID = "head-grid";
     private static final String HEADS_LAYOUT_ID = "heads-layout";
@@ -70,7 +70,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     private final Set<String> favoritesHeadsOnOpenScreen;
     private ImageRowsElements skinElements;
     private TextFieldWidget headNameField;
-    private BooleanButton overlapHatLayerButton;
+    private EnumWidget skinPreEditOption;
     private TextFieldWidget searchField;
     private List<HeadComponentEntry> headComponentEntries;
     private List<HeadCompoundComponentEntry> headCompoundComponentEntries;
@@ -79,7 +79,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     private ButtonWidget toggleFavoriteList;
     private boolean showFavorites;
     private BufferedImage baseSkin;
-    private BufferedImage gridBaseSkin;
+    private BufferedImage gridBaseSkinOriginalBody;
+    private BufferedImage gridBaseSkinEditedBody;
     private String previousSkinName;
     private IHeadCategory selectedCategory;
     private ButtonComponent giveButton;
@@ -96,7 +97,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         this.headComponentEntries = new ArrayList<>();
         this.headCompoundComponentEntries = new ArrayList<>();
         this.baseSkin = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-        this.gridBaseSkin = this.baseSkin;
+        this.gridBaseSkinOriginalBody = this.baseSkin;
+        this.gridBaseSkinEditedBody = this.baseSkin;
         //general
         this.skinElements = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, SkinMode.NAME);
         this.skinElements.imageButton().setButtonCallback(this::imageCallback);
@@ -127,11 +129,16 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
         // nav var
         this.searchField = TextBoxRow.setup(rootComponent, SEARCH_ID, "", 128, s -> this.applyFilters());
-        this.overlapHatLayerButton = BooleanRow.setup(rootComponent, OVERLAP_HAT_LAYER_ID, FzmmClient.CONFIG.headGenerator.defaultOverlapHatLayer(), button -> {
+        this.skinPreEditOption = EnumRow.setup(rootComponent, SKIN_PRE_EDIT_OPTION_ID, SkinPreEditOption.OVERLAP, true, button -> {
             if (this.skinElements.imageButton().hasImage())
-                this.client.execute(this::updatePreviews);
+                this.updatePreviews();
         });
-        this.overlapHatLayerButton.setContentHorizontalSizing();
+        int maxSkinPreEditOptionWidth = 0;
+        for (var skinPreEditOption : SkinPreEditOption.values())
+            maxSkinPreEditOptionWidth = Math.max(maxSkinPreEditOptionWidth, this.textRenderer.getWidth(Text.translatable(skinPreEditOption.getTranslationKey())));
+
+        this.skinPreEditOption.horizontalSizing(Sizing.fixed(maxSkinPreEditOptionWidth + BaseFzmmScreen.BUTTON_TEXT_PADDING));
+
         CollapsibleContainer headCategoryCollapsible = rootComponent.childById(CollapsibleContainer.class, HEAD_CATEGORY_ID);
         checkNull(headCategoryCollapsible, "collapsible", HEAD_CATEGORY_ID);
         DropdownComponent headCategoryDropdown = Components.dropdown(Sizing.content());
@@ -172,13 +179,16 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
             this.skinElements.imageButton().setImage(skinBase);
         }
 
-        if (ImageUtils.isAlexModel(1, skinBase))
-            skinBase = ImageUtils.convertInSteveModel(skinBase, 1);
+        // this is necessary as the models need consistency in the size of the arms
+        // if you don't want to have a model for each arm size
+//        if (ImageUtils.isAlexModel(1, skinBase))
+//            skinBase = ImageUtils.convertInSteveModel(skinBase, 1);
 
         this.baseSkin = skinBase;
-        this.gridBaseSkin = this.baseSkin;
+        this.gridBaseSkinEditedBody = this.baseSkin;
+        this.gridBaseSkinOriginalBody= this.baseSkin;
 
-        this.client.execute(this::updatePreviews);
+        this.updatePreviews();
     }
 
     private void tryLoadHeadEntries(FlowLayout rootComponent) {
@@ -218,27 +228,40 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         assert this.client != null;
 
         this.client.execute(() -> {
-            TextureOverlap textureOverlap = new TextureOverlap(this.baseSkin, false);
-            if (!this.overlapHatLayer())
-                textureOverlap.removeHatLayer();
+            boolean compoundEntriesEditingSkinBody = this.headCompoundComponentEntries.stream()
+                    .anyMatch(entry -> entry.getValue().isEditingSkinBody());
 
-            BufferedImage previousPreview  = textureOverlap.getHeadTexture();
+            SkinPreEditOption skinPreEditOption = this.skinPreEdit();
+            BufferedImage previousPreview = this.skinPreEdit(this.baseSkin, skinPreEditOption, compoundEntriesEditingSkinBody);
+            boolean isSlim = ImageUtils.isAlexModel(1, this.baseSkin);
 
             for (var headEntry : this.headCompoundComponentEntries) {
-                headEntry.update(previousPreview);
-                previousPreview = headEntry.getPreview();
+                headEntry.update(previousPreview, isSlim);
+                previousPreview = new TextureOverlap(headEntry.getPreview())
+                        .overlap(compoundEntriesEditingSkinBody)
+                        .getHeadTexture();
             }
-            this.gridBaseSkin = previousPreview;
+
+            this.gridBaseSkinOriginalBody = this.skinPreEdit(previousPreview, skinPreEditOption, false);
+            this.gridBaseSkinEditedBody = this.skinPreEdit(previousPreview, skinPreEditOption, true);
 
             for (var headEntry : this.headComponentEntries) {
-                headEntry.update(this.gridBaseSkin);
+                headEntry.update(this.getGridBaseSkin(headEntry.getValue().isEditingSkinBody()), isSlim);
             }
         });
 
     }
 
-    public BufferedImage getGridBaseSkin() {
-        return this.gridBaseSkin;
+    public BufferedImage skinPreEdit(BufferedImage preview, SkinPreEditOption skinPreEditOption, boolean editBody) {
+        BufferedImage result = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+        result = skinPreEditOption.getPreEdit().execute(result, preview, List.of(SkinPart.HEAD));
+        result = (editBody ? skinPreEditOption : SkinPreEditOption.NONE).getPreEdit().execute(result, preview, SkinPart.BODY_PARTS);
+
+        return result;
+    }
+
+    public BufferedImage getGridBaseSkin(boolean editBody) {
+        return editBody ? this.gridBaseSkinEditedBody : this.gridBaseSkinOriginalBody;
     }
 
     private void closeTextures() {
@@ -378,8 +401,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         }, FzmmWikiConstants.HEAD_GENERATOR_WIKI_LINK, true));
     }
 
-    public boolean overlapHatLayer() {
-        return this.overlapHatLayerButton.enabled();
+    public SkinPreEditOption skinPreEdit() {
+        return (SkinPreEditOption) this.skinPreEditOption.getValue();
     }
 
     public void upCompoundEntry(AbstractHeadListEntry entry) {
@@ -444,7 +467,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
                 (SkinMode) this.skinElements.mode().getValue(),
                 this.skinElements.valueField().getText(),
                 this.showFavorites,
-                this.overlapHatLayerButton.enabled(),
+                this.skinPreEdit(),
                 this.selectedCategory,
                 this.searchField.getText()
         );
@@ -460,14 +483,14 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         this.headNameField.setCursor(0);
         if (memento.showFavorites)
             this.toggleFavoriteListExecute();
-        this.overlapHatLayerButton.enabled(memento.overlapHatLayer);
+        this.skinPreEditOption.setValue(memento.skinPreEditOption);
         this.selectedCategory = memento.category;
         this.searchField.setText(memento.search);
         this.searchField.setCursor(0);
     }
 
     private record HeadGeneratorMemento(String headName, SkinMode skinMode, String skinRowValue, boolean showFavorites,
-                                        boolean overlapHatLayer, IHeadCategory category,
+                                        SkinPreEditOption skinPreEditOption, IHeadCategory category,
                                         String search) implements IMementoObject {
     }
 }

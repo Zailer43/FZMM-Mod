@@ -111,6 +111,7 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
         List<ModelParameter<Color>> colors = getHeadModelColors(jsonObject);
         List<ModelParameter<OffsetParameter>> offsets = getHeadModelOffsets(jsonObject);
         boolean isPaintableModel = jsonObject.has("paintable") && jsonObject.get("paintable").getAsBoolean();
+        boolean isEditingSkinBody = jsonObject.has("is_editing_skin_body") && jsonObject.get("is_editing_skin_body").getAsBoolean();
 
         JsonArray stepsArray = jsonObject.getAsJsonArray("steps");
         List<IModelStep> steps = new ArrayList<>();
@@ -131,8 +132,8 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
 
         HeadModelEntry entry = new HeadModelEntry(toDisplayName(fileName), fileName, steps, textures, colors, offsets);
 
-        if (isPaintableModel)
-            entry.isPaintable(true);
+        entry.isPaintable(isPaintableModel);
+        entry.isEditingSkinBody(isEditingSkinBody);
 
         return entry;
     }

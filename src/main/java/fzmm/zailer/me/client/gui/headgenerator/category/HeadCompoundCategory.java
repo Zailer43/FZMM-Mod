@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.headgenerator.category;
 
+import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
@@ -12,8 +13,8 @@ public class HeadCompoundCategory implements IHeadCategory {
     }
 
     @Override
-    public boolean isCategory(String id) {
-        return id.equals(CATEGORY_ID);
+    public boolean isCategory(AbstractHeadEntry entry, String categoryId) {
+        return categoryId.equals(CATEGORY_ID);
     }
 
     @Override

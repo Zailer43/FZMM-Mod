@@ -1,5 +1,6 @@
 {
   "paintable": true,
+  "is_editing_skin_body": true,
   "colors": [
     {
       "id": "selected_color",

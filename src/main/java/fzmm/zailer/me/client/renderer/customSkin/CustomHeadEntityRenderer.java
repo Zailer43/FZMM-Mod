@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.renderer.customHead;
+package fzmm.zailer.me.client.renderer.customSkin;
 
 import fzmm.zailer.me.client.FzmmClient;
 import net.fabricmc.api.EnvType;
@@ -22,7 +22,7 @@ public class CustomHeadEntityRenderer extends MobEntityRenderer<CustomHeadEntity
 
     @Override
     public Identifier getTexture(CustomHeadEntity entity) {
-        return entity.getCustomHeadTexture();
+        return entity.getSkin();
     }
 }
 

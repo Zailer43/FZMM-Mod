@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.renderer.customHead;
+package fzmm.zailer.me.client.renderer.customSkin;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.*;
