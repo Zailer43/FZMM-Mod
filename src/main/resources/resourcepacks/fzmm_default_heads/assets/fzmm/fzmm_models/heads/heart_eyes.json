@@ -1,0 +1,98 @@
+{
+  "textures": [
+    {
+      "id": "heart_eyes",
+      "path": "fzmm:textures/model_textures/heart_eyes.png",
+      "requested": false
+    }
+  ],
+  "offsets": [
+    {
+      "id": "heart_offset",
+      "value": 4,
+      "min_value": 0,
+      "max_value": 5,
+      "axis": "Y",
+      "requested": true,
+      "enabled": false
+    },
+    {
+      "id": "blushing_offset",
+      "value": 3,
+      "min_value": 0,
+      "max_value": 4,
+      "axis": "Y",
+      "requested": true,
+      "enabled": false
+    }
+  ],
+  "steps": [
+    {
+      "comment": "source head",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "source body",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 16,
+        "width": 64,
+        "height": 48
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "heart_eyes"
+    },
+    {
+      "type": "toggle_offset",
+      "offset_id": "heart_offset",
+      "enabled": true
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 8,
+        "width": 8,
+        "height": 3
+      },
+      "add_hat_layer": true
+    },
+    {
+      "type": "toggle_offset",
+      "offset_id": "heart_offset",
+      "enabled": false
+    },
+    {
+      "type": "toggle_offset",
+      "offset_id": "blushing_offset",
+      "enabled": true
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 7,
+        "y": 11,
+        "width": 10,
+        "height": 1
+      }
+    }
+  ]
+}

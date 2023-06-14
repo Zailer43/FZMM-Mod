@@ -5,11 +5,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.logic.headGenerator.model.HeadModelEntry;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.IModelParameter;
 import fzmm.zailer.me.client.logic.headGenerator.model.parameters.ModelParameter;
 import fzmm.zailer.me.client.logic.headGenerator.model.parameters.OffsetParameter;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.ResettableModelParameter;
 import fzmm.zailer.me.client.logic.headGenerator.model.steps.*;
 import fzmm.zailer.me.client.logic.headGenerator.texture.HeadTextureEntry;
-import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.core.Color;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
@@ -107,9 +108,9 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
         String fileName = path.substring(HEADS_MODELS_FOLDER.length() + 1, path.length() - ".json".length());
 
         JsonObject jsonObject = JsonParser.parseReader(new InputStreamReader(inputStream)).getAsJsonObject();
-        List<ModelParameter<BufferedImage>> textures = getHeadModelTextures(jsonObject);
-        List<ModelParameter<Color>> colors = getHeadModelColors(jsonObject);
-        List<ModelParameter<OffsetParameter>> offsets = getHeadModelOffsets(jsonObject);
+        List<ResettableModelParameter<BufferedImage, String>> textures = getHeadModelTextures(jsonObject);
+        List<? extends IModelParameter<Color>> colors = getHeadModelColors(jsonObject);
+        List<? extends IModelParameter<OffsetParameter>> offsets = getHeadModelOffsets(jsonObject);
         boolean isPaintableModel = jsonObject.has("paintable") && jsonObject.get("paintable").getAsBoolean();
         boolean isEditingSkinBody = jsonObject.has("is_editing_skin_body") && jsonObject.get("is_editing_skin_body").getAsBoolean();
 
@@ -118,16 +119,21 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
 
         for (var element : stepsArray) {
             JsonObject stepObject = element.getAsJsonObject();
+            String id = stepObject.get("type").getAsString();
 
-            switch (stepObject.get("type").getAsString()) {
-                case "copy" -> steps.add(ModelCopyStep.parse(stepObject));
-                case "delete" -> steps.add(ModelDeleteStep.parse(stepObject));
-                case "desaturate" -> steps.add(ModelDesaturateStep.parse(stepObject));
-                case "fill_color" -> steps.add(ModelFillColorStep.parse(stepObject));
-                case "select_color" -> steps.add(ModelSelectColorStep.parse(stepObject));
-                case "select_texture" -> steps.add(ModelSelectTextureStep.parse(stepObject));
-                case "toggle_offset" -> steps.add(ModelToggleOffsetStep.parse(stepObject));
-            }
+            IModelStep step = switch (id) {
+                case "copy" -> ModelCopyStep.parse(stepObject);
+                case "delete" -> ModelDeleteStep.parse(stepObject);
+                case "desaturate" -> ModelDesaturateStep.parse(stepObject);
+                case "fill_color" -> ModelFillColorStep.parse(stepObject);
+                case "select_color" -> ModelSelectColorStep.parse(stepObject);
+                case "select_texture" -> ModelSelectTextureStep.parse(stepObject);
+                case "toggle_offset" -> ModelToggleOffsetStep.parse(stepObject);
+                case "select_destination" -> ModelSelectDestinationStep.parse(stepObject);
+                default -> data -> FzmmClient.LOGGER.warn("[HeadResourcesLoader] Unknown model step type: {}", id);
+            };
+
+            steps.add(step);
         }
 
         HeadModelEntry entry = new HeadModelEntry(toDisplayName(fileName), fileName, steps, textures, colors, offsets);
@@ -138,8 +144,8 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
         return entry;
     }
 
-    private static List<ModelParameter<BufferedImage>> getHeadModelTextures(JsonObject jsonObject) {
-        List<ModelParameter<BufferedImage>> result = new ArrayList<>();
+    private static List<ResettableModelParameter<BufferedImage, String>> getHeadModelTextures(JsonObject jsonObject) {
+        List<ResettableModelParameter<BufferedImage, String>> result = new ArrayList<>();
         if (!jsonObject.has("textures"))
             return new ArrayList<>();
 
@@ -149,21 +155,15 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
             JsonObject textureObject = textureElement.getAsJsonObject();
             String id = textureObject.get("id").getAsString();
             boolean requested = !textureObject.has("requested") || textureObject.get("requested").getAsBoolean();
+            String defaultValue = textureObject.has("path") ? textureObject.get("path").getAsString() : null;
 
-            BufferedImage texture = null;
-            if (textureObject.has("path")) {
-                String path = textureObject.get("path").getAsString();
-                Identifier textureIdentifier = new Identifier(textureObject.get("path").getAsString());
-                texture = ImageUtils.getBufferedImgFromIdentifier(textureIdentifier).orElseThrow(() -> new NoSuchElementException(path));
-            }
-
-            result.add(new ModelParameter<>(id, texture, requested));
+            result.add(new ResettableModelParameter<>(id, null, defaultValue, requested));
         }
 
         return result;
     }
 
-    private static List<ModelParameter<Color>> getHeadModelColors(JsonObject jsonObject) {
+    private static List<? extends IModelParameter<Color>> getHeadModelColors(JsonObject jsonObject) {
         List<ModelParameter<Color>> result = new ArrayList<>();
         if (!jsonObject.has("colors"))
             return result;
@@ -187,7 +187,7 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
         return result;
     }
 
-    private static List<ModelParameter<OffsetParameter>> getHeadModelOffsets(JsonObject jsonObject) {
+    private static List<? extends IModelParameter<OffsetParameter>> getHeadModelOffsets(JsonObject jsonObject) {
         List<ModelParameter<OffsetParameter>> result = new ArrayList<>();
         if (!jsonObject.has("offsets"))
             return result;

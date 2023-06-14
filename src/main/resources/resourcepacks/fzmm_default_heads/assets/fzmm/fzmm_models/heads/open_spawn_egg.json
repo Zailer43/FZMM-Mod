@@ -1,0 +1,152 @@
+{
+  "paintable": true,
+  "textures": [
+    {
+      "id": "open_spawn_egg",
+      "path": "fzmm:textures/model_textures/open_spawn_egg.png",
+      "requested": false
+    },
+    {
+      "id": "open_spawn_egg_overlay",
+      "path": "fzmm:textures/model_textures/open_spawn_egg_overlay.png",
+      "requested": false
+    },
+    {
+      "id":"painted_layer_1",
+      "requested": false
+    },
+    {
+      "id":"painted_layer_2",
+      "requested": false
+    }
+  ],
+  "colors": [
+    {
+      "id": "primary_color",
+      "color_hex": "#d9a066"
+    },
+    {
+      "id": "secondary_color",
+      "color_hex": "#936c59"
+    }
+  ],
+  "steps": [
+    {
+      "comment": "head texture",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      },
+      "overlap_hat_layer": true
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "open_spawn_egg_overlay"
+    },
+    {
+      "type": "select_destination",
+      "texture_id": "painted_layer_2"
+    },
+    {
+      "type": "select_color",
+      "color_id": "secondary_color"
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "fill_color",
+      "algorithm": "multiply",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "open_spawn_egg"
+    },
+    {
+      "type": "select_destination",
+      "texture_id": "painted_layer_1"
+    },
+    {
+      "type": "select_color",
+      "color_id": "primary_color"
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "fill_color",
+      "algorithm": "multiply",
+      "area": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "painted_layer_1"
+    },
+    {
+      "type": "select_destination",
+      "texture_id": "destination_skin"
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 64
+      }
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "painted_layer_2"
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 16
+      }
+    }
+  ]
+}

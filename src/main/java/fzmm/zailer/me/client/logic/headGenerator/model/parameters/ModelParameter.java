@@ -4,13 +4,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class ModelParameter<T> implements IModelParameter<T> {
+public class ModelParameter<VALUE> implements IModelParameter<VALUE> {
     private final String id;
     @Nullable
-    private T value;
+    private VALUE value;
     private final boolean isRequested;
 
-    public ModelParameter(String id, @Nullable T value, boolean isRequested) {
+    public ModelParameter(String id, @Nullable VALUE value, boolean isRequested) {
         this.id = id;
         this.value = value;
         this.isRequested = isRequested;
@@ -20,11 +20,11 @@ public class ModelParameter<T> implements IModelParameter<T> {
         return this.id;
     }
 
-    public Optional<T> value() {
+    public Optional<VALUE> value() {
         return Optional.ofNullable(this.value);
     }
 
-    public void setValue(@Nullable T value) {
+    public void setValue(@Nullable VALUE value) {
         this.value = value;
     }
 

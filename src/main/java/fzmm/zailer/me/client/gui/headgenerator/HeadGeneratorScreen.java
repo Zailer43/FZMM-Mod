@@ -21,6 +21,7 @@ import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.headGenerator.HeadResourcesLoader;
 import fzmm.zailer.me.client.logic.headGenerator.TextureOverlap;
+import fzmm.zailer.me.client.logic.headGenerator.model.HeadModelEntry;
 import fzmm.zailer.me.utils.*;
 import fzmm.zailer.me.utils.list.IListEntry;
 import fzmm.zailer.me.utils.list.ListUtils;
@@ -203,6 +204,10 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
             List<HeadComponentEntry> headEntries = new ArrayList<>(headEntriesList.size());
             for (AbstractHeadEntry entry : headEntriesList) {
                 headEntries.add(new HeadComponentEntry(entry, this));
+
+                if (entry instanceof HeadModelEntry modelEntry) {
+                    modelEntry.reset();
+                }
             }
 
             this.headComponentEntries.addAll(headEntries);

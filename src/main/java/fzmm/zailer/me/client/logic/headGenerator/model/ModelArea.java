@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.logic.headGenerator.model;
 
 import com.google.gson.JsonObject;
-import fzmm.zailer.me.client.logic.headGenerator.model.parameters.ModelParameter;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.IModelParameter;
 import fzmm.zailer.me.client.logic.headGenerator.model.parameters.OffsetParameter;
 import fzmm.zailer.me.utils.SkinPart;
 
@@ -36,7 +36,7 @@ public class ModelArea extends ModelPoint {
         return this.height;
     }
 
-    public ModelArea copyWithOffset(List<ModelParameter<OffsetParameter>> offsets) {
+    public ModelArea copyWithOffset(List<IModelParameter<OffsetParameter>> offsets) {
         ModelArea copy = new ModelArea(this.offset, this.hatLayer, this.x, this.y, this.width, this.height);
         for (var offset : offsets) {
             offset.value().ifPresent(offsetParameter -> {

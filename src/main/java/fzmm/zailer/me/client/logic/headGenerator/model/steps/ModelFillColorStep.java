@@ -22,13 +22,13 @@ public class ModelFillColorStep implements IModelStep {
 
     @Override
     public void apply(ModelData data) {
-        Optional<BufferedImage> optionalTexture = data.getTexture("destination_skin");
+        Optional<BufferedImage> optionalTexture = data.getTexture(data.destinationId());
         if (optionalTexture.isEmpty())
             return;
 
         ModelArea area = this.area.copyWithOffset(data.offsets());
         BufferedImage texture = optionalTexture.get();
-        Color selectedColor = data.selectedColor().get();
+        Color selectedColor = data.selectedColor();
 
         int posX = area.getXWithOffset();
         int posY = area.getYWithOffset();
@@ -36,7 +36,7 @@ public class ModelFillColorStep implements IModelStep {
         int posY2 = posY + area.height();
 
         if (posX2 > texture.getWidth() && posY2 > texture.getHeight()) {
-            FzmmClient.LOGGER.error("[ModelFillColorStep] Pixel outside of texture: " + posX2 + " " + posY2);
+            FzmmClient.LOGGER.error("[ModelFillColorStep] Pixel outside of texture: {} {}",  posX2,  posY2);
             return;
         }
 

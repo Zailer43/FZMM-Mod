@@ -7,7 +7,6 @@ import fzmm.zailer.me.client.logic.headGenerator.model.ModelData;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ModelCopyStep implements IModelStep {
 
@@ -31,8 +30,8 @@ public class ModelCopyStep implements IModelStep {
 
     @Override
     public void apply(ModelData data) {
-        Graphics2D graphics = data.graphics();
-        AtomicReference<BufferedImage> selectedTexture = data.selectedTexture();
+        Graphics2D graphics = data.destinationGraphics();
+        BufferedImage selectedTexture = data.selectedTexture();
 
         ModelArea destination = this.destination.copyWithOffset(data.offsets());
         if (this.addHatLayer) {
@@ -47,7 +46,7 @@ public class ModelCopyStep implements IModelStep {
     }
 
 
-    private void apply(Graphics2D graphics, ModelArea destination, AtomicReference<BufferedImage> selectedTexture, boolean sourceHatLayer, boolean destinationHatLayer) {
+    private void apply(Graphics2D graphics, ModelArea destination, BufferedImage selectedTexture, boolean sourceHatLayer, boolean destinationHatLayer) {
         int destinationX = destination.getXWithOffset(destinationHatLayer);
         int destinationY = destination.getYWithOffset(destinationHatLayer);
         int sourceX = this.source.getXWithOffset(sourceHatLayer);
@@ -76,7 +75,7 @@ public class ModelCopyStep implements IModelStep {
         }
 
 
-        graphics.drawImage(selectedTexture.get(),
+        graphics.drawImage(selectedTexture,
                 destinationX,
                 destinationY,
                 destinationX2,

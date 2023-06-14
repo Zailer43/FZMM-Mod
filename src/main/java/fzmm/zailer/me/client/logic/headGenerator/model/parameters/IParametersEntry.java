@@ -7,15 +7,15 @@ import java.util.List;
 
 public interface IParametersEntry {
 
-    List<ModelParameter<Color>> getColors();
+    List<? extends IModelParameter<Color>> getColors();
 
     void putColor(String key, Color color);
 
-    List<ModelParameter<BufferedImage>> getTextures();
+    List<ResettableModelParameter<BufferedImage, String>> getTextures();
 
     void putTexture(String key, BufferedImage image);
 
-    List<ModelParameter<OffsetParameter>> getOffsets();
+    List<? extends IModelParameter<OffsetParameter>> getOffsets();
 
     boolean hasParameters();
 }

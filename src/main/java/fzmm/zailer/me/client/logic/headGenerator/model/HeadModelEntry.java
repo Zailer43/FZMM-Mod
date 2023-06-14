@@ -3,24 +3,24 @@ package fzmm.zailer.me.client.logic.headGenerator.model;
 import fzmm.zailer.me.client.gui.headgenerator.category.HeadModelCategory;
 import fzmm.zailer.me.client.gui.headgenerator.category.HeadPaintableCategory;
 import fzmm.zailer.me.client.logic.headGenerator.AbstractHeadEntry;
-import fzmm.zailer.me.client.logic.headGenerator.model.parameters.IParametersEntry;
-import fzmm.zailer.me.client.logic.headGenerator.model.parameters.ModelParameter;
-import fzmm.zailer.me.client.logic.headGenerator.model.parameters.OffsetParameter;
+import fzmm.zailer.me.client.logic.headGenerator.model.parameters.*;
 import fzmm.zailer.me.client.logic.headGenerator.model.steps.IModelStep;
+import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.core.Color;
+import net.minecraft.util.Identifier;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.NoSuchElementException;
 
 public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntry {
 
     private final List<IModelStep> steps;
-    private final List<ModelParameter<BufferedImage>> textures;
-    private final List<ModelParameter<Color>> colors;
-    private final List<ModelParameter<OffsetParameter>> offsets;
+    private final List<ResettableModelParameter<BufferedImage, String>> textures;
+    private final List<? extends IModelParameter<Color>> colors;
+    private final List<? extends IModelParameter<OffsetParameter>> offsets;
     private boolean isPaintable;
     private boolean isEditingSkinBody;
 
@@ -28,7 +28,10 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
         this("", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
-    public HeadModelEntry(String displayName, String key, List<IModelStep> steps, List<ModelParameter<BufferedImage>> textures, List<ModelParameter<Color>> colors, List<ModelParameter<OffsetParameter>> offsets) {
+    public HeadModelEntry(String displayName, String key, List<IModelStep> steps,
+                          List<ResettableModelParameter<BufferedImage, String>> textures,
+                          List<? extends IModelParameter<Color>> colors,
+                          List<? extends IModelParameter<OffsetParameter>> offsets) {
         super(displayName, key);
         this.steps = steps;
         this.textures = textures;
@@ -42,17 +45,16 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     public BufferedImage getHeadSkin(BufferedImage baseSkin) {
         BufferedImage headSkin = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D graphics = headSkin.createGraphics();
-        AtomicReference<BufferedImage> selectedTexture = new AtomicReference<>(baseSkin);
-        AtomicReference<Color> selectedColor = new AtomicReference<>(Color.WHITE);
-        List<ModelParameter<BufferedImage>> texturesCopy = new ArrayList<>(this.textures);
-        List<ModelParameter<Color>> colorsCopy = new ArrayList<>(this.colors);
-        List<ModelParameter<OffsetParameter>> offsetsCopy = new ArrayList<>(this.offsets);
+        Graphics2D destinationGraphics = headSkin.createGraphics();
+        Color selectedColor = Color.WHITE;
+        List<ResettableModelParameter<BufferedImage, String>> texturesCopy = new ArrayList<>(this.textures);
+        List<IModelParameter<Color>> colorsCopy = new ArrayList<>(this.colors);
+        List<IModelParameter<OffsetParameter>> offsetsCopy = new ArrayList<>(this.offsets);
 
-        texturesCopy.add(new ModelParameter<>("base_skin", baseSkin, false));
-        texturesCopy.add(new ModelParameter<>("destination_skin", headSkin, false));
+        texturesCopy.add(new ResettableModelParameter<>("base_skin", baseSkin, null, false));
+        texturesCopy.add(new ResettableModelParameter<>("destination_skin", headSkin, null, false));
 
-        ModelData modelData = new ModelData(graphics, texturesCopy, colorsCopy, offsetsCopy, selectedTexture, selectedColor);
+        ModelData modelData = new ModelData(destinationGraphics, "destination_skin", texturesCopy, colorsCopy, offsetsCopy, baseSkin, selectedColor);
 
         for (var step : this.steps)
             step.apply(modelData);
@@ -60,7 +62,7 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
         for (var offset : this.offsets)
             offset.value().ifPresent(OffsetParameter::reset);
 
-        graphics.dispose();
+        destinationGraphics.dispose();
 
         return headSkin;
     }
@@ -88,7 +90,7 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     }
 
     @Override
-    public List<ModelParameter<Color>> getColors() {
+    public List<? extends IModelParameter<Color>> getColors() {
         return this.colors;
     }
 
@@ -103,7 +105,7 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     }
 
     @Override
-    public List<ModelParameter<BufferedImage>> getTextures() {
+    public List<ResettableModelParameter<BufferedImage, String>> getTextures() {
         return this.textures;
     }
 
@@ -117,14 +119,29 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     }
 
     @Override
-    public List<ModelParameter<OffsetParameter>> getOffsets() {
+    public List<? extends IModelParameter<OffsetParameter>> getOffsets() {
         return this.offsets;
     }
 
     @Override
     public boolean hasParameters() {
-        return this.getColors().stream().anyMatch(ModelParameter::isRequested)
-                || this.getTextures().stream().anyMatch(ModelParameter::isRequested)
-                || this.getOffsets().stream().anyMatch(ModelParameter::isRequested);
+        return this.getColors().stream().anyMatch(IModelParameter::isRequested)
+                || this.getTextures().stream().anyMatch(IModelParameter::isRequested)
+                || this.getOffsets().stream().anyMatch(IModelParameter::isRequested);
+    }
+
+    public void reset() {
+        for (var textureParameter : this.textures) {
+            BufferedImage texture;
+            String defaultValue = textureParameter.getDefaultValue();
+            if (defaultValue != null) {
+                Identifier textureIdentifier = new Identifier(defaultValue);
+                texture = ImageUtils.getBufferedImgFromIdentifier(textureIdentifier).orElseThrow(() -> new NoSuchElementException(defaultValue));
+            } else {
+                texture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+            }
+
+            textureParameter.setValue(texture);
+        }
     }
 }

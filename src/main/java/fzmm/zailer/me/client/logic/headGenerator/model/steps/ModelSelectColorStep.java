@@ -23,7 +23,7 @@ public class ModelSelectColorStep implements IModelStep {
             FzmmClient.LOGGER.error("[ModelSelectColorStep] Could not find color '{}'", this.colorId);
         }
 
-        data.selectedColor().set(color);
+        data.selectedColor(color);
     }
 
     public static ModelSelectColorStep parse(JsonObject jsonObject) {
