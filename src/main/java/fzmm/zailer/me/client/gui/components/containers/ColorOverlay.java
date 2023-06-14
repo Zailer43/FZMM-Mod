@@ -79,7 +79,8 @@ public class ColorOverlay extends OverlayContainer<GridLayout> {
             if (this.selectedColor == null)
                 return;
 
-            for (var favoriteColor : favoriteColorsComponent.children()) {
+            List<Component> favoriteColorsComponentList = List.copyOf(favoriteColorsComponent.children());
+            for (var favoriteColor : favoriteColorsComponentList) {
                 if (favoriteColor instanceof FlowLayout colorLayout &&
                         colorLayout.children().get(0) instanceof BoxComponent boxComponent &&
                         boxComponent.startColor().get() == this.selectedColor) {
