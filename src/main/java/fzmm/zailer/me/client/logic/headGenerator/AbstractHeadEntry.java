@@ -33,4 +33,6 @@ public abstract class AbstractHeadEntry {
     public abstract String getCategoryId();
 
     public abstract boolean isEditingSkinBody();
+
+    public abstract boolean isFirstResult();
 }

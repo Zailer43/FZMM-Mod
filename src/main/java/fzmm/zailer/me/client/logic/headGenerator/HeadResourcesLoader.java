@@ -50,7 +50,10 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
         LOADED_RESOURCES.addAll(loadHeadsModels(manager));
         LOADED_RESOURCES.addAll(loadHeadsTextures(manager));
 
-        LOADED_RESOURCES.sort(Comparator.comparing(AbstractHeadEntry::getKey));
+        LOADED_RESOURCES.sort(Comparator.comparing(AbstractHeadEntry::isFirstResult)
+                .reversed()
+                .thenComparing(AbstractHeadEntry::getKey));
+
     }
 
     private static Set<HeadTextureEntry> loadHeadsTextures(ResourceManager manager) {
@@ -113,6 +116,7 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
         List<? extends IModelParameter<OffsetParameter>> offsets = getHeadModelOffsets(jsonObject);
         boolean isPaintableModel = jsonObject.has("paintable") && jsonObject.get("paintable").getAsBoolean();
         boolean isEditingSkinBody = jsonObject.has("is_editing_skin_body") && jsonObject.get("is_editing_skin_body").getAsBoolean();
+        boolean isFirstResult = jsonObject.has("first_result") && jsonObject.get("first_result").getAsBoolean();
 
         JsonArray stepsArray = jsonObject.getAsJsonArray("steps");
         List<IModelStep> steps = new ArrayList<>();
@@ -140,6 +144,7 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
 
         entry.isPaintable(isPaintableModel);
         entry.isEditingSkinBody(isEditingSkinBody);
+        entry.isFirstResult(isFirstResult);
 
         return entry;
     }

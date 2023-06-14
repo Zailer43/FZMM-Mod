@@ -1,0 +1,17 @@
+{
+  "first_result": true,
+  "is_editing_skin_body": true,
+  "steps": [
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 64,
+        "height": 64
+      }
+    }
+  ]
+}

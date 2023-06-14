@@ -23,6 +23,7 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
     private final List<? extends IModelParameter<OffsetParameter>> offsets;
     private boolean isPaintable;
     private boolean isEditingSkinBody;
+    private boolean isFirstResult;
 
     public HeadModelEntry() {
         this("", "", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
@@ -39,6 +40,7 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
         this.offsets = offsets;
         this.isPaintable = false;
         this.isEditingSkinBody = false;
+        this.isFirstResult = false;
     }
 
     @Override
@@ -79,6 +81,15 @@ public class HeadModelEntry extends AbstractHeadEntry implements IParametersEntr
 
     public void isEditingSkinBody(boolean value) {
         this.isEditingSkinBody = value;
+    }
+
+    @Override
+    public boolean isFirstResult() {
+        return this.isFirstResult;
+    }
+
+    public void isFirstResult(boolean value) {
+        this.isFirstResult = value;
     }
 
     public void isPaintable(boolean value) {

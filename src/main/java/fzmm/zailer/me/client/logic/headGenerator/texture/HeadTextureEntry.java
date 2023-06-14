@@ -37,6 +37,11 @@ public class HeadTextureEntry extends AbstractHeadEntry {
         return this.isEditingSkinBody;
     }
 
+        @Override
+    public boolean isFirstResult() {
+        return false;
+    }
+
     private boolean calculateIsEditingSkinBody() {
         if (this.headSkin.getWidth() != 64 || this.headSkin.getHeight() != 64)
             return false;
