@@ -345,7 +345,7 @@
                     <all>12</all>
                 </padding>
 
-                <z-index>600</z-index>
+                <z-index>500</z-index>
 
                 <gap>8</gap>
 
