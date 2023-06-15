@@ -42,7 +42,7 @@
         "width": 32,
         "height": 16
       },
-      "overlap_hat_layer": true
+      "add_hat_layer": true
     },
     {
       "type": "select_texture",

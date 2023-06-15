@@ -1,4 +1,3 @@
-
 # FZMM-Mod
 
 
@@ -16,7 +15,7 @@
 A fabric mod that is mainly for editing or creating NBT of items in creative, but it also has a few utilities.
 
 ## How to use?
-The default key to use the mod is `Z` (can be changed in controls), there are also some client-side commands with `/fzmm`
+**The default key to use the mod is `Z`** (can be changed in controls), there are also some client-side commands with `/fzmm`
 
 ## Dependencies
 * [owo-lib](https://modrinth.com/mod/owo-lib)
@@ -25,13 +24,14 @@ The default key to use the mod is `Z` (can be changed in controls), there are al
 ## Features
 
 ### Head generator
-Modify heads in seconds and get the skin instantly, with the "textures" option you can add accessories, glasses, hats, masks, beards, etc.
-and with the "models" option you can turn your skin into a plushie/mini version, put a pixel art of your skin on a book cover, decapitated and add accessories with the color of your choice.
+Easily customize your character's head in seconds and instantly apply the new skin. The head generator allows you to add accessories like glasses, hats, masks, beards, and more. You can also transform your skin into a plushie or mini version, or create a pixel art representation of your skin for a book cover.
 
-Currently, the default resource pack comes with:
+The default resource pack currently includes:
 
-- 219 texture heads
-- 21 model heads
+- 222 texture heads
+- 42 model heads
+
+For instructions on how to add your own custom heads to the head generator, please refer to the [Head Generator Wiki](docs/en/wiki/head_generator/README.md)
 
 <details>
 
@@ -49,6 +49,8 @@ Currently, the default resource pack comes with:
 
 <img src="docs/images/head_generator_gui_layers.png" alt="Head generator gui layers" width="800">
 
+<img src="docs/images/head_generator_gui_overlay.png" alt="Head generator gui overlay" width="800">
+
 </details>
 
 ### Imagetext
@@ -60,31 +62,24 @@ Types of display:
 * Book page
 * Book tooltip
 * Hologram (armor stands)
-* Sign 
+* Sign
+* Text display
 
-#### Lore
+Algorithms:
 
-<img src="docs/images/imagetext_lore.png" alt="Imagetext lore" width="200">
+* Characters
+* Braille
 
-<details>
-<summary>Images</summary> 
+| Lore             | Book page           | Book tooltip           |
+| ---------------- | ------------------- | ---------------------- |
+| <img src="docs/images/imagetext_lore.png" alt="Imagetext lore" width="200"> | <img src="docs/images/imagetext_book_page.png" alt="Imagetext book page" width="200"> | <img src="docs/images/imagetext_book_tooltip.png" alt="Imagetext book tooltip" width="200"> |
+| Hologram         | Sign                | Text display                       |
+| <img src="docs/images/imagetext_hologram.png" alt="Imagetext hologram" width="200"> | <img src="docs/images/imagetext_sign.png" alt="Imagetext sign" width="200"> | <img src="docs/images/imagetext_text_display.png" alt="Imagetext text display" width="200">                       |
 
+#### Braille
 
-#### Book page
+<img src="docs/images/imagetext_braille.png" alt="Imagetext braille" width="200">
 
-<img src="docs/images/imagetext_book_page.png" alt="Imagetext book page" width="200">
-
-#### Book tooltip
-
-<img src="docs/images/imagetext_book_tooltip.png" alt="Imagetext book tooltip" width="200">
-
-#### Hologram
-
-<img src="docs/images/imagetext_hologram.png" alt="Imagetext hologram" width="200">
-
-#### Sign
-
-<img src="docs/images/imagetext_sign.png" alt="Imagetext sign" width="200">
 
 #### GUI
 
@@ -138,13 +133,9 @@ It also allows 128x128 skins.
 <details>
 <summary>Images</summary>
 
-#### Skin 64x64
-
-<img src="docs/images/player_statue_64.png" alt="Player statue skin 64x64" width="200">
-
-#### Skin 128x128
-
-<img src="docs/images/player_statue_128.png" alt="Player statue skin 128x128" width="200">
+| Skin 64x64 | Skin 128x128 |
+|------------|--------------|
+| <img src="docs/images/player_statue_64.png" alt="Player statue skin 64x64" width="200"> | <img src="docs/images/player_statue_128.png" alt="Player statue skin 128x128" width="200"> |
 
 #### GUI
 
@@ -231,9 +222,11 @@ All types of loot chest, or in other words: a list of chests which each time you
 ### Resource packs
 
 * Resource packs that modify how the heads look in the hands as it affects how the Player Statue looks
-  Examples:
-  - [Corrected Mob Heads](https://modrinth.com/resourcepack/corrected-mob-heads)
-  - [Shelf+](https://www.curseforge.com/minecraft/texture-packs/shelf)
+  
+  	Examples:
+  
+  	- [Corrected Mob Heads](https://modrinth.com/resourcepack/corrected-mob-heads)
+  	- [Shelf+](https://www.curseforge.com/minecraft/texture-packs/shelf)
 
 ## Translations
 To contribute with the translation of a language or fix a bug in a language other than English you must use the [Crowdin project of the mod](https://crowdin.com/project/fzmm-mod), if you don't find your language, and you want to translate it you can suggest it with an issue or post it in discord.

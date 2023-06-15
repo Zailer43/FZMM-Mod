@@ -378,6 +378,7 @@
   "fzmm.gui.title.imagetext": "Imagetext",
   "fzmm.gui.title.main": "FZMM Gui",
   "fzmm.gui.title.playerStatue": "Player Statue",
+  "fzmm.gui.title.selectItem": "Select item",
   "fzmm.gui.title.textFormat": "Text format",
   "fzmm.item.encryptbook.encryptMessage.tooltip": "Key: %s\nIs Asymmetric: %s",
   "fzmm.item.error.actionNotAllowed": "FZMM: This action is not allowed if you are not in creative mode.",

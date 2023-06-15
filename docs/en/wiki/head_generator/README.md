@@ -7,6 +7,9 @@ and with the "models" option you can turn your skin into a plushie/mini version,
 # Versions
 Versions are only added when there was a change, if the version you are using does not appear it means that there were no changes, so you must go to the most recent one.
 
+## [0.2.3](./0.2.3_head_generator.md)
+Allows the use of parameters in the GUI, adds offset, other changes
+
 ## [0.2.0](./0.2.0_head_generator.md)
 Add models to head generator
 
