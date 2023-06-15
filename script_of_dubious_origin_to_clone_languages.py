@@ -3,8 +3,10 @@ import shutil
 
 lang = {
   "de_de": {"de_de"},
+  "es_es": {"es_ar", "es_cl", "es_ec", "es_es", "es_mx", "es_uy", "es_ve"},
+  "fr_fr": {"fr_ca", "fr_fr"},
   "ru_ru": {"ru_ru"},
-  "es_es": {"es_ar", "es_cl", "es_ec", "es_es", "es_mx", "es_uy", "es_ve"}
+  "tt_ru": {"tt_ru"}
 }
 
 src_dir = "src/main/resources/assets/fzmm/lang/"
