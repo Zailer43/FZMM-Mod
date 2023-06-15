@@ -70,6 +70,9 @@ Algorithms:
 * Characters
 * Braille
 
+<details>
+<summary>Images</summary>
+
 | Lore             | Book page           | Book tooltip           |
 | ---------------- | ------------------- | ---------------------- |
 | <img src="docs/images/imagetext_lore.png" alt="Imagetext lore" width="200"> | <img src="docs/images/imagetext_book_page.png" alt="Imagetext book page" width="200"> | <img src="docs/images/imagetext_book_tooltip.png" alt="Imagetext book tooltip" width="200"> |
