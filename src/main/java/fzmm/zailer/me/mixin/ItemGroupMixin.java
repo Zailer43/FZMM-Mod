@@ -21,9 +21,13 @@ public abstract class ItemGroupMixin {
             cir.setReturnValue(MinecraftClient.getInstance().options.getOperatorItemsTab().getValue());
     }
 
+    // intellij idea has intrusive thoughts when in fact everything is fine (or so I think, it seems to work).
+    @SuppressWarnings("all")
     @ModifyVariable(method = "updateEntries(Lnet/minecraft/item/ItemGroup$DisplayContext;)V",
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/item/ItemGroup$EntriesImpl;<init>(Lnet/minecraft/item/ItemGroup;Lnet/minecraft/resource/featuretoggle/FeatureSet;)V"),
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/item/ItemGroup$EntriesImpl;<init>(Lnet/minecraft/item/ItemGroup;Lnet/minecraft/resource/featuretoggle/FeatureSet;)V"
+            ),
             index = 1,
             argsOnly = true
     )

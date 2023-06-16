@@ -1,8 +1,8 @@
 package fzmm.zailer.me.mixin.screenshotHud;
 
 import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ChatHudMixin {
 
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void removeHandInScreenshotHud(MatrixStack matrices, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
+    private void removeHandInScreenshotHud(DrawContext context, int currentTick, int mouseX, int mouseY, CallbackInfo ci) {
         if (ScreenshotSource.hasInstance())
             ci.cancel();
     }

@@ -13,6 +13,7 @@ import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.text.Style;
@@ -24,8 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FzmmItemGroup {
-    public static final String OPERATOR_BASE_TRANSLATION_KEY = "itemGroup.op.";
-    public static final String USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY = "itemGroup.fzmm.useful_block_states.";
+    public static final String OPERATOR_BASE_TRANSLATION_KEY = "itemGroup.op";
+    public static final String USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY = "itemGroup.fzmm.useful_block_states";
+    public static final Identifier USEFUL_BLOCK_STATES_IDENTIFIER = new Identifier(FzmmClient.MOD_ID, "useful_block_states");
+    public static final Identifier LOOT_CHESTS_IDENTIFIER = new Identifier(FzmmClient.MOD_ID, "loot_chests");
 
     @SuppressWarnings("UnstableApiUsage")
     public static void register() {
@@ -57,7 +60,8 @@ public class FzmmItemGroup {
             entries.addAfter(Items.DEBUG_STICK, newEntries);
         });
 
-        FabricItemGroup.builder(new Identifier(FzmmClient.MOD_ID, "useful_block_states"))
+        ItemGroup usefulBlockStatesItemGroup = FabricItemGroup.builder()
+                .displayName(Text.translatable(USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY))
                 .icon(() -> new ItemStack(Items.REDSTONE_LAMP))
                 .entries((displayContext, entries) -> {
 
@@ -126,7 +130,8 @@ public class FzmmItemGroup {
                     addWaterloggedBlocks(entries);
                 }).build();
 
-        FabricItemGroup.builder(new Identifier(FzmmClient.MOD_ID, "loot_chests"))
+        ItemGroup lootChestsItemGroup = FabricItemGroup.builder()
+                .displayName(Text.translatable("itemGroup.fzmm.loot_chests"))
                 .icon(() -> new ItemStack(Items.CHEST))
                 .entries((displayContext, entries) -> {
                     List<String> lootTablesPath = LootTables.getAll().stream()
@@ -148,24 +153,27 @@ public class FzmmItemGroup {
                         entries.add(chest);
                     }
                 }).build();
+
+        Registry.register(Registries.ITEM_GROUP, USEFUL_BLOCK_STATES_IDENTIFIER, usefulBlockStatesItemGroup);
+        Registry.register(Registries.ITEM_GROUP, LOOT_CHESTS_IDENTIFIER, lootChestsItemGroup);
     }
 
     private static void addArmorStand(List<ItemStack> entries) {
         String baseTranslation = "armorStand.";
         ItemStack armorStandWithArms = ArmorStandBuilder.builder()
                 .setShowArms()
-                .getItem(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + baseTranslation + "arms"));
+                .getItem(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "." + baseTranslation + "arms"));
         entries.add(armorStandWithArms);
 
         ItemStack smallArmorStand = ArmorStandBuilder.builder()
                 .setSmall()
-                .getItem(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + baseTranslation + "small"));
+                .getItem(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "." + baseTranslation + "small"));
         entries.add(smallArmorStand);
 
         ItemStack smallArmorStandWithArms = ArmorStandBuilder.builder()
                 .setSmall()
                 .setShowArms()
-                .getItem(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + baseTranslation + "smallWithArms"));
+                .getItem(Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "." + baseTranslation + "smallWithArms"));
         entries.add(smallArmorStandWithArms);
     }
 
@@ -178,8 +186,8 @@ public class FzmmItemGroup {
         itemFrame.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
         glowItemFrame.setSubNbt(EntityType.ENTITY_TAG_KEY, entityTag);
 
-        String itemFrameName = Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "invisibleItemFrame").getString();
-        String glowItemFrameName = Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "invisibleGlowItemFrame").getString();
+        String itemFrameName = Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "." + "invisibleItemFrame").getString();
+        String glowItemFrameName = Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "." + "invisibleGlowItemFrame").getString();
 
         itemFrame.setCustomName(Text.literal(itemFrameName).setStyle(Style.EMPTY.withItalic(false)));
         glowItemFrame.setCustomName(Text.literal(glowItemFrameName).setStyle(Style.EMPTY.withItalic(false)));
@@ -218,7 +226,7 @@ public class FzmmItemGroup {
         String baseTranslation = "nameTag.";
         String commentTranslation = ".comment.";
 
-        return Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + baseTranslation + value + commentTranslation + line).getString();
+        return Text.translatable(OPERATOR_BASE_TRANSLATION_KEY + "." + baseTranslation + value + commentTranslation + line).getString();
     }
 
     private static void addCrossbows(List<ItemStack> entries) {

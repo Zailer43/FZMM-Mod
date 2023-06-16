@@ -8,8 +8,6 @@ import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIParsing;
-import io.wispforest.owo.ui.util.Drawer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.w3c.dom.Element;
 
@@ -78,11 +76,11 @@ public abstract class AbstractRow extends FlowLayout {
     public abstract Component[] getComponents(String id, String tooltipId);
 
     @Override
-    public void draw(MatrixStack matrices, int mouseX, int mouseY, float partialTicks, float delta) {
+    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
         if (this.hovered && this.hasHoveredBackground)
-            Drawer.fill(matrices, this.x, this.y, this.x + this.width, this.y + this.height, 0x40000000);
+            context.fill(this.x, this.y, this.x + this.width, this.y + this.height, 0x40000000);
 
-        super.draw(matrices, mouseX, mouseY, partialTicks, delta);
+        super.draw(context, mouseX, mouseY, partialTicks, delta);
     }
 
     public Component getResetButton(String id) {

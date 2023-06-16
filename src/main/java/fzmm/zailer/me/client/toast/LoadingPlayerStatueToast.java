@@ -2,8 +2,8 @@ package fzmm.zailer.me.client.toast;
 
 import fzmm.zailer.me.client.toast.status.IStatus;
 import fzmm.zailer.me.client.toast.status.PlayerStatueStatus;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.toast.ToastManager;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 
 public class LoadingPlayerStatueToast extends AbstractStatusToast {
@@ -30,11 +30,11 @@ public class LoadingPlayerStatueToast extends AbstractStatusToast {
     }
 
     @Override
-    public Visibility draw(MatrixStack matrices, ToastManager manager, long startTime) {
+    public Visibility draw(DrawContext context, ToastManager manager, long startTime) {
         if (this.finished && this.loadedTime == -1)
             this.loadedTime = startTime;
 
-        super.draw(matrices, manager, startTime);
+        super.draw(context, manager, startTime);
 
         return this.finished && (startTime - this.loadedTime) > 3000 ? Visibility.HIDE : Visibility.SHOW;
     }

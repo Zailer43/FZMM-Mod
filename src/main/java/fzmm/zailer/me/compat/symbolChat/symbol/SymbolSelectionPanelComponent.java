@@ -2,10 +2,10 @@ package fzmm.zailer.me.compat.symbolChat.symbol;
 
 import io.wispforest.owo.ui.base.BaseComponent;
 import io.wispforest.owo.ui.core.AnimatableProperty;
+import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.gui.AbstractParentElement;
-import net.minecraft.client.util.math.MatrixStack;
 
 public class SymbolSelectionPanelComponent extends BaseComponent {
 
@@ -23,8 +23,8 @@ public class SymbolSelectionPanelComponent extends BaseComponent {
     }
 
     @Override
-    public void draw(MatrixStack matrices, int mouseX, int mouseY, float partialTicks, float delta) {
-        ((net.replaceitem.symbolchat.gui.SymbolSelectionPanel) this.selectionPanel).render(matrices, mouseX, mouseY, delta);
+    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
+        ((net.replaceitem.symbolchat.gui.SymbolSelectionPanel) this.selectionPanel).render(context, mouseX, mouseY, delta);
     }
 
     @Override

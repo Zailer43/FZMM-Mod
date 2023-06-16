@@ -1,12 +1,12 @@
 package fzmm.zailer.me.client.toast;
 
 import fzmm.zailer.me.client.toast.status.IStatus;
-import io.wispforest.owo.ui.util.Drawer;
+import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.toast.Toast;
 import net.minecraft.client.toast.ToastManager;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 
@@ -16,19 +16,21 @@ public abstract class AbstractStatusToast implements Toast {
     private static final int LINE_DISTANCE = 12;
 
     @Override
-    public Visibility draw(MatrixStack matrices, ToastManager manager, long startTime) {
+    public Visibility draw(DrawContext drawContext, ToastManager manager, long startTime) {
         IStatus status = this.getStatus();
 
-        Drawer.fill(matrices, 0, 0, this.getWidth(), this.getHeight(), status.getBackgroundColor());
-        Drawer.drawRectOutline(matrices, 0, 0, this.getWidth(), this.getHeight(), status.getOutlineColor());
+        OwoUIDrawContext context = OwoUIDrawContext.of(drawContext);
+        context.fill(0, 0, this.getWidth(), this.getHeight(), status.getBackgroundColor());
+        context.drawRectOutline(0, 0, this.getWidth(), this.getHeight(), status.getOutlineColor());
 
         int xOffset = 40;
+        TextRenderer textRenderer = manager.getClient().textRenderer;
 
-        status.getIcon().render(matrices, 12, 12, 0, 0, 0);
-        manager.getClient().textRenderer.drawWithShadow(matrices, status.getStatusTranslation(), xOffset, 8, 0xFFFFFF);
+        status.getIcon().render(context, 12, 12, 0, 0, 0);
+        context.drawTextWithShadow(textRenderer, status.getStatusTranslation(), xOffset, 8, 0xFFFFFF);
         List<OrderedText> detailsLines = this.getDetailsLines();
         for (int i = 0; i != detailsLines.size(); i++)
-            manager.getClient().textRenderer.drawWithShadow(matrices, detailsLines.get(i), xOffset, 8 + LINE_DISTANCE + i * LINE_DISTANCE, 0xFFFFFF);
+            context.drawTextWithShadow(textRenderer, detailsLines.get(i), xOffset, 8 + LINE_DISTANCE + i * LINE_DISTANCE, 0xFFFFFF);
         return startTime > 3000 ? Visibility.HIDE : Visibility.SHOW;
     }
 

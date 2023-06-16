@@ -10,9 +10,8 @@ import fzmm.zailer.me.client.gui.components.row.AbstractRow;
 import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Sizing;
-import io.wispforest.owo.ui.util.Drawer;
-import net.minecraft.client.util.math.MatrixStack;
 import org.w3c.dom.Element;
 
 import java.util.List;
@@ -36,11 +35,11 @@ public class ImageRows extends FlowLayout {
     }
 
     @Override
-    public void draw(MatrixStack matrices, int mouseX, int mouseY, float partialTicks, float delta) {
+    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
         if (this.hovered)
-            Drawer.fill(matrices, this.x, this.y, this.x + this.width, this.y + this.height, 0x40000000);
+            context.fill(this.x, this.y, this.x + this.width, this.y + this.height, 0x40000000);
 
-        super.draw(matrices, mouseX, mouseY, partialTicks, delta);
+        super.draw(context, mouseX, mouseY, partialTicks, delta);
     }
 
     @SuppressWarnings("ConstantConditions")

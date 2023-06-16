@@ -17,13 +17,13 @@ public class BlockStateItemBuilder {
     public BlockStateItemBuilder(Item item, String itemNameTranslationKey) {
         this.item = item;
         this.blockStateTag = new NbtCompound();
-        this.itemName = Text.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + "item." + itemNameTranslationKey).getString();
+        this.itemName = Text.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + ".item." + itemNameTranslationKey).getString();
     }
 
     public BlockStateItemBuilder(Item item, String translationKey, Item translationItem) {
         this.item = item;
         this.blockStateTag = new NbtCompound();
-        this.itemName = Text.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + "item." + translationKey, translationItem.getName().getString()).getString();
+        this.itemName = Text.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + ".item." + translationKey, translationItem.getName().getString()).getString();
     }
 
     public BlockStateItemBuilder(Item item) {
@@ -37,7 +37,7 @@ public class BlockStateItemBuilder {
         if (this.itemName != null) {
             int color = FzmmClient.CONFIG.colors.usefulBlockStates().rgb();
             displayBuilder.setName(this.itemName, color)
-                    .addLore(Text.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + "place").getString(), color);
+                    .addLore(Text.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + ".place").getString(), color);
         }
         ItemStack stack = displayBuilder.get();
 

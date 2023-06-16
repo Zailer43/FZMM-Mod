@@ -119,7 +119,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
             this.addItemCallback(FzmmHistory.getAllItems(), true);
         });
 
-        ItemGroups.updateDisplayContext(this.client.player.networkHandler.getEnabledFeatures(), true, this.client.player.world.getRegistryManager());
+        ItemGroups.updateDisplayContext(this.client.player.networkHandler.getEnabledFeatures(), true, this.client.player.getWorld().getRegistryManager());
         ButtonComponent allButton = rootComponent.childById(ButtonComponent.class, ALL_BUTTON_ID);
         checkNull(allButton, "button", ALL_BUTTON_ID);
         allButton.onPress(buttonComponent -> {

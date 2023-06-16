@@ -4,30 +4,30 @@ import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 
 public class SignBuilder {
 
     public static final int MAX_ROWS = 4;
     private ItemStack stack;
-    private String color;
-    private boolean glowing;
-    private final NbtList textList;
+    private final NbtList frontTextList;
+    private final NbtCompound frontCompound;
+    private final NbtList backTextList;
+    private final NbtCompound backCompound;
+    private boolean isWaxed;
 
     private SignBuilder() {
         this.stack = Items.OAK_SIGN.getDefaultStack();
-        this.color = Formatting.BLACK.getName();
-        this.glowing = false;
-        this.textList = new NbtList();
+        this.frontTextList = new NbtList();
+        this.frontCompound = new NbtCompound();
+        this.backTextList = new NbtList();
+        this.backCompound = new NbtCompound();
+        this.isWaxed = false;
     }
 
     public static SignBuilder builder() {
@@ -40,43 +40,85 @@ public class SignBuilder {
         return this;
     }
 
-    public SignBuilder color(String color) {
-        this.color = color;
+
+    public SignBuilder addFrontLine(NbtString nbtString) {
+        return this.addLine(this.frontTextList, nbtString);
+    }
+
+    public SignBuilder addBackLine(NbtString nbtString) {
+        return this.addLine(this.backTextList, nbtString);
+    }
+
+    private SignBuilder addLine(NbtList list, NbtString nbtString) {
+        list.add(nbtString);
         return this;
     }
 
-    public SignBuilder glowing(boolean value) {
-        this.glowing = value;
-        return this;
+    public SignBuilder addFrontLine(NbtString nbtString, int expectedWidth) {
+        return this.addLine(this.frontTextList, nbtString, expectedWidth);
     }
 
-    public SignBuilder addLine(NbtString nbtString) {
-        this.textList.add(nbtString);
-        return this;
+    public SignBuilder addBackLine(NbtString nbtString, int expectedWidth) {
+        return this.addLine(this.backTextList, nbtString, expectedWidth);
     }
 
-    public SignBuilder addLine(NbtString nbtString, int expectedWidth) {
+    private SignBuilder addLine(NbtList list, NbtString nbtString, int expectedWidth) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         MutableText text = Text.Serializer.fromJson(nbtString.asString());
         if (text == null)
             return this;
 
-        while (textRenderer.getWidth(text) < expectedWidth)
-            text.append(" ");
+        int spaceCount = 0;
+        MutableText textCopy = text.copy();
+        while (textRenderer.getWidth(textCopy) < expectedWidth) {
+            textCopy.append(" ");
+            spaceCount++;
+        }
+        text.append(" ".repeat(spaceCount));
 
         nbtString = FzmmUtils.toNbtString(text, false);
-        return this.addLine(nbtString);
+        return this.addLine(list, nbtString);
+    }
+
+    public SignBuilder glowingFront() {
+        return this.glowing(this.frontCompound);
+    }
+
+    public SignBuilder glowingBack() {
+        return this.glowing(this.backCompound);
+    }
+
+    private SignBuilder glowing(NbtCompound compound) {
+        compound.putBoolean(TagsConstant.SIGN_GLOWING_TEXT, true);
+        return this;
+    }
+
+    public SignBuilder colorFront(String color) {
+        return this.color(this.frontCompound, color);
+    }
+
+    public SignBuilder colorBack(String color) {
+        return this.color(this.backCompound, color);
+    }
+
+    private SignBuilder color(NbtCompound compound, String color) {
+        compound.putString(TagsConstant.SIGN_COLOR, color);
+        return this;
+    }
+
+    public SignBuilder wax() {
+        this.isWaxed = true;
+        return this;
     }
 
     public ItemStack get() {
         NbtCompound entityTag = new NbtCompound();
 
-        entityTag.putString(TagsConstant.SIGN_COLOR, this.color);
-        entityTag.putBoolean(TagsConstant.SIGN_GLOWING_TEXT, this.glowing);
-
-        int rowCount = Math.min(MAX_ROWS, this.textList.size());
-        for (int i = 0; i != rowCount; i++)
-            entityTag.put("Text" + (i + 1), this.textList.get(i));
+        this.frontCompound.put(TagsConstant.SIGN_MESSAGES, this.frontTextList);
+        this.backCompound.put(TagsConstant.SIGN_MESSAGES, this.backTextList);
+        entityTag.put(TagsConstant.SIGN_FRONT_TEXT, this.frontCompound);
+        entityTag.put(TagsConstant.SIGN_BACK_TEXT, this.backCompound);
+        entityTag.putBoolean(TagsConstant.SIGN_IS_WAXED, this.isWaxed);
 
         this.stack.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, entityTag);
         return this.stack;

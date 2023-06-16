@@ -218,7 +218,7 @@
   "fzmm.gui.imagetext.option.imageSourceType": "Image source type",
   "fzmm.gui.imagetext.option.imageSourceType.tooltip": "Supports: PNG, JPG, GIF (first frame) and BMP.",
   "fzmm.gui.imagetext.option.isHangingSign": "Is hanging sign",
-  "fzmm.gui.imagetext.option.isHangingSign.tooltip": "Whether to use the hanging sign\nversion or the normal one.\n\nNote: currently only works when\nusing the experimental 1.20 datapack.",
+  "fzmm.gui.imagetext.option.isHangingSign.tooltip": "Whether to use the hanging sign\nversion or the normal one.",
   "fzmm.gui.imagetext.option.loreMode": "Lore mode",
   "fzmm.gui.imagetext.option.loreMode.tooltip": "Choose how the imagetext will be added to the item's lore.\n\nAdd: add the imagetext to the end of existing lores.\nSet: override lore with imagetext.",
   "fzmm.gui.imagetext.option.percentageOfSimilarityToCompress": "Percentage of similarity to compress",

@@ -1,11 +1,13 @@
 package fzmm.zailer.me.client.gui.main.components;
 
 import fzmm.zailer.me.client.gui.main.MainIcon;
-import io.wispforest.owo.mixin.ui.ClickableWidgetAccessor;
+import io.wispforest.owo.mixin.ui.access.ClickableWidgetAccessor;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.util.Drawer;
+import io.wispforest.owo.ui.core.Color;
+import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
@@ -23,25 +25,27 @@ public class MainButtonComponent extends ButtonComponent {
 
     // this is copied from ButtonComponent to change text height
     @Override
-    public void renderButton(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.renderer.draw(matrices, this, delta);
-        Drawer.drawRectOutline(matrices, this.getX(), this.getY(), this.width, this.height, 0x20000000);
+    public void renderButton(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+        OwoUIDrawContext context = OwoUIDrawContext.of(drawContext);
+        this.renderer.draw(context, this, delta);
+        context.drawRectOutline(this.getX(), this.getY(), this.width, this.height, 0x20000000);
 
         var textRenderer = MinecraftClient.getInstance().textRenderer;
         int color = this.active ? 0xffffff : 0xa0a0a0;
         int centerX = this.getX() + this.width / 2;
 
         if (this.textShadow) {
-            Drawer.drawCenteredTextWithShadow(matrices, textRenderer, this.getMessage(), centerX, this.getY() + 10, color);
+            context.drawCenteredTextWithShadow(textRenderer, this.getMessage(), centerX, this.getY() + 10, color);
         } else {
-            textRenderer.draw(matrices, this.getMessage(), this.getX() + this.width / 2f - textRenderer.getWidth(this.getMessage()) / 2f, this.getY() + 10, color);
+            context.drawText(this.getMessage(), this.getX() + this.width / 2f - textRenderer.getWidth(this.getMessage()) / 2f, this.getY() + 10, color, Color.WHITE.argb());
         }
 
         if (this.icon != null)
-            this.icon.render(matrices, centerX - this.icon.getWidth() / 2, this.getY() + 22, mouseX, mouseY, delta);
+            this.icon.render(context, centerX - this.icon.getWidth() / 2, this.getY() + 22, mouseX, mouseY, delta);
 
         var tooltip = ((ClickableWidgetAccessor)this).owo$getTooltip();
-        if (this.hovered && tooltip != null) Drawer.utilityScreen().renderOrderedTooltip(matrices, tooltip.getLines(MinecraftClient.getInstance()), mouseX, mouseY);
+        if (this.hovered && tooltip != null)
+            context.drawTooltip(textRenderer, tooltip.getLines(MinecraftClient.getInstance()), HoveredTooltipPositioner.INSTANCE, mouseX, mouseY);
     }
 
     public void setIcon(MainIcon icon) {

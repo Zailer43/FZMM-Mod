@@ -1,10 +1,8 @@
 package fzmm.zailer.me.client.gui.main;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import fzmm.zailer.me.client.FzmmIcons;
 import io.wispforest.owo.itemgroup.Icon;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 
 public class MainIcon implements Icon {
     private final int width, height;
@@ -32,9 +30,8 @@ public class MainIcon implements Icon {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int x, int y, int mouseX, int mouseY, float delta) {
-        RenderSystem.setShaderTexture(0, FzmmIcons.TEXTURE);
-        DrawableHelper.drawTexture(matrixStack, x, y, this.width, this.height, this.u, this.v, 16, 16, this.textureWidth, this.textureHeight);
+    public void render(DrawContext context, int x, int y, int mouseX, int mouseY, float delta) {
+        context.drawTexture(FzmmIcons.TEXTURE, x, y, this.width, this.height, this.u, this.v, 16, 16, this.textureWidth, this.textureHeight);
     }
 
     public int getHeight() {

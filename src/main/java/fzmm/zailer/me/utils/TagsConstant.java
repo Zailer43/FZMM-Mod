@@ -12,8 +12,12 @@ public class TagsConstant {
 
     public static final String ITEM_FRAME_ITEM = "Item";
 
-    public static final String SIGN_COLOR = "Color";
-    public static final String SIGN_GLOWING_TEXT = "GlowingText";
+    public static final String SIGN_FRONT_TEXT = "front_text";
+    public static final String SIGN_BACK_TEXT = "back_text";
+    public static final String SIGN_MESSAGES = "messages";
+    public static final String SIGN_COLOR = "color";
+    public static final String SIGN_GLOWING_TEXT = "has_glowing_text";
+    public static final String SIGN_IS_WAXED = "is_waxed";
 
     public static final String BANNER_PATTERN = "Patterns";
     public static final String BANNER_PATTERN_COLOR = "Color";

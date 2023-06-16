@@ -125,7 +125,7 @@ public class ImagetextSignTab implements IImagetextTab {
                 for (int i = 0; i != SignBuilder.MAX_ROWS; i++) {
                     int imagetextIndex = (y * SignBuilder.MAX_ROWS + i) * horizontalSigns + x;
                     if (imagetext.size() > imagetextIndex)
-                        signBuilder.addLine((NbtString) imagetext.get(imagetextIndex), maxTextWidth);
+                        signBuilder.addFrontLine((NbtString) imagetext.get(imagetextIndex), maxTextWidth);
                 }
             }
         }
@@ -153,7 +153,7 @@ public class ImagetextSignTab implements IImagetextTab {
         int color = FzmmClient.CONFIG.colors.imagetextMessages().rgb();
 
         for (int i = 0; i != signBuilders.size(); i++) {
-            ItemStack sign = signBuilders.get(i).get();
+            ItemStack sign = signBuilders.get(i).wax().get();
 
             sign = DisplayBuilder.of(sign)
                     .setName(String.format("X: %d - Y: %d", i % signsPerLine + 1, i / signsPerLine + 1), color)

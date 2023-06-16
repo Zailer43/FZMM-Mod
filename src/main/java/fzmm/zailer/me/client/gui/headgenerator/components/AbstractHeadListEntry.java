@@ -25,7 +25,6 @@ import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.*;
-import io.wispforest.owo.ui.util.Drawer;
 import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -34,7 +33,6 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.util.ScreenshotRecorder;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
@@ -84,11 +82,11 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
     }
 
     @Override
-    public void draw(MatrixStack matrices, int mouseX, int mouseY, float partialTicks, float delta) {
+    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
         if (this.hovered)
-            Drawer.fill(matrices, this.x, this.y, this.x + this.width, this.y + this.height, 0x40000000);
+            context.fill(this.x, this.y, this.x + this.width, this.y + this.height, 0x40000000);
 
-        super.draw(matrices, mouseX, mouseY, partialTicks, delta);
+        super.draw(context, mouseX, mouseY, partialTicks, delta);
     }
 
     private void setBodyPreview(boolean value) {

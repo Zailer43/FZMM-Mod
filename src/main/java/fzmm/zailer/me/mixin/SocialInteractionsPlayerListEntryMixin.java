@@ -5,13 +5,13 @@ import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.itemgroup.Icon;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.multiplayer.SocialInteractionsPlayerListEntry;
 import net.minecraft.client.gui.screen.multiplayer.SocialInteractionsScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -66,13 +66,13 @@ public abstract class SocialInteractionsPlayerListEntryMixin {
     }
 
     @Inject(method = "render", at = @At("RETURN"))
-    private void render(MatrixStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
+    private void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
         if (this.giveHeadButton == null)
             return;
 
         this.giveHeadButton.setX(x + (entryWidth - this.giveHeadButton.getWidth() - 4) + (this.hideButton == null ? 0 : -48));
         this.giveHeadButton.setY(y + (entryHeight - this.giveHeadButton.getHeight()) / 2);
-        this.giveHeadButton.render(matrices, mouseX, mouseY, tickDelta);
-        this.icon.render(matrices, this.giveHeadButton.getX() + 2, this.giveHeadButton.getY() + 1, mouseX, mouseY, tickDelta);
+        this.giveHeadButton.render(context, mouseX, mouseY, tickDelta);
+        this.icon.render(context, this.giveHeadButton.getX() + 2, this.giveHeadButton.getY() + 1, mouseX, mouseY, tickDelta);
     }
 }
