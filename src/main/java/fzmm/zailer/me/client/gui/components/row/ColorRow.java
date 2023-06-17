@@ -58,7 +58,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
      * but I don't have an Option<Color> object.
      */
     @SuppressWarnings({"UnstableApiUsage", "ConstantConditions"})
-    public static ConfigTextBox setup(FlowLayout rootComponent, String id, Color defaultcolor, boolean withAlpha, @Nullable Consumer<String> changedListener) {
+    public static ConfigTextBox setup(FlowLayout rootComponent, String id, Color defaultcolor, boolean withAlpha, int additionalZIndex, @Nullable Consumer<String> changedListener) {
         ConfigTextBox colorField = ConfigTextBoxRow.setup(rootComponent, getColorFieldId(id), id, defaultcolor.asHexString(withAlpha), changedListener);
 
         colorField.inputPredicate(withAlpha ? s -> s.matches("#[a-zA-Z\\d]{0,8}") : s -> s.matches("#[a-zA-Z\\d]{0,6}"));
@@ -75,7 +75,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
         );
 
         Supplier<Color> valueGetter = () -> (Color) colorField.parsedValue();
-        BoxComponent colorPreview = setupColorPreview(id, rootComponent, withAlpha, valueGetter,
+        BoxComponent colorPreview = setupColorPreview(id, rootComponent, withAlpha, additionalZIndex, valueGetter,
                 (picker) -> colorField.text(picker.selectedColor().asHexString(withAlpha)));
 
         colorField.onChanged().subscribe(value -> colorPreview.color(valueGetter.get()));
@@ -86,7 +86,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
 
 
     @SuppressWarnings("ConstantConditions")
-    public static BoxComponent setupColorPreview(String id, FlowLayout rootComponent, boolean withAlpha, Supplier<Color> valueGetter, Consumer<ColorPickerComponent> onPress) {
+    public static BoxComponent setupColorPreview(String id, FlowLayout rootComponent, boolean withAlpha, int additionalZIndex, Supplier<Color> valueGetter, Consumer<ColorPickerComponent> onPress) {
         BoxComponent colorPreview = rootComponent.childById(BoxComponent.class, getColorPreviewId(id));
         BaseFzmmScreen.checkNull(colorPreview, "box", getColorPreviewId(id));
 
@@ -94,6 +94,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
 
         colorPreview.mouseDown().subscribe((mouseX, mouseY, button) -> {
             ColorOverlay colorOverlay = new ColorOverlay(valueGetter.get(), withAlpha, onPress, colorPreview);
+            colorOverlay.zIndex(colorOverlay.zIndex() + additionalZIndex);
             ((FlowLayout) colorPreview.root()).child(colorOverlay);
 
             return true;

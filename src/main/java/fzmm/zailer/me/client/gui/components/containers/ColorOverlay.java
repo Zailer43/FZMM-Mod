@@ -213,7 +213,6 @@ public class ColorOverlay extends OverlayContainer<GridLayout> {
         assert this.child.parent() != null;
         ButtonComponent cancelButton = Components.button(Text.translatable("fzmm.gui.colorPicker.cancel"), buttonComponent -> this.child.parent().remove());
         cancelButton.sizing(Sizing.fixed(50), Sizing.fixed(15))
-                .zIndex(300)
                 .id("cancel-button");
 
         ButtonComponent confirmButton = Components.button(Text.translatable("fzmm.gui.colorPicker.confirm"), buttonComponent -> {
@@ -222,7 +221,6 @@ public class ColorOverlay extends OverlayContainer<GridLayout> {
             this.child.parent().remove();
         });
         confirmButton.sizing(Sizing.fixed(50), Sizing.fixed(15))
-                .zIndex(300)
                 .id("confirm-button");
 
         FlowLayout buttonsLayout = this.getButtonsLayout(cancelButton, confirmButton);

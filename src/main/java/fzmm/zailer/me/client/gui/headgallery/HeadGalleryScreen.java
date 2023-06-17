@@ -226,7 +226,6 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         // and I don't want to scroll back to the start
         if (this.tagOverlay == null) {
             FlowLayout tagSelectPanel = this.getModel().expandTemplate(FlowLayout.class, "select-tag", Map.of()).configure(flowLayout -> {
-                int buttonsZIndex = 200;
                 VerticalGridLayout tagListGrid = flowLayout.childById(VerticalGridLayout.class, TAGS_LIST_GRID_ID);
                 checkNull(tagListGrid, "flow-layout", TAGS_LIST_GRID_ID);
 
@@ -243,7 +242,6 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
                     Text buttonText = this.selectedTags.contains(availableTag) ? this.getSelectedTagText(availableTag) : Text.literal(availableTag);
                     ButtonComponent button = (ButtonComponent) Components.button(buttonText, buttonComponent -> this.tagButtonExecute(buttonComponent, tagsOverlayLabel))
                             .horizontalSizing(Sizing.fixed(200));
-                    button.zIndex(buttonsZIndex);
 
                     buttonList.add(button);
                 }
@@ -256,7 +254,6 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
                             buttonTag.onPress();
                     }
                 });
-                clearSelectedTags.zIndex(buttonsZIndex);
 
                 TextBoxRow.setup(flowLayout, TAG_SEARCH_ID, "", 100, value -> {
                     List<Component> buttonListCopy = new ArrayList<>(buttonList);
@@ -272,6 +269,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
             tagSelectPanel.mouseDown().subscribe((mouseX, mouseY, button) -> true);
             this.tagOverlay = Containers.overlay(tagSelectPanel);
+            this.tagOverlay.zIndex(500);
         }
 
         rootComponent.child(this.tagOverlay);

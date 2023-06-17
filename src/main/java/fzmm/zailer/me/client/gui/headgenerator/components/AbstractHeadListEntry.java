@@ -256,7 +256,7 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
             ColorRow colorRow = new ColorRow(parent.getBaseScreenTranslationKey(), id, id, false, false);
             parametersLayout.child(colorRow);
 
-            ColorRow.setup(parametersLayout, id, colorParameter.value().orElse(Color.WHITE), false, s -> {
+            ColorRow.setup(parametersLayout, id, colorParameter.value().orElse(Color.WHITE), false, 300, s -> {
                 parametersEntry.putColor(colorParameter.id(), colorRow.getValue());
                 this.update();
             });

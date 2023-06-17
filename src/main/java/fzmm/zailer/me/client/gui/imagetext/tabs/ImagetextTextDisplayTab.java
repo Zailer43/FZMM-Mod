@@ -93,7 +93,7 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
         assert MinecraftClient.getInstance().player != null;
 
         this.textOpacity = SliderRow.setup(rootComponent, TEXT_OPACITY_ID, 255, 0, 255, Integer.class, 0, 1, null);
-        this.backgroundColor = ColorRow.setup(rootComponent, BACKGROUND_COLOR_ID, Color.ofArgb(DisplayEntity.TextDisplayEntity.INITIAL_BACKGROUND), true, null);
+        this.backgroundColor = ColorRow.setup(rootComponent, BACKGROUND_COLOR_ID, Color.ofArgb(DisplayEntity.TextDisplayEntity.INITIAL_BACKGROUND), true, 0, null);
         this.textShadow = BooleanRow.setup(rootComponent, TEXT_SHADOW_ID, false, null);
         this.textSeeThrough = BooleanRow.setup(rootComponent, TEXT_SEE_THROUGH_ID, false, null);
         this.textAlignment = EnumRow.setup(rootComponent, TEXT_ALIGNMENT_ID, TextDisplayAlignmentOption.LEFT, null);
