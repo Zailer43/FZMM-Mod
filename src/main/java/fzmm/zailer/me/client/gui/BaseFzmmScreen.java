@@ -15,14 +15,14 @@ import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.gui.components.containers.VerticalGridLayout;
-import fzmm.zailer.me.compat.CompatMods;
-import fzmm.zailer.me.compat.symbolChat.symbol.CustomSymbolSelectionPanel;
-import fzmm.zailer.me.compat.symbolChat.symbol.SymbolSelectionPanelComponent;
+import fzmm.zailer.me.compat.symbolChat.font.FontTextBoxComponent;
+import fzmm.zailer.me.compat.symbolChat.SymbolChatCompat;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import net.minecraft.client.MinecraftClient;
@@ -46,7 +46,8 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     protected final String baseScreenTranslationKey;
     public static final int BUTTON_TEXT_PADDING = 8;
     public static final int COMPONENT_DISTANCE = 8;
-    private final CustomSymbolSelectionPanel customSymbolSelectionPanel;
+    private final SymbolChatCompat symbolChatCompat;
+//    private final CustomSymbolSelectionPanel customSymbolSelectionPanel;
     protected final HashMap<String, IScreenTab> tabs;
 //    private final FontSelectionDropDownComponent fontSelectionDropDown;
 
@@ -55,20 +56,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         this.baseScreenTranslationKey = baseScreenTranslationKey;
         this.parent = parent;
         this.tabs = new HashMap<>();
-
-        if (CompatMods.SYMBOL_CHAT_PRESENT) {
-                this.customSymbolSelectionPanel = CustomSymbolSelectionPanel.of(0, 0);
-//            this.fontSelectionDropDown = new FontSelectionDropDownComponent(new net.replaceitem.symbolchat.gui.widget.FontSelectionDropDownWidget(0,
-//                    0,
-//                    net.replaceitem.symbolchat.gui.SymbolSelectionPanel.WIDTH,
-//                    15,
-//                    net.replaceitem.symbolchat.FontProcessor.fontProcessors,
-//                    net.replaceitem.symbolchat.SymbolChat.selectedFont
-//            ));
-        } else {
-            this.customSymbolSelectionPanel = null;
-//            this.fontSelectionDropDown = null;
-        }
+        this.symbolChatCompat = new SymbolChatCompat();
     }
 
     @Override
@@ -78,10 +66,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         if (backButton != null)
             backButton.onPress(button -> this.close());
 
-        if (CompatMods.SYMBOL_CHAT_PRESENT) {
-            rootComponent.child(new SymbolSelectionPanelComponent(this.customSymbolSelectionPanel.parent()));
-//            rootComponent.child(this.fontSelectionDropDown);
-        }
+        this.symbolChatCompat.addSymbolChatComponents(this);
 
         this.setupButtonsCallbacks(rootComponent);
 
@@ -180,13 +165,6 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         return this.baseScreenTranslationKey;
     }
 
-    public Optional<CustomSymbolSelectionPanel> getCustomSymbolSelectionPanel() {
-        return Optional.ofNullable(this.customSymbolSelectionPanel);
-    }
-
-//    public Optional<FontSelectionDropDownComponent> getFontSelectionDropDown() {
-//        return Optional.ofNullable(this.fontSelectionDropDown);
-//    }
 
     public static String getBaseTranslationKey(Element element) {
         Screen currentScreen = MinecraftClient.getInstance().currentScreen;
@@ -203,6 +181,14 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 
     public static String getOptionBaseTranslationKey(String baseScreenTranslationKey) {
         return getBaseTranslationKey(baseScreenTranslationKey) + ".option.";
+    }
+
+    public void child(Component child) {
+        this.uiAdapter.rootComponent.child(child);
+    }
+
+    public SymbolChatCompat getSymbolChatCompat() {
+        return this.symbolChatCompat;
     }
 
     static {
@@ -228,6 +214,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         UIParsing.registerFactory("screenshot-zone", element -> new ScreenshotZoneComponent());
         UIParsing.registerFactory("color-list", ColorListContainer::parse);
         UIParsing.registerFactory("vertical-grid-layout", VerticalGridLayout::parse);
+        UIParsing.registerFactory("font-text-box", element -> new FontTextBoxComponent(Sizing.fixed(100)));
 
     }
 

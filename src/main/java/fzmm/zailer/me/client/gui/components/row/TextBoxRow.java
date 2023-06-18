@@ -2,10 +2,8 @@ package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.compat.symbolChat.symbol.CustomSymbolSelectionPanel;
-import fzmm.zailer.me.compat.symbolChat.symbol.SymbolButtonComponent;
+import fzmm.zailer.me.compat.symbolChat.font.FontTextBoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -14,8 +12,6 @@ import io.wispforest.owo.ui.parsing.UIParsing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
@@ -24,21 +20,18 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class TextBoxRow extends AbstractRow {
-    //    private static final Text FONT_BUTTON_TEXT = Text.translatable("fzmm.gui.button.chatSymbol.font");
-    private static final Text SYMBOL_BUTTON_TEXT = Text.translatable("fzmm.gui.button.chatSymbol.symbol");
-    private static final Text CHAT_SYMBOL_NOT_AVAILABLE_TEXT = Text.translatable("fzmm.gui.button.chatSymbol.notAvailable.note").setStyle(Style.EMPTY.withColor(0xF2200D));
-    //    private static final Text NOT_AVAILABLE_FONT_BUTTON_TEXT = FONT_BUTTON_TEXT.copy().append("\n\n").append(CHAT_SYMBOL_NOT_AVAILABLE_TEXT);
-    private static final Text NOT_AVALIBLE_SYMBOL_BUTTON_TEXT = SYMBOL_BUTTON_TEXT.copy().append("\n\n").append(CHAT_SYMBOL_NOT_AVAILABLE_TEXT);
 
-
-    public TextBoxRow(String baseTranslationKey, String id, String tooltipId) {
+    public TextBoxRow(String baseTranslationKey, String id, String tooltipId, boolean symbolChatButtons) {
         super(baseTranslationKey, id, tooltipId, true);
+
+        FontTextBoxComponent fontTextBoxComponent = this.childById(FontTextBoxComponent.class, getTextBoxId(id));
+        if (fontTextBoxComponent != null)
+            fontTextBoxComponent.setEnabled(symbolChatButtons);
     }
 
     @Override
     public Component[] getComponents(String id, String tooltipId) {
-        Component textBox = Components
-                .textBox(Sizing.fixed(TEXT_FIELD_WIDTH))
+        Component textBox = new FontTextBoxComponent(Sizing.fixed(TEXT_FIELD_WIDTH))
                 .id(getTextBoxId(id));
 
         return new Component[]{
@@ -86,17 +79,14 @@ public class TextBoxRow extends AbstractRow {
         boolean removeHorizontalMargins = UIParsing.childElements(element).containsKey("removeHorizontalMargins") &&
                 UIParsing.parseBool(UIParsing.childElements(element).get("removeHorizontalMargins"));
 
-        boolean symbolButton = UIParsing.childElements(element).containsKey("symbolButton") &&
-                UIParsing.parseBool(UIParsing.childElements(element).get("symbolButton"));
-
-//        boolean fontButton = UIParsing.childElements(element).containsKey("fontButton") &&
-//                UIParsing.parseBool(UIParsing.childElements(element).get("fontButton"));
+        boolean symbolChatButtons = UIParsing.childElements(element).containsKey("symbolChatButtons") &&
+                UIParsing.parseBool(UIParsing.childElements(element).get("symbolChatButtons"));
 
 
         int fieldSize = UIParsing.childElements(element).containsKey("fieldSize") ? UIParsing.parseSignedInt(UIParsing.childElements(element).get("fieldSize")) : -1;
         fieldSize = UIParsing.childElements(element).containsKey("removeHorizontalMargins") ? fieldSize : -1;
 
-        TextBoxRow row = new TextBoxRow(baseTranslationKey, id, tooltipId);
+        TextBoxRow row = new TextBoxRow(baseTranslationKey, id, tooltipId, symbolChatButtons);
         if (removeHorizontalMargins)
             row.removeHorizontalMargins();
 
@@ -110,7 +100,7 @@ public class TextBoxRow extends AbstractRow {
         }
 
         Screen screen = MinecraftClient.getInstance().currentScreen;
-        if (symbolButton && screen instanceof BaseFzmmScreen baseFzmmScreen)
+        if (symbolChatButtons && screen instanceof BaseFzmmScreen baseFzmmScreen)
             row.addSymbolChatButtons(baseFzmmScreen);
         return row;
     }
@@ -129,54 +119,10 @@ public class TextBoxRow extends AbstractRow {
         TextBoxComponent textBoxComponent = rightLayout.childById(TextBoxComponent.class, getTextBoxId(this.getId()));
         rightLayout.clearChildren();
 
-//        if (fontButton)
-//            rightLayout.child(this.addFontButton(screen));
-
-        rightLayout.child(this.addSymbolButton(screen, textBoxComponent));
+        rightLayout.child(screen.getSymbolChatCompat().getOpenFontSelectionDropDownButton(textBoxComponent));
+        rightLayout.child(screen.getSymbolChatCompat().getOpenSymbolChatPanelButton(textBoxComponent));
 
         rightLayout.children(componentList);
     }
 
-    public Component addSymbolButton(BaseFzmmScreen screen, TextBoxComponent textBoxComponent) {
-        if (screen.getCustomSymbolSelectionPanel().isPresent()) {
-            CustomSymbolSelectionPanel customSymbolSelectionPanel = screen.getCustomSymbolSelectionPanel().get();
-
-           Optional<ButtonComponent> component = SymbolButtonComponent.of(customSymbolSelectionPanel, 0, 0, 20, 20, textBoxComponent);
-            if (component.isPresent())
-                return component.get()
-                        .tooltip(SYMBOL_BUTTON_TEXT);
-        }
-
-        ButtonComponent button = (ButtonComponent) Components.button(Text.literal("☺"), buttonComponent -> {
-                }).sizing(Sizing.fixed(20), Sizing.fixed(20))
-                .tooltip(NOT_AVALIBLE_SYMBOL_BUTTON_TEXT);
-
-        button.active = false;
-        return button;
-    }
-
-//    public Component addFontButton(BaseFzmmScreen screen) {
-//        if (screen.getFontSelectionDropDown().isPresent()) {
-//            FontSelectionDropDownComponent fontSelection = screen.getFontSelectionDropDown().get();
-//            return Components.button(Text.literal("T"), buttonComponent -> {
-//                        boolean isVisible = !fontSelection.isVisible();
-//                        fontSelection.setExpanded(isVisible);
-//                        fontSelection.setVisible(isVisible);
-//
-//                        Optional<SymbolSelectionPanelComponent> symbolSelectionPanel = screen.getSymbolSelectionPanel();
-//
-//                        if (symbolSelectionPanel.isPresent() && SymbolButtonComponent.isVisible(symbolSelectionPanel.get().getSymbolSelectionPanel()))
-//                            SymbolButtonComponent.setVisible(symbolSelectionPanel.get().getSymbolSelectionPanel(), false);
-//
-//                    }).sizing(Sizing.fixed(20), Sizing.fixed(20))
-//                    .tooltip(FONT_BUTTON_TEXT);
-//        }
-//
-//        ButtonComponent button = (ButtonComponent) Components.button(Text.literal("T"), buttonComponent -> {
-//                }).sizing(Sizing.fixed(20), Sizing.fixed(20))
-//                .tooltip(NOT_AVAILABLE_FONT_BUTTON_TEXT);
-//
-//        button.active = false;
-//        return button;
-//    }
 }

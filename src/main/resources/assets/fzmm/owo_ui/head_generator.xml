@@ -17,8 +17,7 @@
                         </image-rows>
                         <text-box-row>
                             <id>headName</id>
-                            <symbolButton>true</symbolButton>
-                            <fontButton>true</fontButton>
+                            <symbolChatButtons>true</symbolChatButtons>
                         </text-box-row>
                     </children>
 

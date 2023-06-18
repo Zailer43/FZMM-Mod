@@ -46,8 +46,7 @@
                                 <children>
                                     <text-box-row>
                                         <id>characters</id>
-                                        <symbolButton>true</symbolButton>
-                                        <fontButton>true</fontButton>
+                                        <symbolChatButtons>true</symbolChatButtons>
                                     </text-box-row>
                                 </children>
                             </screen-tab>

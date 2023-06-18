@@ -29,8 +29,7 @@
                             </number-row>
                             <text-box-row>
                                 <id>name</id>
-                                <symbolButton>true</symbolButton>
-                                <fontButton>true</fontButton>
+                                <symbolChatButtons>true</symbolChatButtons>
                             </text-box-row>
                             <screen-tab-row>
                                 <id>tabs</id>

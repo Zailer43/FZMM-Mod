@@ -42,8 +42,7 @@
                         <children>
                             <text-box-row>
                                 <id>message</id>
-                                <symbolButton>true</symbolButton>
-                                <fontButton>true</fontButton>
+                                <symbolChatButtons>true</symbolChatButtons>
                             </text-box-row>
                             <flow-layout direction="horizontal" id="styles-layout">
                                 <children>
