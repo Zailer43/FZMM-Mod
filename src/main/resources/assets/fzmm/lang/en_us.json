@@ -37,7 +37,7 @@
   "fzmm.gui.button.symbolChat.symbol.tooltip": "View a list of symbols to use in this text field.",
   "fzmm.gui.button.symbolChat.symbol": "☺",
   "fzmm.gui.button.symbolChat.font": "T",
-  "fzmm.gui.button.symbolChat.font.tooltip": "Change the font of the text field.",
+  "fzmm.gui.button.symbolChat.font.tooltip": "Change the font of the text.",
   "fzmm.gui.button.colorList.add": "Add color",
   "fzmm.gui.button.colorList.amount": "There are %s colors",
   "fzmm.gui.button.copy": "Copy",
