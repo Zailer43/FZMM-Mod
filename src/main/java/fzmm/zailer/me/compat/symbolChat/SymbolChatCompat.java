@@ -6,6 +6,8 @@ import fzmm.zailer.me.compat.CompatMods;
 import fzmm.zailer.me.compat.symbolChat.symbol.SymbolSelectionPanelComponentAdapter;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.container.Containers;
+import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.gui.AbstractParentElement;
@@ -111,8 +113,8 @@ public class SymbolChatCompat {
         }
     }
 
-    public ButtonComponent getOpenSymbolChatPanelButton(TextFieldWidget selectedComponent) {
-        ButtonComponent result = Components.button(SYMBOL_BUTTON_TEXT, button -> {
+    public Component getOpenSymbolChatPanelButton(TextFieldWidget selectedComponent) {
+        Component result = Components.button(SYMBOL_BUTTON_TEXT, button -> {
             if (this.fontSelectionDropDown.visible)
                 this.fontSelectionDropDown.visible = false;
 
@@ -130,14 +132,21 @@ public class SymbolChatCompat {
         });
         result.sizing(Sizing.fixed(20));
 
-        result.active = CompatMods.SYMBOL_CHAT_PRESENT;
-        result.tooltip(CompatMods.SYMBOL_CHAT_PRESENT ? SYMBOL_BUTTON_TEXT_TOOLTIP : SYMBOL_BUTTON_NOT_AVAILABLE_TOOLTIP);
+        ((ButtonComponent) result).active = CompatMods.SYMBOL_CHAT_PRESENT;
+
+        if (CompatMods.SYMBOL_CHAT_PRESENT) {
+            result.tooltip(SYMBOL_BUTTON_TEXT_TOOLTIP);
+        } else {
+            result = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+                    .child(result)
+                    .tooltip(SYMBOL_BUTTON_NOT_AVAILABLE_TOOLTIP);
+        }
 
         return result;
     }
 
-    public ButtonComponent getOpenFontSelectionDropDownButton(TextFieldWidget selectedComponent) {
-        ButtonComponent result = Components.button(FONT_BUTTON_TEXT, button -> {
+    public Component getOpenFontSelectionDropDownButton(TextFieldWidget selectedComponent) {
+        Component result = Components.button(FONT_BUTTON_TEXT, button -> {
             if (this.symbolSelectionPanelVisible)
                 this.toggleSymbolChatPanelVisibility();
 
@@ -154,8 +163,15 @@ public class SymbolChatCompat {
         });
         result.sizing(Sizing.fixed(20));
 
-        result.active = CompatMods.SYMBOL_CHAT_PRESENT;
-        result.tooltip(CompatMods.SYMBOL_CHAT_PRESENT ? FONT_BUTTON_TEXT_TOOLTIP : FONT_BUTTON_NOT_AVAILABLE_TOOLTIP);
+        ((ButtonComponent) result).active = CompatMods.SYMBOL_CHAT_PRESENT;
+
+        if (CompatMods.SYMBOL_CHAT_PRESENT) {
+            result.tooltip(FONT_BUTTON_TEXT_TOOLTIP);
+        } else {
+            result = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+                    .child(result)
+                    .tooltip(FONT_BUTTON_NOT_AVAILABLE_TOOLTIP);
+        }
 
         return result;
     }
