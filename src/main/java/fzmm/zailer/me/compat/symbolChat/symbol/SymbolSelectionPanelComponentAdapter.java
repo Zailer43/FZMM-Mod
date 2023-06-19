@@ -5,57 +5,24 @@ import fzmm.zailer.me.compat.CompatMods;
 import io.wispforest.owo.ui.base.BaseComponent;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.gui.AbstractParentElement;
-import net.minecraft.client.gui.DrawContext;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import net.replaceitem.symbolchat.gui.SymbolSelectionPanel;
 
 public class SymbolSelectionPanelComponentAdapter extends BaseComponent {
 
-    private final AbstractParentElement selectionPanel;
-    private final Field isVisibleField;
-    private Method selectionPanelRenderMethod;
-    private int contentWidth;
-    private int contentHeight;
+    private final SymbolSelectionPanel selectionPanel;
 
-    public SymbolSelectionPanelComponentAdapter(AbstractParentElement symbolSelectionPanel, Field visibleField, Class<?> symbolSelectionPanelClass) {
+    public SymbolSelectionPanelComponentAdapter(SymbolSelectionPanel symbolSelectionPanel) {
         super();
         this.selectionPanel = symbolSelectionPanel;
-        this.isVisibleField = visibleField;
 
         this.mouseDown().subscribe((mouseX, mouseY, button) ->
-                this.isVisible() && this.selectionPanel.mouseClicked(mouseX, mouseY, button));
+                this.selectionPanel.visible && this.selectionPanel.mouseClicked(mouseX, mouseY, button));
 
         this.mouseScroll().subscribe((mouseX, mouseY, amount) ->
-                this.isVisible() && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount));
+                this.selectionPanel.visible && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount));
 
         this.keyPress().subscribe(this.selectionPanel::keyPressed);
         this.charTyped().subscribe(this.selectionPanel::charTyped);
-
-        try {
-            this.selectionPanelRenderMethod = symbolSelectionPanelClass.getMethod("render", DrawContext.class, int.class, int.class, float.class);
-        } catch (Exception e) {
-            FzmmClient.LOGGER.error("[SymbolSelectionPanelComponentAdapter] Failed to find render method", e);
-            CompatMods.SYMBOL_CHAT_PRESENT = false;
-        }
-
-        try {
-            this.contentWidth = symbolSelectionPanelClass.getField("WIDTH").getInt(null);
-            this.contentHeight = symbolSelectionPanelClass.getField("HEIGHT").getInt(null);
-        } catch (Exception e) {
-            FzmmClient.LOGGER.error("[SymbolSelectionPanelComponentAdapter] Failed to find component size", e);
-            CompatMods.SYMBOL_CHAT_PRESENT = false;
-        }
-    }
-
-    public boolean isVisible() {
-        try {
-            return this.isVisibleField.getBoolean(this.selectionPanel);
-        } catch (Exception e) {
-            CompatMods.SYMBOL_CHAT_PRESENT = false;
-            return false;
-        }
     }
 
     @Override
@@ -64,7 +31,7 @@ public class SymbolSelectionPanelComponentAdapter extends BaseComponent {
             return;
 
         try {
-            this.selectionPanelRenderMethod.invoke(this.selectionPanel, context, mouseX, mouseY, delta);
+            this.selectionPanel.render(context, mouseX, mouseY, delta);
         } catch (Exception e) {
             FzmmClient.LOGGER.error("[SymbolSelectionPanelComponentAdapter] Failed to invoke render method", e);
             CompatMods.SYMBOL_CHAT_PRESENT = false;
@@ -73,17 +40,17 @@ public class SymbolSelectionPanelComponentAdapter extends BaseComponent {
 
     @Override
     protected int determineHorizontalContentSize(Sizing sizing) {
-        return this.contentWidth;
+        return CompatMods.SYMBOL_CHAT_PRESENT ? SymbolSelectionPanel.WIDTH : 100;
     }
 
     @Override
     protected int determineVerticalContentSize(Sizing sizing) {
-        return this.contentHeight;
+        return CompatMods.SYMBOL_CHAT_PRESENT ? SymbolSelectionPanel.HEIGHT : 150;
     }
 
     @Override
     public boolean isInBoundingBox(double x, double y) {
-        if (!this.isVisible())
+        if (!this.selectionPanel.visible)
             return false;
         return super.isInBoundingBox(x, y);
     }

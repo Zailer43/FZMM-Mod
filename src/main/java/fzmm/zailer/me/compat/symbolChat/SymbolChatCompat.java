@@ -10,14 +10,17 @@ import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import net.replaceitem.symbolchat.SymbolChat;
+import net.replaceitem.symbolchat.font.FontProcessor;
+import net.replaceitem.symbolchat.font.Fonts;
+import net.replaceitem.symbolchat.gui.SymbolSelectionPanel;
+import net.replaceitem.symbolchat.gui.widget.DropDownWidget;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Consumer;
@@ -36,69 +39,54 @@ public class SymbolChatCompat {
 
     public static final String SYMBOL_SELECTION_PANEL_ID = "symbol-selection-panel";
     public static final String FONT_SELECTION_DROP_DOWN_ID = "font-selection-drop-down";
-    private AbstractParentElement symbolSelectionPanel;
-    private ClickableWidget fontSelectionDropDownParent;
+    private SymbolSelectionPanel symbolSelectionPanel;
+    private DropDownWidget<FontProcessor> fontSelectionDropDownParent;
     private ClickableWidget fontSelectionDropDown;
-    private Field fontProcessorSelectedField;
-    private boolean symbolSelectionPanelVisible = false;
-    private Field symbolSelectionPanelVisibleField;
     private TextFieldWidget selectedComponent = null;
 
     public void addSymbolChatComponents(BaseFzmmScreen screen) {
         if (CompatMods.SYMBOL_CHAT_PRESENT) {
-            this.addSymbolSelectionPanelComponent(screen);
-            this.addFontSelectionDropDownComponent(screen);
+            try {
+                this.addSymbolSelectionPanelComponent(screen);
+                this.addFontSelectionDropDownComponent(screen);
+            } catch (Exception e) {
+                FzmmClient.LOGGER.error("[SymbolChatCompat] Failed to add symbol chat components", e);
+                CompatMods.SYMBOL_CHAT_PRESENT = false;
+            }
         }
     }
 
     private void addSymbolSelectionPanelComponent(BaseFzmmScreen screen) {
-        try {
-            Class<?> symbolSelectionPanelClass = Class.forName("net.replaceitem.symbolchat.gui.SymbolSelectionPanel");
-            Constructor<?> symbolSelectionPanelClassConstructor = symbolSelectionPanelClass.getConstructor(Consumer.class, int.class, int.class);
-            this.symbolSelectionPanel = (AbstractParentElement) symbolSelectionPanelClassConstructor.newInstance((Consumer<String>) s -> {
-                if (this.selectedComponent != null)
-                    this.selectedComponent.write(s);
-            }, 0, 0);
+        this.symbolSelectionPanel = new SymbolSelectionPanel(s -> {
+            if (this.selectedComponent != null)
+                this.selectedComponent.write(s);
+        }, 0, 0);
 
-            this.symbolSelectionPanelVisibleField = symbolSelectionPanelClass.getField("visible");
-            this.symbolSelectionPanelVisibleField.setBoolean(this.symbolSelectionPanel, this.symbolSelectionPanelVisible);
+        this.symbolSelectionPanel.visible = false;
 
-            screen.child(new SymbolSelectionPanelComponentAdapter(this.symbolSelectionPanel, symbolSelectionPanelVisibleField, symbolSelectionPanelClass)
-                    .positioning(Positioning.relative(0, 0))
-                    .id(SYMBOL_SELECTION_PANEL_ID)
-            );
+        screen.child(new SymbolSelectionPanelComponentAdapter(this.symbolSelectionPanel)
+                .positioning(Positioning.relative(0, 0))
+                .id(SYMBOL_SELECTION_PANEL_ID)
+        );
 
-
-        } catch (Exception e) {
-            FzmmClient.LOGGER.error("[SymbolChatCompat] Failed to add symbol selection panel", e);
-            CompatMods.SYMBOL_CHAT_PRESENT = false;
-        }
     }
 
     private void addFontSelectionDropDownComponent(BaseFzmmScreen screen) {
+        this.fontSelectionDropDownParent = new DropDownWidget<>(0, 0, 180, 15, Fonts.fontProcessors, SymbolChat.selectedFont);
+
+        this.fontSelectionDropDownParent.visible = false;
+        this.fontSelectionDropDownParent.expanded = true;
+
         try {
-            List<?> fontProcessorList = (List<?>) Class.forName("net.replaceitem.symbolchat.font.Fonts").getDeclaredField("fontProcessors").get(null);
-            int selectedFontIndex = Class.forName("net.replaceitem.symbolchat.SymbolChat").getDeclaredField("selectedFont").getInt(null);
-
-            Class<?> dropDownWidgetClass = Class.forName("net.replaceitem.symbolchat.gui.widget.DropDownWidget");
-            Constructor<?> dropDownWidgetClassConstructor = dropDownWidgetClass.getConstructor(int.class, int.class, int.class, int.class, List.class, int.class);
-
-            this.fontSelectionDropDownParent = (ClickableWidget) dropDownWidgetClassConstructor.newInstance(0, 0, 180, 15, fontProcessorList, selectedFontIndex);
-
-            this.fontSelectionDropDownParent.visible = false;
-            Field isExpandedField = dropDownWidgetClass.getDeclaredField("expanded");
-            isExpandedField.setBoolean(this.fontSelectionDropDownParent, true);
-
-            Field selectionWidgetField = dropDownWidgetClass.getDeclaredField("selectionWidget");
+            Field selectionWidgetField = this.fontSelectionDropDownParent.getClass().getDeclaredField("selectionWidget");
             selectionWidgetField.setAccessible(true);
-            this.fontProcessorSelectedField = dropDownWidgetClass.getDeclaredField("selected");
             // I use the selection widget because it is the really important part,
             // if I want to use the fontSelectionDropDownParent I need to modify the
             // renderButton because if I change its height so that owo-lib allows me to
             // click on the selection widget it puts the text in the middle of the component,
             // and if I don't change its height the selection widget part is completely unclickable,
             // remember: don't use ClickableWidget as parent
-            this.fontSelectionDropDown = (ClickableWidget) selectionWidgetField.get(fontSelectionDropDownParent);
+            this.fontSelectionDropDown = (ClickableWidget) selectionWidgetField.get(this.fontSelectionDropDownParent);
             this.fontSelectionDropDown.visible = false;
 
             screen.child(this.fontSelectionDropDown
@@ -106,9 +94,8 @@ public class SymbolChatCompat {
                     .id(FONT_SELECTION_DROP_DOWN_ID)
                     .zIndex(100)
             );
-
         } catch (Exception e) {
-            FzmmClient.LOGGER.error("[SymbolChatCompat] Failed to add font selection drop down", e);
+            FzmmClient.LOGGER.error("[SymbolChatCompat] Failed to add font selection drop down component", e);
             CompatMods.SYMBOL_CHAT_PRESENT = false;
         }
     }
@@ -118,15 +105,15 @@ public class SymbolChatCompat {
             if (this.fontSelectionDropDown.visible)
                 this.fontSelectionDropDown.visible = false;
 
-            if (this.selectedComponent == null || !this.symbolSelectionPanelVisible) {
-                this.toggleSymbolChatPanelVisibility();
+            if (this.selectedComponent == null || !this.symbolSelectionPanel.visible) {
+                this.symbolSelectionPanel.visible = !this.symbolSelectionPanel.visible;
                 this.selectedComponent = selectedComponent;
 
             } else if (this.selectedComponent != selectedComponent) {
                 this.selectedComponent = selectedComponent;
 
             } else {
-                this.toggleSymbolChatPanelVisibility();
+                this.symbolSelectionPanel.visible = false;
                 this.selectedComponent = null;
             }
         });
@@ -147,8 +134,8 @@ public class SymbolChatCompat {
 
     public Component getOpenFontSelectionDropDownButton(TextFieldWidget selectedComponent) {
         Component result = Components.button(FONT_BUTTON_TEXT, button -> {
-            if (this.symbolSelectionPanelVisible)
-                this.toggleSymbolChatPanelVisibility();
+            if (this.symbolSelectionPanel.visible)
+                this.symbolSelectionPanel.visible = false;
 
             if (this.selectedComponent == null || !this.fontSelectionDropDown.visible) {
                 this.fontSelectionDropDown.visible = true;
@@ -176,16 +163,6 @@ public class SymbolChatCompat {
         return result;
     }
 
-    public void toggleSymbolChatPanelVisibility() {
-        try {
-            this.symbolSelectionPanelVisibleField.setBoolean(this.symbolSelectionPanel, !this.symbolSelectionPanelVisible);
-            this.symbolSelectionPanelVisible = !this.symbolSelectionPanelVisible;
-        } catch (Exception e) {
-            FzmmClient.LOGGER.error("[SymbolChatCompat] Failed to toggle symbol chat panel visibility", e);
-            CompatMods.SYMBOL_CHAT_PRESENT = false;
-        }
-    }
-
     public void processFont(TextFieldWidget widget, String text, Consumer<String> writeConsumer) {
         if (!CompatMods.SYMBOL_CHAT_PRESENT) {
             writeConsumer.accept(text);
@@ -197,7 +174,7 @@ public class SymbolChatCompat {
             Class<?> fontsClass = Class.forName("net.replaceitem.symbolchat.font.Fonts");
 
             List<?> fontProcessors = (List<?>) fontsClass.getField("fontProcessors").get(null);
-            Object selectedFontProcessor = fontProcessors.get(MathHelper.clamp(this.fontProcessorSelectedField.getInt(this.fontSelectionDropDownParent), 0, fontProcessors.size() - 1));
+            Object selectedFontProcessor = fontProcessors.get(MathHelper.clamp(this.fontSelectionDropDownParent.selected, 0, fontProcessors.size() - 1));
 
             text = (String) fontProcessorClass.getMethod("convertString", String.class).invoke(selectedFontProcessor, text);
             writeConsumer.accept(text);
