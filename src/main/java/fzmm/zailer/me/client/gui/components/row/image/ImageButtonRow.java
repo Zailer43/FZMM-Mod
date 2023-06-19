@@ -14,6 +14,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -40,8 +41,16 @@ public class ImageButtonRow extends AbstractRow {
                         textRenderer.getWidth(resetButton.getMessage())
         );
 
-        Component textField = new SuggestionTextBox(textFieldSizing, SuggestionTextBox.SuggestionPosition.BOTTOM, 5)
+        SuggestionTextBox textField = (SuggestionTextBox) new SuggestionTextBox(textFieldSizing, SuggestionTextBox.SuggestionPosition.BOTTOM, 5)
                 .id(getImageValueFieldId(id));
+
+        textField.getTextBox().keyPress().subscribe((keyCode, scanCode, modifiers) -> {
+            boolean isEnter = keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER;
+            if (isEnter)
+                imageButton.onPress();
+
+            return isEnter;
+        });
 
         return new Component[] {
                 textField,
