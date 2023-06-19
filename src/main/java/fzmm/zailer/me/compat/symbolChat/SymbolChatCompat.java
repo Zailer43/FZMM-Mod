@@ -43,6 +43,7 @@ public class SymbolChatCompat {
     private DropDownWidget<FontProcessor> fontSelectionDropDownParent;
     private ClickableWidget fontSelectionDropDown;
     private TextFieldWidget selectedComponent = null;
+    private int fontSelectionOriginalWidth;
 
     public void addSymbolChatComponents(BaseFzmmScreen screen) {
         if (CompatMods.SYMBOL_CHAT_PRESENT) {
@@ -72,7 +73,8 @@ public class SymbolChatCompat {
     }
 
     private void addFontSelectionDropDownComponent(BaseFzmmScreen screen) {
-        this.fontSelectionDropDownParent = new DropDownWidget<>(0, 0, 180, 15, Fonts.fontProcessors, SymbolChat.selectedFont);
+        this.fontSelectionOriginalWidth = 180;
+        this.fontSelectionDropDownParent = new DropDownWidget<>(0, 0, this.fontSelectionOriginalWidth, 15, Fonts.fontProcessors, SymbolChat.selectedFont);
 
         this.fontSelectionDropDownParent.visible = false;
         this.fontSelectionDropDownParent.expanded = true;
@@ -87,7 +89,7 @@ public class SymbolChatCompat {
             // and if I don't change its height the selection widget part is completely unclickable,
             // remember: don't use ClickableWidget as parent
             this.fontSelectionDropDown = (ClickableWidget) selectionWidgetField.get(this.fontSelectionDropDownParent);
-            this.fontSelectionDropDown.visible = false;
+            this.toggleFontSelection(false);
 
             screen.child(this.fontSelectionDropDown
                     .positioning(Positioning.relative(0, 0))
@@ -103,7 +105,7 @@ public class SymbolChatCompat {
     public Component getOpenSymbolChatPanelButton(TextFieldWidget selectedComponent) {
         Component result = Components.button(SYMBOL_BUTTON_TEXT, button -> {
             if (this.fontSelectionDropDown.visible)
-                this.fontSelectionDropDown.visible = false;
+                this.toggleFontSelection(false);
 
             if (this.selectedComponent == null || !this.symbolSelectionPanel.visible) {
                 this.symbolSelectionPanel.visible = !this.symbolSelectionPanel.visible;
@@ -138,13 +140,13 @@ public class SymbolChatCompat {
                 this.symbolSelectionPanel.visible = false;
 
             if (this.selectedComponent == null || !this.fontSelectionDropDown.visible) {
-                this.fontSelectionDropDown.visible = true;
+                this.toggleFontSelection(true);
                 this.selectedComponent = selectedComponent;
 
             } else if (this.selectedComponent != selectedComponent) {
                 this.selectedComponent = selectedComponent;
             } else {
-                this.fontSelectionDropDown.visible = false;
+                this.toggleFontSelection(false);
                 this.selectedComponent = null;
             }
         });
@@ -161,6 +163,11 @@ public class SymbolChatCompat {
         }
 
         return result;
+    }
+
+    public void toggleFontSelection(boolean visible) {
+        this.fontSelectionDropDown.visible = visible;
+        this.fontSelectionDropDown.horizontalSizing(Sizing.fixed(this.fontSelectionDropDown.visible ? this.fontSelectionOriginalWidth : 0));
     }
 
     public void processFont(TextFieldWidget widget, String text, Consumer<String> writeConsumer) {
