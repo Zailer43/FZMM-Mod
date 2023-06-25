@@ -23,6 +23,7 @@ import net.minecraft.village.raid.Raid;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FzmmItemGroup {
     public static final String OPERATOR_BASE_TRANSLATION_KEY = "itemGroup.op";
@@ -136,21 +137,21 @@ public class FzmmItemGroup {
                     List<String> lootTablesPath = LootTables.getAll().stream()
                             .map(Identifier::getPath)
                             .sorted()
-                            .toList();
+                            .collect(Collectors.toList());
 
-                    for (String path : lootTablesPath) {
-                        if (path.startsWith("entities"))
-                            continue;
+                    List<String> archeologyLootTablesPath = LootTables.getAll().stream()
+                            .map(Identifier::getPath)
+                            .sorted()
+                            .collect(Collectors.toList());
 
-                        ItemStack chest = new ItemStack(Items.CHEST);
-                        NbtCompound blockEntityTag = new NbtCompound();
+                    archeologyLootTablesPath.removeIf(path -> !path.startsWith("archaeology"));
 
-                        blockEntityTag.putString("LootTable", path);
+                    lootTablesPath.removeIf(path -> path.startsWith("entities"));
+                    lootTablesPath.removeIf(archeologyLootTablesPath::contains);
 
-                        chest.setCustomName(Text.literal("LootChest: " + path));
-                        chest.setSubNbt(TagsConstant.BLOCK_ENTITY, blockEntityTag);
-                        entries.add(chest);
-                    }
+                    addLootChest(entries, Items.SUSPICIOUS_SAND, archeologyLootTablesPath);
+                    addLootChest(entries, Items.SUSPICIOUS_GRAVEL, archeologyLootTablesPath);
+                    addLootChest(entries, Items.CHEST, lootTablesPath);
                 }).build();
 
         Registry.register(Registries.ITEM_GROUP, USEFUL_BLOCK_STATES_IDENTIFIER, usefulBlockStatesItemGroup);
@@ -307,5 +308,18 @@ public class FzmmItemGroup {
 
     private static boolean contains(Item item, TagKey<Item> tag) {
         return ItemPredicate.Builder.create().tag(tag).build().test(new ItemStack(item));
+    }
+
+    private static void addLootChest(ItemGroup.Entries entries, Item item, List<String> pathList) {
+        for (var path : pathList) {
+            ItemStack chest = new ItemStack(item);
+            NbtCompound blockEntityTag = new NbtCompound();
+
+            blockEntityTag.putString("LootTable", path);
+
+            chest.setCustomName(Text.literal("LootChest: " + path));
+            chest.setSubNbt(TagsConstant.BLOCK_ENTITY, blockEntityTag);
+            entries.add(chest);
+        }
     }
 }
