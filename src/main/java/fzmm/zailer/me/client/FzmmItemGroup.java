@@ -39,6 +39,7 @@ public class FzmmItemGroup {
 
             newEntries.add(Items.DRAGON_EGG.getDefaultStack());
             newEntries.add(new ItemStack(Items.FILLED_MAP));
+            newEntries.add(new ItemStack(Items.WRITTEN_BOOK));
             newEntries.add(new ItemStack(Items.ENCHANTED_BOOK));
             newEntries.add(Items.KNOWLEDGE_BOOK.getDefaultStack());
             newEntries.add(new ItemStack(Items.SUSPICIOUS_STEW));
