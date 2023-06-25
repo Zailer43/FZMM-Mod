@@ -37,15 +37,14 @@ public class FzmmItemGroup {
             ArrayList<ItemStack> newEntries = new ArrayList<>();
 
             newEntries.add(Items.DRAGON_EGG.getDefaultStack());
-            newEntries.add(Items.FILLED_MAP.getDefaultStack());
-            newEntries.add(Items.WRITTEN_BOOK.getDefaultStack());
-            newEntries.add(Items.ENCHANTED_BOOK.getDefaultStack());
+            newEntries.add(new ItemStack(Items.FILLED_MAP));
+            newEntries.add(new ItemStack(Items.ENCHANTED_BOOK));
             newEntries.add(Items.KNOWLEDGE_BOOK.getDefaultStack());
-            newEntries.add(Items.SUSPICIOUS_STEW.getDefaultStack());
-            newEntries.add(Items.POTION.getDefaultStack());
-            newEntries.add(Items.SPLASH_POTION.getDefaultStack());
-            newEntries.add(Items.LINGERING_POTION.getDefaultStack());
-            newEntries.add(Items.TIPPED_ARROW.getDefaultStack());
+            newEntries.add(new ItemStack(Items.SUSPICIOUS_STEW));
+            newEntries.add(new ItemStack(Items.POTION));
+            newEntries.add(new ItemStack(Items.SPLASH_POTION));
+            newEntries.add(new ItemStack(Items.LINGERING_POTION));
+            newEntries.add(new ItemStack(Items.TIPPED_ARROW));
 
             addArmorStand(newEntries);
             addItemFrames(newEntries);
