@@ -2,24 +2,28 @@ package fzmm.zailer.me.compat.symbolChat.symbol;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.compat.CompatMods;
+import fzmm.zailer.me.compat.symbolChat.SymbolChatCompat;
 import io.wispforest.owo.ui.base.BaseComponent;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Sizing;
+import net.replaceitem.symbolchat.SymbolChat;
 import net.replaceitem.symbolchat.gui.SymbolSelectionPanel;
 
 public class SymbolSelectionPanelComponentAdapter extends BaseComponent {
 
     private final SymbolSelectionPanel selectionPanel;
+    private final SymbolChatCompat symbolChatCompat;
 
-    public SymbolSelectionPanelComponentAdapter(SymbolSelectionPanel symbolSelectionPanel) {
+    public SymbolSelectionPanelComponentAdapter(SymbolSelectionPanel symbolSelectionPanel, SymbolChatCompat symbolChatCompat) {
         super();
         this.selectionPanel = symbolSelectionPanel;
+        this.symbolChatCompat = symbolChatCompat;
 
         this.mouseDown().subscribe((mouseX, mouseY, button) ->
-                this.selectionPanel.visible && this.selectionPanel.mouseClicked(mouseX, mouseY, button));
+                this.symbolChatCompat.getSelectionPanelVisible() && this.selectionPanel.mouseClicked(mouseX, mouseY, button));
 
         this.mouseScroll().subscribe((mouseX, mouseY, amount) ->
-                this.selectionPanel.visible && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount));
+                this.symbolChatCompat.getSelectionPanelVisible() && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount));
 
         this.keyPress().subscribe(this.selectionPanel::keyPressed);
         this.charTyped().subscribe(this.selectionPanel::charTyped);
@@ -45,12 +49,12 @@ public class SymbolSelectionPanelComponentAdapter extends BaseComponent {
 
     @Override
     protected int determineVerticalContentSize(Sizing sizing) {
-        return CompatMods.SYMBOL_CHAT_PRESENT ? SymbolSelectionPanel.HEIGHT : 150;
+        return CompatMods.SYMBOL_CHAT_PRESENT ? SymbolChat.config.getSymbolPanelHeight() : 150;
     }
 
     @Override
     public boolean isInBoundingBox(double x, double y) {
-        if (!this.selectionPanel.visible)
+        if (!this.symbolChatCompat.getSelectionPanelVisible())
             return false;
         return super.isInBoundingBox(x, y);
     }

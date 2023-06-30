@@ -44,13 +44,14 @@ public class SymbolChatCompat {
     private ClickableWidget fontSelectionDropDown;
     private TextFieldWidget selectedComponent = null;
     private int fontSelectionOriginalWidth;
+    private Field visibleField;
 
     public void addSymbolChatComponents(BaseFzmmScreen screen) {
         if (CompatMods.SYMBOL_CHAT_PRESENT) {
             try {
                 this.addSymbolSelectionPanelComponent(screen);
                 this.addFontSelectionDropDownComponent(screen);
-            } catch (Exception e) {
+            } catch (Error e) {
                 FzmmClient.LOGGER.error("[SymbolChatCompat] Failed to add symbol chat components", e);
                 CompatMods.SYMBOL_CHAT_PRESENT = false;
             }
@@ -61,11 +62,18 @@ public class SymbolChatCompat {
         this.symbolSelectionPanel = new SymbolSelectionPanel(s -> {
             if (this.selectedComponent != null)
                 this.selectedComponent.write(s);
-        }, 0, 0);
+        }, 0, 0, SymbolChat.config.getSymbolPanelHeight());
 
-        this.symbolSelectionPanel.visible = false;
+        try {
+            this.visibleField = this.symbolSelectionPanel.getClass().getDeclaredField("visible");
+            this.visibleField.setAccessible(true);
+            this.setSelectionPanelVisible(false);
+        } catch (Exception e) {
+            FzmmClient.LOGGER.error("[SymbolChatCompat] Failed to get visible field", e);
+            CompatMods.SYMBOL_CHAT_PRESENT = false;
+        }
 
-        screen.child(new SymbolSelectionPanelComponentAdapter(this.symbolSelectionPanel)
+        screen.child(new SymbolSelectionPanelComponentAdapter(this.symbolSelectionPanel, this)
                 .positioning(Positioning.relative(0, 0))
                 .id(SYMBOL_SELECTION_PANEL_ID)
         );
@@ -80,7 +88,7 @@ public class SymbolChatCompat {
         this.fontSelectionDropDownParent.expanded = true;
 
         try {
-            Field selectionWidgetField = this.fontSelectionDropDownParent.getClass().getDeclaredField("selectionWidget");
+            Field selectionWidgetField = this.fontSelectionDropDownParent.getClass().getDeclaredField("scrollableGridWidget");
             selectionWidgetField.setAccessible(true);
             // I use the selection widget because it is the really important part,
             // if I want to use the fontSelectionDropDownParent I need to modify the
@@ -102,20 +110,45 @@ public class SymbolChatCompat {
         }
     }
 
+    public boolean getSelectionPanelVisible() {
+        if (!CompatMods.SYMBOL_CHAT_PRESENT)
+            return false;
+
+        try {
+            return this.visibleField.getBoolean(this.symbolSelectionPanel);
+        } catch (Exception e) {
+            FzmmClient.LOGGER.error("[SymbolChatCompat] Failed to get visible field", e);
+            CompatMods.SYMBOL_CHAT_PRESENT = false;
+            return false;
+        }
+    }
+
+    public void setSelectionPanelVisible(boolean visible) {
+        if (!CompatMods.SYMBOL_CHAT_PRESENT)
+            return;
+
+        try {
+            this.visibleField.setBoolean(this.symbolSelectionPanel, visible);
+        } catch (Exception e) {
+            FzmmClient.LOGGER.error("[SymbolChatCompat] Failed to set visible field", e);
+            CompatMods.SYMBOL_CHAT_PRESENT = false;
+        }
+    }
+
     public Component getOpenSymbolChatPanelButton(TextFieldWidget selectedComponent) {
         Component result = Components.button(SYMBOL_BUTTON_TEXT, button -> {
             if (this.fontSelectionDropDown.visible)
                 this.toggleFontSelection(false);
 
-            if (this.selectedComponent == null || !this.symbolSelectionPanel.visible) {
-                this.symbolSelectionPanel.visible = !this.symbolSelectionPanel.visible;
+            if (this.selectedComponent == null || !this.getSelectionPanelVisible()) {
+                this.setSelectionPanelVisible(!this.getSelectionPanelVisible());
                 this.selectedComponent = selectedComponent;
 
             } else if (this.selectedComponent != selectedComponent) {
                 this.selectedComponent = selectedComponent;
 
             } else {
-                this.symbolSelectionPanel.visible = false;
+                this.setSelectionPanelVisible(false);
                 this.selectedComponent = null;
             }
         });
@@ -136,8 +169,8 @@ public class SymbolChatCompat {
 
     public Component getOpenFontSelectionDropDownButton(TextFieldWidget selectedComponent) {
         Component result = Components.button(FONT_BUTTON_TEXT, button -> {
-            if (this.symbolSelectionPanel.visible)
-                this.symbolSelectionPanel.visible = false;
+            if (this.getSelectionPanelVisible())
+                this.setSelectionPanelVisible(false);
 
             if (this.selectedComponent == null || !this.fontSelectionDropDown.visible) {
                 this.toggleFontSelection(true);
@@ -166,6 +199,9 @@ public class SymbolChatCompat {
     }
 
     public void toggleFontSelection(boolean visible) {
+        if (!CompatMods.SYMBOL_CHAT_PRESENT)
+            return;
+
         this.fontSelectionDropDown.visible = visible;
         this.fontSelectionDropDown.horizontalSizing(Sizing.fixed(this.fontSelectionDropDown.visible ? this.fontSelectionOriginalWidth : 0));
     }
