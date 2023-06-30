@@ -41,18 +41,16 @@ public class ImageButtonRow extends AbstractRow {
                         textRenderer.getWidth(resetButton.getMessage())
         );
 
-        SuggestionTextBox textField = (SuggestionTextBox) new SuggestionTextBox(textFieldSizing, SuggestionTextBox.SuggestionPosition.BOTTOM, 5)
-                .id(getImageValueFieldId(id));
+        SuggestionTextBox textField = (SuggestionTextBox) new SuggestionTextBox(textFieldSizing, SuggestionTextBox.SuggestionPosition.BOTTOM, 5,
+                (keyCode, scanCode, modifiers) -> {
+                    boolean isEnter = keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER;
+                    if (isEnter)
+                        imageButton.onPress();
 
-        textField.getTextBox().keyPress().subscribe((keyCode, scanCode, modifiers) -> {
-            boolean isEnter = keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER;
-            if (isEnter)
-                imageButton.onPress();
+                    return isEnter;
+                }).id(getImageValueFieldId(id));
 
-            return isEnter;
-        });
-
-        return new Component[] {
+        return new Component[]{
                 textField,
                 imageButton
         };

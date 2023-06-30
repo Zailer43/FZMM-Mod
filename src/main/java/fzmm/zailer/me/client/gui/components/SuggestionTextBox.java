@@ -12,15 +12,20 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.event.KeyPress;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class SuggestionTextBox extends FlowLayout {
     private static final int SUGGESTION_HEIGHT = 16;
@@ -35,18 +40,27 @@ public class SuggestionTextBox extends FlowLayout {
     private final ScrollContainer<FlowLayout> suggestionsContainer;
     private boolean mouseHoverSuggestion;
     private int maxSuggestionLines;
+    private int selectedSuggestionIndex;
 
     @SuppressWarnings("UnstableApiUsage")
-    public SuggestionTextBox(Sizing horizontalSizing, SuggestionPosition position, int maxSuggestionLines) {
+    public SuggestionTextBox(Sizing horizontalSizing, SuggestionPosition position, int maxSuggestionLines, @Nullable KeyPress onKeyPress) {
         super(horizontalSizing, Sizing.content(), Algorithm.VERTICAL);
         this.suggestionProvider = (nul, builder) -> CompletableFuture.completedFuture(builder.build());
-        this.textBox = new ConfigTextBox();
+        this.textBox = new ConfigTextBox() {
+            @Override
+            public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+                if (keyCode == GLFW.GLFW_KEY_TAB)
+                    return false;
+                return super.keyPressed(keyCode, scanCode, modifiers);
+            }
+        };
         this.mouseHoverSuggestion = false;
         this.textBox.horizontalSizing(Sizing.fill(100));
         this.suggestionsLayout = Containers.verticalFlow(Sizing.fill(100), Sizing.content());
         this.suggestionsContainer = Containers.verticalScroll(horizontalSizing, Sizing.fixed(0), this.suggestionsLayout);
         this.suggestionsContainer.scrollbar(ScrollContainer.Scrollbar.flat(Color.WHITE));
         this.child(this.textBox);
+        this.selectedSuggestionIndex = -1;
 
         this.setMaxSuggestionLines(maxSuggestionLines);
         this.setSuggestionPosition(position);
@@ -54,7 +68,59 @@ public class SuggestionTextBox extends FlowLayout {
         this.textBox.onChanged().subscribe(this::onTextChanged);
         this.removeSuggestionOnLostFocusEvents();
 
-        this.focusLost().subscribe(this.suggestionsLayout::clearChildren);
+        this.textBox.keyPress().subscribe((keyCode, scanCode, modifiers) -> {
+            boolean result = this.onTextBoxKeyPress(keyCode);
+            if (!result && onKeyPress != null)
+                result = onKeyPress.onKeyPress(keyCode, scanCode, modifiers);
+            return result;
+        });
+    }
+
+    private boolean onTextBoxKeyPress(int keyCode) {
+        if (keyCode == GLFW.GLFW_KEY_TAB || keyCode == GLFW.GLFW_KEY_DOWN) {
+            return this.changeSelectedSuggestionIndex(this.selectedSuggestionIndex, this.selectedSuggestionIndex + 1);
+
+        } else if (keyCode == GLFW.GLFW_KEY_UP) {
+            return this.changeSelectedSuggestionIndex(this.selectedSuggestionIndex, this.selectedSuggestionIndex - 1);
+
+        } else if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+
+            List<Component> children = this.suggestionsLayout.children();
+            if (this.selectedSuggestionIndex >= 0 && this.selectedSuggestionIndex < children.size()) {
+                Component selectedComponent = children.get(this.selectedSuggestionIndex);
+                selectedComponent.onMouseDown(selectedComponent.x(), selectedComponent.y(), GLFW.GLFW_MOUSE_BUTTON_1);
+                this.textBox.onFocusGained(FocusSource.MOUSE_CLICK);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean changeSelectedSuggestionIndex(int currentIndex, int newIndex) {
+        List<Component> children = this.suggestionsLayout.children();
+        int childrenSize = children.size();
+
+        currentIndex = Math.max(0, currentIndex);
+
+        if (childrenSize > currentIndex)
+            children.get(currentIndex).onFocusLost();
+
+        if (newIndex < 0)
+            newIndex = childrenSize - 1;
+        else if (newIndex >= childrenSize)
+            newIndex = 0;
+
+        if (childrenSize > newIndex) {
+            Component selectedComponent = children.get(newIndex);
+            selectedComponent.onFocusGained(FocusSource.MOUSE_CLICK);
+            this.suggestionsContainer.scrollTo(selectedComponent);
+        }
+
+        this.selectedSuggestionIndex = newIndex;
+        return true;
     }
 
     private void removeSuggestionOnLostFocusEvents() {
@@ -155,10 +221,13 @@ public class SuggestionTextBox extends FlowLayout {
     // we live in a society where if you click on a component first the focusLost is
     // sent and then the mouseDown so if that focusLost removes your component with
     // mouseDown it will never be called
+    //
+    // in other words, I can't call this.textBox.onFocusGained(FocusSource.MOUSE_CLICK); here
     private void onClickSuggestion() {
         this.update(0, 0, 0);
         this.mouseHoverSuggestion = false;
         this.suggestionsLayout.clearChildren();
+        this.textBox.setCursorToEnd();
         this.textBox.onFocusLost();
     }
 
@@ -173,8 +242,24 @@ public class SuggestionTextBox extends FlowLayout {
         });
 
         int backgroundColor = 0xA0000000;
-        layout.mouseEnter().subscribe(() -> layout.surface(Surface.flat(0xE0000000)));
-        layout.mouseLeave().subscribe(() -> layout.surface(Surface.flat(backgroundColor)));
+        Consumer<FlowLayout> setSurfaceConsumer = flowLayout -> flowLayout.surface(Surface.flat(0xE0000000).and(Surface.outline(0xA0FFFFFF)));
+        Consumer<FlowLayout> removeSurfaceConsumer = flowLayout -> flowLayout.surface(Surface.flat(backgroundColor));
+        AtomicBoolean isFocusedAtomic = new AtomicBoolean(false);
+
+        layout.mouseEnter().subscribe(() -> setSurfaceConsumer.accept(layout));
+        layout.focusGained().subscribe(source -> {
+            setSurfaceConsumer.accept(layout);
+            isFocusedAtomic.set(true);
+        });
+
+        layout.mouseLeave().subscribe(() -> {
+            if (!isFocusedAtomic.get())
+                removeSurfaceConsumer.accept(layout);
+        });
+        layout.focusLost().subscribe(() -> {
+            removeSurfaceConsumer.accept(layout);
+            isFocusedAtomic.set(false);
+        });
 
         layout.surface(Surface.flat(backgroundColor))
                 .padding(Insets.horizontal(4))
@@ -201,7 +286,7 @@ public class SuggestionTextBox extends FlowLayout {
         };
 
         this.getSuggestionsContainerParent().ifPresent(flowLayout -> {
-            Insets padding =  flowLayout.padding().get();
+            Insets padding = flowLayout.padding().get();
             int x = this.x - flowLayout.x() - padding.left();
             int y = this.y - flowLayout.y() - padding.top();
             this.suggestionsContainer.positioning(Positioning.absolute(x, y + offset));
