@@ -14,7 +14,7 @@
                             <label id="message-preview">
 
                                 <margins>
-                                    <bottom>4</bottom>
+                                    <vertical>4</vertical>
                                 </margins>
                             </label>
                         </children>
