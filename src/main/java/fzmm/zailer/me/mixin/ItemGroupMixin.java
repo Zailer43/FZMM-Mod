@@ -3,6 +3,7 @@ package fzmm.zailer.me.mixin;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
+import net.minecraft.registry.Registries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,24 +18,19 @@ public abstract class ItemGroupMixin {
     // by the changes to show the tab even if you don't have op
     @Inject(method = "shouldDisplay()Z", at = @At("HEAD"), cancellable = true)
     private void noDisplayOperatorItemGroup(CallbackInfoReturnable<Boolean> cir) {
-        if (((Object) this) == ItemGroups.OPERATOR)
+        if (((Object) this) == Registries.ITEM_GROUP.get(ItemGroups.OPERATOR))
             cir.setReturnValue(MinecraftClient.getInstance().options.getOperatorItemsTab().getValue());
     }
 
-    // intellij idea has intrusive thoughts when in fact everything is fine (or so I think, it seems to work).
-    @SuppressWarnings("all")
-    @ModifyVariable(method = "updateEntries(Lnet/minecraft/item/ItemGroup$DisplayContext;)V",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/item/ItemGroup$EntriesImpl;<init>(Lnet/minecraft/item/ItemGroup;Lnet/minecraft/resource/featuretoggle/FeatureSet;)V"
-            ),
+    @ModifyVariable(
+            method = "updateEntries(Lnet/minecraft/item/ItemGroup$DisplayContext;)V",
+            at = @At(value = "HEAD"),
             index = 1,
-            argsOnly = true
-    )
+            argsOnly = true)
     public ItemGroup.DisplayContext showOperatorUtilitiesWithoutOp(ItemGroup.DisplayContext value) {
 
         // displays the operator utilities item group even if you do not have op
-        if (((Object) this) == ItemGroups.OPERATOR) {
+        if (((Object) this) == Registries.ITEM_GROUP.get(ItemGroups.OPERATOR)) {
             value = new ItemGroup.DisplayContext(value.enabledFeatures(), true, value.lookup());
         }
 
