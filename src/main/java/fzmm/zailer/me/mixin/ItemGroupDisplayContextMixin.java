@@ -17,7 +17,7 @@ public abstract class ItemGroupDisplayContextMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    public void updateItemGroupsOnChangeLang(FeatureSet enabledFeatures, boolean hasPermissions, RegistryWrapper.WrapperLookup lookup, CallbackInfoReturnable<Boolean> cir) {
+    public void fzmm$updateItemGroupsOnChangeLang(FeatureSet enabledFeatures, boolean hasPermissions, RegistryWrapper.WrapperLookup lookup, CallbackInfoReturnable<Boolean> cir) {
         String previousLanguage = this.previousLanguage;
         String currentLanguage = MinecraftClient.getInstance().options.language;
         this.previousLanguage = currentLanguage;

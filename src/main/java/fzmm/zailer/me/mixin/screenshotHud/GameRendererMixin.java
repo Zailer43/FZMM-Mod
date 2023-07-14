@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class GameRendererMixin {
 
     @Inject(method = "renderHand(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/Camera;F)V", at = @At("HEAD"), cancellable = true)
-    private void removeHandInScreenshotHud(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo ci) {
+    private void fzmm$removeHandInScreenshotHud(MatrixStack matrices, Camera camera, float tickDelta, CallbackInfo ci) {
         if (ScreenshotSource.hasInstance())
             ci.cancel();
     }

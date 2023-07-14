@@ -16,17 +16,17 @@ public abstract class ChatScreenMixin {
     @Shadow protected TextFieldWidget chatField;
 
     @Inject(method = "onChatFieldUpdate", at = @At("HEAD"))
-    private void onChatFieldUpdate(String chatText, CallbackInfo ci) {
-        this.setFzmmCommandMaxLength(chatText);
+    private void fzmm$onChatFieldUpdate(String chatText, CallbackInfo ci) {
+        this.fzmm$setFzmmCommandMaxLength(chatText);
     }
 
     @Redirect(method = "setChatFromHistory", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/TextFieldWidget;setText(Ljava/lang/String;)V"))
-    private void setText(TextFieldWidget textField, String text) {
-        this.setFzmmCommandMaxLength(text);
+    private void fzmm$setText(TextFieldWidget textField, String text) {
+        this.fzmm$setFzmmCommandMaxLength(text);
         textField.setText(text);
     }
 
-    private void setFzmmCommandMaxLength(String message) {
+    private void fzmm$setFzmmCommandMaxLength(String message) {
         if (message.startsWith("/fzmm "))
             this.chatField.setMaxLength(200000);
         else {
@@ -37,7 +37,7 @@ public abstract class ChatScreenMixin {
     }
 
     @Inject(method = "normalize", at = @At(value = "HEAD"), cancellable = true)
-    private void avoidNormalizeWithFzmmCommand(String str, CallbackInfoReturnable<String> cir) {
+    private void fzmm$avoidNormalizeWithFzmmCommand(String str, CallbackInfoReturnable<String> cir) {
         if (str.startsWith("/fzmm "))
             cir.setReturnValue(str);
     }

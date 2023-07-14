@@ -17,12 +17,12 @@ public class ItemFrameEntityRendererMixin<T extends ItemFrameEntity> {
     private boolean hasStack;
 
     @Inject(method = "render*", at = @At("HEAD"))
-    private void render(T itemFrameEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
+    private void fzmm$render(T itemFrameEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         this.hasStack = itemFrameEntity.getHeldItemStack().isEmpty();
     }
 
     @ModifyVariable(method = "render*", at = @At("STORE"))
-    private boolean disableItemFrameFrameRendering(boolean bl) {
+    private boolean fzmm$disableItemFrameFrameRendering(boolean bl) {
         return (FzmmClient.CONFIG.general.forceInvisibleItemFrame() && !this.hasStack) || bl;
     }
 }

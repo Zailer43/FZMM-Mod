@@ -24,7 +24,7 @@ public abstract class ItemStackMixin {
     public abstract ItemStack copy();
 
     @Inject(method = "getTooltip", at = @At("RETURN"))
-    public void getTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
+    public void fzmm$getTooltip(PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir) {
         if (!FzmmClient.CONFIG.general.showItemSize())
             return;
 
@@ -32,13 +32,13 @@ public abstract class ItemStackMixin {
         for (int i = tooltipList.size() - 1; i > 0; i--) {
             Text tooltipLine = tooltipList.get(i);
             if (tooltipLine.getContent() instanceof TranslatableTextContent translatableTooltipText && translatableTooltipText.getKey().equals("item.nbt_tags")) {
-                tooltipList.add( i + 1, this.getSizeMessage());
+                tooltipList.add( i + 1, this.fzmm$getSizeMessage());
                 return;
             }
         }
     }
 
-    public Text getSizeMessage() {
+    public Text fzmm$getSizeMessage() {
         ItemStack stack = this.copy();
 
         long itemSizeInBytes = FzmmUtils.getLengthInBytes(stack);

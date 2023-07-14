@@ -46,7 +46,7 @@ public abstract class SocialInteractionsPlayerListEntryMixin {
     private Icon icon;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void addGiveHeadButton(MinecraftClient client, SocialInteractionsScreen parent, UUID uuid, String name, Supplier<Identifier> skinTexture, boolean reportable, CallbackInfo ci) {
+    private void fzmm$addGiveHeadButton(MinecraftClient client, SocialInteractionsScreen parent, UUID uuid, String name, Supplier<Identifier> skinTexture, boolean reportable, CallbackInfo ci) {
         assert this.client.player != null;
         PlayerListEntry playerListEntry = this.client.player.networkHandler.getPlayerListEntry(uuid);
         if (playerListEntry == null)
@@ -66,7 +66,7 @@ public abstract class SocialInteractionsPlayerListEntryMixin {
     }
 
     @Inject(method = "render", at = @At("RETURN"))
-    private void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
+    private void fzmm$render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta, CallbackInfo ci) {
         if (this.giveHeadButton == null)
             return;
 

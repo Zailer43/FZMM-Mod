@@ -17,7 +17,7 @@ public abstract class ItemGroupMixin {
     // this is to maintain compatibility with vanilla which is broken
     // by the changes to show the tab even if you don't have op
     @Inject(method = "shouldDisplay()Z", at = @At("HEAD"), cancellable = true)
-    private void noDisplayOperatorItemGroup(CallbackInfoReturnable<Boolean> cir) {
+    private void fzmm$noDisplayOperatorItemGroup(CallbackInfoReturnable<Boolean> cir) {
         if (((Object) this) == Registries.ITEM_GROUP.get(ItemGroups.OPERATOR))
             cir.setReturnValue(MinecraftClient.getInstance().options.getOperatorItemsTab().getValue());
     }
@@ -27,7 +27,7 @@ public abstract class ItemGroupMixin {
             at = @At(value = "HEAD"),
             index = 1,
             argsOnly = true)
-    public ItemGroup.DisplayContext showOperatorUtilitiesWithoutOp(ItemGroup.DisplayContext value) {
+    public ItemGroup.DisplayContext fzmm$showOperatorUtilitiesWithoutOp(ItemGroup.DisplayContext value) {
 
         // displays the operator utilities item group even if you do not have op
         if (((Object) this) == Registries.ITEM_GROUP.get(ItemGroups.OPERATOR)) {
