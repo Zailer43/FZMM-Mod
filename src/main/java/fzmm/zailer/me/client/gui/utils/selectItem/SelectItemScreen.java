@@ -139,7 +139,11 @@ public class SelectItemScreen extends BaseFzmmScreen {
 
 
         this.sourceButtons = ImmutableList.of(inventoryButton, defaultButton, historyButton, allButton);
+
         inventoryButton.onPress();
+
+        if (this.itemComponentList.isEmpty())
+            defaultButton.onPress();
     }
 
     private void addItemCallback(Collection<ItemStack> stackList, boolean filter) {
