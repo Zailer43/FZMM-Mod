@@ -3,12 +3,12 @@ package fzmm.zailer.me.client.gui.main;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.EncryptBookScreen;
-import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
 import fzmm.zailer.me.client.gui.converters.ConvertersScreen;
 import fzmm.zailer.me.client.gui.headgallery.HeadGalleryScreen;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.HistoryScreen;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
+import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.main.components.MainButtonComponent;
 import fzmm.zailer.me.client.gui.playerstatue.PlayerStatueScreen;
 import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
@@ -34,6 +34,7 @@ public class MainScreen extends BaseFzmmScreen {
                 .onPress(button -> this.client.setScreen(ConfigScreen.create(FzmmClient.CONFIG, this)));
 
         Map<String, ButtonData> openScreenButtons = Map.of(
+                "itemEditor-button", new ButtonData(() -> new ItemEditorBaseScreen(this), MainIcon.ITEM_EDITOR),
                 "imagetext-button", new ButtonData(() -> new ImagetextScreen(this), MainIcon.IMAGETEXT),
                 "textFormat-button", new ButtonData(() -> new TextFormatScreen(this), MainIcon.TEXT_FORMAT),
                 "playerStatue-button", new ButtonData(() -> new PlayerStatueScreen(this), MainIcon.PLAYER_STATUE),
@@ -41,8 +42,7 @@ public class MainScreen extends BaseFzmmScreen {
                 "headGenerator-button", new ButtonData(() -> new HeadGeneratorScreen(this), MainIcon.HEAD_GENERATOR),
                 "converters-button", new ButtonData(() -> new ConvertersScreen(this), MainIcon.CONVERTERS),
                 "history-button", new ButtonData(() -> new HistoryScreen(this), MainIcon.HISTORY),
-                "headGallery-button", new ButtonData(() -> new HeadGalleryScreen(this), MainIcon.HEAD_GALLERY),
-                "bannerEditor-button", new ButtonData(() -> new BannerEditorScreen(this), MainIcon.BANNER_EDITOR)
+                "headGallery-button", new ButtonData(() -> new HeadGalleryScreen(this), MainIcon.HEAD_GALLERY)
         );
 
         for (var key : openScreenButtons.keySet()) {

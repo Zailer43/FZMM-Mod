@@ -54,7 +54,7 @@ public class BannerBuilder {
 
         return builder()
                 .addPatterns(patterns)
-                .item(item instanceof BannerItem ? item : Items.WHITE_BANNER)
+                .item(item)
                 .isShield(isShield)
                 .nbt(nbt);
     }

@@ -37,4 +37,6 @@ public class TagsConstant {
     public static final String HEAD_PROPERTIES = "Properties";
     public static final String HEAD_PROPERTIES_TEXTURES = "textures";
 
+    public static final String TRIM_COMPOUND = "Trim";
+
 }

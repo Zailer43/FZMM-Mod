@@ -1,0 +1,132 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+    <components>
+        <flow-layout direction="horizontal">
+            <children>
+                <scroll direction="vertical">
+                    <flow-layout direction="vertical">
+                        <children>
+                            <flow-layout direction="horizontal">
+                                <children>
+                                    <template name="select-option">
+                                        <id>select-part</id>
+                                        <translation>fzmm.gui.itemEditor.armor.label.selectArmorPart</translation>
+                                        <horizontal-sizing>40</horizontal-sizing>
+                                        <horizontal-sizing-type>fill</horizontal-sizing-type>
+                                    </template>
+                                    <template name="select-option">
+                                        <id>select-armor-material</id>
+                                        <translation>fzmm.gui.itemEditor.armor.label.selectArmorMaterial</translation>
+                                        <horizontal-sizing>40</horizontal-sizing>
+                                        <horizontal-sizing-type>fill</horizontal-sizing-type>
+                                    </template>
+
+                                </children>
+
+                            </flow-layout>
+
+                            <template name="select-option">
+                                <id>select-trim-material</id>
+                                <translation>fzmm.gui.itemEditor.armor.label.selectTrimMaterial</translation>
+                                <horizontal-sizing>80</horizontal-sizing>
+                                <horizontal-sizing-type>fill</horizontal-sizing-type>
+                            </template>
+
+                            <template name="select-option">
+                                <id>select-trim-pattern</id>
+                                <translation>fzmm.gui.itemEditor.armor.label.selectTrimPattern</translation>
+                                <horizontal-sizing>80</horizontal-sizing>
+                                <horizontal-sizing-type>fill</horizontal-sizing-type>
+                            </template>
+
+                        </children>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">100</vertical>
+                    </sizing>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+
+                <flow-layout direction="horizontal">
+                    <children>
+                        <entity type="armor_stand" id="armor-preview">
+                            <mouse-rotation>true</mouse-rotation>
+
+                            <sizing>
+                                <vertical method="fixed">20</vertical>
+                                <horizontal method="fixed">20</horizontal>
+                            </sizing>
+
+                            <cursor-style>hand</cursor-style>
+
+
+                        </entity>
+                    </children>
+
+                    <sizing>
+                        <vertical method="fixed">50</vertical>
+                        <horizontal method="fixed">40</horizontal>
+                    </sizing>
+
+                    <allow-overflow>true</allow-overflow>
+
+                    <vertical-alignment>center</vertical-alignment>
+                    <horizontal-alignment>center</horizontal-alignment>
+
+                    <positioning type="relative">0,0</positioning>
+                </flow-layout>
+            </children>
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+        </flow-layout>
+    </components>
+
+    <templates>
+        <select-option>
+            <flow-layout direction="vertical">
+                <children>
+                    <label>
+                        <text translate="true">{{translation}}</text>
+                    </label>
+
+                    <flow-layout direction="ltr-text-flow" id="{{id}}">
+                        <children>
+                        </children>
+
+                        <gap>4</gap>
+
+                        <margins>
+                            <top>12</top>
+                        </margins>
+
+                        <sizing>
+                            <horizontal method="fill">100</horizontal>
+                        </sizing>
+
+                        <horizontal-alignment>center</horizontal-alignment>
+                    </flow-layout>
+                </children>
+
+                <padding>
+                    <all>8</all>
+                </padding>
+
+                <surface>
+                    <panel dark="true"/>
+                </surface>
+
+                <sizing>
+                    <horizontal method="{{horizontal-sizing-type}}">{{horizontal-sizing}}</horizontal>
+                </sizing>
+
+                <horizontal-alignment>center</horizontal-alignment>
+            </flow-layout>
+        </select-option>
+    </templates>
+</owo-ui>

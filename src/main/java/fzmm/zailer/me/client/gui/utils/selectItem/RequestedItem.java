@@ -1,36 +1,52 @@
 package fzmm.zailer.me.client.gui.utils.selectItem;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public final class RequestedItem {
+public class RequestedItem {
     private final Predicate<ItemStack> predicate;
-    private final Consumer<ItemStack> consumer;
+    private final Consumer<ItemStack> executeConsumer;
+    @Nullable
+    private Consumer<ItemStack> updatePreviewConsumer;
     private final Text title;
     private final boolean required;
     private final List<ItemStack> defaultItems;
     @Nullable
     private ItemStack stack;
 
-    public RequestedItem(Predicate<ItemStack> predicate, Consumer<ItemStack> consumer, List<ItemStack> defaultItems, @Nullable ItemStack stack, Text title, boolean required) {
+    public RequestedItem(Predicate<ItemStack> predicate, Consumer<ItemStack> executeConsumer, @Nullable List<ItemStack> defaultItems, @Nullable ItemStack stack, Text title, boolean required) {
         this.predicate = predicate;
-        this.consumer = consumer;
+        this.executeConsumer = executeConsumer;
+        this.updatePreviewConsumer = null;
         this.stack = stack;
         this.title = title;
         this.required = required;
-        this.defaultItems = defaultItems;
+        this.defaultItems = defaultItems == null ? this.getApplicableItems() : defaultItems;
     }
 
-    public RequestedItem(Predicate<ItemStack> predicate, Consumer<ItemStack> consumer, List<ItemStack> defaultItems, Text title, boolean required) {
-        this(predicate, consumer, defaultItems, null, title, required);
+    public RequestedItem(Predicate<ItemStack> predicate, Consumer<ItemStack> executeConsumer, @Nullable List<ItemStack> defaultItems, Text title, boolean required) {
+        this(predicate, executeConsumer, defaultItems, null, title, required);
+    }
+
+    private List<ItemStack> getApplicableItems() {
+        List<ItemStack> applicableItems = new ArrayList<>();
+
+        for (Item item : Registries.ITEM) {
+            if (this.predicate.test(item.getDefaultStack()))
+                applicableItems.add(item.getDefaultStack());
+        }
+
+        return applicableItems;
     }
 
     public Predicate<ItemStack> predicate() {
@@ -39,11 +55,20 @@ public final class RequestedItem {
 
     public void execute() {
         if (this.stack != null)
-            this.consumer.accept(this.stack);
+            this.executeConsumer.accept(this.stack);
     }
 
-    public Optional<ItemStack> stack() {
-        return Optional.ofNullable(this.stack);
+    public void updatePreview() {
+        if (this.updatePreviewConsumer != null)
+            this.updatePreviewConsumer.accept(this.stack());
+    }
+
+    public void setUpdatePreviewConsumer(@Nullable Consumer<ItemStack> updatePreviewConsumer) {
+        this.updatePreviewConsumer = updatePreviewConsumer;
+    }
+
+    public ItemStack stack() {
+        return this.stack == null ? ItemStack.EMPTY : this.stack;
     }
 
     public void setStack(@Nullable ItemStack stack) {

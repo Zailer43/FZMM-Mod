@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui.bannereditor.tabs;
+package fzmm.zailer.me.client.gui.item_editor.banner_editor.tabs;
 
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 
