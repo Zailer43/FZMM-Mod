@@ -38,4 +38,6 @@ public class TagsConstant {
     public static final String HEAD__PROPERTIES_SIGNATURE = "Signature";
     public static final String HEAD_PROPERTIES_TEXTURES = "textures";
 
+    public static final String TRIM_COMPOUND = "Trim";
+
 }

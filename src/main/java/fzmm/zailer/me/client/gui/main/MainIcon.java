@@ -18,7 +18,7 @@ public class MainIcon implements Icon {
     public static final MainIcon CONVERTERS;
     public static final MainIcon HISTORY;
     public static final MainIcon HEAD_GALLERY;
-    public static final MainIcon BANNER_EDITOR;
+    public static final MainIcon ITEM_EDITOR;
 
     public MainIcon(int width, int height, int u, int v, int textureWidth, int textureHeight) {
         this.width = width;
@@ -51,6 +51,6 @@ public class MainIcon implements Icon {
         CONVERTERS = new MainIcon(WIDTH, HEIGHT, 16, 80, 256, 256);
         HISTORY = new MainIcon(WIDTH, HEIGHT, 16, 96, 256, 256);
         HEAD_GALLERY = new MainIcon(WIDTH, HEIGHT, 16, 112, 256, 256);
-        BANNER_EDITOR = new MainIcon(WIDTH, HEIGHT, 16, 128, 256, 256);
+        ITEM_EDITOR = new MainIcon(WIDTH, HEIGHT, 16, 128, 256, 256);
     }
 }

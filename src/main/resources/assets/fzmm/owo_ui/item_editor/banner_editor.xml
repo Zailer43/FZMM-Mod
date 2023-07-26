@@ -3,12 +3,6 @@
     <components>
         <flow-layout direction="horizontal">
             <children>
-                <label id="title">
-                    <positioning type="absolute">20,20</positioning>
-                    <text translate="true">fzmm.gui.title.bannerEditor</text>
-                </label>
-
-
                 <scroll direction="vertical">
                     <flow-layout direction="vertical">
                         <children>
@@ -31,33 +25,17 @@
                                                 </sizing>
                                             </item>
 
-                                            <button id="give-button">
-                                                <text translate="true">fzmm.gui.bannerEditor.button.give</text>
-
-                                                <sizing>
-                                                    <horizontal method="fixed">95</horizontal>
-                                                </sizing>
-                                            </button>
-
-                                            <button id="select-banner-button">
-                                                <text translate="true">fzmm.gui.bannerEditor.button.select</text>
-
-                                                <sizing>
-                                                    <horizontal method="fixed">95</horizontal>
-                                                </sizing>
-                                            </button>
-
                                             <flow-layout direction="horizontal">
                                                 <children>
                                                     <button id="undo">
                                                         <text translate="true">fzmm.gui.button.arrow2.left</text>
-                                                        <tooltip-text translate="true">fzmm.gui.bannerEditor.option.undo.tooltip</tooltip-text>
+                                                        <tooltip-text translate="true">fzmm.gui.itemEditor.banner.option.undo.tooltip</tooltip-text>
                                                         <positioning type="relative">0,100</positioning>
                                                     </button>
 
                                                     <button id="redo">
                                                         <text translate="true">fzmm.gui.button.arrow2.right</text>
-                                                        <tooltip-text translate="true">fzmm.gui.bannerEditor.option.redo.tooltip</tooltip-text>
+                                                        <tooltip-text translate="true">fzmm.gui.itemEditor.banner.option.redo.tooltip</tooltip-text>
                                                         <positioning type="relative">100,100</positioning>
                                                     </button>
                                                 </children>
@@ -192,35 +170,11 @@
                         <flat>#FFFFFF</flat>
                     </scrollbar>
                 </scroll>
-
-                <flow-layout direction="horizontal">
-                    <children>
-
-                        <button id="back-button">
-                            <text translate="true">fzmm.gui.button.back</text>
-
-                            <margins>
-                                <right>20</right>
-                                <bottom>20</bottom>
-                            </margins>
-                        </button>
-
-                    </children>
-
-                    <positioning type="relative">100,100</positioning>
-
-                    <vertical-alignment>bottom</vertical-alignment>
-                    <horizontal-alignment>right</horizontal-alignment>
-                </flow-layout>
             </children>
 
 
             <vertical-alignment>center</vertical-alignment>
             <horizontal-alignment>center</horizontal-alignment>
-
-            <surface>
-                <vanilla-translucent/>
-            </surface>
         </flow-layout>
     </components>
 </owo-ui>

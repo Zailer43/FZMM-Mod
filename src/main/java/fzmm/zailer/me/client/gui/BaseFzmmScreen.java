@@ -89,7 +89,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     }
 
 
-    protected void setTabs(Enum<? extends ITabsEnum> tabs) {
+    public void setTabs(Enum<? extends ITabsEnum> tabs) {
         this.setTabs(this.tabs, tabs);
     }
 

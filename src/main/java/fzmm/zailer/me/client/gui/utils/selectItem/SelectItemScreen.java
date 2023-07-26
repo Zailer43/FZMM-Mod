@@ -20,6 +20,7 @@ import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class SelectItemScreen extends BaseFzmmScreen {
@@ -35,6 +36,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
     private final HashMap<RequestedItem, ItemComponent> requestedItems;
     private final RequestedItem selectedRequestedItem;
     private final List<ItemComponent> itemComponentList;
+    private final Consumer<ItemStack> executeCallback;
     private FlowLayout requestedItemsLayout;
     private FlowLayout itemLayout;
     private TextFieldWidget searchField;
@@ -42,10 +44,10 @@ public class SelectItemScreen extends BaseFzmmScreen {
     private ButtonComponent executeButton;
 
     public SelectItemScreen(@Nullable Screen parent, RequestedItem requestedItem) {
-        this(parent, List.of(requestedItem));
+        this(parent, List.of(requestedItem), (ItemStack -> {}));
     }
 
-    public SelectItemScreen(@Nullable Screen parent, List<RequestedItem> requestedItems) {
+    public SelectItemScreen(@Nullable Screen parent, List<RequestedItem> requestedItems, Consumer<ItemStack> executeCallback) {
         super("utils/select_item", "selectItem", parent);
         this.requestedItems = new HashMap<>();
         this.itemComponentList = new ArrayList<>();
@@ -55,6 +57,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
         }
 
         this.selectedRequestedItem = requestedItems.get(0);
+        this.executeCallback = executeCallback;
     }
 
     @Override
@@ -80,6 +83,8 @@ public class SelectItemScreen extends BaseFzmmScreen {
         this.executeButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(EXECUTE_BUTTON_ID), this.canExecute(), buttonComponent -> {
             for (var requestedItem : this.requestedItems.keySet()) {
                 requestedItem.execute();
+                requestedItem.updatePreview();
+                this.executeCallback.accept(requestedItem.stack());
             }
 
             this.close();
@@ -190,7 +195,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
         List<Component> requestedItemsEntries = new ArrayList<>();
         for (int i = 0; i != entries.size(); i++) {
             RequestedItem entry = entries.get(i);
-            requestedItemsEntries.add(this.addRequestedItemButton(entry, entry.stack().orElse(ItemStack.EMPTY), i));
+            requestedItemsEntries.add(this.addRequestedItemButton(entry, entry.stack(), i));
         }
 
         this.requestedItemsLayout.children(requestedItemsEntries);

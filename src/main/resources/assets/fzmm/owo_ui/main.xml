@@ -12,6 +12,9 @@
                     <flow-layout direction="ltr-text-flow">
                         <children>
                             <template name="main-button-layout">
+                                <name>itemEditor</name>
+                            </template>
+                            <template name="main-button-layout">
                                 <name>imagetext</name>
                             </template>
                             <template name="main-button-layout">
@@ -34,9 +37,6 @@
                             </template>
                             <template name="main-button-layout">
                                 <name>headGallery</name>
-                            </template>
-                            <template name="main-button-layout">
-                                <name>bannerEditor</name>
                             </template>
                         </children>
 

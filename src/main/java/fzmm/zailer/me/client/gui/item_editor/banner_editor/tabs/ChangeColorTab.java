@@ -1,7 +1,7 @@
-package fzmm.zailer.me.client.gui.bannereditor.tabs;
+package fzmm.zailer.me.client.gui.item_editor.banner_editor.tabs;
 
 import fzmm.zailer.me.builders.BannerBuilder;
-import fzmm.zailer.me.client.gui.bannereditor.BannerEditorScreen;
+import fzmm.zailer.me.client.gui.item_editor.banner_editor.BannerEditorScreen;
 import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.util.UISounds;
@@ -131,7 +131,7 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
             MutableText result  = defaultTooltip.get().copy();
 
             result.append("\n\n")
-                .append(Text.translatable("fzmm.gui.bannerEditor.tab.changeColor.shiftHotkey"));
+                .append(Text.translatable("fzmm.gui.itemEditor.banner.tab.changeColor.shiftHotkey"));
 
             return Optional.of(result);
         }

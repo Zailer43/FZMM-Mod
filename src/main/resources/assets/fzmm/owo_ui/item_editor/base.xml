@@ -1,0 +1,135 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="horizontal">
+            <children>
+                <stack-layout>
+                    <children>
+                        <scroll direction="vertical" id="base-panel">
+                            <flow-layout direction="vertical">
+                                <children>
+
+                                    <template name="category-button">
+                                        <translation>required_items</translation>
+                                        <id>required-items</id>
+                                    </template>
+                                    <template name="category-button">
+                                        <translation>applicable_editors</translation>
+                                        <id>applicable-editors</id>
+                                    </template>
+                                    <template name="category-button">
+                                        <translation>non_applicable_editors</translation>
+                                        <id>non-applicable-editors</id>
+                                    </template>
+
+                                </children>
+
+                                <vertical-alignment>top</vertical-alignment>
+                                <horizontal-alignment>center</horizontal-alignment>
+
+                                <sizing>
+                                    <horizontal method="fill">100</horizontal>
+                                </sizing>
+
+                            </flow-layout>
+
+                            <sizing>
+                                <horizontal method="fixed">200</horizontal>
+                                <vertical method="fill">100</vertical>
+                            </sizing>
+
+                            <scrollbar>
+                                <flat>#FFFFFF</flat>
+                            </scrollbar>
+
+                            <surface>
+                                <panel dark="true"/>
+                            </surface>
+
+                            <padding>
+                                <all>6</all>
+                            </padding>
+
+                        </scroll>
+
+                        <flow-layout direction="vertical" id="content">
+                            <children>
+
+                            </children>
+
+                            <sizing>
+                                <vertical method="fill">100</vertical>
+                                <horizontal method="fill">100</horizontal>
+                            </sizing>
+
+
+                            <padding>
+                                <left>200</left>
+                                <bottom>24</bottom>
+                            </padding>
+                        </flow-layout>
+
+                    </children>
+
+                    <sizing>
+                        <vertical method="fill">100</vertical>
+                        <horizontal method="fill">100</horizontal>
+                    </sizing>
+                </stack-layout>
+
+                <flow-layout direction="horizontal">
+                    <children>
+
+                        <button id="back-button">
+                            <text translate="true">fzmm.gui.button.back</text>
+
+                            <margins>
+                                <right>2</right>
+                                <bottom>2</bottom>
+                            </margins>
+                        </button>
+
+                    </children>
+
+                    <positioning type="relative">100,100</positioning>
+
+                    <vertical-alignment>bottom</vertical-alignment>
+                    <horizontal-alignment>right</horizontal-alignment>
+                </flow-layout>
+            </children>
+
+            <vertical-alignment>top</vertical-alignment>
+            <horizontal-alignment>left</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+
+    <templates>
+        <category-button>
+            <flow-layout direction="vertical">
+                <children>
+                    <label id="{{id}}-label">
+                        <text translate="true">fzmm.gui.itemEditor.base.label.{{translation}}</text>
+                    </label>
+
+                    <flow-layout direction="vertical" id="{{id}}">
+                        <children>
+                        </children>
+
+                        <gap>2</gap>
+
+                        <margins>
+                            <top>2</top>
+                            <bottom>10</bottom>
+                        </margins>
+                    </flow-layout>
+                </children>
+
+                <horizontal-alignment>center</horizontal-alignment>
+            </flow-layout>
+        </category-button>
+    </templates>
+</owo-ui>
