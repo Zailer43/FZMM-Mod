@@ -45,7 +45,11 @@ public class BlockStateItemBuilder {
             stack = displayBuilder.get();
         }
 
-        stack.setSubNbt(BlockItem.BLOCK_STATE_TAG_KEY, this.blockStateTag);
+        if (this.blockStateTag.isEmpty())
+            stack.removeSubNbt(BlockItem.BLOCK_STATE_TAG_KEY);
+        else
+            stack.setSubNbt(BlockItem.BLOCK_STATE_TAG_KEY, this.blockStateTag);
+
         return stack;
     }
 

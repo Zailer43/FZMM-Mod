@@ -22,10 +22,7 @@ import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class BlockStateEditor implements IItemEditorScreen {
@@ -116,7 +113,8 @@ public class BlockStateEditor implements IItemEditorScreen {
         }
 
         BlockState blockState = blockStateOptional.get();
-        for (var property : blockState.getProperties()) {
+        List<Property<?>> propertyList = blockState.getProperties().stream().sorted(Comparator.comparing(Property::getName)).toList();
+        for (var property : propertyList) {
             this.resetStateLayoutsOfProperty(property);
 
             FlowLayout valuesLayout = Containers.ltrTextFlow(Sizing.fill(100), Sizing.content());
@@ -179,17 +177,15 @@ public class BlockStateEditor implements IItemEditorScreen {
         String key = propertyName + "-" + labelName;
         String labelId = key + "-label";
         String labelKey = propertyName + "." + labelName;
-        String propertyParameter = propertyName;
         String valueParameter = valueName;
         if (isDefault) {
             labelName = "default";
-            key = "default-default";
+            key = propertyName + "-default";
             labelId = key + "-label";
             labelKey = "default";
-            propertyParameter = "default";
             valueParameter = "default";
         }
-        parameters.put("property", propertyParameter);
+        parameters.put("property", propertyName);
         parameters.put("value", valueParameter);
         FlowLayout valueLayout = this.uiModel.expandTemplate(FlowLayout.class, BLOCK_STATE_BUTTON_ID, parameters);
 
@@ -217,11 +213,8 @@ public class BlockStateEditor implements IItemEditorScreen {
 
         for (var property : this.statesLayoutOfProperties.keySet()) {
             HashMap<String, FlowLayout> statesLayoutOfProperty = this.statesLayoutOfProperties.get(property);
-            boolean first = true;
-            for (var valueName : statesLayoutOfProperty.keySet()) {
-                this.updateStateLayout(property, valueName, first);
-                first = false;
-            }
+            for (var valueName : statesLayoutOfProperty.keySet())
+                this.updateStateLayout(property, valueName, valueName.equals("default"));
         }
 
         this.updatePreview();
@@ -259,10 +252,11 @@ public class BlockStateEditor implements IItemEditorScreen {
         String propertyName = property.getName();
 
         if (isDefault)
-            this.setItem(this.blockBuilder.remove(propertyName).get());
+            this.blockBuilder.remove(propertyName);
         else
-            this.setItem(this.blockBuilder.add(propertyName, valueName).get());
+            this.blockBuilder.add(propertyName, valueName);
 
+        this.setItem(this.blockBuilder.get());
         this.updatePropertiesContent();
         return true;
     }

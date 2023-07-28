@@ -84,7 +84,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
             for (var requestedItem : this.requestedItems.keySet()) {
                 requestedItem.execute();
                 requestedItem.updatePreview();
-                this.executeCallback.accept(requestedItem.stack());
+                this.executeCallback.accept(requestedItem.stack().copy());
             }
 
             this.close();

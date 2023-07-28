@@ -70,7 +70,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
         assert this.client != null;
         assert this.client.player != null;
-        this.selectedItem = this.client.player.getMainHandStack();
+        this.selectedItem = this.client.player.getMainHandStack().copy();
 
         this.basePanelLayout = rootComponent.childById(ScrollContainer.class, BASE_PANEL_ID);
         checkNull(this.basePanelLayout, "scroll", BASE_PANEL_ID);
@@ -94,17 +94,25 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
 
     private void selectEditor() {
         boolean stackEmpty = this.selectedItem.isEmpty();
-        IItemEditorScreen currentEditor = this.itemEditorScreens.stream()
-                .filter(editor -> selectedEditor == null || editor.getClass() == selectedEditor)
-                .filter(editor -> editor.isApplicable(this.selectedItem) || stackEmpty)
-                .findFirst()
-                .orElse(null);
+        if (selectedEditor != null) {
+            for (var editor : this.itemEditorScreens) {
+                if (editor.getClass() == selectedEditor && editor.isApplicable(this.selectedItem) || stackEmpty) {
+                    this.selectEditor(editor);
+                    return;
+                }
+            }
+        }
 
-        if (currentEditor != null)
-            this.selectEditor(currentEditor);
-        else
-            this.selectEditor(this.itemEditorScreens.get(0));
+        for (var editor : this.itemEditorScreens) {
+            if (editor.isApplicable(this.selectedItem) || stackEmpty) {
+                this.selectEditor(editor);
+                return;
+            }
+        }
+
+        this.selectEditor(this.itemEditorScreens.get(0));
     }
+
     public void selectEditor(IItemEditorScreen editor) {
         selectedEditor = editor.getClass();
         this.currentEditor = editor;

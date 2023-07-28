@@ -89,7 +89,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
                     this.setSelectedItem(itemStack, this.helmetRequest, this.helmetBuilder);
                 },
                 null,
-                playerInventory.getArmorStack(PlayerInventory.ARMOR_SLOTS[3]),
+                playerInventory.getArmorStack(PlayerInventory.ARMOR_SLOTS[3]).copy(),
                 Text.translatable("fzmm.gui.itemEditor.armor.item.helmet"),
                 false
         );
@@ -98,7 +98,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
                 (itemStack) -> this.test(itemStack, EquipmentSlot.CHEST, recipeTypes),
                 itemStack -> this.setSelectedItem(itemStack, this.chestplateRequest, this.chestplateBuilder),
                 null,
-                playerInventory.getArmorStack(PlayerInventory.ARMOR_SLOTS[2]),
+                playerInventory.getArmorStack(PlayerInventory.ARMOR_SLOTS[2]).copy(),
                 Text.translatable("fzmm.gui.itemEditor.armor.item.chestplate"),
                 false
         );
@@ -107,7 +107,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
                 (itemStack) -> this.test(itemStack, EquipmentSlot.LEGS, recipeTypes),
                 itemStack -> this.setSelectedItem(itemStack, this.leggingsRequest, this.leggingsBuilder),
                 null,
-                playerInventory.getArmorStack(PlayerInventory.ARMOR_SLOTS[1]),
+                playerInventory.getArmorStack(PlayerInventory.ARMOR_SLOTS[1]).copy(),
                 Text.translatable("fzmm.gui.itemEditor.armor.item.leggings"),
                 false
         );
@@ -116,7 +116,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
                 (itemStack) -> this.test(itemStack, EquipmentSlot.FEET, recipeTypes),
                 itemStack -> this.setSelectedItem(itemStack, this.bootsRequest, this.bootsBuilder),
                 null,
-                playerInventory.getArmorStack(PlayerInventory.ARMOR_SLOTS[0]),
+                playerInventory.getArmorStack(PlayerInventory.ARMOR_SLOTS[0]).copy(),
                 Text.translatable("fzmm.gui.itemEditor.armor.item.boots"),
                 false
         );
