@@ -12,13 +12,13 @@
                                         <id>select-part</id>
                                         <translation>fzmm.gui.itemEditor.armor.label.selectArmorPart</translation>
                                         <horizontal-sizing>40</horizontal-sizing>
-                                        <horizontal-sizing-type>fill</horizontal-sizing-type>
+                                        <content-layout-top-margin>12</content-layout-top-margin>
                                     </template>
                                     <template name="select-option">
                                         <id>select-armor-material</id>
                                         <translation>fzmm.gui.itemEditor.armor.label.selectArmorMaterial</translation>
                                         <horizontal-sizing>40</horizontal-sizing>
-                                        <horizontal-sizing-type>fill</horizontal-sizing-type>
+                                        <content-layout-top-margin>12</content-layout-top-margin>
                                     </template>
 
                                 </children>
@@ -26,17 +26,16 @@
                             </flow-layout>
 
                             <template name="select-option">
-                                <id>select-trim-material</id>
-                                <translation>fzmm.gui.itemEditor.armor.label.selectTrimMaterial</translation>
-                                <horizontal-sizing>80</horizontal-sizing>
-                                <horizontal-sizing-type>fill</horizontal-sizing-type>
-                            </template>
-
-                            <template name="select-option">
                                 <id>select-trim-pattern</id>
                                 <translation>fzmm.gui.itemEditor.armor.label.selectTrimPattern</translation>
                                 <horizontal-sizing>80</horizontal-sizing>
-                                <horizontal-sizing-type>fill</horizontal-sizing-type>
+                                <content-layout-top-margin>0</content-layout-top-margin>
+                            </template>
+                            <template name="select-option">
+                                <id>select-trim-material</id>
+                                <translation>fzmm.gui.itemEditor.armor.label.selectTrimMaterial</translation>
+                                <horizontal-sizing>80</horizontal-sizing>
+                                <content-layout-top-margin>12</content-layout-top-margin>
                             </template>
 
                         </children>
@@ -91,25 +90,37 @@
         <select-option>
             <flow-layout direction="vertical">
                 <children>
-                    <label>
-                        <text translate="true">{{translation}}</text>
-                    </label>
-
-                    <flow-layout direction="ltr-text-flow" id="{{id}}">
+                    <flow-layout direction="horizontal" id="{{id}}-label-layout">
                         <children>
+                            <label>
+                                <text translate="true">{{translation}}</text>
+                            </label>
                         </children>
 
-                        <gap>4</gap>
+                        <gap>8</gap>
 
-                        <margins>
-                            <top>12</top>
-                        </margins>
+                        <vertical-alignment>center</vertical-alignment>
+                    </flow-layout>
 
-                        <sizing>
-                            <horizontal method="fill">100</horizontal>
-                        </sizing>
+                    <flow-layout direction="horizontal" id="{{id}}-layout">
+                        <children>
+                            <flow-layout direction="ltr-text-flow" id="{{id}}">
+                                <children>
+                                </children>
 
-                        <horizontal-alignment>center</horizontal-alignment>
+                                <gap>4</gap>
+
+                                <margins>
+                                    <top>{{content-layout-top-margin}}</top>
+                                </margins>
+
+                                <sizing>
+                                    <horizontal method="fill">100</horizontal>
+                                </sizing>
+
+                                <horizontal-alignment>center</horizontal-alignment>
+                            </flow-layout>
+                        </children>
                     </flow-layout>
                 </children>
 
@@ -122,7 +133,7 @@
                 </surface>
 
                 <sizing>
-                    <horizontal method="{{horizontal-sizing-type}}">{{horizontal-sizing}}</horizontal>
+                    <horizontal method="fill">{{horizontal-sizing}}</horizontal>
                 </sizing>
 
                 <horizontal-alignment>center</horizontal-alignment>

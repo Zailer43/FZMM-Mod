@@ -34,10 +34,12 @@ public abstract class AbstractArmorEditorOptionList<TYPE> {
         this.options.clear();
 
         if (this.addFirstValueNull())
-            components.add(this.getLayout(null, this.getValueId(null), this.isValueSelected(null)));
+            components.add(this.getLayout(null, this.getValueId(null)));
 
         for (var value : this.getValueList())
-            components.add(this.getLayout(value, this.getValueId(value), this.isValueSelected(value)));
+            components.add(this.getLayout(value, this.getValueId(value)));
+
+        this.updateSelectedOption(this.getSelectedValue());
 
         optionParent.children(components);
     }
@@ -46,9 +48,9 @@ public abstract class AbstractArmorEditorOptionList<TYPE> {
 
     public abstract String getValueId(@Nullable TYPE value);
 
-    public abstract boolean isValueSelected(@Nullable TYPE value);
+    public abstract TYPE getSelectedValue();
 
-    public abstract Component getLayout(@Nullable TYPE value, String id, boolean selected);
+    public abstract Component getLayout(@Nullable TYPE value, String id);
 
     public void updateSelectedOption(TYPE value) {
         if (this.selectedComponent != null)

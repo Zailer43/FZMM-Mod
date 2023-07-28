@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.item_editor.armor_editor.options;
 
 import blue.endless.jankson.annotation.Nullable;
 import fzmm.zailer.me.builders.ArmorBuilder;
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.ArmorEditorScreen;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.EntityComponent;
@@ -33,14 +34,19 @@ public class ArmorEditorOptionTrimPattern extends AbstractArmorEditorOptionList<
     public void generateLayout(FlowLayout optionParent) {
         this.armorStandList.clear();
         super.generateLayout(optionParent);
-        this.updatePreview();
+        this.updatePreview(this.parent.showAllArmorInTrimPatternPreview());
     }
 
     @Override
     public List<ArmorTrimPattern> getValueList() {
-        assert MinecraftClient.getInstance().world != null;
-        Registry<ArmorTrimPattern> trimPatternRegistry = MinecraftClient.getInstance().world.getRegistryManager().get(RegistryKeys.TRIM_PATTERN);
-        return trimPatternRegistry.stream().sorted(Comparator.comparing(o -> o.assetId().getPath())).toList();
+        try {
+            assert MinecraftClient.getInstance().world != null;
+            Registry<ArmorTrimPattern> trimPatternRegistry = MinecraftClient.getInstance().world.getRegistryManager().get(RegistryKeys.TRIM_PATTERN);
+            return trimPatternRegistry.stream().sorted(Comparator.comparing(o -> o.assetId().getPath())).toList();
+        } catch (IllegalStateException e) {
+            FzmmClient.LOGGER.warn("[ArmorEditorOptionTrimPattern] Failed to get value list, registry TRIM_PATTERN not exists");
+            return List.of();
+        }
     }
 
     @Override
@@ -49,12 +55,12 @@ public class ArmorEditorOptionTrimPattern extends AbstractArmorEditorOptionList<
     }
 
     @Override
-    public boolean isValueSelected(@Nullable ArmorTrimPattern value) {
-        return value == this.selectedArmorBuilder.trimPattern();
+    public ArmorTrimPattern getSelectedValue() {
+        return this.selectedArmorBuilder.trimPattern();
     }
 
     @Override
-    public Component getLayout(@Nullable ArmorTrimPattern value, String id, boolean selected) {
+    public Component getLayout(@Nullable ArmorTrimPattern value, String id) {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client != null;
 
@@ -63,8 +69,6 @@ public class ArmorEditorOptionTrimPattern extends AbstractArmorEditorOptionList<
         layout.tooltip(value == null ? Text.translatable("fzmm.gui.itemEditor.armor.label.emptyTrim") : value.description());
 
         layout.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
-        if (selected)
-            layout.surface(Surface.flat(0x40000000));
 
         ArmorStandEntity armorStandEntity = new ArmorStandEntity(EntityType.ARMOR_STAND, client.world);
         this.parent.updateArmorStandArmor(armorStandEntity);
@@ -102,7 +106,7 @@ public class ArmorEditorOptionTrimPattern extends AbstractArmorEditorOptionList<
         this.selectedArmorBuilder.trimPattern(value);
     }
 
-    public void updatePreview() {
+    public void updatePreview(boolean showAllArmor) {
         assert MinecraftClient.getInstance().world != null;
         List<ArmorTrimPattern> trimPatterns = this.getValueList();
 
@@ -115,7 +119,11 @@ public class ArmorEditorOptionTrimPattern extends AbstractArmorEditorOptionList<
             ArmorBuilder builder = this.selectedArmorBuilder.copy().trimPattern(trimPattern);
             ItemStack stack = builder.get();
 
-            this.parent.updateArmorStandArmor(armorStandEntity);
+            if (showAllArmor)
+                this.parent.updateArmorStandArmor(armorStandEntity);
+            else
+                this.parent.updateArmorStandArmor(armorStandEntity, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY);
+
             this.equipInArmorStand(armorStandEntity, stack);
         }
     }

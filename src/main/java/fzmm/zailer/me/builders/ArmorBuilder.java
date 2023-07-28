@@ -94,6 +94,7 @@ public class ArmorBuilder {
         return this;
     }
 
+    @Nullable
     public ArmorTrimMaterial trimMaterial() {
         return this.trimMaterial;
     }
@@ -103,6 +104,7 @@ public class ArmorBuilder {
         return this;
     }
 
+    @Nullable
     public ArmorTrimPattern trimPattern() {
         return this.trimPattern;
     }

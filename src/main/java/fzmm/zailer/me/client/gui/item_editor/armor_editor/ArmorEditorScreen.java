@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui.item_editor.armor_editor;
 import fzmm.zailer.me.builders.ArmorBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.options.ArmorEditorOptionArmorMaterial;
@@ -15,7 +16,9 @@ import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.EntityComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.container.StackLayout;
+import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
@@ -44,7 +47,11 @@ public class ArmorEditorScreen implements IItemEditorScreen {
     private static final String SELECT_PART_ID = "select-part";
     private static final String SELECT_ARMOR_MATERIAL_ID = "select-armor-material";
     private static final String SELECT_TRIM_MATERIAL_ID = "select-trim-material";
+    private static final String SELECT_TRIM_MATERIAL_LAYOUT_ID = SELECT_TRIM_MATERIAL_ID + "-layout";
     private static final String SELECT_TRIM_PATTERN_ID = "select-trim-pattern";
+    private static final String SELECT_TRIM_PATTERN_LABEL_LAYOUT_ID = SELECT_TRIM_PATTERN_ID + "-label-layout";
+    private static final Text SHOW_ALL_ARMOR_IN_TRIM_PATTERN_PREVIEW_ENABLED_TEXT = Text.translatable("fzmm.gui.itemEditor.armor.option.showAllArmorInTrimPatternPreview.enabled");
+    private static final Text SHOW_ALL_ARMOR_IN_TRIM_PATTERN_PREVIEW_DISABLED_TEXT = Text.translatable("fzmm.gui.itemEditor.armor.option.showAllArmorInTrimPatternPreview.disabled");
     private final ArmorBuilder helmetBuilder = ArmorBuilder.builder();
     private final ArmorBuilder chestplateBuilder = ArmorBuilder.builder();
     private final ArmorBuilder leggingsBuilder = ArmorBuilder.builder();
@@ -62,6 +69,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
     private ArmorBuilder selectedArmorPartBuilder;
     private HashMap<Predicate<ItemStack>, ButtonComponent> armorPartButtons;
     private FlowLayout armorMaterialLayout;
+    private BooleanButton showAllArmorInTrimPatternPreviewButton;
 
     @Override
     public List<RequestedItem> getRequestedItems(Consumer<ItemStack> firstItemSetter) {
@@ -163,6 +171,22 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         FlowLayout trimPatternLayout = rootComponent.childById(FlowLayout.class, SELECT_TRIM_PATTERN_ID);
         BaseFzmmScreen.checkNull(trimPatternLayout, "flow-layout", SELECT_TRIM_PATTERN_ID);
 
+        this.showAllArmorInTrimPatternPreviewButton = new BooleanButton(SHOW_ALL_ARMOR_IN_TRIM_PATTERN_PREVIEW_ENABLED_TEXT, SHOW_ALL_ARMOR_IN_TRIM_PATTERN_PREVIEW_DISABLED_TEXT);
+        this.showAllArmorInTrimPatternPreviewButton.enabled(false);
+        this.showAllArmorInTrimPatternPreviewButton.onPress(button -> this.trimPatternOption.updatePreview(((BooleanButton) button).enabled()));
+        FlowLayout trimPatternLabelLayout = rootComponent.childById(FlowLayout.class, SELECT_TRIM_PATTERN_LABEL_LAYOUT_ID);
+        BaseFzmmScreen.checkNull(trimPatternLabelLayout, "flow-layout", SELECT_TRIM_PATTERN_LABEL_LAYOUT_ID);
+        trimPatternLabelLayout.child(this.showAllArmorInTrimPatternPreviewButton);
+
+        if (this.trimMaterialOption.getValueList().size() > 100) {
+            FlowLayout trimMaterialParentLayout = rootComponent.childById(FlowLayout.class, SELECT_TRIM_MATERIAL_LAYOUT_ID);
+            BaseFzmmScreen.checkNull(trimMaterialParentLayout, "flow-layout", SELECT_TRIM_MATERIAL_LAYOUT_ID);
+            trimMaterialParentLayout.removeChild(trimMaterialLayout);
+            ScrollContainer<FlowLayout> trimMaterialScroll = Containers.verticalScroll(Sizing.content(), Sizing.fill(40), trimMaterialLayout);
+            trimMaterialScroll.scrollbar(ScrollContainer.Scrollbar.flat(Color.WHITE));
+            trimMaterialParentLayout.child(trimMaterialScroll);
+        }
+
         this.selectArmorPartExecute(this.helmetRequest, this.helmetBuilder);
         this.updateSelectedArmorReference();
 
@@ -219,16 +243,19 @@ public class ArmorEditorScreen implements IItemEditorScreen {
 
     private Component getPartComponent(Item item, RequestedItem requestedItem, ArmorBuilder builder) {
         String id = "part-" + item.toString();
-        StackLayout stackLayout = this.getButtonWithItemOver(item.getDefaultStack(), id, requestedItem.predicate().test(item.getDefaultStack()));
+        StackLayout stackLayout = this.getButtonWithItemOver(item.getDefaultStack(), id);
+
 
         ButtonComponent button = stackLayout.childById(ButtonComponent.class, id);
         BaseFzmmScreen.checkNull(button, "button", id);
         this.armorPartButtons.put(requestedItem.predicate(), button);
+        if (requestedItem.predicate().test(item.getDefaultStack()))
+            button.active = false;
         button.onPress(buttonComponent -> this.selectArmorPartExecute(requestedItem, builder));
         return stackLayout;
     }
 
-    public StackLayout getButtonWithItemOver(ItemStack stack, String buttonId, boolean active) {
+    public StackLayout getButtonWithItemOver(ItemStack stack, String buttonId) {
         Component itemComponent = Components.item(stack)
                 .setTooltipFromStack(true)
                 .sizing(Sizing.fixed(16), Sizing.fixed(16))
@@ -239,7 +266,6 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         buttonComponent.sizing(Sizing.fixed(20), Sizing.fixed(20))
                 .margins(Insets.bottom(4))
                 .id(buttonId);
-        buttonComponent.active = !active;
 
         return Containers.stack(Sizing.content(), Sizing.content())
                 .child(buttonComponent)
@@ -261,7 +287,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         this.trimMaterialOption.updateSelectedOption(this.selectedArmorPartBuilder.trimMaterial());
         this.trimPatternOption.updateSelectedOption(this.selectedArmorPartBuilder.trimPattern());
 
-        this.trimPatternOption.updatePreview();
+        this.trimPatternOption.updatePreview(this.showAllArmorInTrimPatternPreview());
         this.updateArmorStandArmor(this.armorStandPreview);
     }
 
@@ -299,10 +325,17 @@ public class ArmorEditorScreen implements IItemEditorScreen {
     }
 
     public void updateArmorStandArmor(ArmorStandEntity entity) {
-        entity.equipStack(EquipmentSlot.HEAD, this.helmetRequest.stack());
-        entity.equipStack(EquipmentSlot.CHEST, this.chestplateRequest.stack());
-        entity.equipStack(EquipmentSlot.LEGS, this.leggingsRequest.stack());
-        entity.equipStack(EquipmentSlot.FEET, this.bootsRequest.stack());
+        this.updateArmorStandArmor(entity, this.helmetRequest.stack(), this.chestplateRequest.stack(), this.leggingsRequest.stack(), this.bootsRequest.stack());
     }
 
+    public void updateArmorStandArmor(ArmorStandEntity entity, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots) {
+        entity.equipStack(EquipmentSlot.HEAD, helmet);
+        entity.equipStack(EquipmentSlot.CHEST, chestplate);
+        entity.equipStack(EquipmentSlot.LEGS, leggings);
+        entity.equipStack(EquipmentSlot.FEET, boots);
+    }
+
+    public boolean showAllArmorInTrimPatternPreview() {
+        return this.showAllArmorInTrimPatternPreviewButton.enabled();
+    }
 }

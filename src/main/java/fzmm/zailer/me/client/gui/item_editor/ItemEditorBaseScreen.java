@@ -39,6 +39,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
     private static final String APPLICABLE_EDITORS_LABEL_ID = "applicable-editors-label";
     private static final String NON_APPLICABLE_EDITORS_ID = "non-applicable-editors";
     private static final String CONTENT_ID = "content";
+    private static Class<? extends IItemEditorScreen> selectedEditor = null;
     protected final List<IItemEditorScreen> itemEditorScreens;
     private ScrollContainer<?> basePanelLayout;
     private FlowLayout requiredItemsLayout;
@@ -86,10 +87,23 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
         checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
 
-        this.selectEditor(this.itemEditorScreens.get(0));
+        this.selectEditor();
     }
 
+    private void selectEditor() {
+        IItemEditorScreen currentEditor = this.itemEditorScreens.stream()
+                .filter(editor -> selectedEditor == null || editor.getClass() == selectedEditor)
+                .filter(editor -> editor.isApplicable(this.selectedItem))
+                .findFirst()
+                .orElse(null);
+
+        if (currentEditor != null)
+            this.selectEditor(currentEditor);
+        else
+            this.selectEditor(this.itemEditorScreens.get(0));
+    }
     public void selectEditor(IItemEditorScreen editor) {
+        selectedEditor = editor.getClass();
         this.currentEditor = editor;
         this.contentLayout.clearChildren();
         List<RequestedItem> requestedItems = this.currentEditor.getRequestedItems();
@@ -125,7 +139,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
             layout.verticalAlignment(VerticalAlignment.CENTER);
 
             ButtonComponent selectItemButton = Components.button(Text.empty(),
-                    button -> this.client.setScreen(new SelectItemScreen(this, List.of(requestedItem), (itemStack) -> this.updateApplicableEditorsComponents())));
+                    button -> this.client.setScreen(new SelectItemScreen(this, List.of(requestedItem), (itemStack) -> this.updateEditorsComponents())));
             selectItemButton.horizontalSizing(Sizing.fixed(100));
             layout.child(selectItemButton);
 
@@ -154,37 +168,25 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         itemComponent.stack(stack).setTooltipFromStack(true);
         selectItemButton.setMessage(requestedItem.predicate().test(stack) ? requestedItem.title() : requestedItem.title().copy()
                 .setStyle(Style.EMPTY.withColor(0xD83F27)).append(" ⚠"));
-        this.updateApplicableEditorsComponents();
+        this.updateEditorsComponents();
     }
 
-    private void updateApplicableEditorsComponents() {
+    private void updateEditorsComponents() {
         this.applicableEditorsLabel.text(Text.translatable(APPLICABLE_EDITORS_TEXT, this.selectedItem.getItem().getName()));
 
-        this.updateApplicableEditorsComponents(this.filterEditors(true));
-        this.updateNonApplicableEditorsComponents(this.filterEditors(false));
+        this.updateEditorsComponents(this.applicableEditorsLayout, this.filterEditors(true), true);
+        this.updateEditorsComponents(this.nonApplicableEditorsLayout, this.filterEditors(false), false);
     }
 
-
-    public void updateApplicableEditorsComponents(List<IItemEditorScreen> applicableEditors) {
+    public void updateEditorsComponents(FlowLayout layout, List<IItemEditorScreen> applicableEditors, boolean applicable) {
         assert this.client != null;
-        this.applicableEditorsLayout.clearChildren();
+        layout.clearChildren();
         List<Component> componentList = new ArrayList<>();
 
         for (var applicableEditor : applicableEditors)
-            componentList.add(this.getEditorRow(applicableEditor, true, applicableEditor == this.currentEditor));
+            componentList.add(this.getEditorRow(applicableEditor, applicable, applicableEditor == this.currentEditor));
 
-        this.applicableEditorsLayout.children(componentList);
-    }
-
-    public void updateNonApplicableEditorsComponents(List<IItemEditorScreen> nonApplicableEditors) {
-        assert this.client != null;
-        this.nonApplicableEditorsLayout.clearChildren();
-        List<Component> componentList = new ArrayList<>();
-
-        for (var nonApplicableEditor : nonApplicableEditors)
-            componentList.add(this.getEditorRow(nonApplicableEditor, false, nonApplicableEditor == this.currentEditor));
-
-        this.nonApplicableEditorsLayout.children(componentList);
+        layout.children(componentList);
     }
 
     public FlowLayout getEditorRow(IItemEditorScreen itemEditorScreen, boolean isApplicable, boolean isSelected) {
@@ -205,7 +207,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         layout.surface(Surface.flat(backgroundColor));
 
         layout.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            if (itemEditorScreen != this.currentEditor) {
+            if (itemEditorScreen.getClass() != selectedEditor) {
                 this.selectEditor(itemEditorScreen);
                 return true;
             }

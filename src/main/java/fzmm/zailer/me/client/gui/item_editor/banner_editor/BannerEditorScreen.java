@@ -122,6 +122,7 @@ public class BannerEditorScreen implements IItemEditorScreen {
             boolean isShield = ((BooleanButton) button).enabled();
             this.updatePreview(this.bannerBuilder.isShield(isShield));
         });
+        this.isShieldButton.horizontalSizing(Sizing.fill(33));
 
         this.updatePreview(this.bannerBuilder);
         return rootComponent;

@@ -28,13 +28,13 @@ public class ArmorEditorOptionArmorMaterial extends AbstractArmorEditorOptionLis
     }
 
     @Override
-    public boolean isValueSelected(@Nullable Item value) {
-        return value == this.selectedArmorBuilder.item();
+    public Item getSelectedValue() {
+        return this.selectedArmorBuilder.item();
     }
 
     @Override
-    public Component getLayout(@Nullable Item value, String id, boolean selected) {
-        StackLayout stackLayout = this.parent.getButtonWithItemOver(value.getDefaultStack(), id, selected);
+    public Component getLayout(@Nullable Item value, String id) {
+        StackLayout stackLayout = this.parent.getButtonWithItemOver(value.getDefaultStack(), id);
 
         ButtonComponent button = stackLayout.childById(ButtonComponent.class, id);
         BaseFzmmScreen.checkNull(button, "button", id);
