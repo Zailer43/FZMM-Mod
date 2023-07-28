@@ -65,69 +65,70 @@ public class FzmmItemGroup {
                 .displayName(Text.translatable(USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY))
                 .icon(() -> new ItemStack(Items.REDSTONE_LAMP))
                 .entries((displayContext, entries) -> {
+                    BlockStateItemBuilder builder = BlockStateItemBuilder.builder();
 
-                    entries.add(new BlockStateItemBuilder(Items.REDSTONE_LAMP, "litRedstoneLamp").add("lit", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.FURNACE, "litFurnace").add("lit", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.SMOKER, "litSmoker").add("lit", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.BLAST_FURNACE, "litBlastFurnace").add("lit", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.CAMPFIRE, "offCampfire").add("lit", false).get());
-                    entries.add(new BlockStateItemBuilder(Items.CAMPFIRE, "signalFireOfCampfire").add("signal_fire", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.SOUL_CAMPFIRE, "offSoulCampfire").add("lit", false).get());
-                    entries.add(new BlockStateItemBuilder(Items.SOUL_CAMPFIRE, "signalFireOfSoulCampfire").add("signal_fire", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.GRASS_BLOCK, "snowyGrassBlock").add("snowy", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.MYCELIUM, "snowyMycelium").add("snowy", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.PODZOL, "snowyPodzol").add("snowy", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.SNOW, "snowBlock").add("layers", 8).get());
-                    entries.add(new BlockStateItemBuilder(Items.BARREL, "openBarrel").add("open", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.IRON_TRAPDOOR, "openIronTrapdoor").add("open", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.IRON_DOOR, "openIronDoor").add("open", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.END_PORTAL_FRAME, "endPortalFrameWithEye").add("eye", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.LANTERN, "hangingLantern").add("hanging", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.LANTERN, "lanternOnTheFloor").add("hanging", false).get());
-                    entries.add(new BlockStateItemBuilder(Items.SOUL_LANTERN, "hangingSoulLantern").add("hanging", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.SOUL_LANTERN, "soulLanternOnTheFloor").add("hanging", false).get());
-                    entries.add(new BlockStateItemBuilder(Items.MANGROVE_PROPAGULE, "hangingMangrovePropagule").add("hanging", true).get());
+                    entries.add(builder.clearStates().itemName(Items.REDSTONE_LAMP, "litRedstoneLamp").add("lit", true).get());
+                    entries.add(builder.clearStates().itemName(Items.FURNACE, "litFurnace").add("lit", true).get());
+                    entries.add(builder.clearStates().itemName(Items.SMOKER, "litSmoker").add("lit", true).get());
+                    entries.add(builder.clearStates().itemName(Items.BLAST_FURNACE, "litBlastFurnace").add("lit", true).get());
+                    entries.add(builder.clearStates().itemName(Items.CAMPFIRE, "offCampfire").add("lit", false).get());
+                    entries.add(builder.clearStates().itemName(Items.CAMPFIRE, "signalFireOfCampfire").add("signal_fire", true).get());
+                    entries.add(builder.clearStates().itemName(Items.SOUL_CAMPFIRE, "offSoulCampfire").add("lit", false).get());
+                    entries.add(builder.clearStates().itemName(Items.SOUL_CAMPFIRE, "signalFireOfSoulCampfire").add("signal_fire", true).get());
+                    entries.add(builder.clearStates().itemName(Items.GRASS_BLOCK, "snowyGrassBlock").add("snowy", true).get());
+                    entries.add(builder.clearStates().itemName(Items.MYCELIUM, "snowyMycelium").add("snowy", true).get());
+                    entries.add(builder.clearStates().itemName(Items.PODZOL, "snowyPodzol").add("snowy", true).get());
+                    entries.add(builder.clearStates().itemName(Items.SNOW, "snowBlock").add("layers", 8).get());
+                    entries.add(builder.clearStates().itemName(Items.BARREL, "openBarrel").add("open", true).get());
+                    entries.add(builder.clearStates().itemName(Items.IRON_TRAPDOOR, "openIronTrapdoor").add("open", true).get());
+                    entries.add(builder.clearStates().itemName(Items.IRON_DOOR, "openIronDoor").add("open", true).get());
+                    entries.add(builder.clearStates().itemName(Items.END_PORTAL_FRAME, "endPortalFrameWithEye").add("eye", true).get());
+                    entries.add(builder.clearStates().itemName(Items.LANTERN, "hangingLantern").add("hanging", true).get());
+                    entries.add(builder.clearStates().itemName(Items.LANTERN, "lanternOnTheFloor").add("hanging", false).get());
+                    entries.add(builder.clearStates().itemName(Items.SOUL_LANTERN, "hangingSoulLantern").add("hanging", true).get());
+                    entries.add(builder.clearStates().itemName(Items.SOUL_LANTERN, "soulLanternOnTheFloor").add("hanging", false).get());
+                    entries.add(builder.clearStates().itemName(Items.MANGROVE_PROPAGULE, "hangingMangrovePropagule").add("hanging", true).get());
                     // it is not possible to place it on faces of blocks other than the bottom one, it is useless
 //                    stacks.add(new BlockStateTagItem(Items.MANGROVE_PROPAGULE, "Mangrove propagule on the floor").add("hanging", false).get());
-                    entries.add(new BlockStateItemBuilder(Items.COMPOSTER, "fullComposter").add("level", 8).get());
-                    entries.add(new BlockStateItemBuilder(Items.RESPAWN_ANCHOR, "fullRespawnAnchor").add("charges", 4).get());
-                    entries.add(new BlockStateItemBuilder(Items.BAMBOO, "bambooWithLeaves").add("leaves", "large").get());
-                    entries.add(new BlockStateItemBuilder(Items.WHEAT_SEEDS, "fullGrownWheat").add("age", 7).get());
-                    entries.add(new BlockStateItemBuilder(Items.PUMPKIN_SEEDS, "fullGrownPumpkin").add("age", 7).get());
-                    entries.add(new BlockStateItemBuilder(Items.MELON_SEEDS, "fullGrownMelon").add("age", 7).get());
-                    entries.add(new BlockStateItemBuilder(Items.CARROT, "fullGrownCarrot").add("age", 7).get());
-                    entries.add(new BlockStateItemBuilder(Items.POTATO, "fullGrownPotatoes").add("age", 7).get());
-                    entries.add(new BlockStateItemBuilder(Items.BEETROOT_SEEDS, "fullGrownBeetroots").add("age", 3).get());
-                    entries.add(new BlockStateItemBuilder(Items.COCOA_BEANS, "fullGrownCocoa").add("age", 2).get());
-                    entries.add(new BlockStateItemBuilder(Items.GLOW_BERRIES, "glowBerries").add("berries", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.REPEATER, "repeaterTicks.2").add("delay", 2).get());
-                    entries.add(new BlockStateItemBuilder(Items.REPEATER, "repeaterTicks.3").add("delay", 3).get());
-                    entries.add(new BlockStateItemBuilder(Items.REPEATER, "repeaterTicks.4").add("delay", 4).get());
-                    entries.add(new BlockStateItemBuilder(Items.REPEATER, "lockedRepeater").add("locked", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.HOPPER, "disabledHopper").add("enabled", false).get());
-                    entries.add(new BlockStateItemBuilder(Items.BEE_NEST, "beeNestFilledWithHoney").add("honey_level", 5).get());
-                    entries.add(new BlockStateItemBuilder(Items.BEEHIVE, "beehiveFilledWithHoney").add("honey_level", 5).get());
-                    entries.add(new BlockStateItemBuilder(Items.SEA_PICKLE, "seaPickle4").add("pickles", 4).get());
-                    entries.add(new BlockStateItemBuilder(Items.TURTLE_EGG, "turtleEgg4").add("eggs", 4).get());
-                    entries.add(new BlockStateItemBuilder(Items.CAKE, "sliceOfCake").add("bites", 6).get());
-                    entries.add(new BlockStateItemBuilder(Items.TNT, "unstableTnt").add("unstable", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.REDSTONE, "poweredRedstone").add("power", 15).get());
-                    entries.add(new BlockStateItemBuilder(Items.SCULK_CATALYST, "sculkCatalystBloom").add("bloom", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.SCULK_SHRIEKER, "sculkShriekerCanSummon").add("can_summon", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.SCULK_SHRIEKER, "sculkShriekerLocked").add("shrieking", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.GLOW_LICHEN, "glowLichenBlock").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.SCULK_VEIN, "sculkVeinBlock").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.CHEST, "leftChest").add("type", "left").get());
-                    entries.add(new BlockStateItemBuilder(Items.CHEST, "rightChest").add("type", "right").get());
-                    entries.add(new BlockStateItemBuilder(Items.TRAPPED_CHEST, "leftTrappedChest").add("type", "left").get());
-                    entries.add(new BlockStateItemBuilder(Items.TRAPPED_CHEST, "rightTrappedChest").add("type", "right").get());
+                    entries.add(builder.clearStates().itemName(Items.COMPOSTER, "fullComposter").add("level", 8).get());
+                    entries.add(builder.clearStates().itemName(Items.RESPAWN_ANCHOR, "fullRespawnAnchor").add("charges", 4).get());
+                    entries.add(builder.clearStates().itemName(Items.BAMBOO, "bambooWithLeaves").add("leaves", "large").get());
+                    entries.add(builder.clearStates().itemName(Items.WHEAT_SEEDS, "fullGrownWheat").add("age", 7).get());
+                    entries.add(builder.clearStates().itemName(Items.PUMPKIN_SEEDS, "fullGrownPumpkin").add("age", 7).get());
+                    entries.add(builder.clearStates().itemName(Items.MELON_SEEDS, "fullGrownMelon").add("age", 7).get());
+                    entries.add(builder.clearStates().itemName(Items.CARROT, "fullGrownCarrot").add("age", 7).get());
+                    entries.add(builder.clearStates().itemName(Items.POTATO, "fullGrownPotatoes").add("age", 7).get());
+                    entries.add(builder.clearStates().itemName(Items.BEETROOT_SEEDS, "fullGrownBeetroots").add("age", 3).get());
+                    entries.add(builder.clearStates().itemName(Items.COCOA_BEANS, "fullGrownCocoa").add("age", 2).get());
+                    entries.add(builder.clearStates().itemName(Items.GLOW_BERRIES, "glowBerries").add("berries", true).get());
+                    entries.add(builder.clearStates().itemName(Items.REPEATER, "repeaterTicks.2").add("delay", 2).get());
+                    entries.add(builder.clearStates().itemName(Items.REPEATER, "repeaterTicks.3").add("delay", 3).get());
+                    entries.add(builder.clearStates().itemName(Items.REPEATER, "repeaterTicks.4").add("delay", 4).get());
+                    entries.add(builder.clearStates().itemName(Items.REPEATER, "lockedRepeater").add("locked", true).get());
+                    entries.add(builder.clearStates().itemName(Items.HOPPER, "disabledHopper").add("enabled", false).get());
+                    entries.add(builder.clearStates().itemName(Items.BEE_NEST, "beeNestFilledWithHoney").add("honey_level", 5).get());
+                    entries.add(builder.clearStates().itemName(Items.BEEHIVE, "beehiveFilledWithHoney").add("honey_level", 5).get());
+                    entries.add(builder.clearStates().itemName(Items.SEA_PICKLE, "seaPickle4").add("pickles", 4).get());
+                    entries.add(builder.clearStates().itemName(Items.TURTLE_EGG, "turtleEgg4").add("eggs", 4).get());
+                    entries.add(builder.clearStates().itemName(Items.CAKE, "sliceOfCake").add("bites", 6).get());
+                    entries.add(builder.clearStates().itemName(Items.TNT, "unstableTnt").add("unstable", true).get());
+                    entries.add(builder.clearStates().itemName(Items.REDSTONE, "poweredRedstone").add("power", 15).get());
+                    entries.add(builder.clearStates().itemName(Items.SCULK_CATALYST, "sculkCatalystBloom").add("bloom", true).get());
+                    entries.add(builder.clearStates().itemName(Items.SCULK_SHRIEKER, "sculkShriekerCanSummon").add("can_summon", true).get());
+                    entries.add(builder.clearStates().itemName(Items.SCULK_SHRIEKER, "sculkShriekerLocked").add("shrieking", true).get());
+                    entries.add(builder.clearStates().itemName(Items.GLOW_LICHEN, "glowLichenBlock").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
+                    entries.add(builder.clearStates().itemName(Items.SCULK_VEIN, "sculkVeinBlock").add("down", true).add("east", true).add("north", true).add("south", true).add("up", true).add("west", true).get());
+                    entries.add(builder.clearStates().itemName(Items.CHEST, "leftChest").add("type", "left").get());
+                    entries.add(builder.clearStates().itemName(Items.CHEST, "rightChest").add("type", "right").get());
+                    entries.add(builder.clearStates().itemName(Items.TRAPPED_CHEST, "leftTrappedChest").add("type", "left").get());
+                    entries.add(builder.clearStates().itemName(Items.TRAPPED_CHEST, "rightTrappedChest").add("type", "right").get());
                     addHalfDoors(entries);
                     addTallFlowers(entries);
                     addLeaves(entries);
                     addLitCandles(entries);
                     addHalfBed(entries);
                     addLockedBed(entries);
-                    entries.add(new BlockStateItemBuilder(Items.MANGROVE_ROOTS, "waterloggedMangroveRoots").add("waterlogged", true).get());
+                    entries.add(builder.clearStates().itemName(Items.MANGROVE_ROOTS, "waterloggedMangroveRoots").add("waterlogged", true).get());
                     addWaterloggedBlocks(entries);
                 }).build();
 
@@ -251,9 +252,10 @@ public class FzmmItemGroup {
     }
 
     private static void addLeaves(ItemGroup.Entries entries) {
+        BlockStateItemBuilder builder = BlockStateItemBuilder.builder();
         for (var item : Registries.ITEM) {
             if (contains(item, ItemTags.LEAVES))
-                entries.add(new BlockStateItemBuilder(item, "nonPersistentLeaves", item).add("persistent", false).get());
+                entries.add(builder.clearStates().itemName(item, "nonPersistentLeaves").add("persistent", false).get());
         }
     }
 
@@ -276,34 +278,38 @@ public class FzmmItemGroup {
     }
 
     private static void addHalfUpper(ItemGroup.Entries entries, Item item, String translation) {
-        entries.add(new BlockStateItemBuilder(item, translation, item).add("half", "upper").get());
+        entries.add(BlockStateItemBuilder.builder().itemName(item, translation).add("half", "upper").get());
     }
 
     private static void addLitCandles(ItemGroup.Entries entries) {
+        BlockStateItemBuilder builder = BlockStateItemBuilder.builder();
         for (var item : Registries.ITEM) {
             if (contains(item, ItemTags.CANDLES))
-                entries.add(new BlockStateItemBuilder(item, "litCandle", item).add("lit", true).get());
+                entries.add(builder.clearStates().itemName(item, "litCandle").add("lit", true).get());
         }
     }
 
     private static void addHalfBed(ItemGroup.Entries entries) {
+        BlockStateItemBuilder builder = BlockStateItemBuilder.builder();
         for (var item : Registries.ITEM) {
             if (contains(item, ItemTags.BEDS))
-                entries.add(new BlockStateItemBuilder(item, "bedHeadPart", item).add("part", "head").get());
+                entries.add(builder.clearStates().itemName(item, "bedHeadPart").add("part", "head").get());
         }
     }
 
     private static void addLockedBed(ItemGroup.Entries entries) {
+        BlockStateItemBuilder builder = BlockStateItemBuilder.builder();
         for (var item : Registries.ITEM) {
             if (contains(item, ItemTags.BEDS))
-                entries.add(new BlockStateItemBuilder(item, "lockedBed", item).add("occupied", true).get());
+                entries.add(builder.clearStates().itemName(item, "lockedBed").add("occupied", true).get());
         }
     }
 
     private static void addWaterloggedBlocks(ItemGroup.Entries entries) {
+        BlockStateItemBuilder builder = BlockStateItemBuilder.builder();
         for (var item : Registries.ITEM) {
             if (contains(item, ItemTags.SLABS))
-                entries.add(new BlockStateItemBuilder(item, "waterloggedBlock", item).add("type", "double").add("waterlogged", true).get());
+                entries.add(builder.clearStates().itemName(item, "waterloggedBlock").add("type", "double").add("waterlogged", true).get());
         }
     }
 

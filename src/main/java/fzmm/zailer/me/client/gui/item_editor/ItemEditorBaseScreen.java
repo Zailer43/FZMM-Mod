@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui.item_editor;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.ArmorEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.banner_editor.BannerEditorScreen;
+import fzmm.zailer.me.client.gui.item_editor.block_state_editor.BlockStateEditor;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import fzmm.zailer.me.client.gui.utils.selectItem.SelectItemScreen;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -60,6 +61,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
 
         itemEditorScreens.add(new ArmorEditorScreen());
         itemEditorScreens.add(new BannerEditorScreen());
+        itemEditorScreens.add(new BlockStateEditor());
 
         return itemEditorScreens;
     }
@@ -91,9 +93,10 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
     }
 
     private void selectEditor() {
+        boolean stackEmpty = this.selectedItem.isEmpty();
         IItemEditorScreen currentEditor = this.itemEditorScreens.stream()
                 .filter(editor -> selectedEditor == null || editor.getClass() == selectedEditor)
-                .filter(editor -> editor.isApplicable(this.selectedItem))
+                .filter(editor -> editor.isApplicable(this.selectedItem) || stackEmpty)
                 .findFirst()
                 .orElse(null);
 

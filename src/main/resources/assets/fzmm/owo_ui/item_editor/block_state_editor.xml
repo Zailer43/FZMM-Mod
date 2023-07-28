@@ -1,0 +1,76 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+    <components>
+        <flow-layout direction="horizontal">
+            <children>
+                <scroll direction="vertical">
+                    <flow-layout direction="vertical">
+                        <children>
+                            <flow-layout direction="vertical" id="content">
+                                <children>
+                                </children>
+
+                                <surface>
+                                    <panel dark="true"/>
+                                </surface>
+
+                                <padding>
+                                    <all>10</all>
+                                </padding>
+                            </flow-layout>
+                        </children>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">100</vertical>
+                        <horizontal method="fill">80</horizontal>
+                    </sizing>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+
+                <flow-layout direction="horizontal"  id="block-preview-layout">
+                    <children>
+                    </children>
+
+                    <margins>
+                        <top>5</top>
+                        <left>5</left>
+                    </margins>
+
+                    <vertical-alignment>center</vertical-alignment>
+                    <horizontal-alignment>center</horizontal-alignment>
+
+                    <positioning type="relative">0,0</positioning>
+                </flow-layout>
+            </children>
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+        </flow-layout>
+    </components>
+
+    <templates>
+        <block-state-button>
+            <flow-layout direction="vertical">
+                <children>
+                    <flow-layout direction="vertical" id="{{property}}-{{value}}-state-layout">
+                        <children>
+
+                        </children>
+                    </flow-layout>
+
+                    <label id="{{property}}-{{value}}-label">
+                    </label>
+                </children>
+
+                <horizontal-alignment>center</horizontal-alignment>
+
+                <gap>2</gap>
+            </flow-layout>
+        </block-state-button>
+    </templates>
+</owo-ui>
