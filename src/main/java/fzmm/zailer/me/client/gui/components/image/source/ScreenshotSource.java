@@ -53,6 +53,12 @@ public class ScreenshotSource implements IInteractiveImageLoader {
         this.consumer = consumer;
         MinecraftClient client = MinecraftClient.getInstance();
 
+        // Activate the HUD, as due to errors in the owo-lib,
+        // it is added or removed incorrectly if the HUD is hidden.
+        // If the HUD is activated immediately after the change, it has no effect,
+        // as owo-lib makes the HUD change when an event is called.
+        client.options.hudHidden = false;
+
         this.previousScreen = client.currentScreen;
         client.setScreen(null);
         Hud.add(HUD_CAPTURE_SCREENSHOT, this::getHud);
@@ -123,11 +129,16 @@ public class ScreenshotSource implements IInteractiveImageLoader {
             toast.setResponse(ImageStatus.UNEXPECTED_ERROR);
             this.setImage(null);
         }
+        // Activate the HUD, as due to errors in the owo-lib,
+        // it is added or removed incorrectly if the HUD is hidden.
+        // If the HUD is activated immediately after the change, it has no effect,
+        // as owo-lib makes the HUD change when an event is called.
+        client.options.hudHidden = false;
 
-        instance = null;
         Hud.remove(HUD_CAPTURE_SCREENSHOT);
         client.setScreen(this.previousScreen);
         this.previousScreen = null;
+        instance = null;
     }
 
     private BufferedImage removePadding(BufferedImage image) {
