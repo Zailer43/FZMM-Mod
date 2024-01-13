@@ -23,6 +23,6 @@ public class CopyTextAsJson extends AbstractCopyTextAlgorithm {
             text.getSiblings().addAll(siblings);
         }
 
-        stringBuilder.append(Text.Serializer.toJson(text));
+        stringBuilder.append(Text.Serialization.toJsonString(text));
     }
 }

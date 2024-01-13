@@ -61,7 +61,7 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
     public void execute(ImagetextLogic logic) {
         NbtCompound textDisplayNbt = new NbtCompound();
 
-        textDisplayNbt.putString(DisplayEntity.TextDisplayEntity.TEXT_NBT_KEY, Text.Serializer.toJson(logic.getText()));
+        textDisplayNbt.putString(DisplayEntity.TextDisplayEntity.TEXT_NBT_KEY, Text.Serialization.toJsonString(logic.getText()));
         textDisplayNbt.putInt(TagsConstant.TEXT_DISPLAY_LINE_WIDTH, logic.getLineWidth());
 
         textDisplayNbt.putInt(TagsConstant.TEXT_DISPLAY_TEXT_OPACITY, (int) this.textOpacity.discreteValue());

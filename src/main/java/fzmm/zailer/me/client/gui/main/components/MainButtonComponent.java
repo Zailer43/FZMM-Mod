@@ -25,7 +25,7 @@ public class MainButtonComponent extends ButtonComponent {
 
     // this is copied from ButtonComponent to change text height
     @Override
-    public void renderButton(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+    public void renderWidget(DrawContext drawContext, int mouseX, int mouseY, float delta) {
         OwoUIDrawContext context = OwoUIDrawContext.of(drawContext);
         this.renderer.draw(context, this, delta);
         context.drawRectOutline(this.getX(), this.getY(), this.width, this.height, 0x20000000);

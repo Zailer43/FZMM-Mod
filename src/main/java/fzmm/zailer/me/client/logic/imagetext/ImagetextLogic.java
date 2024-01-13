@@ -43,7 +43,7 @@ public class ImagetextLogic {
                 .toList()
         );
 
-        Text firstLine = linesList.isEmpty() ? Text.empty() : Text.Serializer.fromJson(linesList.get(0).asString());
+        Text firstLine = linesList.isEmpty() ? Text.empty() : Text.Serialization.fromJson(linesList.get(0).asString());
         this.lineWidth = MinecraftClient.getInstance().textRenderer.getWidth(firstLine);
         this.imagetext = linesList;
     }
@@ -111,7 +111,7 @@ public class ImagetextLogic {
         List<Text> textList = new ArrayList<>();
 
         for (var line : this.imagetext) {
-            textList.add(Text.Serializer.fromJson(line.asString()));
+            textList.add(Text.Serialization.fromJson(line.asString()));
         }
 
         return textList;

@@ -106,9 +106,11 @@ public class ContainerBuilder {
             String name = optionalName.get();
             MutableText nameText;
             try {
-                nameText = Text.Serializer.fromJson(name);
+                nameText = Text.Serialization.fromJson(name);
                 if (nameText == null)
                     nameText = Text.literal(name);
+
+                nameText = nameText.copy();
 
                 nameText.setStyle(style);
                 stack.setCustomName(nameText);

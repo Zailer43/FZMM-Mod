@@ -52,13 +52,6 @@ public class HeadBuilder {
         textures.add(value);
         properties.put(TagsConstant.HEAD_PROPERTIES_TEXTURES, textures);
 
-
-        // this is required since 1.20.2 to avoid errors in the logs,
-        // although when included it still gives error,
-        // and it seems that this must be used for the skin reporting system.
-//        if (this.signature != null)
-//            properties.putString(TagsConstant.HEAD__PROPERTIES_SIGNATURE, this.signature);
-
         skullOwner.put(TagsConstant.HEAD_PROPERTIES, properties);
         skullOwner.put("Id", this.id);
 

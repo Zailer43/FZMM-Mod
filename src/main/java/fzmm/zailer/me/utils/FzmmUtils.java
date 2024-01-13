@@ -134,7 +134,7 @@ public class FzmmUtils {
     public static NbtString toNbtString(Text text, boolean useDisableItalicConfig) {
         if (useDisableItalicConfig)
             disableItalicConfig(text);
-        return NbtString.of(Text.Serializer.toJson(text));
+        return NbtString.of(Text.Serialization.toJsonString(text));
     }
 
     public static String getPlayerUuid(String name) throws IOException, JsonIOException {

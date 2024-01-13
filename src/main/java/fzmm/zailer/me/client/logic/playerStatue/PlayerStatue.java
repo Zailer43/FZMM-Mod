@@ -125,11 +125,11 @@ public class PlayerStatue {
 
         if (name != null && !name.isEmpty()) {
             try {
-                Text.Serializer.fromJson(name);
+                Text.Serialization.fromJson(name);
             } catch (Exception e) {
                 if (name.length() > 100)
                     name = name.substring(0, 99);
-                name = Text.Serializer.toJson(Text.of(name));
+                name = Text.Serialization.toJsonString(Text.of(name));
             }
         }
 

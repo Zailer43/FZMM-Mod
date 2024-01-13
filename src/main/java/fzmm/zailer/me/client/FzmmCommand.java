@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import fzmm.zailer.me.builders.DisplayBuilder;
@@ -19,7 +20,6 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
@@ -44,7 +44,6 @@ import java.util.Optional;
 // I want to remove all the commands so that the mod can be used only through gui
 public class FzmmCommand {
 
-    private static final CommandException ERROR_WITHOUT_NBT = new CommandException(Text.translatable("commands.fzmm.item.withoutNbt"));
     private static final String BASE_COMMAND_ALIAS = "fzmm";
     private static final String BASE_COMMAND = "/" + BASE_COMMAND_ALIAS;
 
@@ -150,7 +149,7 @@ public class FzmmCommand {
 
         fzmmCommand.then(ClientCommandManager.literal("nbt")
                 .executes(ctx -> {
-                    showNbt();
+                    showNbt(ctx);
                     return 1;
                 })
         );
@@ -316,13 +315,15 @@ public class FzmmCommand {
         FzmmUtils.giveItem(stack);
     }
 
-    private static void showNbt() {
+    private static void showNbt(CommandContext<FabricClientCommandSource> ctx) {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
         ItemStack stack = client.player.getInventory().getMainHandStack();
 
-        if (!stack.hasNbt())
-            throw ERROR_WITHOUT_NBT;
+        if (!stack.hasNbt()) {
+            ctx.getSource().sendError(Text.translatable("commands.fzmm.item.withoutNbt"));
+            return;
+        };
 
         assert stack.getNbt() != null;
         Text nbtMessage = NbtHelper.toPrettyPrintedText(stack.getNbt());

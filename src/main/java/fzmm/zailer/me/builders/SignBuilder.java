@@ -64,9 +64,11 @@ public class SignBuilder {
 
     private SignBuilder addLine(NbtList list, NbtString nbtString, int expectedWidth) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        MutableText text = Text.Serializer.fromJson(nbtString.asString());
+        MutableText text = Text.Serialization.fromJson(nbtString.asString());
         if (text == null)
             return this;
+
+        text = text.copy();
 
         int spaceCount = 0;
         MutableText textCopy = text.copy();
