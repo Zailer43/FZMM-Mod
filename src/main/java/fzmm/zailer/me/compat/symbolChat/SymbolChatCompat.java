@@ -97,7 +97,7 @@ public class SymbolChatCompat {
             // and if I don't change its height the selection widget part is completely unclickable,
             // remember: don't use ClickableWidget as parent
             this.fontSelectionDropDown = (ClickableWidget) selectionWidgetField.get(this.fontSelectionDropDownParent);
-            this.toggleFontSelection(false);
+            this.setFontSelectionVisible(false);
 
             screen.child(this.fontSelectionDropDown
                     .positioning(Positioning.relative(0, 0))
@@ -110,7 +110,7 @@ public class SymbolChatCompat {
         }
     }
 
-    public boolean getSelectionPanelVisible() {
+    public boolean isSelectionPanelVisible() {
         if (!CompatMods.SYMBOL_CHAT_PRESENT)
             return false;
 
@@ -138,10 +138,10 @@ public class SymbolChatCompat {
     public Component getOpenSymbolChatPanelButton(TextFieldWidget selectedComponent) {
         Component result = Components.button(SYMBOL_BUTTON_TEXT, button -> {
             if (this.fontSelectionDropDown.visible)
-                this.toggleFontSelection(false);
+                this.setFontSelectionVisible(false);
 
-            if (this.selectedComponent == null || !this.getSelectionPanelVisible()) {
-                this.setSelectionPanelVisible(!this.getSelectionPanelVisible());
+            if (this.selectedComponent == null || !this.isSelectionPanelVisible()) {
+                this.setSelectionPanelVisible(!this.isSelectionPanelVisible());
                 this.selectedComponent = selectedComponent;
 
             } else if (this.selectedComponent != selectedComponent) {
@@ -169,17 +169,17 @@ public class SymbolChatCompat {
 
     public Component getOpenFontSelectionDropDownButton(TextFieldWidget selectedComponent) {
         Component result = Components.button(FONT_BUTTON_TEXT, button -> {
-            if (this.getSelectionPanelVisible())
+            if (this.isSelectionPanelVisible())
                 this.setSelectionPanelVisible(false);
 
             if (this.selectedComponent == null || !this.fontSelectionDropDown.visible) {
-                this.toggleFontSelection(true);
+                this.setFontSelectionVisible(true);
                 this.selectedComponent = selectedComponent;
 
             } else if (this.selectedComponent != selectedComponent) {
                 this.selectedComponent = selectedComponent;
             } else {
-                this.toggleFontSelection(false);
+                this.setFontSelectionVisible(false);
                 this.selectedComponent = null;
             }
         });
@@ -198,7 +198,20 @@ public class SymbolChatCompat {
         return result;
     }
 
-    public void toggleFontSelection(boolean visible) {
+    public boolean isFontSelectionVisible() {
+        if (!CompatMods.SYMBOL_CHAT_PRESENT)
+            return false;
+
+        try {
+            return this.fontSelectionDropDown.visible;
+        } catch (Exception e) {
+            FzmmClient.LOGGER.error("[SymbolChatCompat] Failed to get visible field", e);
+            CompatMods.SYMBOL_CHAT_PRESENT = false;
+            return false;
+        }
+    }
+
+    public void setFontSelectionVisible(boolean visible) {
         if (!CompatMods.SYMBOL_CHAT_PRESENT)
             return;
 

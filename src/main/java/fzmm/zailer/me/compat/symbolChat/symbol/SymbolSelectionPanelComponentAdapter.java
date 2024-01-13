@@ -28,10 +28,10 @@ public class SymbolSelectionPanelComponentAdapter extends BaseParentComponent {
         this.symbolChatCompat = symbolChatCompat;
 
         this.mouseDown().subscribe((mouseX, mouseY, button) ->
-                this.symbolChatCompat.getSelectionPanelVisible() && this.selectionPanel.mouseClicked(mouseX, mouseY, button));
+                this.symbolChatCompat.isSelectionPanelVisible() && this.selectionPanel.mouseClicked(mouseX, mouseY, button));
 
         this.mouseScroll().subscribe((mouseX, mouseY, amount) ->
-                this.symbolChatCompat.getSelectionPanelVisible() && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount));
+                this.symbolChatCompat.isSelectionPanelVisible() && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount));
 
         try {
             Field tabsField = this.selectionPanel.getClass().getDeclaredField("tabs");
@@ -67,7 +67,7 @@ public class SymbolSelectionPanelComponentAdapter extends BaseParentComponent {
 
     @Override
     public boolean isInBoundingBox(double x, double y) {
-        if (!this.symbolChatCompat.getSelectionPanelVisible())
+        if (!this.symbolChatCompat.isSelectionPanelVisible())
             return false;
         return super.isInBoundingBox(x, y);
     }

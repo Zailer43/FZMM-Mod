@@ -31,6 +31,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 import org.w3c.dom.Element;
 
 import java.util.Arrays;
@@ -186,6 +187,18 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            if (this.symbolChatCompat.isSelectionPanelVisible()) {
+                this.symbolChatCompat.setSelectionPanelVisible(false);
+                return true;
+            }
+
+            if (this.symbolChatCompat.isFontSelectionVisible()) {
+                this.symbolChatCompat.setFontSelectionVisible(false);
+                return true;
+            }
+        }
+
         if (super.keyPressed(keyCode, scanCode, modifiers))
             return true;
 
