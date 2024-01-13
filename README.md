@@ -7,7 +7,7 @@
 
 </div>
 
-[![Discord invite](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white&style=for-the-badge&logo=appveyor)](https://discord.com/invite/y3GcaUNgCr)
+[![Discord invite](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white&style=for-the-badge&logo=appveyor)](https://discord.gg/mwBRwXmE63)
 [![Github Downloads](https://img.shields.io/github/downloads/Zailer43/FZMM-Mod/total?color=red&logo=github&style=for-the-badge)](https://github.com/Zailer43/FZMM-Mod/actions)
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/fzmm?label=Modrinth&logo=modrinth&style=for-the-badge)](https://modrinth.com/mod/fzmm/)
 [![CurseForge Downloads](https://cf.way2muchnoise.eu/full_787646_downloads.svg?badge_style=for_the_badge)](https://www.curseforge.com/minecraft/mc-mods/fzmm)
