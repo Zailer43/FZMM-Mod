@@ -184,6 +184,22 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         this.uiAdapter.rootComponent.child(child);
     }
 
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (super.keyPressed(keyCode, scanCode, modifiers))
+            return true;
+
+        return this.symbolChatCompat.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char chr, int modifiers) {
+        if (super.charTyped(chr, modifiers))
+            return true;
+
+        return this.symbolChatCompat.charTyped(chr, modifiers);
+    }
+
     public SymbolChatCompat getSymbolChatCompat() {
         return this.symbolChatCompat;
     }

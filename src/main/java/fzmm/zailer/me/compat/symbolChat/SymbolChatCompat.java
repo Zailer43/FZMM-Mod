@@ -234,4 +234,17 @@ public class SymbolChatCompat {
         }
     }
 
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (CompatMods.SYMBOL_CHAT_PRESENT) {
+            return this.symbolSelectionPanel.keyPressed(keyCode, scanCode, modifiers);
+        }
+        return false;
+    }
+
+    public boolean charTyped(char chr, int modifiers) {
+        if (CompatMods.SYMBOL_CHAT_PRESENT) {
+            return this.symbolSelectionPanel.charTyped(chr, modifiers);
+        }
+        return false;
+    }
 }

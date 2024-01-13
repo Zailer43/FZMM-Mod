@@ -3,19 +3,27 @@ package fzmm.zailer.me.compat.symbolChat.symbol;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.compat.CompatMods;
 import fzmm.zailer.me.compat.symbolChat.SymbolChatCompat;
-import io.wispforest.owo.ui.base.BaseComponent;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
-import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.base.BaseParentComponent;
+import io.wispforest.owo.ui.core.*;
 import net.replaceitem.symbolchat.SymbolChat;
 import net.replaceitem.symbolchat.gui.SymbolSelectionPanel;
+import net.replaceitem.symbolchat.gui.tab.SearchTab;
+import net.replaceitem.symbolchat.gui.tab.SymbolTab;
+import net.replaceitem.symbolchat.gui.widget.SymbolSearchBar;
 
-public class SymbolSelectionPanelComponentAdapter extends BaseComponent {
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SymbolSelectionPanelComponentAdapter extends BaseParentComponent {
 
     private final SymbolSelectionPanel selectionPanel;
+    private SymbolSearchBar searchBar;
     private final SymbolChatCompat symbolChatCompat;
 
+    @SuppressWarnings("unchecked")
     public SymbolSelectionPanelComponentAdapter(SymbolSelectionPanel symbolSelectionPanel, SymbolChatCompat symbolChatCompat) {
-        super();
+        super(Sizing.fixed(SymbolSelectionPanel.WIDTH), Sizing.fixed(SymbolChat.config.getSymbolPanelHeight()));
         this.selectionPanel = symbolSelectionPanel;
         this.symbolChatCompat = symbolChatCompat;
 
@@ -25,8 +33,23 @@ public class SymbolSelectionPanelComponentAdapter extends BaseComponent {
         this.mouseScroll().subscribe((mouseX, mouseY, amount) ->
                 this.symbolChatCompat.getSelectionPanelVisible() && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount));
 
-        this.keyPress().subscribe(this.selectionPanel::keyPressed);
-        this.charTyped().subscribe(this.selectionPanel::charTyped);
+        try {
+            Field tabsField = this.selectionPanel.getClass().getDeclaredField("tabs");
+            tabsField.setAccessible(true);
+            List<SymbolTab> tabs = (List<SymbolTab>) tabsField.get(this.selectionPanel);
+
+            for (var tab : tabs) {
+                if (tab instanceof SearchTab) {
+                    Field searchField = SearchTab.class.getDeclaredField("searchBar");
+                    searchField.setAccessible(true);
+                    this.searchBar = (SymbolSearchBar) searchField.get(tab);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            FzmmClient.LOGGER.error("[SymbolSelectionPanelComponentAdapter] Failed to get search bar field", e);
+            CompatMods.SYMBOL_CHAT_PRESENT = false;
+        }
     }
 
     @Override
@@ -43,19 +66,41 @@ public class SymbolSelectionPanelComponentAdapter extends BaseComponent {
     }
 
     @Override
-    protected int determineHorizontalContentSize(Sizing sizing) {
-        return CompatMods.SYMBOL_CHAT_PRESENT ? SymbolSelectionPanel.WIDTH : 100;
-    }
-
-    @Override
-    protected int determineVerticalContentSize(Sizing sizing) {
-        return CompatMods.SYMBOL_CHAT_PRESENT ? SymbolChat.config.getSymbolPanelHeight() : 150;
-    }
-
-    @Override
     public boolean isInBoundingBox(double x, double y) {
         if (!this.symbolChatCompat.getSelectionPanelVisible())
             return false;
         return super.isInBoundingBox(x, y);
+    }
+
+    @Override
+    public void layout(Size space) {
+
+    }
+
+    @Override
+    public List<Component> children() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ParentComponent removeChild(Component child) {
+        return this;
+    }
+
+    @Override
+    public boolean onKeyPress(int keyCode, int scanCode, int modifiers) {
+        FzmmClient.LOGGER.warn("[SymbolSelectionPanelComponentAdapter] " + keyCode);
+        if (this.searchBar != null && this.searchBar.isFocused())
+            return this.searchBar.onKeyPress(keyCode, scanCode, modifiers);
+
+        return super.onKeyPress(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean onCharTyped(char chr, int modifiers) {
+        if (this.searchBar != null && this.searchBar.isFocused())
+            return this.searchBar.onCharTyped(chr, modifiers);
+
+        return super.onCharTyped(chr, modifiers);
     }
 }
