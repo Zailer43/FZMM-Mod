@@ -64,7 +64,7 @@ public class TextFormatSimpleTab implements ITextFormatTab {
     public void restoreMemento(IMementoObject mementoTab) {
         SimpleMementoTab simpleMementoTab = (SimpleMementoTab) mementoTab;
         this.color.setText(simpleMementoTab.color.asHexString(false));
-        this.color.setCursor(0);
+        this.color.setCursorToStart(false);
     }
 
     private record SimpleMementoTab(Color color) implements IMementoObject {

@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.2/owo-ui.xsd">
     <components>
         <flow-layout direction="vertical">
             <children>
@@ -40,41 +40,41 @@
 
                     <flow-layout direction="vertical" id="options-list">
                         <children>
-                            <text-box-row>
+                            <fzmm.text-box-row>
                                 <id>message</id>
                                 <symbolChatButtons>true</symbolChatButtons>
-                            </text-box-row>
+                            </fzmm.text-box-row>
                             <flow-layout direction="horizontal" id="styles-layout">
                                 <children>
-                                    <boolean-button id="bold">
+                                    <fzmm.boolean-button id="bold">
                                         <text translate="true">fzmm.gui.textFormat.option.bold</text>
                                         <tooltip-text translate="true">fzmm.gui.textFormat.option.bold.tooltip</tooltip-text>
                                         <enabled-color>#31CE52</enabled-color>
-                                    </boolean-button>
+                                    </fzmm.boolean-button>
 
-                                    <boolean-button id="italic">
+                                    <fzmm.boolean-button id="italic">
                                         <text translate="true">fzmm.gui.textFormat.option.italic</text>
                                         <tooltip-text translate="true">fzmm.gui.textFormat.option.italic.tooltip</tooltip-text>
                                         <enabled-color>#31CE52</enabled-color>
-                                    </boolean-button>
+                                    </fzmm.boolean-button>
 
-                                    <boolean-button id="strikethrough">
+                                    <fzmm.boolean-button id="strikethrough">
                                         <text translate="true">fzmm.gui.textFormat.option.strikethrough</text>
                                         <tooltip-text translate="true">fzmm.gui.textFormat.option.strikethrough.tooltip</tooltip-text>
                                         <enabled-color>#31CE52</enabled-color>
-                                    </boolean-button>
+                                    </fzmm.boolean-button>
 
-                                    <boolean-button id="underline">
+                                    <fzmm.boolean-button id="underline">
                                         <text translate="true">fzmm.gui.textFormat.option.underline</text>
                                         <tooltip-text translate="true">fzmm.gui.textFormat.option.underline.tooltip</tooltip-text>
                                         <enabled-color>#31CE52</enabled-color>
-                                    </boolean-button>
+                                    </fzmm.boolean-button>
 
-                                    <boolean-button id="obfuscated">
+                                    <fzmm.boolean-button id="obfuscated">
                                         <text translate="true">fzmm.gui.textFormat.option.obfuscated</text>
                                         <tooltip-text translate="true">fzmm.gui.textFormat.option.obfuscated.tooltip</tooltip-text>
                                         <enabled-color>#31CE52</enabled-color>
-                                    </boolean-button>
+                                    </fzmm.boolean-button>
                                 </children>
 
                                 <gap>8</gap>
@@ -89,59 +89,59 @@
                                     <horizontal method="fill">100</horizontal>
                                 </sizing>
                             </flow-layout>
-                            <screen-tab-row>
+                            <fzmm.screen-tab-row>
                                 <id>tabs</id>
-                            </screen-tab-row>
+                            </fzmm.screen-tab-row>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>rainbow</id>
                                 <children>
-                                    <slider-row>
+                                    <fzmm.slider-row>
                                         <id>hue</id>
-                                    </slider-row>
-                                    <slider-row>
+                                    </fzmm.slider-row>
+                                    <fzmm.slider-row>
                                         <id>brightness</id>
-                                    </slider-row>
-                                    <slider-row>
+                                    </fzmm.slider-row>
+                                    <fzmm.slider-row>
                                         <id>saturation</id>
-                                    </slider-row>
-                                    <slider-row>
+                                    </fzmm.slider-row>
+                                    <fzmm.slider-row>
                                         <id>hueStep</id>
-                                    </slider-row>
+                                    </fzmm.slider-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>gradient</id>
                                 <children>
-                                    <color-list>
+                                    <fzmm.color-list>
                                         <id>gradientColorList</id>
-                                    </color-list>
+                                    </fzmm.color-list>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>simple</id>
                                 <children>
-                                    <color-row>
+                                    <fzmm.color-row>
                                         <id>color</id>
-                                    </color-row>
+                                    </fzmm.color-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>interleaved_colors</id>
                                 <children>
-                                    <slider-row>
+                                    <fzmm.slider-row>
                                         <id>interleavedDistance</id>
-                                    </slider-row>
-                                    <color-list>
+                                    </fzmm.slider-row>
+                                    <fzmm.color-list>
                                         <id>interleavedColorList</id>
-                                    </color-list>
+                                    </fzmm.color-list>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>placeholder_api</id>
                                 <children>
                                     <flow-layout direction="vertical" id="placeholder-info">
@@ -159,7 +159,7 @@
                                         <gap>8</gap>
                                     </flow-layout>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
                         </children>
 
                         <horizontal-alignment>center</horizontal-alignment>

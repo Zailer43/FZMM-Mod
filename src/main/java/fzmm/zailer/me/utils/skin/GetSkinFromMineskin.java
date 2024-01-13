@@ -68,7 +68,8 @@ public class GetSkinFromMineskin extends GetSkinDecorator {
             HeadUtils headUtils = new HeadUtils().uploadHead(this.skin, playerName).get();
             HeadBuilder builder = HeadBuilder.builder()
                     .headName(playerName)
-                    .skinValue(headUtils.getSkinValue());
+                    .skinValue(headUtils.getSkinValue())
+                    .signature(headUtils.getSignature());
 
             return headUtils.isSkinGenerated() ? Optional.of(builder.get()) : super.getHead(playerName);
         } catch (InterruptedException | ExecutionException e) {

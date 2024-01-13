@@ -119,7 +119,7 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMementoScreen
     public void restoreMemento(IMementoObject mementoObject) {
         PlayerStatueMemento memento = (PlayerStatueMemento) mementoObject;
         this.nameField.setText(memento.name());
-        this.nameField.setCursor(0);
+        this.nameField.setCursorToStart(false);
         this.restoreMementoTabs(memento.mementoTabHashMap);
     }
 

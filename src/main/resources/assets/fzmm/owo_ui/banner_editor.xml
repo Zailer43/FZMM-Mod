@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.2/owo-ui.xsd">
     <components>
         <flow-layout direction="horizontal">
             <children>
@@ -12,13 +12,13 @@
                 <scroll direction="vertical">
                     <flow-layout direction="vertical">
                         <children>
-                            <boolean-row>
+                            <fzmm.boolean-row>
                                 <id>isShield</id>
-                            </boolean-row>
+                            </fzmm.boolean-row>
 
-                            <screen-tab-row>
+                            <fzmm.screen-tab-row>
                                 <id>tabs</id>
-                            </screen-tab-row>
+                            </fzmm.screen-tab-row>
 
                             <flow-layout direction="horizontal">
                                 <children>
@@ -73,7 +73,7 @@
 
                                             </flow-layout>
 
-                                            <screen-tab>
+                                            <fzmm.screen-tab>
                                                 <id>addPatterns</id>
                                                 <children>
                                                     <flow-layout direction="ltr-text-flow" id="add-patterns-layout">
@@ -90,9 +90,9 @@
 
                                                     </flow-layout>
                                                 </children>
-                                            </screen-tab>
+                                            </fzmm.screen-tab>
 
-                                            <screen-tab>
+                                            <fzmm.screen-tab>
                                                 <id>changeColor</id>
                                                 <children>
                                                     <flow-layout direction="ltr-text-flow" id="change-color-layout">
@@ -109,9 +109,9 @@
 
                                                     </flow-layout>
                                                 </children>
-                                            </screen-tab>
+                                            </fzmm.screen-tab>
 
-                                            <screen-tab>
+                                            <fzmm.screen-tab>
                                                 <id>removePatterns</id>
                                                 <children>
                                                     <flow-layout direction="ltr-text-flow" id="remove-patterns-layout">
@@ -128,7 +128,7 @@
 
                                                     </flow-layout>
                                                 </children>
-                                            </screen-tab>
+                                            </fzmm.screen-tab>
                                         </children>
 
                                         <sizing>

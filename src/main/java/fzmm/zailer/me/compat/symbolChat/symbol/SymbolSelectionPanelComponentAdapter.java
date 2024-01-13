@@ -31,7 +31,7 @@ public class SymbolSelectionPanelComponentAdapter extends BaseParentComponent {
                 this.symbolChatCompat.isSelectionPanelVisible() && this.selectionPanel.mouseClicked(mouseX, mouseY, button));
 
         this.mouseScroll().subscribe((mouseX, mouseY, amount) ->
-                this.symbolChatCompat.isSelectionPanelVisible() && this.selectionPanel.mouseScrolled(mouseX, mouseY, amount));
+                this.symbolChatCompat.isSelectionPanelVisible() && this.selectionPanel.mouseScrolled(mouseX, mouseY, 0, amount));
 
         try {
             Field tabsField = this.selectionPanel.getClass().getDeclaredField("tabs");

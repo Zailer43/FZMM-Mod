@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.2/owo-ui.xsd">
     <components>
         <flow-layout direction="horizontal">
             <children>
@@ -122,12 +122,12 @@
 
                         <flow-layout direction="horizontal">
                             <children>
-                                <text-box-row>
+                                <fzmm.text-box-row>
                                     <id>content-search</id>
                                     <removeResetButton>true</removeResetButton>
                                     <fieldSize>120</fieldSize>
                                     <removeHorizontalMargins>true</removeHorizontalMargins>
-                                </text-box-row>
+                                </fzmm.text-box-row>
                             </children>
 
                             <vertical-alignment>center</vertical-alignment>
@@ -276,10 +276,10 @@
                         </margins>
                     </label>
 
-                    <text-box-row>
+                    <fzmm.text-box-row>
                         <id>tag-search</id>
                         <removeHorizontalMargins>true</removeHorizontalMargins>
-                    </text-box-row>
+                    </fzmm.text-box-row>
 
                     <button id="clear-selected-tags">
                         <text translate="true">fzmm.gui.headGallery.button.clearSelectedTags</text>

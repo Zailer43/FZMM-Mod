@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.2/owo-ui.xsd">
     <components>
         <flow-layout direction="vertical">
             <children>
@@ -12,27 +12,27 @@
 
                     <flow-layout direction="vertical" id="options-list">
                         <children>
-                            <text-box-row>
+                            <fzmm.text-box-row>
                                 <id>message</id>
                                 <symbolChatButtons>true</symbolChatButtons>
-                            </text-box-row>
-                            <number-row>
+                            </fzmm.text-box-row>
+                            <fzmm.number-row>
                                 <id>seed</id>
-                            </number-row>
-                            <text-box-row>
+                            </fzmm.number-row>
+                            <fzmm.text-box-row>
                                 <id>paddingCharacters</id>
-                            </text-box-row>
-                            <text-box-row>
+                            </fzmm.text-box-row>
+                            <fzmm.text-box-row>
                                 <id>author</id>
                                 <symbolChatButtons>true</symbolChatButtons>
-                            </text-box-row>
-                            <text-box-row>
+                            </fzmm.text-box-row>
+                            <fzmm.text-box-row>
                                 <id>title</id>
                                 <symbolChatButtons>true</symbolChatButtons>
-                            </text-box-row>
-                            <slider-row>
+                            </fzmm.text-box-row>
+                            <fzmm.slider-row>
                                 <id>maxMessageLength</id>
-                            </slider-row>
+                            </fzmm.slider-row>
                         </children>
                     </flow-layout>
 

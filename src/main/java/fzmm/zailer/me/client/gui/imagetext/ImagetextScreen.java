@@ -208,7 +208,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     public void restoreMemento(IMementoObject mementoObject) {
         ImagetextMemento memento = (ImagetextMemento) mementoObject;
         this.imageElements.valueField().setText(memento.imageRowValue);
-        this.imageElements.valueField().setCursor(0);
+        this.imageElements.valueField().setCursorToStart(false);
         this.imageElements.mode().setValue(memento.imageGetter);
         this.widthSlider.setFromDiscreteValue(memento.width);
         this.heightSlider.setFromDiscreteValue(memento.height);

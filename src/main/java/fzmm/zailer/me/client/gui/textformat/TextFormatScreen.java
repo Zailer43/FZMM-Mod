@@ -206,7 +206,7 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
     public void restoreMemento(IMementoObject mementoObject) {
         TextFormatMemento memento = (TextFormatMemento) mementoObject;
         this.messageTextField.setText(memento.message);
-        this.messageTextField.setCursor(0);
+        this.messageTextField.setCursorToStart(false);
         this.obfuscatedToggle.enabled(memento.obfuscated);
         this.boldToggle.enabled(memento.bold);
         this.strikethroughToggle.enabled(memento.strikethrough);

@@ -35,7 +35,7 @@ public class ConverterUuidToArrayTab implements IScreenTab {
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(RANDOM_ID), true,
                 button -> {
                     uuidField.setText(UUID.randomUUID().toString());
-                    uuidField.setCursor(0);
+                    uuidField.setCursorToStart(false);
                 });
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_ID), true, button -> {
             if (!uuidField.isValid())

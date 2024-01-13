@@ -79,7 +79,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
                 (picker) -> colorField.text(picker.selectedColor().asHexString(withAlpha)));
 
         colorField.onChanged().subscribe(value -> colorPreview.color(valueGetter.get()));
-        colorField.setCursor(0);
+        colorField.setCursorToStart(false);
 
         return colorField;
     }
@@ -128,7 +128,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
         ConfigTextBox colorField = this.childById(ConfigTextBox.class, getColorFieldId(this.getId()));
         if (colorField != null) {
             colorField.setText(value.asHexString(value.alpha() < 1f));
-            colorField.setCursor(0);
+            colorField.setCursor(0, false);
         }
     }
 }

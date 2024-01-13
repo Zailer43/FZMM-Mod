@@ -31,7 +31,7 @@ public abstract class ChatScreenMixin {
             this.chatField.setMaxLength(200000);
         else {
             if (this.chatField.getCursor() > 256)
-                this.chatField.setCursor(Math.min(256, this.chatField.getText().length()));
+                this.chatField.setCursor(Math.min(256, this.chatField.getText().length()), false);
             this.chatField.setMaxLength(256);
         }
     }

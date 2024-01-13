@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.2/owo-ui.xsd">
     <components>
         <flow-layout direction="vertical">
             <children>
@@ -12,156 +12,156 @@
 
                     <flow-layout direction="vertical" id="options-list">
                         <children>
-                            <image-rows>
+                            <fzmm.image-rows>
                                 <buttonId>image</buttonId>
                                 <enumId>imageSourceType</enumId>
-                            </image-rows>
-                            <slider-row>
+                            </fzmm.image-rows>
+                            <fzmm.slider-row>
                                 <id>width</id>
                                 <tooltipId>resolution</tooltipId>
-                            </slider-row>
-                            <slider-row>
+                            </fzmm.slider-row>
+                            <fzmm.slider-row>
                                 <id>height</id>
                                 <tooltipId>resolution</tooltipId>
-                            </slider-row>
-                            <boolean-row>
+                            </fzmm.slider-row>
+                            <fzmm.boolean-row>
                                 <id>preserveImageAspectRatio</id>
-                            </boolean-row>
-                            <boolean-row>
+                            </fzmm.boolean-row>
+                            <fzmm.boolean-row>
                                 <id>showResolution</id>
-                            </boolean-row>
-                            <boolean-row>
+                            </fzmm.boolean-row>
+                            <fzmm.boolean-row>
                                 <id>smoothImage</id>
-                            </boolean-row>
-                            <slider-row>
+                            </fzmm.boolean-row>
+                            <fzmm.slider-row>
                                 <id>percentageOfSimilarityToCompress</id>
-                            </slider-row>
+                            </fzmm.slider-row>
 
-                            <screen-tab-row>
+                            <fzmm.screen-tab-row>
                                 <id>algorithms</id>
-                            </screen-tab-row>
+                            </fzmm.screen-tab-row>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>algorithm.characters</id>
                                 <children>
-                                    <text-box-row>
+                                    <fzmm.text-box-row>
                                         <id>characters</id>
                                         <symbolChatButtons>true</symbolChatButtons>
-                                    </text-box-row>
+                                    </fzmm.text-box-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>algorithm.braille</id>
                                 <children>
-                                    <slider-row>
+                                    <fzmm.slider-row>
                                         <id>edgeThreshold</id>
-                                    </slider-row>
-                                    <slider-row>
+                                    </fzmm.slider-row>
+                                    <fzmm.slider-row>
                                         <id>edgeDistance</id>
-                                    </slider-row>
+                                    </fzmm.slider-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab-row>
+                            <fzmm.screen-tab-row>
                                 <id>tabs</id>
-                            </screen-tab-row>
+                            </fzmm.screen-tab-row>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>lore</id>
                                 <children>
-                                    <enum-row>
+                                    <fzmm.enum-row>
                                         <id>loreMode</id>
-                                    </enum-row>
+                                    </fzmm.enum-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>bookPage</id>
                                 <children>
-                                    <enum-row>
+                                    <fzmm.enum-row>
                                         <id>bookPageMode</id>
-                                    </enum-row>
+                                    </fzmm.enum-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>bookTooltip</id>
                                 <children>
-                                    <enum-row>
+                                    <fzmm.enum-row>
                                         <id>bookTooltipMode</id>
-                                    </enum-row>
-                                    <text-box-row>
+                                    </fzmm.enum-row>
+                                    <fzmm.text-box-row>
                                         <id>bookTooltipAuthor</id>
-                                    </text-box-row>
-                                    <text-box-row>
+                                    </fzmm.text-box-row>
+                                    <fzmm.text-box-row>
                                         <id>bookTooltipMessage</id>
-                                    </text-box-row>
+                                    </fzmm.text-box-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>hologram</id>
                                 <children>
-                                    <number-row>
+                                    <fzmm.number-row>
                                         <id>hologramPosX</id>
                                         <tooltipId>hologramPos</tooltipId>
-                                    </number-row>
-                                    <number-row>
+                                    </fzmm.number-row>
+                                    <fzmm.number-row>
                                         <id>hologramPosY</id>
                                         <tooltipId>hologramPos</tooltipId>
-                                    </number-row>
-                                    <number-row>
+                                    </fzmm.number-row>
+                                    <fzmm.number-row>
                                         <id>hologramPosZ</id>
                                         <tooltipId>hologramPos</tooltipId>
-                                    </number-row>
+                                    </fzmm.number-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>sign</id>
                                 <children>
-                                    <enum-row>
+                                    <fzmm.enum-row>
                                         <id>signType</id>
-                                    </enum-row>
-                                    <boolean-row>
+                                    </fzmm.enum-row>
+                                    <fzmm.boolean-row>
                                         <id>isHangingSign</id>
-                                    </boolean-row>
+                                    </fzmm.boolean-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>textDisplay</id>
                                 <children>
-                                    <slider-row>
+                                    <fzmm.slider-row>
                                         <id>textDisplayTextOpacity</id>
-                                    </slider-row>
-                                    <color-row>
+                                    </fzmm.slider-row>
+                                    <fzmm.color-row>
                                         <id>textDisplayBackgroundColor</id>
-                                    </color-row>
-                                    <boolean-row>
+                                    </fzmm.color-row>
+                                    <fzmm.boolean-row>
                                         <id>textDisplayTextShadow</id>
-                                    </boolean-row>
-                                    <boolean-row>
+                                    </fzmm.boolean-row>
+                                    <fzmm.boolean-row>
                                         <id>textDisplayTextSeeThrough</id>
-                                    </boolean-row>
-                                    <enum-row>
+                                    </fzmm.boolean-row>
+                                    <fzmm.enum-row>
                                         <id>textDisplayTextAlignment</id>
-                                    </enum-row>
-                                    <enum-row>
+                                    </fzmm.enum-row>
+                                    <fzmm.enum-row>
                                         <id>textDisplayBillboard</id>
-                                    </enum-row>
-                                    <slider-row>
+                                    </fzmm.enum-row>
+                                    <fzmm.slider-row>
                                         <id>textDisplayRotation</id>
-                                    </slider-row>
+                                    </fzmm.slider-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>copy</id>
                                 <children>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
                         </children>
                     </flow-layout>
 

@@ -218,28 +218,28 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
     }
 
     static {
-        UIParsing.registerFactory("boolean-row", BooleanRow::parse);
-        UIParsing.registerFactory("button-row", ButtonRow::parse);
-        UIParsing.registerFactory("color-row", ColorRow::parse);
-        UIParsing.registerFactory("predicate-text-box-row", ConfigTextBoxRow::parse);
-        UIParsing.registerFactory("enum-row", EnumRow::parse);
-        UIParsing.registerFactory("image-rows", ImageRows::parse);
-        UIParsing.registerFactory("number-row", NumberRow::parse);
-        UIParsing.registerFactory("screen-tab-row", ScreenTabRow::parse);
-        UIParsing.registerFactory("slider-row", SliderRow::parse);
-        UIParsing.registerFactory("text-box-row", TextBoxRow::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "boolean-row"), BooleanRow::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "button-row"), ButtonRow::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "color-row"), ColorRow::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "predicate-text-box-row"), ConfigTextBoxRow::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "enum-row"), EnumRow::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "image-rows"), ImageRows::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "number-row"), NumberRow::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "screen-tab-row"), ScreenTabRow::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "slider-row"), SliderRow::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "text-box-row"), TextBoxRow::parse);
 
         // these are necessary in case you want to create the fields manually with XML
-        UIParsing.registerFactory("boolean-button", BooleanButton::parse);
-        UIParsing.registerFactory("number-slider", element -> new SliderWidget());
-        UIParsing.registerFactory("text-option", element -> new ConfigTextBox());
-        UIParsing.registerFactory("image-option", element -> new ImageButtonComponent());
-        UIParsing.registerFactory("enum-option", element -> new EnumWidget());
-        UIParsing.registerFactory("screen-tab", ScreenTabContainer::parse);
-        UIParsing.registerFactory("main-button", element -> new MainButtonComponent(Text.empty(), buttonComponent -> {}));
-        UIParsing.registerFactory("screenshot-zone", element -> new ScreenshotZoneComponent());
-        UIParsing.registerFactory("color-list", ColorListContainer::parse);
-        UIParsing.registerFactory("font-text-box", element -> new FontTextBoxComponent(Sizing.fixed(100)));
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "boolean-button"), BooleanButton::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "number-slider"), element -> new SliderWidget());
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "text-option"), element -> new ConfigTextBox());
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "image-option"), element -> new ImageButtonComponent());
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "enum-option"), element -> new EnumWidget());
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "screen-tab"), ScreenTabContainer::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "main-button"), element -> new MainButtonComponent(Text.empty(), buttonComponent -> {}));
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "screenshot-zone"), element -> new ScreenshotZoneComponent());
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "color-list"), ColorListContainer::parse);
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "font-text-box"), element -> new FontTextBoxComponent(Sizing.fixed(100)));
 
     }
 

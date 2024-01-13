@@ -87,9 +87,9 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
     public void restoreMemento(IMementoObject mementoTab) {
         BookTooltipMementoTab memento = (BookTooltipMementoTab) mementoTab;
         this.bookTooltipAuthor.setText(memento.author);
-        this.bookTooltipAuthor.setCursor(0);
+        this.bookTooltipAuthor.setCursorToStart(false);
         this.bookTooltipMessage.setText(memento.message);
-        this.bookTooltipMessage.setCursor(0);
+        this.bookTooltipMessage.setCursorToStart(false);
         this.bookTooltipMode.setValue(memento.mode);
     }
 

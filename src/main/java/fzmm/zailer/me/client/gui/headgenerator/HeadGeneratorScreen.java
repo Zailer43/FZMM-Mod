@@ -448,7 +448,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
             return;
         if (((SkinMode) mode.getValue()).isHeadName() && this.headNameField.getText().equals(this.previousSkinName)) {
             this.headNameField.setText(value);
-            this.headNameField.setCursor(0);
+            this.headNameField.setCursorToStart(false);
         }
 
         this.previousSkinName = value;
@@ -482,15 +482,15 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         HeadGeneratorMemento memento = (HeadGeneratorMemento) mementoObject;
         this.skinElements.mode().setValue(memento.skinMode);
         this.skinElements.valueField().setText(memento.skinRowValue);
-        this.skinElements.valueField().setCursor(0);
+        this.skinElements.valueField().setCursorToStart(false);
         this.headNameField.setText(memento.headName);
-        this.headNameField.setCursor(0);
+        this.headNameField.setCursorToStart(false);
         if (memento.showFavorites)
             this.toggleFavoriteListExecute();
         this.skinPreEditOption.setValue(memento.skinPreEditOption);
         this.selectedCategory = memento.category;
         this.searchField.setText(memento.search);
-        this.searchField.setCursor(0);
+        this.searchField.setCursorToStart(false);
     }
 
     private record HeadGeneratorMemento(String headName, SkinMode skinMode, String skinRowValue, boolean showFavorites,

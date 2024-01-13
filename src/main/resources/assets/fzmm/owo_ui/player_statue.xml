@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.2/owo-ui.xsd">
     <components>
         <flow-layout direction="vertical">
             <children>
@@ -12,44 +12,44 @@
 
                     <flow-layout direction="vertical" id="options-list">
                         <children>
-                            <enum-row>
+                            <fzmm.enum-row>
                                 <id>horizontal-direction</id>
-                            </enum-row>
-                            <number-row>
+                            </fzmm.enum-row>
+                            <fzmm.number-row>
                                 <id>posX</id>
                                 <tooltipId>pos</tooltipId>
-                            </number-row>
-                            <number-row>
+                            </fzmm.number-row>
+                            <fzmm.number-row>
                                 <id>posY</id>
                                 <tooltipId>pos</tooltipId>
-                            </number-row>
-                            <number-row>
+                            </fzmm.number-row>
+                            <fzmm.number-row>
                                 <id>posZ</id>
                                 <tooltipId>pos</tooltipId>
-                            </number-row>
-                            <text-box-row>
+                            </fzmm.number-row>
+                            <fzmm.text-box-row>
                                 <id>name</id>
                                 <symbolChatButtons>true</symbolChatButtons>
-                            </text-box-row>
-                            <screen-tab-row>
+                            </fzmm.text-box-row>
+                            <fzmm.screen-tab-row>
                                 <id>tabs</id>
-                            </screen-tab-row>
+                            </fzmm.screen-tab-row>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>generate</id>
                                 <children>
-                                    <image-rows>
+                                    <fzmm.image-rows>
                                         <buttonId>skin</buttonId>
                                         <enumId>skin-source</enumId>
-                                    </image-rows>
+                                    </fzmm.image-rows>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>update</id>
                                 <children>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
                         </children>
                     </flow-layout>
 

@@ -35,7 +35,7 @@ public class GetSkinFromCache extends GetSkinDecorator {
         if (playerListEntry == null)
             return super.getSkin(playerName);
 
-        Identifier skinIdentifier = playerListEntry.getSkinTexture();
+        Identifier skinIdentifier = playerListEntry.getSkinTextures().texture();
         AbstractTexture texture = client.getTextureManager().getTexture(skinIdentifier);
         // if the player is invisible the texture is not an instance of PlayerSkinTexture
         if (!(texture instanceof PlayerSkinTexture skinTexture))

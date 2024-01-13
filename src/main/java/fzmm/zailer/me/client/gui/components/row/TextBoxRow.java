@@ -62,7 +62,7 @@ public class TextBoxRow extends AbstractRow {
         });
         textField.setMaxLength(maxLength);
         textField.setText(defaultValue);
-        textField.setCursor(0);
+        textField.setCursorToStart(false);
 
         if (resetButton != null)
             resetButton.onPress(button -> textField.setText(defaultValue));

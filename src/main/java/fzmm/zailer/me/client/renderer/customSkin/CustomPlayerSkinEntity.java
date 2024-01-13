@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.renderer.customSkin;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.client.network.OtherClientPlayerEntity;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
 
@@ -9,36 +10,32 @@ import java.util.UUID;
 
 public class CustomPlayerSkinEntity extends OtherClientPlayerEntity implements ISkinMutable {
 
-    private static final String SLIM_ID = "slim"; // DefaultSkinHelper.Model.SLIM
-    private static final String WIDE_ID = "default"; // DefaultSkinHelper.Model.WIDE
-
-    private Identifier skin;
-    private String model;
-
+    private SkinTextures textures;
+    
     public CustomPlayerSkinEntity(ClientWorld world) {
-        super(world, new GameProfile(UUID.randomUUID(), null));
+        super(world, new GameProfile(UUID.randomUUID(), ""));
         this.getDataTracker().set(PLAYER_MODEL_PARTS, Byte.MAX_VALUE);
     }
 
     @Override
-    public Identifier getSkinTexture() {
-        return this.getSkin();
+    public SkinTextures getSkinTextures() {
+        return this.textures;
     }
 
     @Override
-    public Identifier getSkin() {
-        return this.skin;
+    public Identifier getTextures() {
+        return this.textures.texture();
     }
 
     @Override
     public void setSkin(Identifier skin, boolean isSlim) {
-        this.skin = skin;
-        this.model = isSlim ? SLIM_ID : WIDE_ID;
-    }
-
-    @Override
-    public String getModel() {
-        return this.model;
+        this.textures = new SkinTextures(skin,
+                null,
+                null,
+                null,
+                isSlim ? SkinTextures.Model.SLIM : SkinTextures.Model.WIDE,
+                false
+        );
     }
 
     /**

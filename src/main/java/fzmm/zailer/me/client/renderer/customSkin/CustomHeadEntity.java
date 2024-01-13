@@ -32,7 +32,7 @@ public class CustomHeadEntity extends MobEntity implements ISkinMutable {
     }
 
     @Override
-    public Identifier getSkin() {
+    public Identifier getTextures() {
         return this.customHeadTexture;
     }
 

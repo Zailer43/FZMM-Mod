@@ -35,6 +35,7 @@ public class TagsConstant {
     public static final String TEXT_DISPLAY_ALIGNMENT = "alignment";
 
     public static final String HEAD_PROPERTIES = "Properties";
+    public static final String HEAD__PROPERTIES_SIGNATURE = "Signature";
     public static final String HEAD_PROPERTIES_TEXTURES = "textures";
 
 }

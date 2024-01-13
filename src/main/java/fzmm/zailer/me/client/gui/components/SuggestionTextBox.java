@@ -227,7 +227,7 @@ public class SuggestionTextBox extends FlowLayout {
         this.update(0, 0, 0);
         this.mouseHoverSuggestion = false;
         this.suggestionsLayout.clearChildren();
-        this.textBox.setCursorToEnd();
+        this.textBox.setCursorToStart(false);
         this.textBox.onFocusLost();
     }
 

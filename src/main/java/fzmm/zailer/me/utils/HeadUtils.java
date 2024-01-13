@@ -3,13 +3,12 @@ package fzmm.zailer.me.utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SkullItem;
+import net.minecraft.item.PlayerHeadItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.util.math.MathHelper;
@@ -27,12 +26,14 @@ public class HeadUtils {
     public static final String MINESKIN_API = "https://api.mineskin.org/";
     private static final String BOUNDARY = UUID.randomUUID().toString();
     private String skinValue;
+    private String signature;
     private String url;
     private boolean skinGenerated;
     private int delayForNextInMillis;
 
     public HeadUtils() {
         this.skinValue = "";
+        this.signature = "";
         this.url = "";
         this.skinGenerated = false;
         this.delayForNextInMillis = 6000;
@@ -40,11 +41,16 @@ public class HeadUtils {
 
     public HeadBuilder getBuilder() {
         return HeadBuilder.builder()
-                .skinValue(this.skinValue);
+                .skinValue(this.skinValue)
+                .signature(this.signature);
     }
 
     public String getSkinValue() {
         return this.skinValue;
+    }
+
+    public String getSignature() {
+        return this.signature;
     }
 
     public String getUrl() {
@@ -117,6 +123,7 @@ public class HeadUtils {
         JsonObject json = (JsonObject) JsonParser.parseString(reply);
         JsonObject texture = json.getAsJsonObject("data").getAsJsonObject("texture");
         this.skinValue = texture.get("value").getAsString();
+        this.signature = texture.get("signature").getAsString();
         this.url = texture.get("url").getAsString();
         this.skinGenerated = true;
         this.delayForNextInMillis = (short) this.getDelay(json.getAsJsonObject("delayInfo").get("millis").getAsInt());
@@ -131,16 +138,16 @@ public class HeadUtils {
         assert client.player != null;
 
         NbtCompound nbt = stack.getOrCreateNbt();
-        NbtCompound skullOwnerTag = nbt.getCompound(SkullItem.SKULL_OWNER_KEY);
+        NbtCompound skullOwnerTag = nbt.getCompound(PlayerHeadItem.SKULL_OWNER_KEY);
         GameProfile gameProfile = NbtHelper.toGameProfile(skullOwnerTag);
         if (gameProfile == null)
             return Optional.empty();
 
-        MinecraftProfileTexture texture = MinecraftClient.getInstance()
+        String textureUrl = MinecraftClient.getInstance()
                 .getSkinProvider()
-                .getTextures(gameProfile)
-                .get(MinecraftProfileTexture.Type.SKIN);
+                .getSkinTextures(gameProfile)
+                .textureUrl();
 
-        return ImageUtils.getImageFromUrl(texture.getUrl());
+        return ImageUtils.getImageFromUrl(textureUrl);
     }
 }

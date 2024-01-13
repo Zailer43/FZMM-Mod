@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.2/owo-ui.xsd">
     <components>
         <flow-layout direction="vertical">
             <children>
@@ -12,67 +12,67 @@
 
                     <flow-layout direction="vertical" id="options-list">
                         <children>
-                            <screen-tab-row>
+                            <fzmm.screen-tab-row>
                                 <id>tabs</id>
-                            </screen-tab-row>
+                            </fzmm.screen-tab-row>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>base64</id>
                                 <children>
-                                    <text-box-row>
+                                    <fzmm.text-box-row>
                                         <id>message</id>
-                                    </text-box-row>
-                                    <button-row>
+                                    </fzmm.text-box-row>
+                                    <fzmm.button-row>
                                         <id>copyDecoded</id>
-                                    </button-row>
-                                    <button-row>
+                                    </fzmm.button-row>
+                                    <fzmm.button-row>
                                         <id>copyEncoded</id>
-                                    </button-row>
+                                    </fzmm.button-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>uuidToArray</id>
                                 <children>
-                                    <predicate-text-box-row>
+                                    <fzmm.predicate-text-box-row>
                                         <id>uuidField</id>
-                                    </predicate-text-box-row>
-                                    <button-row>
+                                    </fzmm.predicate-text-box-row>
+                                    <fzmm.button-row>
                                         <id>uuidToArray.random</id>
-                                    </button-row>
-                                    <button-row>
+                                    </fzmm.button-row>
+                                    <fzmm.button-row>
                                         <id>uuidToArray.copy</id>
-                                    </button-row>
+                                    </fzmm.button-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
 
-                            <screen-tab>
+                            <fzmm.screen-tab>
                                 <id>arrayToUuid</id>
                                 <children>
-                                    <number-row>
+                                    <fzmm.number-row>
                                         <id>array.0</id>
                                         <tooltipId>array</tooltipId>
-                                    </number-row>
-                                    <number-row>
+                                    </fzmm.number-row>
+                                    <fzmm.number-row>
                                         <id>array.1</id>
                                         <tooltipId>array</tooltipId>
-                                    </number-row>
-                                    <number-row>
+                                    </fzmm.number-row>
+                                    <fzmm.number-row>
                                         <id>array.2</id>
                                         <tooltipId>array</tooltipId>
-                                    </number-row>
-                                    <number-row>
+                                    </fzmm.number-row>
+                                    <fzmm.number-row>
                                         <id>array.3</id>
                                         <tooltipId>array</tooltipId>
-                                    </number-row>
-                                    <button-row>
+                                    </fzmm.number-row>
+                                    <fzmm.button-row>
                                         <id>arrayToUuid.random</id>
-                                    </button-row>
-                                    <button-row>
+                                    </fzmm.button-row>
+                                    <fzmm.button-row>
                                         <id>arrayToUuid.copy</id>
-                                    </button-row>
+                                    </fzmm.button-row>
                                 </children>
-                            </screen-tab>
+                            </fzmm.screen-tab>
                         </children>
                     </flow-layout>
 

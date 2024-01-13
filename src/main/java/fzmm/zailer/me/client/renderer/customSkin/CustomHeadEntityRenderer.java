@@ -22,7 +22,7 @@ public class CustomHeadEntityRenderer extends MobEntityRenderer<CustomHeadEntity
 
     @Override
     public Identifier getTexture(CustomHeadEntity entity) {
-        return entity.getSkin();
+        return entity.getTextures();
     }
 }
 

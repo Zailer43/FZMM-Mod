@@ -53,7 +53,7 @@ public class ConfigTextBoxRow extends AbstractRow {
         BaseFzmmScreen.checkNull(textBox, "text-option", textBoxId);
         
         textBox.setText(defaultValue);
-        textBox.setCursor(0);
+        textBox.setCursorToStart(false);
         textBox.onChanged().subscribe(s -> {
             if (resetButton != null)
                 resetButton.active = !defaultPredicate.test(s);

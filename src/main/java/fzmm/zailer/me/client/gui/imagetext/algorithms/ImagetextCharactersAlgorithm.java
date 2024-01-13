@@ -52,7 +52,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
     @Override
     public void setupComponents(FlowLayout rootComponent) {
         this.charactersTextField = TextBoxRow.setup(rootComponent, CHARACTERS_ID, ImagetextLine.DEFAULT_TEXT, FzmmClient.CONFIG.imagetext.maxResolution());
-        this.charactersTextField.setCursor(0);
+        this.charactersTextField.setCursorToStart(false);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
     public void restoreMemento(IMementoObject mementoObject) {
         CharactersAlgorithmMementoTab memento = (CharactersAlgorithmMementoTab) mementoObject;
         this.charactersTextField.setText(memento.characters);
-        this.charactersTextField.setCursor(0);
+        this.charactersTextField.setCursorToStart(false);
     }
 
     private record CharactersAlgorithmMementoTab(String characters) implements IMementoObject{

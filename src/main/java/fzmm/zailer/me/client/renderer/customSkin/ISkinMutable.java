@@ -4,7 +4,7 @@ import net.minecraft.util.Identifier;
 
 public interface ISkinMutable {
 
-    Identifier getSkin();
+    Identifier getTextures();
 
     void setSkin(Identifier skin, boolean isSlim);
 }

@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.2/owo-ui.xsd">
     <components>
         <flow-layout direction="vertical">
             <children>
@@ -12,30 +12,30 @@
 
                     <flow-layout direction="vertical" id="copy-buttons-list">
                         <children>
-                            <button-row>
+                            <fzmm.button-row>
                                 <id>json</id>
-                            </button-row>
-                            <button-row>
+                            </fzmm.button-row>
+                            <fzmm.button-row>
                                 <id>chatDefault</id>
-                            </button-row>
-                            <button-row>
+                            </fzmm.button-row>
+                            <fzmm.button-row>
                                 <id>chatLegacy</id>
-                            </button-row>
-                            <button-row>
+                            </fzmm.button-row>
+                            <fzmm.button-row>
                                 <id>console</id>
-                            </button-row>
-                            <button-row>
+                            </fzmm.button-row>
+                            <fzmm.button-row>
                                 <id>motd</id>
-                            </button-row>
-                            <button-row>
+                            </fzmm.button-row>
+                            <fzmm.button-row>
                                 <id>xml</id>
-                            </button-row>
-                            <button-row>
+                            </fzmm.button-row>
+                            <fzmm.button-row>
                                 <id>bbcode</id>
-                            </button-row>
-                            <button-row>
+                            </fzmm.button-row>
+                            <fzmm.button-row>
                                 <id>string</id>
-                            </button-row>
+                            </fzmm.button-row>
                         </children>
                     </flow-layout>
 

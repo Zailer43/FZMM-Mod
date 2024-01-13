@@ -135,7 +135,7 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
             previewEntity.setSkin(textureManager.registerDynamicTexture("fzmm_head", this.previewTexture), isSlim);
         });
 
-        textureManager.bindTexture(previewEntity.getSkin());
+        textureManager.bindTexture(previewEntity.getTextures());
     }
 
     protected EntityComponent<Entity> cloneCustomHeadEntity() {

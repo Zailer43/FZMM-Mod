@@ -1,5 +1,58 @@
+<!DOCTYPE owo-ui [
+        <!ELEMENT owo-ui (components|templates)*>
+        <!ATTLIST owo-ui
+                xmlns:xsi CDATA #REQUIRED
+                xsi:noNamespaceSchemaLocation CDATA #REQUIRED>
+        <!ELEMENT components (flow-layout)*>
+        <!ELEMENT flow-layout (children|sizing|vertical-alignment|horizontal-alignment|gap|positioning|surface)*>
+        <!ATTLIST flow-layout
+                direction CDATA #REQUIRED>
+        <!ELEMENT children (label|scroll|template|flow-layout|button)*>
+        <!ELEMENT label (positioning|text)*>
+        <!ATTLIST label
+                id CDATA #REQUIRED>
+        <!ELEMENT positioning (#PCDATA)>
+        <!ATTLIST positioning
+                type CDATA #REQUIRED>
+        <!ELEMENT text (#PCDATA)>
+        <!ATTLIST text
+                translate CDATA #REQUIRED>
+        <!ELEMENT scroll (flow-layout|scrollbar|sizing)*>
+        <!ATTLIST scroll
+                direction CDATA #REQUIRED>
+        <!ELEMENT template (name)*>
+        <!ATTLIST template
+                name CDATA #REQUIRED>
+        <!ELEMENT name (#PCDATA)>
+        <!ELEMENT sizing (horizontal|vertical)*>
+        <!ELEMENT horizontal (#PCDATA)>
+        <!ATTLIST horizontal
+                method CDATA #REQUIRED>
+        <!ELEMENT vertical-alignment (#PCDATA)>
+        <!ELEMENT horizontal-alignment (#PCDATA)>
+        <!ELEMENT gap (#PCDATA)>
+        <!ELEMENT scrollbar (flat)*>
+        <!ELEMENT flat (#PCDATA)>
+        <!ELEMENT vertical (#PCDATA)>
+        <!ATTLIST vertical
+                method CDATA #REQUIRED>
+        <!ELEMENT button (text|margins)*>
+        <!ATTLIST button
+                id CDATA #REQUIRED>
+        <!ELEMENT margins (right|top|bottom)*>
+        <!ELEMENT right (#PCDATA)>
+        <!ELEMENT top (#PCDATA)>
+        <!ELEMENT bottom (#PCDATA)>
+        <!ELEMENT surface (vanilla-translucent)*>
+        <!ELEMENT vanilla-translucent (#PCDATA)>
+        <!ELEMENT templates (main-button-layout)*>
+        <!ELEMENT main-button-layout (main-button)*>
+        <!ELEMENT main-button (text|sizing|margins)*>
+        <!ATTLIST main-button
+                id CDATA #REQUIRED>
+        ]>
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.2/owo-ui.xsd">
     <components>
         <flow-layout direction="vertical">
             <children>
@@ -114,7 +167,7 @@
 
     <templates>
         <main-button-layout>
-            <main-button id="{{name}}-button">
+            <fzmm.main-button id="{{name}}-button">
                 <text translate="true">fzmm.gui.title.{{name}}</text>
                 <sizing>
                     <horizontal method="fixed">150</horizontal>
@@ -124,7 +177,7 @@
                 <margins>
                     <bottom>5</bottom>
                 </margins>
-            </main-button>
+            </fzmm.main-button>
         </main-button-layout>
     </templates>
 </owo-ui>
