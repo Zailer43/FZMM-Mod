@@ -298,6 +298,10 @@
                             <vertical-alignment>top</vertical-alignment>
                             <horizontal-alignment>center</horizontal-alignment>
 
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                            </sizing>
+
                             <gap>4</gap>
                         </flow-layout>
 
