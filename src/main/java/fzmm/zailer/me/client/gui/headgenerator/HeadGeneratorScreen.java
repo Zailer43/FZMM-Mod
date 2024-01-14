@@ -6,7 +6,6 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
-import fzmm.zailer.me.client.gui.components.row.EnumRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
@@ -33,6 +32,7 @@ import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Insets;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -56,7 +56,6 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     private static final String SKIN_ID = "skin";
     private static final String SKIN_SOURCE_TYPE_ID = "skinSourceType";
     private static final String HEAD_NAME_ID = "headName";
-    private static final String SKIN_PRE_EDIT_OPTION_ID = "skinPreEdit";
     private static final String SEARCH_ID = "search";
     private static final String CONTENT_ID = "content";
     private static final String HEADS_LAYOUT_ID = "heads-layout";
@@ -70,7 +69,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     private final Set<String> favoritesHeadsOnOpenScreen;
     private ImageRowsElements skinElements;
     private TextFieldWidget headNameField;
-    private EnumWidget skinPreEditOption;
+    private HashMap<SkinPreEditOption, ButtonComponent> skinPreEditButtons;
+    private SkinPreEditOption selectedSkinPreEdit;
     private TextFieldWidget searchField;
     private List<HeadComponentEntry> headComponentEntries;
     private List<HeadCompoundComponentEntry> headCompoundComponentEntries;
@@ -85,6 +85,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     private IHeadCategory selectedCategory;
     private ButtonComponent giveButton;
     private Animation.Composed compoundExpandAnimation;
+
 
     public HeadGeneratorScreen(@Nullable Screen parent) {
         super("head_generator", "headGenerator", parent);
@@ -129,15 +130,16 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
         // nav var
         this.searchField = TextBoxRow.setup(rootComponent, SEARCH_ID, "", 128, s -> this.applyFilters());
-        this.skinPreEditOption = EnumRow.setup(rootComponent, SKIN_PRE_EDIT_OPTION_ID, SkinPreEditOption.OVERLAP, true, button -> {
-            if (this.skinElements.imageButton().hasImage())
-                this.updatePreviews();
-        });
-        int maxSkinPreEditOptionWidth = 0;
-        for (var skinPreEditOption : SkinPreEditOption.values())
-            maxSkinPreEditOptionWidth = Math.max(maxSkinPreEditOptionWidth, this.textRenderer.getWidth(Text.translatable(skinPreEditOption.getTranslationKey())));
+//        this.skinPreEditLayout = EnumRow.setup(rootComponent, SKIN_PRE_EDIT_LAYOUT_ID, SkinPreEditOption.OVERLAP, true, button -> {
+//            if (this.skinElements.imageButton().hasImage())
+//                this.updatePreviews();
+//        });
 
-        this.skinPreEditOption.horizontalSizing(Sizing.fixed(maxSkinPreEditOptionWidth + BaseFzmmScreen.BUTTON_TEXT_PADDING));
+        this.skinPreEditButtons = new HashMap<>();
+        for (SkinPreEditOption preEditOption : SkinPreEditOption.values()) {
+            this.setupPreEditButton(rootComponent, preEditOption);
+        }
+        this.skinPreEditButtons.get(SkinPreEditOption.OVERLAP).onPress();
 
         CollapsibleContainer headCategoryCollapsible = rootComponent.childById(CollapsibleContainer.class, HEAD_CATEGORY_ID);
         checkNull(headCategoryCollapsible, "collapsible", HEAD_CATEGORY_ID);
@@ -165,6 +167,11 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         ButtonRow.setup(rootComponent, WIKI_BUTTON_ID, true, buttonComponent -> this.wikiExecute());
 
         this.tryLoadHeadEntries(rootComponent);
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
     }
 
     private void imageCallback(BufferedImage skinBase) {
@@ -195,7 +202,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         if (this.contentLayout.children().isEmpty()) {
             List<AbstractHeadEntry> headEntriesList = HeadResourcesLoader.getPreloaded();
 
-            if (headEntriesList.size() == 0) {
+            if (headEntriesList.isEmpty()) {
                 this.addNoResultsMessage(rootComponent);
                 return;
             }
@@ -262,6 +269,32 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         result = (editBody ? skinPreEditOption : SkinPreEditOption.NONE).getPreEdit().execute(result, preview, SkinPart.BODY_PARTS);
 
         return result;
+    }
+
+    public void setupPreEditButton(FlowLayout rootComponent, SkinPreEditOption preEditOption) {
+        ButtonComponent preEditButton = rootComponent.childById(ButtonComponent.class, preEditOption.getId());
+        checkNull(preEditButton, "button", preEditOption.getId());
+        preEditButton.onPress(button -> {
+            this.selectedSkinPreEdit = preEditOption;
+
+            if (this.skinElements.imageButton().hasImage()) {
+                this.updatePreviews();
+            }
+
+            for (SkinPreEditOption option : this.skinPreEditButtons.keySet()) {
+                if (option != preEditOption)
+                    this.skinPreEditButtons.get(option).active = true;
+            }
+            button.active = false;
+        });
+        preEditButton.horizontalSizing(Sizing.fixed(20));
+        preEditButton.renderer((context, button, delta) -> {
+            ButtonComponent.Renderer.VANILLA.draw(context, button, delta);
+            preEditOption.getIcon().render(context, button.x() + 2, button.y() + 2, 0, 0, delta);
+        });
+        preEditButton.tooltip(Text.translatable(preEditOption.getTranslationKey() + ".tooltip"));
+
+        this.skinPreEditButtons.put(preEditOption, preEditButton);
     }
 
     public BufferedImage getGridBaseSkin(boolean editBody) {
@@ -406,7 +439,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     }
 
     public SkinPreEditOption skinPreEdit() {
-        return (SkinPreEditOption) this.skinPreEditOption.getValue();
+        return this.selectedSkinPreEdit;
     }
 
     public void upCompoundEntry(AbstractHeadListEntry entry) {
@@ -487,7 +520,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         this.headNameField.setCursorToStart(false);
         if (memento.showFavorites)
             this.toggleFavoriteListExecute();
-        this.skinPreEditOption.setValue(memento.skinPreEditOption);
+        this.skinPreEditButtons.get(memento.skinPreEditOption).onPress();
         this.selectedCategory = memento.category;
         this.searchField.setText(memento.search);
         this.searchField.setCursorToStart(false);
