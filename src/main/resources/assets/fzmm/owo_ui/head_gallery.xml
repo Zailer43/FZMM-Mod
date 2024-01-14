@@ -14,19 +14,64 @@
                         <flow-layout direction="vertical" id="options-list">
                             <children>
 
-                                <template name="left-option-list">
-                                    <id>minecraft-heads-category-list</id>
-                                    <labelId>category</labelId>
-                                    <vertical-size>60</vertical-size>
-                                </template>
+                                <flow-layout direction="vertical">
+                                    <children>
+                                        <label>
+                                            <text translate="true">fzmm.gui.headGallery.option.tag-search</text>
+                                            <tooltip-text translate="true">fzmm.gui.headGallery.option.tag-search.tooltip</tooltip-text>
+                                        </label>
+                                        <text-box id="content-search">
+                                            <sizing>
+                                                <horizontal method="fill">100</horizontal>
+                                            </sizing>
+                                        </text-box>
+                                    </children>
+
+                                    <horizontal-alignment>left</horizontal-alignment>
+                                    <gap>4</gap>
+
+                                    <sizing>
+                                        <horizontal method="fill">100</horizontal>
+                                        <vertical method="fixed">36</vertical>
+                                    </sizing>
+
+                                    <padding>
+                                        <right>8</right>
+                                    </padding>
+                                </flow-layout>
 
                                 <template name="left-option-list">
                                     <id>tags-layout</id>
                                     <labelId>tags</labelId>
-                                    <vertical-size>40</vertical-size>
+
+                                    <vertical-sizing-method>fixed</vertical-sizing-method>
+                                    <vertical-sizing-value>46</vertical-sizing-value>
                                 </template>
 
+                                <flow-layout direction="vertical">
+                                    <children>
+                                        <template name="left-option-list">
+                                            <id>minecraft-heads-category-list</id>
+                                            <labelId>category</labelId>
+
+                                            <vertical-sizing-method>fill</vertical-sizing-method>
+                                            <vertical-sizing-value>100</vertical-sizing-value>
+                                        </template>
+                                    </children>
+                                    <margins>
+                                        <top>80</top>
+                                    </margins>
+                                    <positioning type="relative">0,0</positioning>
+
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                    </sizing>
+
+                                </flow-layout>
+
                             </children>
+
+                            <gap>6</gap>
 
                             <sizing>
                                 <horizontal method="fill">30</horizontal>
@@ -38,7 +83,7 @@
                     </children>
                 </flow-layout>
 
-                <flow-layout direction="vertical">
+                <flow-layout direction="vertical" id="gallery-layout">
                     <children>
                         <flow-layout direction="horizontal">
                             <children>
@@ -84,7 +129,7 @@
                                     </sizing>
                                 </label>
 
-                                <scroll direction="vertical">
+                                <scroll direction="vertical" id="content-scroll">
                                     <flow-layout direction="ltr-text-flow" id="content">
                                         <children>
 
@@ -95,7 +140,7 @@
                                         </sizing>
 
                                         <vertical-alignment>top</vertical-alignment>
-                                        <horizontal-alignment>center</horizontal-alignment>
+                                        <horizontal-alignment>left</horizontal-alignment>
                                     </flow-layout>
 
 
@@ -111,7 +156,7 @@
                             </children>
 
                             <padding>
-                                <vertical>25</vertical>
+                                <bottom>25</bottom>
                             </padding>
 
                             <sizing>
@@ -119,31 +164,10 @@
                             </sizing>
 
                         </flow-layout>
-
-                        <flow-layout direction="horizontal">
-                            <children>
-                                <fzmm.text-box-row>
-                                    <id>content-search</id>
-                                    <removeResetButton>true</removeResetButton>
-                                    <fieldSize>120</fieldSize>
-                                    <removeHorizontalMargins>true</removeHorizontalMargins>
-                                </fzmm.text-box-row>
-                            </children>
-
-                            <vertical-alignment>center</vertical-alignment>
-                            <horizontal-alignment>center</horizontal-alignment>
-
-                            <sizing>
-                                <horizontal method="fill">100</horizontal>
-                                <vertical method="fixed">22</vertical>
-                            </sizing>
-
-                            <positioning type="relative">0,0</positioning>
-                        </flow-layout>
                     </children>
 
                     <sizing>
-                        <horizontal method="fill">60</horizontal>
+                        <horizontal method="fill">52</horizontal>
                         <vertical method="fill">70</vertical>
                     </sizing>
 
@@ -159,17 +183,39 @@
                     <vertical-alignment>center</vertical-alignment>
                 </flow-layout>
 
+                <flow-layout direction="vertical" id="preview-layout">
+                    <children>
+                    </children>
+
+                    <sizing>
+                        <horizontal method="fixed">48</horizontal>
+                        <vertical method="fill">70</vertical>
+                    </sizing>
+                </flow-layout>
+
                 <flow-layout direction="horizontal">
                     <children>
 
-                        <button id="back-button">
-                            <text translate="true">fzmm.gui.button.back</text>
+                        <flow-layout direction="horizontal">
+                            <children>
+
+                                <button id="minecraft-heads-button">
+                                    <text translate="true">fzmm.gui.headGallery.button.minecraftHeads</text>
+                                </button>
+
+                                <button id="back-button">
+                                    <text translate="true">fzmm.gui.button.back</text>
+                                </button>
+
+                            </children>
+
+                            <gap>8</gap>
 
                             <margins>
                                 <right>20</right>
-                                <bottom>20</bottom>
+                                <bottom>10</bottom>
                             </margins>
-                        </button>
+                        </flow-layout>
 
                     </children>
 
@@ -177,22 +223,6 @@
 
                     <vertical-alignment>bottom</vertical-alignment>
                     <horizontal-alignment>right</horizontal-alignment>
-                </flow-layout>
-                <flow-layout direction="horizontal">
-                    <children>
-
-                        <button id="minecraft-heads-button">
-                            <text translate="true">fzmm.gui.headGallery.button.minecraftHeads</text>
-
-                            <margins>
-                                <right>20</right>
-                                <top>20</top>
-                            </margins>
-                        </button>
-
-                    </children>
-
-                    <positioning type="relative">100,0</positioning>
                 </flow-layout>
             </children>
 
@@ -250,21 +280,23 @@
                         </flow-layout>
 
                         <sizing>
-                            <vertical method="fill">{{vertical-size}}</vertical>
+                            <vertical method="fill">100</vertical>
                         </sizing>
+
+                        <margins>
+                            <bottom>20</bottom>
+                        </margins>
 
                         <scrollbar>
                             <flat>#FFFFFF</flat>
                         </scrollbar>
-
-
-                        <margins>
-                            <bottom>12</bottom>
-                        </margins>
                     </scroll>
                 </children>
-            </flow-layout>
 
+                <sizing>
+                    <vertical method="{{vertical-sizing-method}}">{{vertical-sizing-value}}</vertical>
+                </sizing>
+            </flow-layout>
         </left-option-list>
 
         <select-tag>

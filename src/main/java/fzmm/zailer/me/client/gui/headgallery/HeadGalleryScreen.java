@@ -11,23 +11,28 @@ import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.headGallery.HeadGalleryResources;
 import fzmm.zailer.me.client.logic.headGallery.MinecraftHeadsData;
+import fzmm.zailer.me.client.renderer.customSkin.CustomHeadEntity;
 import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.utils.HeadUtils;
 import io.wispforest.owo.ui.component.*;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
+import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,6 +48,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     private static final String TAGS_OVERLAY_LABEL_ID = "tags-overlay-label";
     private static final String TAG_SEARCH_ID = "tag-search";
     private static final String CLEAR_SELECTED_TAGS_ID = "clear-selected-tags";
+    private static final String CONTENT_SCROLL = "content-scroll";
     private static final String CONTENT_ID = "content";
     private static final String PAGE_PREVIOUS_BUTTON_ID = "previous-page-button";
     private static final String CURRENT_PAGE_LABEL_ID = "current-page-label";
@@ -56,7 +62,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     private LabelComponent currentPageLabel;
     private final ObjectArrayList<HeadGalleryItemComponent> heads;
     private final ObjectArrayList<HeadGalleryItemComponent> headsWithFilter;
-    private TextFieldWidget contentSearchField;
+    private TextBoxComponent contentSearchField;
     private ButtonComponent tagButton;
     private List<Component> categoryButtonList;
     private Set<String> selectedTags;
@@ -65,6 +71,9 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     private OverlayContainer<?> tagOverlay;
     private LabelComponent errorLabel;
     private String selectedCategory;
+    private ScrollContainer<?> contentScroll;
+    private CustomHeadEntity frontEntityPreview;
+    private CustomHeadEntity backEntityPreview;
 
     public HeadGalleryScreen(@Nullable Screen parent) {
         super("head_gallery", "headGallery", parent);
@@ -78,6 +87,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         this.selectedTags = new HashSet<>();
         this.availableTags = new HashSet<>();
         this.tagOverlay = null;
+        assert this.client != null;
 
         FlowLayout categoryList = rootComponent.childById(FlowLayout.class, CATEGORY_LAYOUT_ID);
         checkNull(categoryList, "flow-layout", CATEGORY_LAYOUT_ID);
@@ -102,6 +112,9 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
         checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
 
+        this.contentScroll = rootComponent.childById(ScrollContainer.class, CONTENT_SCROLL);
+        checkNull(this.contentScroll, "flow-layout", CONTENT_SCROLL);
+
         ButtonComponent previousPageButton = rootComponent.childById(ButtonComponent.class, PAGE_PREVIOUS_BUTTON_ID);
         checkNull(previousPageButton, "button", PAGE_PREVIOUS_BUTTON_ID);
         this.currentPageLabel = rootComponent.childById(LabelComponent.class, CURRENT_PAGE_LABEL_ID);
@@ -112,7 +125,9 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         previousPageButton.onPress(buttonComponent -> this.setPage(this.page - 1));
         nextPageButton.onPress(buttonComponent -> this.setPage(this.page + 1));
 
-        this.contentSearchField = TextBoxRow.setup(rootComponent, CONTENT_SEARCH_ID, "", 255, s -> {
+        this.contentSearchField = rootComponent.childById(TextBoxComponent.class, CONTENT_SEARCH_ID);
+        checkNull(this.contentSearchField, "text-box", CONTENT_SEARCH_ID);
+        this.contentSearchField.onChanged().subscribe(s -> {
             this.applyFilters();
             this.setPage(this.page);
         });
@@ -122,10 +137,23 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         this.errorLabel = rootComponent.childById(LabelComponent.class, ERROR_MESSAGE_ID);
         checkNull(this.errorLabel, "label", ERROR_MESSAGE_ID);
 
+        FlowLayout previewLayout = rootComponent.childById(FlowLayout.class, "preview-layout");
+        checkNull(previewLayout, "flow-layout", "preview-layout");
+        this.frontEntityPreview = new CustomHeadEntity(this.client.world);
+        this.backEntityPreview= new CustomHeadEntity(this.client.world);
+
+        EntityComponent<CustomHeadEntity> backEntityPreview = Components.entity(Sizing.fixed(48), this.backEntityPreview)
+                .allowMouseRotation(true);
+        backEntityPreview.onMouseDrag(0, 0, 160, 0, GLFW.GLFW_MOUSE_BUTTON_LEFT);
+        backEntityPreview.allowMouseRotation(false);
+
+        previewLayout.child(Components.entity(Sizing.fixed(48), this.frontEntityPreview));
+        previewLayout.child(backEntityPreview);
+        this.updatePreview(Items.PLAYER_HEAD.getDefaultStack());
+
         this.applyFilters();
         this.setPage(1);
     }
-
 
     private void categoryButtonExecute(ButtonComponent selectedButton, String category, @Nullable Runnable callback) {
         assert this.client != null;
@@ -306,12 +334,18 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         this.currentPageLabel.text(Text.translatable("fzmm.gui.headGallery.label.page", page, lastPage));
 
         int lastElementIndex = Math.min((page) * maxHeadsPerPage, this.headsWithFilter.size());
-        List<Component> currentPageHeads = this.headsWithFilter.subList(firstElementIndex, lastElementIndex)
-                .stream()
-                .map(headGalleryItemComponent -> (Component) headGalleryItemComponent)
-                .toList();
+        List<HeadGalleryItemComponent> currentPageHeads = this.headsWithFilter.subList(firstElementIndex, lastElementIndex);
 
         assert this.client != null;
+
+        for (var component : currentPageHeads) {
+            component.mouseEnter().subscribe(() -> {
+                if (this.contentScroll.isInBoundingBox(component.x(), component.y())) {
+                    this.updatePreview(component.stack());
+                }
+            });
+        }
+
         this.client.execute(() -> {
             this.contentLayout.clearChildren();
             this.contentLayout.children(currentPageHeads);
@@ -351,6 +385,16 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     private Text getSelectedTagText(String value) {
         return Text.literal(value).setStyle(Style.EMPTY.withBold(true).withUnderline(true).withColor(SELECTED_TAG_COLOR));
     }
+
+    private void updatePreview(ItemStack stack) {
+        Optional<SkinTextures> skinTextures = HeadUtils.getSkinTextures(stack);
+        if (skinTextures.isEmpty())
+            return;
+
+        this.frontEntityPreview.setSkin(skinTextures.get().texture(), false);
+        this.backEntityPreview.setSkin(skinTextures.get().texture(), false);
+    }
+
 
     @Override
     public void setMemento(IMementoObject memento) {
