@@ -14,7 +14,7 @@
                         <children>
                             <fzmm.image-rows>
                                 <buttonId>image</buttonId>
-                                <enumId>imageSourceType</enumId>
+                                <imageModeId>imageSourceType</imageModeId>
                             </fzmm.image-rows>
                             <fzmm.slider-row>
                                 <id>width</id>

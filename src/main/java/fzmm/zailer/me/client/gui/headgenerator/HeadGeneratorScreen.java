@@ -3,8 +3,7 @@ package fzmm.zailer.me.client.gui.headgenerator;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.EnumWidget;
-import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
+import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
@@ -49,6 +48,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScreen {
     private static final int COMPOUND_HEAD_LAYOUT_WIDTH = 60;
@@ -101,7 +101,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         this.gridBaseSkinOriginalBody = this.baseSkin;
         this.gridBaseSkinEditedBody = this.baseSkin;
         //general
-        this.skinElements = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, SkinMode.NAME);
+        this.skinElements = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, ImageMode.NAME);
         this.skinElements.imageButton().setButtonCallback(this::imageCallback);
         this.previousSkinName = "";
         this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "", 512);
@@ -281,7 +281,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
                 this.updatePreviews();
             }
 
-            for (SkinPreEditOption option : this.skinPreEditButtons.keySet()) {
+            for (var option : this.skinPreEditButtons.keySet()) {
                 if (option != preEditOption)
                     this.skinPreEditButtons.get(option).active = true;
             }
@@ -476,10 +476,9 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     }
 
     private void onChangeSkinField(String value) {
-        EnumWidget mode = this.skinElements.mode();
-        if (mode == null)
-            return;
-        if (((SkinMode) mode.getValue()).isHeadName() && this.headNameField.getText().equals(this.previousSkinName)) {
+        AtomicReference<ImageMode> mode = this.skinElements.mode();
+
+        if (mode.get().isHeadName() && this.headNameField.getText().equals(this.previousSkinName)) {
             this.headNameField.setText(value);
             this.headNameField.setCursorToStart(false);
         }
@@ -501,7 +500,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     public IMementoObject createMemento() {
         return new HeadGeneratorMemento(
                 this.headNameField.getText(),
-                (SkinMode) this.skinElements.mode().getValue(),
+                this.skinElements.mode().get(),
                 this.skinElements.valueField().getText(),
                 this.showFavorites,
                 this.skinPreEdit(),
@@ -513,7 +512,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     @Override
     public void restoreMemento(IMementoObject mementoObject) {
         HeadGeneratorMemento memento = (HeadGeneratorMemento) mementoObject;
-        this.skinElements.mode().setValue(memento.skinMode);
+        this.skinElements.imageModeButtons().get(memento.skinMode).onPress();
         this.skinElements.valueField().setText(memento.skinRowValue);
         this.skinElements.valueField().setCursorToStart(false);
         this.headNameField.setText(memento.headName);
@@ -526,7 +525,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         this.searchField.setCursorToStart(false);
     }
 
-    private record HeadGeneratorMemento(String headName, SkinMode skinMode, String skinRowValue, boolean showFavorites,
+    private record HeadGeneratorMemento(String headName, ImageMode skinMode, String skinRowValue, boolean showFavorites,
                                         SkinPreEditOption skinPreEditOption, IHeadCategory category,
                                         String search) implements IMementoObject {
     }

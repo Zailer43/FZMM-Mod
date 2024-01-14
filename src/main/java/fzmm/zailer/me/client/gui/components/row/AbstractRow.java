@@ -159,7 +159,7 @@ public abstract class AbstractRow extends FlowLayout {
 
     public void removeHorizontalMargins() {
         Optional<FlowLayout> rightLayoutOptional = this.getRightLayout();
-        if (rightLayoutOptional.isPresent() && rightLayoutOptional.get().children().size() > 0) {
+        if (rightLayoutOptional.isPresent() && !rightLayoutOptional.get().children().isEmpty()) {
             List<Component> rightLayoutChildren = rightLayoutOptional.get().children();
             Component lastElement = rightLayoutChildren.get(rightLayoutChildren.size() - 1);
             Insets previousMargins = lastElement.margins().get();

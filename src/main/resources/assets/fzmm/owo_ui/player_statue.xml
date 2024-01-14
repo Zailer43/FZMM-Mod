@@ -40,7 +40,7 @@
                                 <children>
                                     <fzmm.image-rows>
                                         <buttonId>skin</buttonId>
-                                        <enumId>skin-source</enumId>
+                                        <imageModeId>skin-source</imageModeId>
                                     </fzmm.image-rows>
                                 </children>
                             </fzmm.screen-tab>

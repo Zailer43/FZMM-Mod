@@ -13,7 +13,7 @@
 
                         <fzmm.image-rows>
                             <buttonId>skin</buttonId>
-                            <enumId>skinSourceType</enumId>
+                            <imageModeId>skinSourceType</imageModeId>
                         </fzmm.image-rows>
                         <fzmm.text-box-row>
                             <id>headName</id>

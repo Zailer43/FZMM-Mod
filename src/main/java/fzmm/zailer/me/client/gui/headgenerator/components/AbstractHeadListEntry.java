@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui.headgenerator.components;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
+import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
@@ -237,14 +237,14 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
             ImageRows imageRows = new ImageRows(parent.getBaseScreenTranslationKey(), buttonId, buttonId, enumButtonId, enumButtonId, false);
             parametersLayout.child(imageRows);
 
-            ImageRowsElements elements = ImageRows.setup(parametersLayout, buttonId, enumButtonId, SkinMode.NAME);
+            ImageRowsElements elements = ImageRows.setup(parametersLayout, buttonId, enumButtonId, ImageMode.NAME);
             elements.imageButton().setButtonCallback(bufferedImage -> {
                 parametersEntry.putTexture(texture.id(), bufferedImage);
                 this.update();
             });
 
             elements.suggestionTextBox().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
-            elements.mode().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
+            elements.imageModeButtons().get(elements.mode().get()).horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
         }
     }
 
