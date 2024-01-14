@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.playerstatue.tabs;
 
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
-import fzmm.zailer.me.client.gui.components.image.mode.SkinMode;
+import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
@@ -35,7 +35,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
 
     @Override
     public void setupComponents(FlowLayout rootComponent) {
-        this.skinElements = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_ID, SkinMode.NAME);
+        this.skinElements = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_ID, ImageMode.NAME);
         this.executeButton = rootComponent.childById(ButtonWidget.class, ButtonRow.getButtonId(PlayerStatueScreen.EXECUTE_ID));
 
         ImageButtonComponent skinButton = this.skinElements.imageButton();
@@ -97,7 +97,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
 
     @Override
     public IMementoObject createMemento() {
-        return new GenerateMementoTab(this.skinElements.valueField().getText(), (SkinMode) this.skinElements.mode().getValue());
+        return new GenerateMementoTab(this.skinElements.valueField().getText(), this.skinElements.mode().get());
     }
 
     @Override
@@ -105,9 +105,9 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
         GenerateMementoTab memento = (GenerateMementoTab) mementoTab;
         this.skinElements.valueField().setText(memento.skinRowValue);
         this.skinElements.valueField().setCursorToStart(false);
-        this.skinElements.mode().setValue(memento.sourceType);
+        this.skinElements.imageModeButtons().get(memento.sourceType).onPress();
     }
 
-    private record GenerateMementoTab(String skinRowValue, SkinMode sourceType) implements IMementoObject {
+    private record GenerateMementoTab(String skinRowValue, ImageMode sourceType) implements IMementoObject {
     }
 }

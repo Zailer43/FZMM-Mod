@@ -8,7 +8,7 @@ import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
-import fzmm.zailer.me.client.gui.components.image.mode.ImageMode;
+import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
@@ -192,7 +192,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     @Override
     public IMementoObject createMemento() {
         return new ImagetextMemento(this.imageElements.valueField().getText(),
-                (ImageMode) this.imageElements.mode().getValue(),
+                this.imageElements.mode().get(),
                 (int) this.widthSlider.parsedValue(),
                 (int) this.heightSlider.parsedValue(),
                 this.smoothImageToggle.enabled(),
@@ -209,7 +209,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         ImagetextMemento memento = (ImagetextMemento) mementoObject;
         this.imageElements.valueField().setText(memento.imageRowValue);
         this.imageElements.valueField().setCursorToStart(false);
-        this.imageElements.mode().setValue(memento.imageGetter);
+        this.imageElements.imageModeButtons().get(memento.imageMode).onPress();
         this.widthSlider.setFromDiscreteValue(memento.width);
         this.heightSlider.setFromDiscreteValue(memento.height);
         this.smoothImageToggle.enabled(memento.smoothScaling);
@@ -220,7 +220,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         this.restoreMementoTabs(memento.mementoAlgorithmTabHashMap, this.algorithmsTabs);
     }
 
-    private record ImagetextMemento(String imageRowValue, ImageMode imageGetter, int width, int height,
+    private record ImagetextMemento(String imageRowValue, ImageMode imageMode, int width, int height,
                                     boolean smoothScaling, boolean showResolution, boolean preserveImageAspectRatio,
                                     double percentageOfSimilarityToCompress, HashMap<String, IMementoObject> mementoTabHashMap,
                                     HashMap<String, IMementoObject> mementoAlgorithmTabHashMap) implements IMementoObject {
