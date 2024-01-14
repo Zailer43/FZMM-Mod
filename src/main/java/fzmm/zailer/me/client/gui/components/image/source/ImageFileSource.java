@@ -26,6 +26,7 @@ public class ImageFileSource implements IImageLoaderFromText, IImageSuggestion {
     public ImageStatus loadImage(String value) {
         this.image = null;
 
+        value = this.fixPath(value);
         try {
             File file = Paths.get(value).toFile();
             if (!file.exists())
@@ -49,6 +50,7 @@ public class ImageFileSource implements IImageLoaderFromText, IImageSuggestion {
 
     @Override
     public boolean predicate(String value) {
+        value = this.fixPath(value);
         File file = new File(value);
         return file.exists() && file.isFile();
     }
@@ -102,5 +104,18 @@ public class ImageFileSource implements IImageLoaderFromText, IImageSuggestion {
         }
 
         suggestions.forEach(builder::suggest);
+    }
+
+    /**
+     * In Windows when copying the path to a file you get the path
+     * with quotes but the path is not valid if they are not removed.
+     * @return the path without quotes
+     */
+    private String fixPath(String path) {
+        if (path.startsWith("\"") && path.endsWith("\"")) {
+            path = path.substring(1, path.length() - 1);
+        }
+
+        return path;
     }
 }
