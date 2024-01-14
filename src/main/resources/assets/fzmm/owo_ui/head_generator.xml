@@ -122,11 +122,23 @@
                                                 <button id="toggle-favorite-list">
                                                 </button>
 
-                                                <fzmm.enum-option id="skinPreEdit-enum-option">
-                                                    <sizing>
-                                                        <horizontal method="content">0</horizontal>
-                                                    </sizing>
-                                                </fzmm.enum-option>
+                                                <flow-layout direction="horizontal" id="skin-pre-edit-layout">
+                                                    <children>
+                                                        <button id="skin-pre-edit-none">
+                                                        </button>
+
+                                                        <button id="skin-pre-edit-overlap">
+                                                        </button>
+
+                                                        <button id="skin-pre-edit-remove">
+                                                        </button>
+                                                    </children>
+                                                    <gap>4</gap>
+
+                                                    <margins>
+                                                        <left>6</left>
+                                                    </margins>
+                                                </flow-layout>
                                             </children>
 
                                             <horizontal-alignment>left</horizontal-alignment>
