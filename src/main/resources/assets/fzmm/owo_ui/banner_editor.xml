@@ -46,6 +46,31 @@
                                                     <horizontal method="fixed">95</horizontal>
                                                 </sizing>
                                             </button>
+
+                                            <flow-layout direction="horizontal">
+                                                <children>
+                                                    <button id="undo">
+                                                        <text translate="true">fzmm.gui.button.arrow2.left</text>
+                                                        <tooltip-text translate="true">fzmm.gui.bannerEditor.option.undo.tooltip</tooltip-text>
+                                                        <positioning type="relative">0,100</positioning>
+                                                    </button>
+
+                                                    <button id="redo">
+                                                        <text translate="true">fzmm.gui.button.arrow2.right</text>
+                                                        <tooltip-text translate="true">fzmm.gui.bannerEditor.option.redo.tooltip</tooltip-text>
+                                                        <positioning type="relative">100,100</positioning>
+                                                    </button>
+                                                </children>
+
+                                                <sizing>
+                                                    <vertical method="fixed">20</vertical>
+                                                    <horizontal method="fixed">95</horizontal>
+                                                </sizing>
+
+                                                <margins>
+                                                    <all>1</all>
+                                                </margins>
+                                            </flow-layout>
                                         </children>
                                         <gap>4</gap>
 

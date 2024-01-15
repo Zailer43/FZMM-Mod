@@ -16,10 +16,12 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
 
@@ -58,12 +60,9 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
 
             this.onItemComponentCreated(parent, itemComponent, pattern, currentBanner, color);
             itemComponent.cursorStyle(CursorStyle.HAND);
-            if (pattern instanceof NbtCompound patternCompound) {
-                DyeColor patternColor = DyeColor.byId(patternCompound.getInt(TagsConstant.BANNER_PATTERN_COLOR));
-                RegistryEntry<BannerPattern> patternRegistry = BannerPattern.byId(patternCompound.getString(TagsConstant.BANNER_PATTERN_VALUE));
 
-                itemComponent.tooltip(BannerBuilder.tooltipOf(patternColor, patternRegistry));
-            }
+            Optional<Text> tooltip = this.getTooltip(parent, pattern, currentBanner, color);
+            tooltip.ifPresent(itemComponent::tooltip);
 
             bannerList.add(itemComponent);
         }
@@ -71,4 +70,15 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
     }
 
     protected abstract void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color);
+
+    protected Optional<Text> getTooltip(BannerEditorScreen parent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color) {
+        if (pattern instanceof NbtCompound patternCompound) {
+            DyeColor patternColor = DyeColor.byId(patternCompound.getInt(TagsConstant.BANNER_PATTERN_COLOR));
+            RegistryEntry<BannerPattern> patternRegistry = BannerPattern.byId(patternCompound.getString(TagsConstant.BANNER_PATTERN_VALUE));
+
+            return Optional.of(BannerBuilder.tooltipOf(patternColor, patternRegistry));
+        }
+
+        return Optional.empty();
+    }
 }

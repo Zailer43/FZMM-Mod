@@ -29,6 +29,8 @@ public class RemovePatternsTab extends AbstractModifyPatternsTab {
     protected void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color) {
         itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
             UISounds.playButtonSound();
+            parent.addUndo(currentBanner);
+
             currentBanner.removePattern(pattern);
 
             parent.updatePreview(currentBanner);
