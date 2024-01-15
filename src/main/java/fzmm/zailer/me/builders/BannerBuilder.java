@@ -147,7 +147,7 @@ public class BannerBuilder {
 
     private void formatPatterns() {
         BannerPattern basePattern = Registries.BANNER_PATTERN.get(BannerPatterns.BASE);
-        if (basePattern == null || this.patterns.size() == 0)
+        if (basePattern == null || this.patterns.isEmpty())
             return;
 
         NbtElement firstPatternElement = this.patterns.get(0);

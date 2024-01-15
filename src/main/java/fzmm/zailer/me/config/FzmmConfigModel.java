@@ -21,6 +21,12 @@ public class FzmmConfigModel {
 
     @Nest
     public GeneralNest general = new GeneralNest();
+
+
+    @Nest
+    public ItemEditorBannerNest itemEditorBanner = new ItemEditorBannerNest();
+
+
     @Nest
     public ColorsNest colors = new ColorsNest();
     @Nest
@@ -47,6 +53,11 @@ public class FzmmConfigModel {
         public boolean giveClientSide = false;
         public boolean showSymbolButton = true;
         public boolean showItemSize = true;
+    }
+
+    public static class ItemEditorBannerNest {
+        @RangeConstraint(min = 0, max = 300, decimalPlaces = 0)
+        public int maxUndo = 75;
     }
 
     public static class MineskinNest {

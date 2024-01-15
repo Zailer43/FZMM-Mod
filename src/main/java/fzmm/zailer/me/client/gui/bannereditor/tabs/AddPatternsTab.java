@@ -57,6 +57,7 @@ public class AddPatternsTab implements IBannerEditorTab {
 
             itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
                 UISounds.playButtonSound();
+                parent.addUndo(currentBanner);
 
                 currentBanner.addPattern(color, pattern);
 

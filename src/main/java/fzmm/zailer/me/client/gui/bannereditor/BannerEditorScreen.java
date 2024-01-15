@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.bannereditor;
 
 import fzmm.zailer.me.builders.BannerBuilder;
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.bannereditor.tabs.BannerEditorTabs;
 import fzmm.zailer.me.client.gui.bannereditor.tabs.IBannerEditorTab;
@@ -24,7 +25,9 @@ import net.minecraft.item.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,11 +38,17 @@ public class BannerEditorScreen extends BaseFzmmScreen {
     private static final String SELECT_BANNER_BUTTON_ID = "select-banner-button";
     private static final String IS_SHIELD_ID = "isShield";
     private static final String CONTENT_ID = "content";
+    private static final String UNDO_BUTTON_ID = "undo";
+    private static final String REDO_BUTTON_ID = "redo";
     private static BannerEditorTabs selectedTab = BannerEditorTabs.ADD_PATTERNS;
     private ItemComponent bannerPreview;
     private BooleanButton isShieldButton;
     private BannerBuilder bannerBuilder;
     private DyeColor selectedColor;
+    private ButtonComponent undoButton;
+    private ButtonComponent redoButton;
+    private ArrayDeque<BannerBuilder> undoArray;
+    private ArrayDeque<BannerBuilder> redoArray;
 
     public BannerEditorScreen(@Nullable Screen parent) {
         super("banner_editor", "bannerEditor", parent);
@@ -47,11 +56,12 @@ public class BannerEditorScreen extends BaseFzmmScreen {
 
     @Override
     protected void setupButtonsCallbacks(FlowLayout rootComponent) {
-        //general
+        //preview
         this.bannerPreview = rootComponent.childById(ItemComponent.class, BANNER_PREVIEW_ID);
         checkNull(this.bannerPreview, "flow-layout", BANNER_PREVIEW_ID);
         this.bannerBuilder = BannerBuilder.of(Items.WHITE_BANNER.getDefaultStack());
 
+        //preview buttons
         ButtonComponent giveButton = rootComponent.childById(ButtonComponent.class, GIVE_BUTTON_ID);
         checkNull(giveButton, "button", GIVE_BUTTON_ID);
         giveButton.onPress(buttonComponent -> FzmmUtils.giveItem(this.bannerBuilder.get()));
@@ -60,6 +70,19 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         checkNull(selectBannerButton, "button", SELECT_BANNER_BUTTON_ID);
         selectBannerButton.onPress(buttonComponent -> this.selectBanner());
 
+        this.undoArray = new ArrayDeque<>();
+        this.undoButton = rootComponent.childById(ButtonComponent.class, UNDO_BUTTON_ID);
+        checkNull(this.undoButton, "button", UNDO_BUTTON_ID);
+        this.undoButton.onPress(buttonComponent -> this.undo());
+
+        this.redoArray = new ArrayDeque<>();
+        this.redoButton = rootComponent.childById(ButtonComponent.class, REDO_BUTTON_ID);
+        checkNull(this.redoButton, "button", REDO_BUTTON_ID);
+        this.redoButton.onPress(buttonComponent -> this.redo());
+
+        this.clearUndo();
+
+        //content
         FlowLayout contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
         checkNull(contentLayout, "flow-layout", CONTENT_ID);
 
@@ -118,6 +141,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
             this.updatePreview(this.bannerBuilder.isShield(isShield));
         });
 
+        this.clearUndo();
         this.updatePreview(this.bannerBuilder);
     }
 
@@ -150,8 +174,87 @@ public class BannerEditorScreen extends BaseFzmmScreen {
     }
 
     public void updatePreview(BannerBuilder builder) {
+        this.updatePreview(builder, true);
+    }
+
+    private void updatePreview(BannerBuilder builder, boolean canClearUndo) {
+        if (canClearUndo && !this.redoArray.isEmpty())
+            this.clearUndo();
+
         this.bannerPreview.stack(builder.get());
         this.getTab(selectedTab, IBannerEditorTab.class).update(this, builder, this.selectedColor);
     }
 
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_Z && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0 && (modifiers & GLFW.GLFW_MOD_SHIFT) == 0) {
+            this.undo();
+            return true;
+        }
+
+        if ((keyCode == GLFW.GLFW_KEY_Z && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0  && (modifiers & GLFW.GLFW_MOD_SHIFT) != 0 )
+                || (keyCode == GLFW.GLFW_KEY_Y && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0)) {
+
+            this.redo();
+            return true;
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    private void undo() {
+        BannerBuilder currentBanner = this.bannerBuilder.copy();
+
+        if (this.undoArray.isEmpty()) {
+            if (!this.bannerBuilder.patterns().isEmpty()) {
+                this.bannerBuilder.patterns().clear();
+                this.updatePreview(this.bannerBuilder);
+                this.redoArray.addFirst(currentBanner);
+            }
+            return;
+        }
+
+        BannerBuilder bannerBuilder = this.undoArray.removeFirst();
+        this.bannerBuilder = bannerBuilder;
+        this.updatePreview(bannerBuilder, false);
+        this.redoArray.addFirst(currentBanner);
+
+        this.redoButton.active = true;
+        if (this.undoArray.isEmpty() && bannerBuilder.patterns().isEmpty())
+            this.undoButton.active = false;
+    }
+
+    private void redo() {
+        if (this.redoArray.isEmpty())
+            return;
+
+        BannerBuilder bannerBuilder = this.redoArray.removeFirst();
+        BannerBuilder currentBanner = this.bannerBuilder.copy();
+        this.bannerBuilder = bannerBuilder;
+        this.updatePreview(bannerBuilder, false);
+        this.undoArray.addFirst(currentBanner);
+
+        this.undoButton.active = true;
+        if (this.redoArray.isEmpty())
+            this.redoButton.active = false;
+    }
+
+    public void addUndo(BannerBuilder bannerBuilder) {
+        this.undoArray.addFirst(bannerBuilder.copy());
+        if (this.undoArray.size() > FzmmClient.CONFIG.itemEditorBanner.maxUndo())
+            this.undoArray.removeLast();
+
+        this.redoArray.clear();
+
+        this.redoButton.active = false;
+        this.undoButton.active = true;
+    }
+
+    public void clearUndo() {
+        this.undoArray.clear();
+        this.redoArray.clear();
+
+        this.undoButton.active = false;
+        this.redoButton.active = false;
+    }
 }
