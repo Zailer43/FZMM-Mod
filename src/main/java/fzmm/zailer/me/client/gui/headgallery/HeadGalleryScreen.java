@@ -4,9 +4,9 @@ import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.GiveItemComponent;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
-import fzmm.zailer.me.client.gui.headgallery.components.HeadGalleryItemComponent;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.headGallery.HeadGalleryResources;
@@ -60,8 +60,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     private int page;
     private FlowLayout contentLayout;
     private LabelComponent currentPageLabel;
-    private final ObjectArrayList<HeadGalleryItemComponent> heads;
-    private final ObjectArrayList<HeadGalleryItemComponent> headsWithFilter;
+    private final ObjectArrayList<MinecraftHeadsData> categoryHeads;
+    private final ObjectArrayList<MinecraftHeadsData> categoryHeadsWithFilter;
     private TextBoxComponent contentSearchField;
     private ButtonComponent tagButton;
     private List<Component> categoryButtonList;
@@ -77,8 +77,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
     public HeadGalleryScreen(@Nullable Screen parent) {
         super("head_gallery", "headGallery", parent);
-        this.heads = new ObjectArrayList<>();
-        this.headsWithFilter = new ObjectArrayList<>();
+        this.categoryHeads = new ObjectArrayList<>();
+        this.categoryHeadsWithFilter = new ObjectArrayList<>();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         FlowLayout previewLayout = rootComponent.childById(FlowLayout.class, "preview-layout");
         checkNull(previewLayout, "flow-layout", "preview-layout");
         this.frontEntityPreview = new CustomHeadEntity(this.client.world);
-        this.backEntityPreview= new CustomHeadEntity(this.client.world);
+        this.backEntityPreview = new CustomHeadEntity(this.client.world);
 
         EntityComponent<CustomHeadEntity> backEntityPreview = Components.entity(Sizing.fixed(48), this.backEntityPreview)
                 .allowMouseRotation(true);
@@ -168,37 +168,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
         HeadGalleryResources.getCategory(category).thenAccept(categoryData -> this.client.execute(() -> {
             this.selectedCategory = category;
-            this.heads.clear();
-            FzmmConfig config = FzmmClient.CONFIG;
-            int nameColor = config.colors.headGalleryName().rgb();
-            int tagsColor = config.colors.headGalleryTags().rgb();
-            boolean stylingHeads = config.headGallery.stylingHeads();
-            ObjectArrayList<HeadGalleryItemComponent> categoryHeads = categoryData.stream()
-                    .map(minecraftHeadsData -> {
-                        ItemStack head = HeadBuilder.builder()
-                                .skinValue(minecraftHeadsData.value())
-                                .id(minecraftHeadsData.uuid())
-                                .notAddToHistory()
-                                .get();
-
-                        DisplayBuilder builder = DisplayBuilder.of(head);
-
-                        if (stylingHeads) {
-                            builder.setName(Text.translatable("fzmm.item.headGallery.heads.name", minecraftHeadsData.name()).getString(), nameColor)
-                                    .addLore(Text.translatable("fzmm.item.headGallery.heads.tags.title").getString(), tagsColor);
-
-                            for (var tag : minecraftHeadsData.tags())
-                                builder.addLore(Text.translatable("fzmm.item.headGallery.heads.tags.tag", tag).getString(), tagsColor);
-
-                        } else {
-                            builder.setName(minecraftHeadsData.name());
-                        }
-
-                        head = builder.get();
-
-                        return new HeadGalleryItemComponent(head, head.getName().getString(), minecraftHeadsData.tags());
-                    }).collect(ObjectArrayList.toList());
-            this.heads.addAll(categoryHeads);
+            this.categoryHeads.clear();
+            this.categoryHeads.addAll(categoryData);
 
             for (var component : this.categoryButtonList) {
                 if (component instanceof ButtonWidget button)
@@ -219,7 +190,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
             if (throwable == null) {
                 this.errorLabel.text(Text.empty());
             } else {
-                this.heads.clear();
+                this.categoryHeads.clear();
                 this.applyFilters();
                 this.setPage(1);
                 this.errorLabel.text(Text.translatable("fzmm.gui.headGallery.label.error", category, throwable.getCause())
@@ -323,18 +294,18 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
             page = 1;
 
         int firstElementIndex = (page - 1) * maxHeadsPerPage;
-        int lastPage = (int) Math.ceil(this.headsWithFilter.size() / (float) maxHeadsPerPage);
+        int lastPage = (int) Math.ceil(this.categoryHeadsWithFilter.size() / (float) maxHeadsPerPage);
 
-        if (firstElementIndex >= this.headsWithFilter.size()) {
+        if (firstElementIndex >= this.categoryHeadsWithFilter.size()) {
             page = lastPage;
-            firstElementIndex = this.headsWithFilter.isEmpty() ? 0 : (lastPage - 1) * maxHeadsPerPage;
+            firstElementIndex = this.categoryHeadsWithFilter.isEmpty() ? 0 : (lastPage - 1) * maxHeadsPerPage;
         }
 
         this.page = page;
         this.currentPageLabel.text(Text.translatable("fzmm.gui.headGallery.label.page", page, lastPage));
 
-        int lastElementIndex = Math.min((page) * maxHeadsPerPage, this.headsWithFilter.size());
-        List<HeadGalleryItemComponent> currentPageHeads = this.headsWithFilter.subList(firstElementIndex, lastElementIndex);
+        int lastElementIndex = Math.min((page) * maxHeadsPerPage, this.categoryHeadsWithFilter.size());
+        List<GiveItemComponent> currentPageHeads = this.getPageItems(firstElementIndex, lastElementIndex);
 
         assert this.client != null;
 
@@ -352,15 +323,50 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         });
     }
 
+    public List<GiveItemComponent> getPageItems(int startIndex, int endIndex) {
+        List<GiveItemComponent> pageItems = new ArrayList<>();
+        FzmmConfig config = FzmmClient.CONFIG;
+        int nameColor = config.colors.headGalleryName().rgb();
+        int tagsColor = config.colors.headGalleryTags().rgb();
+        boolean stylingHeads = config.headGallery.stylingHeads();
+
+        for (int i = startIndex; i != endIndex; i++) {
+            MinecraftHeadsData minecraftHeadsData = this.categoryHeadsWithFilter.get(i);
+            ItemStack head = HeadBuilder.builder()
+                    .skinValue(minecraftHeadsData.value())
+                    .id(minecraftHeadsData.uuid())
+                    .notAddToHistory()
+                    .get();
+
+            DisplayBuilder builder = DisplayBuilder.of(head);
+
+            if (stylingHeads) {
+                builder.setName(Text.translatable("fzmm.item.headGallery.heads.name", minecraftHeadsData.name()).getString(), nameColor)
+                        .addLore(Text.translatable("fzmm.item.headGallery.heads.tags.title").getString(), tagsColor);
+
+                for (var tag : minecraftHeadsData.tags())
+                    builder.addLore(Text.translatable("fzmm.item.headGallery.heads.tags.tag", tag).getString(), tagsColor);
+            } else {
+                builder.setName(minecraftHeadsData.name());
+            }
+
+            head = builder.get();
+
+            pageItems.add(new GiveItemComponent(head));
+        }
+
+        return pageItems;
+    }
+
     public void applyFilters() {
         if (this.contentSearchField == null)
             return;
 
-        this.headsWithFilter.clear();
-        this.headsWithFilter.addAll(this.heads);
+        this.categoryHeadsWithFilter.clear();
+        this.categoryHeadsWithFilter.addAll(this.categoryHeads);
 
         String search = this.contentSearchField.getText().toLowerCase();
-        this.headsWithFilter.removeIf(itemComponent -> !itemComponent.filter(this.selectedTags, search));
+        this.categoryHeadsWithFilter.removeIf(itemComponent -> !itemComponent.filter(this.selectedTags, search));
     }
 
     private void minecraftHeadsExecute() {
@@ -379,7 +385,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     }
 
     private Text getTagLabelText() {
-        return Text.translatable(TAG_LABEL_TEXT, this.selectedTags.size(), this.headsWithFilter.size());
+        return Text.translatable(TAG_LABEL_TEXT, this.selectedTags.size(), this.categoryHeadsWithFilter.size());
     }
 
     private Text getSelectedTagText(String value) {
@@ -435,6 +441,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         }
     }
 
-    private record HeadGalleryMemento(Set<String> selectedTags, int page, String category, String contentSearch) implements IMementoObject {
+    private record HeadGalleryMemento(Set<String> selectedTags, int page, String category,
+                                      String contentSearch) implements IMementoObject {
     }
 }
