@@ -124,14 +124,20 @@
 
                                                 <flow-layout direction="horizontal" id="skin-pre-edit-layout">
                                                     <children>
-                                                        <button id="skin-pre-edit-none">
-                                                        </button>
+                                                        <flow-layout direction="vertical" id="skin-pre-edit-none">
+                                                            <children>
+                                                            </children>
+                                                        </flow-layout>
 
-                                                        <button id="skin-pre-edit-overlap">
-                                                        </button>
+                                                        <flow-layout direction="vertical" id="skin-pre-edit-overlap">
+                                                            <children>
+                                                            </children>
+                                                        </flow-layout>
 
-                                                        <button id="skin-pre-edit-remove">
-                                                        </button>
+                                                        <flow-layout direction="vertical" id="skin-pre-edit-remove">
+                                                            <children>
+                                                            </children>
+                                                        </flow-layout>
                                                     </children>
                                                     <gap>4</gap>
 

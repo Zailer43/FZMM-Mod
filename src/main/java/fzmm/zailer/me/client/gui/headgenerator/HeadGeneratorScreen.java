@@ -130,10 +130,6 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
         // nav var
         this.searchField = TextBoxRow.setup(rootComponent, SEARCH_ID, "", 128, s -> this.applyFilters());
-//        this.skinPreEditLayout = EnumRow.setup(rootComponent, SKIN_PRE_EDIT_LAYOUT_ID, SkinPreEditOption.OVERLAP, true, button -> {
-//            if (this.skinElements.imageButton().hasImage())
-//                this.updatePreviews();
-//        });
 
         this.skinPreEditButtons = new HashMap<>();
         for (SkinPreEditOption preEditOption : SkinPreEditOption.values()) {
@@ -272,9 +268,11 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     }
 
     public void setupPreEditButton(FlowLayout rootComponent, SkinPreEditOption preEditOption) {
-        ButtonComponent preEditButton = rootComponent.childById(ButtonComponent.class, preEditOption.getId());
-        checkNull(preEditButton, "button", preEditOption.getId());
-        preEditButton.onPress(button -> {
+        FlowLayout preEditLayout = rootComponent.childById(FlowLayout.class, preEditOption.getId());
+        checkNull(preEditLayout, "button", preEditOption.getId());
+        preEditLayout.tooltip(Text.translatable(preEditOption.getTranslationKey() + ".tooltip"));
+
+        ButtonComponent preEditButton = Components.button(Text.empty(), button -> {
             this.selectedSkinPreEdit = preEditOption;
 
             if (this.skinElements.imageButton().hasImage()) {
@@ -292,9 +290,9 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
             ButtonComponent.Renderer.VANILLA.draw(context, button, delta);
             preEditOption.getIcon().render(context, button.x() + 2, button.y() + 2, 0, 0, delta);
         });
-        preEditButton.tooltip(Text.translatable(preEditOption.getTranslationKey() + ".tooltip"));
 
         this.skinPreEditButtons.put(preEditOption, preEditButton);
+        preEditLayout.child(preEditButton);
     }
 
     public BufferedImage getGridBaseSkin(boolean editBody) {
