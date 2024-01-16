@@ -16,4 +16,10 @@ public record MinecraftHeadsData(String name, UUID uuid, String value, Set<Strin
         Set<String> tags = new HashSet<>(Arrays.asList(jsonObject.get("tags").getAsString().split(",")));
         return new MinecraftHeadsData(name, uuid, value, tags);
     }
+
+    public boolean filter(Set<String> tags, String toLowerCaseName) {
+        boolean hasTag = tags.isEmpty() || this.tags.containsAll(tags);
+
+        return hasTag && this.name.toLowerCase().contains(toLowerCaseName);
+    }
 }
