@@ -244,7 +244,6 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
             });
 
             elements.suggestionTextBox().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
-            elements.imageModeButtons().get(elements.mode().get()).horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
         }
     }
 
