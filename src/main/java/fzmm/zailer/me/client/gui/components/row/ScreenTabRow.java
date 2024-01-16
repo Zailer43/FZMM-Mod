@@ -5,6 +5,7 @@ import fzmm.zailer.me.client.gui.components.tabs.IScreenTabIdentifier;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
@@ -14,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScreenTabRow extends AbstractRow {
+    private FlowLayout tabsLayout;
+    private ScrollContainer<?> scrollContainer;
+
     public ScreenTabRow(String baseTranslationKey, String id) {
         super(baseTranslationKey);
         this.id(id);
@@ -60,15 +64,15 @@ public class ScreenTabRow extends AbstractRow {
             componentList.add(button);
         }
 
-        Component flowLayoutComponent = Containers.horizontalFlow(Sizing.content(), Sizing.content())
+        this.tabsLayout = (FlowLayout) Containers.horizontalFlow(Sizing.content(), Sizing.content())
                 .children(componentList)
                 .gap(this.gap())
                 .margins(Insets.vertical(4));
-        Component scrollComponent = Containers.horizontalScroll(Sizing.fill(100), Sizing.fill(100), flowLayoutComponent)
+        this.scrollContainer = (ScrollContainer<?>) Containers.horizontalScroll(Sizing.fill(100), Sizing.fill(100), this.tabsLayout)
                 .alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
                 .margins(Insets.horizontal(20));
 
-        this.child(scrollComponent);
+        this.child(this.scrollContainer);
 
     }
 
@@ -77,5 +81,14 @@ public class ScreenTabRow extends AbstractRow {
         String id = getId(element);
 
         return new ScreenTabRow(baseTranslationKey, id);
+    }
+
+    @Override
+    public boolean onMouseScroll(double mouseX, double mouseY, double amount) {
+        if (this.scrollContainer.width() > this.tabsLayout.width())
+            return false;
+
+
+        return super.onMouseScroll(mouseX, mouseY, amount);
     }
 }
