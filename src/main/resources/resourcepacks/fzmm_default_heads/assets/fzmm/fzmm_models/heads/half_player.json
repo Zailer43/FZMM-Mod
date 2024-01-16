@@ -1,4 +1,5 @@
 {
+  "is_editing_skin_body": true,
   "textures": [
     {
       "id": "half",
@@ -64,6 +65,71 @@
       "add_hat_layer": true
     },
     {
+      "comment": "left arm",
+      "type": "copy",
+      "source": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "left leg",
+      "type": "copy",
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "left front body",
+      "type": "copy",
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 8,
+        "height": 16
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "left bottom body",
+      "type": "copy",
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 12,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "left back body",
+      "type": "copy",
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 20,
+        "y": 0,
+        "width": 4,
+        "height": 16
+      },
+      "add_hat_layer": true
+    },
+    {
       "type": "select_texture",
       "texture_id": "half"
     },
@@ -76,7 +142,7 @@
         "x": 0,
         "y": 0,
         "width": 64,
-        "height": 16
+        "height": 64
       }
     },
     {
@@ -119,6 +185,71 @@
         "y": 0,
         "width": 4,
         "height": 8
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right arm",
+      "type": "copy",
+      "source": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right leg",
+      "type": "copy",
+      "source": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 0,
+        "width": 16,
+        "height": 16
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right front body",
+      "type": "copy",
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 4,
+        "height": 16
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right side body",
+      "type": "copy",
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "add_hat_layer": true
+    },
+    {
+      "comment": "right back body",
+      "type": "copy",
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 16,
+        "y": 0,
+        "width": 4,
+        "height": 16
       },
       "add_hat_layer": true
     }

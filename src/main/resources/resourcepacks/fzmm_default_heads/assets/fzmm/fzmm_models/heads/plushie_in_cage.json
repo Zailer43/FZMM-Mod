@@ -1,0 +1,394 @@
+{
+  "textures": [
+    {
+      "path": "fzmm:textures/model_textures/cage.png",
+      "id": "cage",
+      "requested": false
+    }
+  ],
+  "steps": [
+    {
+      "comment": "head top",
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 0,
+        "width": 8,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "head lateral",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 64,
+        "height": 5
+      },
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 8,
+        "width": 64,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "body",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 13,
+        "width": 8,
+        "height": 2
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 13,
+        "width": 8,
+        "height": 2
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 8,
+        "height": 12
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 13,
+        "width": 8,
+        "height": 2
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 24,
+        "y": 13,
+        "width": 8,
+        "height": 2
+      },
+      "source": {
+        "offset": "BODY",
+        "hat_layer": false,
+        "x": 16,
+        "y": 4,
+        "width": 8,
+        "height": 12
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "right leg lateral",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 15,
+        "width": 8,
+        "height": 1
+      },
+      "source": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 8,
+        "y": 4,
+        "width": 4,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "right leg front",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 12,
+        "y": 15,
+        "width": 4,
+        "height": 1
+      },
+      "source": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 4,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "right leg back",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 24,
+        "y": 15,
+        "width": 4,
+        "height": 1
+      },
+      "source": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "right leg bottom",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 20,
+        "y": 0,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "RIGHT_LEG",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "left leg lateral",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 0,
+        "y": 15,
+        "width": 8,
+        "height": 1
+      },
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "left leg front",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 8,
+        "y": 15,
+        "width": 4,
+        "height": 1
+      },
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 4,
+        "y": 4,
+        "width": 4,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "left leg back",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 28,
+        "y": 15,
+        "width": 4,
+        "height": 1
+      },
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "left leg bottom",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": false,
+        "x": 16,
+        "y": 0,
+        "width": 4,
+        "height": 8
+      },
+      "source": {
+        "offset": "LEFT_LEG",
+        "hat_layer": false,
+        "x": 12,
+        "y": 4,
+        "width": 4,
+        "height": 8
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "right arm",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 16,
+        "y": 13,
+        "width": 1,
+        "height": 1
+      },
+      "source": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 8,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "right hand",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 14,
+        "y": 12,
+        "width": 2,
+        "height": 2
+      },
+      "source": {
+        "offset": "RIGHT_ARM",
+        "hat_layer": false,
+        "x": 4,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "left arm",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 7,
+        "y": 13,
+        "width": 1,
+        "height": 1
+      },
+      "source": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 0,
+        "y": 4,
+        "width": 4,
+        "height": 12
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "comment": "left hand",
+      "type": "copy",
+      "destination": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 8,
+        "y": 12,
+        "width": 2,
+        "height": 2
+      },
+      "source": {
+        "offset": "LEFT_ARM",
+        "hat_layer": false,
+        "x": 4,
+        "y": 0,
+        "width": 4,
+        "height": 4
+      },
+      "overlap_source_hat": true
+    },
+    {
+      "type": "select_texture",
+      "texture_id": "cage"
+    },
+    {
+      "type": "copy",
+      "source": {
+        "offset": "HEAD",
+        "hat_layer": true,
+        "x": 0,
+        "y": 0,
+        "width": 32,
+        "height": 16
+      }
+    }
+  ]
+}
+
