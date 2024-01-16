@@ -116,10 +116,22 @@ public class SignBuilder {
     public ItemStack get() {
         NbtCompound entityTag = new NbtCompound();
 
-        this.frontCompound.put(TagsConstant.SIGN_MESSAGES, this.frontTextList);
-        this.backCompound.put(TagsConstant.SIGN_MESSAGES, this.backTextList);
-        entityTag.put(TagsConstant.SIGN_FRONT_TEXT, this.frontCompound);
-        entityTag.put(TagsConstant.SIGN_BACK_TEXT, this.backCompound);
+        if (!this.frontTextList.isEmpty()) {
+            while (this.frontTextList.size() < 4) {
+                this.frontTextList.add(NbtString.of("\"\""));
+            }
+            this.frontCompound.put(TagsConstant.SIGN_MESSAGES, this.frontTextList);
+            entityTag.put(TagsConstant.SIGN_FRONT_TEXT, this.frontCompound);
+        }
+
+        if (!this.backTextList.isEmpty()) {
+            while (this.backTextList.size() < 4) {
+                this.backTextList.add(NbtString.of("\"\""));
+            }
+            this.backCompound.put(TagsConstant.SIGN_MESSAGES, this.backTextList);
+            entityTag.put(TagsConstant.SIGN_BACK_TEXT, this.backCompound);
+        }
+
         entityTag.putBoolean(TagsConstant.SIGN_IS_WAXED, this.isWaxed);
 
         this.stack.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, entityTag);
