@@ -81,7 +81,7 @@
                                             <horizontal method="fill">100</horizontal>
                                         </sizing>
 
-                                        <horizontal-alignment>center</horizontal-alignment>
+                                        <horizontal-alignment>left</horizontal-alignment>
                                     </flow-layout>
 
                                     <sizing>
