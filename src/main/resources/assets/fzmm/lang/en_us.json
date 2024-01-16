@@ -183,7 +183,7 @@
   "fzmm.gui.headGenerator.option.skin": "Skin",
   "fzmm.gui.headGenerator.option.skin.tooltip": "Skin used for the head to be generated.",
   "fzmm.gui.headGenerator.option.skinPreEdit.none.tooltip": "Pre-edit: None\nIt does not modify the skin.",
-  "fzmm.gui.headGenerator.option.skinPreEdit.overlap.tooltip": "Pre-edit: Overlap\nIt overlaps the second layer of the skin on the first one.",
+  "fzmm.gui.headGenerator.option.skinPreEdit.overlap.tooltip": "Pre-edit: Overlap\nIt overlaps the second layer\nof the skin on the first one.",
   "fzmm.gui.headGenerator.option.skinPreEdit.remove.tooltip": "Pre-edit: Remove\nRemoves the second skin layer.",
   "fzmm.gui.headGenerator.option.skinSourceType": "Skin source type",
   "fzmm.gui.headGenerator.option.skinSourceType.tooltip": "Source from which the skin for the head will be obtained.\n\nSupports 64x64 and 64x32 skin.",

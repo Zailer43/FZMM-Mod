@@ -79,11 +79,12 @@ public class ImageRows extends FlowLayout {
 
                 ImageButtonRow.setupSuggestionTextBox(suggestionTextBox, imageGetter);
             });
-            
-            modeButton.tooltip(Text.translatable(modeOption.getTranslationKey() + ".tooltip"));
+            FlowLayout modeButtonLayout = Containers.verticalFlow(Sizing.content(), Sizing.content());
+            modeButtonLayout.tooltip(Text.translatable(modeOption.getTranslationKey() + ".tooltip"));
             modeButton.horizontalSizing(Sizing.fixed(20));
+            modeButtonLayout.child(modeButton);
             imageModeButtons.put(modeOption, modeButton);
-            imageModeLayout.child(modeButton);
+            imageModeLayout.child(modeButtonLayout);
         }
 
         imageModeButtons.get(defaultValue).onPress();
