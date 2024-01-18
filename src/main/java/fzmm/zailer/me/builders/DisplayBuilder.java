@@ -12,6 +12,8 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class DisplayBuilder {
@@ -76,6 +78,17 @@ public class DisplayBuilder {
     public NbtList getLore() {
         NbtCompound display = this.getDisplay();
         return display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE) ? display.getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE) : new NbtList();
+    }
+
+    public List<Text> getLoreText() {
+        NbtList lore = this.getLore();
+        List<Text> result = new ArrayList<>();
+
+        for (int i = 0; i < lore.size(); i++) {
+            result.add(Text.Serialization.fromJson(lore.getString(i)));
+        }
+
+        return result;
     }
 
     public Optional<String> getName() {

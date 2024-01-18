@@ -2,6 +2,7 @@ package fzmm.zailer.me.client;
 
 import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
 import fzmm.zailer.me.client.gui.main.MainScreen;
+import fzmm.zailer.me.client.gui.utils.autoplacer.AutoPlacerHud;
 import fzmm.zailer.me.client.logic.FzmmHistory;
 import fzmm.zailer.me.client.logic.headGenerator.HeadResourcesLoader;
 import fzmm.zailer.me.client.renderer.customSkin.CustomHeadEntity;
@@ -56,6 +57,8 @@ public class FzmmClient implements ClientModInitializer {
 
             if (ScreenshotSource.hasInstance()) {
                 ScreenshotSource.getInstance().takeScreenshot();
+            } else if (AutoPlacerHud.isHudActive) {
+                AutoPlacerHud.removeHud();
             } else {
                 client.setScreen(new MainScreen(client.currentScreen));
             }
@@ -78,5 +81,7 @@ public class FzmmClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(MODEL_CUSTOM_HEAD_LAYER, CustomHeadEntityModel::getTexturedModelData);
 
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new HeadResourcesLoader());
+
+        AutoPlacerHud.init();
     }
 }

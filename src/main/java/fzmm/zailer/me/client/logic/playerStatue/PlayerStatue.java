@@ -224,13 +224,18 @@ public class PlayerStatue {
         return getStatueInContainer(statueList, pos);
     }
 
-    public static boolean containsStatuePart(ItemStack container) {
-        for (ItemStack stack : InventoryUtils.getItemsFromContainer(container)) {
-            if (StatuePart.isStatue(stack) || isNameTag(stack))
-                return true;
+    public static boolean isPlayerStatue(ItemStack container) {
+        List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container);
+
+        if (containerItems.isEmpty())
+            return false;
+
+        for (ItemStack stack : containerItems) {
+            if (!StatuePart.isStatue(stack) && !isNameTag(stack))
+                return false;
         }
 
-        return false;
+        return true;
     }
 
     private int getSkinScale() {
