@@ -31,9 +31,9 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
         assert client.player != null;
 
         RequestedItem requestedItem = new RequestedItem(
-                PlayerStatue::containsStatuePart,
+                PlayerStatue::isPlayerStatue,
                 stack -> {
-                    if (PlayerStatue.containsStatuePart(stack)) {
+                    if (PlayerStatue.isPlayerStatue(stack)) {
                         ItemStack statue = PlayerStatue.updateStatue(stack, new Vector3f(x, y, z), direction, name);
                         FzmmUtils.giveItem(statue);
 

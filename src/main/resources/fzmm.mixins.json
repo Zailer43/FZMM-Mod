@@ -6,6 +6,7 @@
   "client": [
     "screenshotHud.ChatHudMixin",
     "screenshotHud.GameRendererMixin",
+    "AutoPlacerMixin",
     "ChatScreenMixin",
     "HandledScreenAccessor",
     "ItemFrameEntityRendererMixin",

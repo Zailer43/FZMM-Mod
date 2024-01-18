@@ -1,0 +1,93 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <flow-layout direction="vertical" id="main-layout">
+                    <children>
+                        <flow-layout direction="horizontal">
+                            <children>
+                                <button id="place-player-statue">
+                                    <text translate="true">fzmm.gui.playerStatuePlacer.option.place-player-statue</text>
+                                    <positioning type="relative">0,0</positioning>
+                                </button>
+
+                                <button id="cancel">
+                                    <text translate="true">fzmm.gui.button.cancel</text>
+                                    <positioning type="relative">100,0</positioning>
+                                </button>
+                            </children>
+
+                            <sizing>
+                                <vertical method="fixed">30</vertical>
+                                <horizontal method="fill">100</horizontal>
+                            </sizing>
+                        </flow-layout>
+
+                        <flow-layout direction="horizontal">
+                            <children>
+                                <flow-layout direction="vertical" id="loading-bar">
+                                    <children>
+                                    </children>
+
+                                    <surface>
+                                        <flat>#2DD25E</flat>
+                                    </surface>
+
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                        <horizontal method="fill">0</horizontal>
+                                    </sizing>
+
+                                    <margins>
+                                        <all>1</all>
+                                    </margins>
+
+                                    <positioning type="relative">0,0</positioning>
+                                </flow-layout>
+
+                                <label id="loading-label">
+                                    <text>0%</text>
+                                </label>
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                                <vertical method="fixed">15</vertical>
+                            </sizing>
+
+                            <horizontal-alignment>center</horizontal-alignment>
+                            <vertical-alignment>center</vertical-alignment>
+
+                            <surface>
+                                <outline>#FFFFFF</outline>
+                            </surface>
+                        </flow-layout>
+
+                        <flow-layout direction="vertical" id="info-labels">
+                            <children>
+                            </children>
+
+                            <gap>4</gap>
+                        </flow-layout>
+                    </children>
+
+                    <sizing>
+                        <vertical method="fill">70</vertical>
+                        <horizontal method="fill">70</horizontal>
+                    </sizing>
+
+                    <gap>4</gap>
+                </flow-layout>
+            </children>
+
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
+        </flow-layout>
+    </components>
+</owo-ui>
