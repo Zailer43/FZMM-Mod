@@ -158,49 +158,51 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     private void categoryButtonExecute(ButtonComponent selectedButton, String category, @Nullable Runnable callback) {
         assert this.client != null;
 
-        this.client.execute(() -> {
-            for (var component : this.categoryButtonList) {
-                if (component instanceof ButtonWidget button)
-                    button.active = false;
-            }
-            this.tagButton.active = false;
-        });
+        for (var component : this.categoryButtonList) {
+            if (component instanceof ButtonWidget button)
+                button.active = false;
+        }
+        this.tagButton.active = false;
 
         HeadGalleryResources.getCategory(category).thenAccept(categoryData -> this.client.execute(() -> {
-            this.selectedCategory = category;
-            this.categoryHeads.clear();
-            this.categoryHeads.addAll(categoryData);
-
-            for (var component : this.categoryButtonList) {
-                if (component instanceof ButtonWidget button)
-                    button.active = true;
-            }
-            selectedButton.active = false;
-            this.tagButton.active = true;
-
-            this.updateAvailableTagList(categoryData);
-
-            if (callback == null) {
-                this.applyFilters();
-                this.setPage(1);
-            } else {
-                callback.run();
-            }
-        })).whenComplete((unused, throwable) -> {
-            if (throwable == null) {
-                this.errorLabel.text(Text.empty());
-            } else {
+            this.client.execute(() -> {
+                this.selectedCategory = category;
                 this.categoryHeads.clear();
-                this.applyFilters();
-                this.setPage(1);
-                this.errorLabel.text(Text.translatable("fzmm.gui.headGallery.label.error", category, throwable.getCause())
-                        .setStyle(Style.EMPTY.withColor(0xD83F27)));
+                this.categoryHeads.addAll(categoryData);
 
                 for (var component : this.categoryButtonList) {
                     if (component instanceof ButtonWidget button)
                         button.active = true;
                 }
-            }
+                selectedButton.active = false;
+                this.tagButton.active = true;
+
+                this.updateAvailableTagList(categoryData);
+
+                if (callback == null) {
+                    this.applyFilters();
+                    this.setPage(1);
+                } else {
+                    callback.run();
+                }
+            });
+        })).whenComplete((unused, throwable) -> {
+            this.client.execute(() -> {
+                if (throwable == null) {
+                    this.errorLabel.text(Text.empty());
+                } else {
+                    this.categoryHeads.clear();
+                    this.applyFilters();
+                    this.setPage(1);
+                    this.errorLabel.text(Text.translatable("fzmm.gui.headGallery.label.error", category, throwable.getCause())
+                            .setStyle(Style.EMPTY.withColor(0xD83F27)));
+
+                    for (var component : this.categoryButtonList) {
+                        if (component instanceof ButtonWidget button)
+                            button.active = true;
+                    }
+                }
+            });
         });
     }
 
