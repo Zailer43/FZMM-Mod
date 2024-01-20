@@ -143,8 +143,6 @@ public class SuggestionTextBox extends FlowLayout {
                 ((FlowLayout) this.root()).removeChild(this.suggestionsContainer);
             this.mouseHoverSuggestion = false;
         });
-        this.suggestionsContainer.mouseEnter().subscribe(() -> this.mouseHoverSuggestion = true);
-        this.suggestionsContainer.mouseLeave().subscribe(() -> this.mouseHoverSuggestion = false);
         this.suggestionsContainer.focusGained().subscribe(source -> this.onClickSuggestion());
     }
 
@@ -246,7 +244,10 @@ public class SuggestionTextBox extends FlowLayout {
         Consumer<FlowLayout> removeSurfaceConsumer = flowLayout -> flowLayout.surface(Surface.flat(backgroundColor));
         AtomicBoolean isFocusedAtomic = new AtomicBoolean(false);
 
-        layout.mouseEnter().subscribe(() -> setSurfaceConsumer.accept(layout));
+        layout.mouseEnter().subscribe(() -> {
+            setSurfaceConsumer.accept(layout);
+            this.mouseHoverSuggestion = true;
+        });
         layout.focusGained().subscribe(source -> {
             setSurfaceConsumer.accept(layout);
             isFocusedAtomic.set(true);
@@ -255,6 +256,7 @@ public class SuggestionTextBox extends FlowLayout {
         layout.mouseLeave().subscribe(() -> {
             if (!isFocusedAtomic.get())
                 removeSurfaceConsumer.accept(layout);
+            this.mouseHoverSuggestion = false;
         });
         layout.focusLost().subscribe(() -> {
             removeSurfaceConsumer.accept(layout);
