@@ -588,7 +588,7 @@
   "text.config.fzmm.option.imagetext.defaultPreserveImageAspectRatio": "Default preserve image aspect ratio",
   "text.config.fzmm.option.imagetext.defaultPreserveImageAspectRatio.tooltip": "Default imagetext value of preserve image aspect ratio of original image.",
   "text.config.fzmm.option.itemEditorBanner.maxUndo": "Max undo",
-  "text.config.fzmm.option.itemEditorBanner.maxUndo.tooltip": "The maximum number of undos to be saved\n(they are deleted when exiting the screen.",
+  "text.config.fzmm.option.itemEditorBanner.maxUndo.tooltip": "The maximum number of undos to be saved\n(they are deleted when exiting the screen)",
   "text.config.fzmm.option.mineskin.apiKey": "API key",
   "text.config.fzmm.option.mineskin.apiKey.tooltip": "Public key from https://mineskin.org/apikey\n\nIt is used to reduce the time when generating skins for\n- Player Statue\n- Head generator",
   "text.config.fzmm.option.mineskin.publicSkins": "Public skins",
