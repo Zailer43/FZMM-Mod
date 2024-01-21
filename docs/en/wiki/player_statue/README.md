@@ -5,6 +5,9 @@ Player Statue is 26 invisible armor stands with heads on their hands making a sk
 # Versions
 Versions are only added when there was a change, if the version you are using does not appear it means that there were no changes, so you must go to the most recent one.
 
+## [0.2.9](./0.2.9_player_statue.md)
+Add auto-autoplacer
+
 ## [0.1.2](./0.1.2_player_statue.md)
 Wiki added
 
