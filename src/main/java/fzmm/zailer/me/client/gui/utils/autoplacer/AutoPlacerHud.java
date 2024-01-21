@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.utils.autoplacer;
 
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.imagetext.HologramPlacerScreen;
 import fzmm.zailer.me.client.gui.playerstatue.PlayerStatuePlacerScreen;
 import io.wispforest.owo.ui.base.BaseComponent;
 import io.wispforest.owo.ui.component.Components;
@@ -129,6 +130,7 @@ public class AutoPlacerHud {
     
     public static void init() {
         addActivation(PlayerStatuePlacerScreen.getActivation());
+        addActivation(HologramPlacerScreen.getActivation());
     }
 
     public static void removeHud() {

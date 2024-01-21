@@ -10,12 +10,16 @@ import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.Text;
 
@@ -23,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
-public class ImagetextHolgoramTab implements IImagetextTab {
+public class ImagetextHologramTab implements IImagetextTab {
     private static final String POS_X_ID = "hologramPosX";
     private static final String POS_Y_ID = "hologramPosY";
     private static final String POS_Z_ID = "hologramPosZ";
@@ -100,6 +104,21 @@ public class ImagetextHolgoramTab implements IImagetextTab {
         return "hologram";
     }
 
+    public static boolean isHologramPart(ItemStack stack) {
+        if (!stack.hasNbt())
+            return false;
+
+        NbtCompound entityNbt = stack.getOrCreateSubNbt(EntityType.ENTITY_TAG_KEY);
+
+        NbtList tags = entityNbt.getList(TagsConstant.ENTITY_TAG_TAGS_ID, NbtElement.STRING_TYPE);
+
+        for (int i = 0; i < tags.size(); i++) {
+            if (tags.getString(i).equals(HOLOGRAM_TAG))
+                return true;
+        }
+
+        return false;
+    }
 
     @Override
     public IMementoObject createMemento() {
