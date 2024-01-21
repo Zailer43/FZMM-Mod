@@ -94,7 +94,7 @@ public class ScreenshotSource implements IInteractiveImageLoader {
                 .positioning(Positioning.absolute(0, 0));
 
         Text keyTranslation = FzmmClient.OPEN_MAIN_GUI_KEYBINDING.getBoundKeyLocalizedText();
-        LabelComponent labelComponent = Components.label(Text.translatable("fzmm.gui.option.imageMode.screenshot.message", keyTranslation));
+        LabelComponent labelComponent = Components.label(Text.translatable("fzmm.gui.option.image.screenshot.message", keyTranslation));
 
         labelLayout.child(labelComponent);
         hudLayout.child(screenshotZoneComponent);
