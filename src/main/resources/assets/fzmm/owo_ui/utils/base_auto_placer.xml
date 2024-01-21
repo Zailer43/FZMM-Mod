@@ -7,7 +7,7 @@
                     <children>
                         <flow-layout direction="horizontal">
                             <children>
-                                <button id="place-player-statue">
+                                <button id="execute">
                                     <text translate="true">fzmm.gui.playerStatuePlacer.option.place-player-statue</text>
                                     <positioning type="relative">0,0</positioning>
                                 </button>
