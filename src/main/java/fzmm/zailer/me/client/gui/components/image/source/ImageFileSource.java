@@ -112,7 +112,7 @@ public class ImageFileSource implements IImageLoaderFromText, IImageSuggestion {
      * @return the path without quotes
      */
     private String fixPath(String path) {
-        if (path.startsWith("\"") && path.endsWith("\"")) {
+        if (path.startsWith("\"") && path.endsWith("\"") && path.length() > 1) {
             path = path.substring(1, path.length() - 1);
         }
 
