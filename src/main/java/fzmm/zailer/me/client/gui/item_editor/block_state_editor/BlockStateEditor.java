@@ -19,6 +19,8 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.state.property.Property;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -80,6 +82,8 @@ public class BlockStateEditor implements IItemEditorScreen {
         this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
         BaseFzmmScreen.checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
 
+        this.blockBuilder.item(Items.AIR);
+
         return rootComponent;
     }
 
@@ -127,7 +131,7 @@ public class BlockStateEditor implements IItemEditorScreen {
 
             LabelComponent propertyLabel = Components.label(Text.translatable(BLOCK_STATE_TRANSLATION_KEY + property.getName()));
             String propertyName = property.getName();
-            this.setTranslation(propertyLabel, propertyName, propertyName);
+            this.setTranslation(propertyLabel, propertyName, propertyName, true);
 
             FlowLayout layout = (FlowLayout) Containers.verticalFlow(Sizing.content(), Sizing.content())
                     .gap(10)
@@ -198,7 +202,9 @@ public class BlockStateEditor implements IItemEditorScreen {
 
         LabelComponent labelComponent = valueLayout.childById(LabelComponent.class, labelId);
         BaseFzmmScreen.checkNull(labelComponent, "label", labelId);
-        this.setTranslation(labelComponent, labelKey, labelName);
+        this.setTranslation(labelComponent, labelKey, labelName, false);
+
+        valueLayout.margins(Insets.of(2));
 
         return valueLayout;
     }
@@ -266,14 +272,14 @@ public class BlockStateEditor implements IItemEditorScreen {
         return true;
     }
 
-    private void setTranslation(LabelComponent labelComponent, String key, String value) {
+    private void setTranslation(LabelComponent labelComponent, String key, String value, boolean bold) {
         String translationKey = BLOCK_STATE_TRANSLATION_KEY + key;
-        Text translation = Text.translatable(translationKey);
+        MutableText translation = Text.translatable(translationKey);
 
         if (translation.getString().equals(translationKey)) {
-            labelComponent.text(Text.of(value));
+            labelComponent.text(Text.literal(value).setStyle(Style.EMPTY.withBold(bold)));
         } else {
-            labelComponent.text(translation);
+            labelComponent.text(translation.setStyle(Style.EMPTY.withBold(bold)));
             labelComponent.tooltip(Text.of(value));
         }
     }

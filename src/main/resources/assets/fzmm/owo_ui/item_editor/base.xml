@@ -63,10 +63,10 @@
                             </sizing>
 
 
-                            <padding>
+                            <margins>
                                 <left>200</left>
                                 <bottom>24</bottom>
-                            </padding>
+                            </margins>
                         </flow-layout>
 
                     </children>
