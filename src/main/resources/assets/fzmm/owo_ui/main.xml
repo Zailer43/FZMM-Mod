@@ -13,30 +13,39 @@
                         <children>
                             <template name="main-button-layout">
                                 <name>itemEditor</name>
+                                <useHandItem>true</useHandItem>
                             </template>
                             <template name="main-button-layout">
                                 <name>imagetext</name>
+                                <useHandItem>false</useHandItem>
                             </template>
                             <template name="main-button-layout">
                                 <name>textFormat</name>
+                                <useHandItem>false</useHandItem>
                             </template>
                             <template name="main-button-layout">
                                 <name>playerStatue</name>
-                            </template>
-                            <template name="main-button-layout">
-                                <name>encryptbook</name>
+                                <useHandItem>false</useHandItem>
                             </template>
                             <template name="main-button-layout">
                                 <name>headGenerator</name>
+                                <useHandItem>false</useHandItem>
+                            </template>
+                            <template name="main-button-layout">
+                                <name>encryptbook</name>
+                                <useHandItem>false</useHandItem>
                             </template>
                             <template name="main-button-layout">
                                 <name>converters</name>
+                                <useHandItem>false</useHandItem>
                             </template>
                             <template name="main-button-layout">
                                 <name>history</name>
+                                <useHandItem>false</useHandItem>
                             </template>
                             <template name="main-button-layout">
                                 <name>headGallery</name>
+                                <useHandItem>false</useHandItem>
                             </template>
                         </children>
 
@@ -92,7 +101,6 @@
                                 <bottom>20</bottom>
                             </margins>
                         </button>
-
                     </children>
 
                     <positioning type="relative">100,100</positioning>
@@ -100,7 +108,6 @@
                     <vertical-alignment>bottom</vertical-alignment>
                     <horizontal-alignment>right</horizontal-alignment>
                 </flow-layout>
-
             </children>
 
             <vertical-alignment>center</vertical-alignment>
@@ -114,17 +121,28 @@
 
     <templates>
         <main-button-layout>
-            <fzmm.main-button id="{{name}}-button">
-                <text translate="true">fzmm.gui.title.{{name}}</text>
-                <sizing>
-                    <horizontal method="fixed">150</horizontal>
-                    <vertical method="fixed">60</vertical>
-                </sizing>
+
+            <flow-layout direction="vertical" id="{{name}}-button">
+                <children>
+                    <label>
+                        <text translate="true">fzmm.gui.title.{{name}}</text>
+                    </label>
+                </children>
+
+                <gap>2</gap>
 
                 <margins>
                     <bottom>5</bottom>
                 </margins>
-            </fzmm.main-button>
+
+                <vertical-alignment>center</vertical-alignment>
+                <horizontal-alignment>center</horizontal-alignment>
+
+                <sizing>
+                    <horizontal method="fixed">130</horizontal>
+                    <vertical method="fixed">55</vertical>
+                </sizing>
+            </flow-layout>
         </main-button-layout>
     </templates>
 </owo-ui>
