@@ -21,6 +21,7 @@ import net.minecraft.text.Text;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class ArmorEditorOptionTrimPattern extends AbstractArmorEditorOptionList<ArmorTrimPattern> {
     private final List<ArmorStandEntity> armorStandList = new ArrayList<>();
@@ -39,8 +40,12 @@ public class ArmorEditorOptionTrimPattern extends AbstractArmorEditorOptionList<
     @Override
     public List<ArmorTrimPattern> getValueList() {
         assert MinecraftClient.getInstance().world != null;
-        Registry<ArmorTrimPattern> trimPatternRegistry = MinecraftClient.getInstance().world.getRegistryManager().get(RegistryKeys.TRIM_PATTERN);
-        return trimPatternRegistry.stream().sorted(Comparator.comparing(o -> o.assetId().getPath())).toList();
+        Optional<Registry<ArmorTrimPattern>> trimPatternRegistryOptional = MinecraftClient.getInstance().world.getRegistryManager().getOptional(RegistryKeys.TRIM_PATTERN);
+        return trimPatternRegistryOptional
+                .map(armorTrimPatterns -> armorTrimPatterns.stream()
+                        .sorted(Comparator.comparing(o -> o.assetId().getPath()))
+                        .toList()
+                ).orElseGet(ArrayList::new);
     }
 
     @Override

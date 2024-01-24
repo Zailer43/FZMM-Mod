@@ -12,8 +12,10 @@ import net.minecraft.item.trim.ArmorTrimMaterial;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class ArmorEditorOptionTrimMaterial extends AbstractArmorEditorOptionList<ArmorTrimMaterial> {
     public ArmorEditorOptionTrimMaterial(ArmorEditorScreen parent) {
@@ -23,8 +25,12 @@ public class ArmorEditorOptionTrimMaterial extends AbstractArmorEditorOptionList
     @Override
     public List<ArmorTrimMaterial> getValueList() {
         assert MinecraftClient.getInstance().world != null;
-        Registry<ArmorTrimMaterial> trimPatternRegistry = MinecraftClient.getInstance().world.getRegistryManager().get(RegistryKeys.TRIM_MATERIAL);
-        return trimPatternRegistry.stream().sorted(Comparator.comparing(ArmorTrimMaterial::assetName)).toList();
+        Optional<Registry<ArmorTrimMaterial>> trimPatternRegistryOptional = MinecraftClient.getInstance().world.getRegistryManager().getOptional(RegistryKeys.TRIM_MATERIAL);
+        return trimPatternRegistryOptional
+                .map(armorTrimMaterials -> armorTrimMaterials.stream()
+                .sorted(Comparator.comparing(ArmorTrimMaterial::assetName))
+                        .toList()
+                ).orElseGet(ArrayList::new);
     }
 
     @Override
