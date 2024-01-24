@@ -40,4 +40,6 @@ public class TagsConstant {
 
     public static final String TRIM_COMPOUND = "Trim";
 
+    public static final String DISPLAY_MAP_COLOR = "MapColor";
+
 }

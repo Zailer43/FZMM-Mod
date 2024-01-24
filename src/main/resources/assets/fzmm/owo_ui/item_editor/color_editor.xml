@@ -1,0 +1,104 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="horizontal">
+            <children>
+                <scroll direction="vertical">
+                    <flow-layout direction="vertical">
+                        <children>
+                            <flow-layout direction="vertical" id="content">
+                                <children>
+
+                                    <flow-layout direction="horizontal">
+                                        <children>
+                                            <flow-layout direction="horizontal">
+                                                <children>
+                                                    <flow-layout direction="horizontal" id="color-input">
+                                                        <children>
+                                                        </children>
+
+                                                        <vertical-alignment>center</vertical-alignment>
+
+                                                        <gap>4</gap>
+                                                    </flow-layout>
+
+                                                    <checkbox id="toggle">
+                                                    </checkbox>
+                                                </children>
+
+                                                <vertical-alignment>center</vertical-alignment>
+                                                <gap>4</gap>
+
+                                                <margins>
+                                                    <bottom>4</bottom>
+                                                </margins>
+                                            </flow-layout>
+                                        </children>
+                                    </flow-layout>
+                                    
+                                    <flow-layout direction="vertical">
+                                        <children>
+                                            <button id="auto-detect">
+
+                                                <text translate="true">fzmm.gui.itemEditor.color.option.autoDetect</text>
+
+                                                <sizing>
+                                                    <horizontal method="fill">100</horizontal>
+                                                </sizing>
+                                            </button>
+                                            <button id="leather">
+
+                                                <text translate="true">fzmm.gui.itemEditor.color.option.leather</text>
+
+                                                <sizing>
+                                                    <horizontal method="fill">100</horizontal>
+                                                </sizing>
+                                            </button>
+                                            <button id="map">
+
+                                                <text translate="true">fzmm.gui.itemEditor.color.option.map</text>
+
+                                                <sizing>
+                                                    <horizontal method="fill">100</horizontal>
+                                                </sizing>
+                                            </button>
+                                            <button id="potion">
+
+                                                <text translate="true">fzmm.gui.itemEditor.color.option.potion</text>
+
+                                                <sizing>
+                                                    <horizontal method="fill">100</horizontal>
+                                                </sizing>
+                                            </button>
+                                        </children>
+                                    </flow-layout>
+                                </children>
+
+                                <surface>
+                                    <panel dark="true"/>
+                                </surface>
+
+                                <padding>
+                                    <all>10</all>
+                                </padding>
+                            </flow-layout>
+                        </children>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">100</vertical>
+                        <horizontal method="fill">80</horizontal>
+                    </sizing>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+            </children>
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+        </flow-layout>
+    </components>
+</owo-ui>
