@@ -75,6 +75,10 @@ public class RequestedItem {
         this.stack = stack;
     }
 
+    public boolean isEmpty() {
+        return this.stack == null;
+    }
+
     public Text title() {
         Text title = this.title;
 

@@ -159,7 +159,7 @@
                     </flow-layout>
 
                     <sizing>
-                        <vertical method="fill">90</vertical>
+                        <vertical method="fill">100</vertical>
                     </sizing>
 
                     <margins>

@@ -1,5 +1,7 @@
 package fzmm.zailer.me.utils.list;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 
 public class ListUtils {
@@ -18,15 +20,16 @@ public class ListUtils {
             list.get(entryIndex).setValue(previousEntry);
         }
 
-        callback.run();
+        if (callback != null)
+            callback.run();
     }
 
-    public static <VALUE, LIST extends IListEntry<VALUE>> void upEntry(List<? extends LIST> list, LIST entry, Runnable callback) {
+    public static <VALUE, LIST extends IListEntry<VALUE>> void upEntry(List<? extends LIST> list, LIST entry, @Nullable Runnable callback) {
         int entryIndex = list.indexOf(entry);
         moveEntryInUnmodifiableList(list, entryIndex, -1, callback);
     }
 
-    public static <VALUE, LIST extends IListEntry<VALUE>> void downEntry(List<? extends LIST> list, LIST entry, Runnable callback) {
+    public static <VALUE, LIST extends IListEntry<VALUE>> void downEntry(List<? extends LIST> list, LIST entry, @Nullable Runnable callback) {
         int entryIndex = list.indexOf(entry);
         moveEntryInUnmodifiableList(list, entryIndex, 1, callback);
     }

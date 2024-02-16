@@ -23,7 +23,7 @@
 
                     <sizing>
                         <vertical method="fill">100</vertical>
-                        <horizontal method="fill">80</horizontal>
+                        <horizontal method="fill">100</horizontal>
                     </sizing>
 
                     <scrollbar>

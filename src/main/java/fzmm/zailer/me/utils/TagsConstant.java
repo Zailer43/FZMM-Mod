@@ -42,4 +42,6 @@ public class TagsConstant {
 
     public static final String DISPLAY_MAP_COLOR = "MapColor";
 
+    public static final String ENCHANTMENTS_LVL = "lvl"; // EnchantmentHelper.LEVEL_KEY
+
 }

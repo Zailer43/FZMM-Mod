@@ -58,10 +58,12 @@
                             </children>
 
                             <sizing>
-                                <vertical method="fill">100</vertical>
                                 <horizontal method="fill">100</horizontal>
                             </sizing>
 
+                            <padding>
+                                <all>8</all>
+                            </padding>
 
                             <margins>
                                 <left>200</left>
@@ -84,8 +86,8 @@
                             <text translate="true">fzmm.gui.button.back</text>
 
                             <margins>
-                                <right>2</right>
-                                <bottom>2</bottom>
+                                <right>8</right>
+                                <bottom>8</bottom>
                             </margins>
                         </button>
 

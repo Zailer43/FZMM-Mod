@@ -26,7 +26,6 @@ import net.minecraft.command.argument.ItemStackArgumentType;
 import net.minecraft.command.argument.RegistryEntryArgumentType;
 import net.minecraft.command.argument.TextArgumentType;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -104,26 +103,6 @@ public class FzmmCommand {
                     return 1;
                 })))
 
-        );
-
-        fzmmCommand.then(ClientCommandManager.literal("enchant")
-                .executes(ctx -> sendHelpMessage("commands.fzmm.enchant.help", BASE_COMMAND + " enchant <enchantment> <level>"))
-                .then(ClientCommandManager.argument("enchantment", RegistryEntryArgumentType.registryEntry(registryAccess, RegistryKeys.ENCHANTMENT)).executes(ctx -> {
-                    @SuppressWarnings("unchecked")
-                    Enchantment enchant = ((RegistryEntry.Reference<Enchantment>) ctx.getArgument("enchantment", RegistryEntry.Reference.class)).value();
-
-                    addEnchant(enchant, (short) 1);
-                    return 1;
-
-                }).then(ClientCommandManager.argument("level", IntegerArgumentType.integer(0, 255)).executes(ctx -> {
-
-                    @SuppressWarnings("unchecked")
-                    Enchantment enchant = ((RegistryEntry.Reference<Enchantment>) ctx.getArgument("enchantment", RegistryEntry.Reference.class)).value();
-                    int level = ctx.getArgument("level", int.class);
-
-                    addEnchant(enchant, (short) level);
-                    return 1;
-                })))
         );
 
         fzmmCommand.then(ClientCommandManager.literal("fakeenchant")
@@ -274,24 +253,6 @@ public class FzmmCommand {
         FzmmUtils.giveItem(itemStack);
     }
 
-    private static void addEnchant(Enchantment enchant, short level) {
-        //{Enchantments:[{message:"minecraft:aqua_affinity",lvl:1s}]}
-
-        assert MinecraftClient.getInstance().player != null;
-        ItemStack stack = MinecraftClient.getInstance().player.getInventory().getMainHandStack();
-        NbtCompound tag = stack.getOrCreateNbt();
-        NbtList enchantments = new NbtList();
-
-        if (tag.contains(ItemStack.ENCHANTMENTS_KEY, NbtElement.LIST_TYPE)) {
-            enchantments = tag.getList(ItemStack.ENCHANTMENTS_KEY, NbtElement.COMPOUND_TYPE);
-        }
-        enchantments.add(EnchantmentHelper.createNbt(EnchantmentHelper.getEnchantmentId(enchant), level));
-
-        tag.put(ItemStack.ENCHANTMENTS_KEY, enchantments);
-        stack.setNbt(tag);
-        FzmmUtils.giveItem(stack);
-    }
-
     private static void addFakeEnchant(Enchantment enchant, int level) {
         assert MinecraftClient.getInstance().player != null;
         ItemStack stack = MinecraftClient.getInstance().player.getInventory().getMainHandStack();
@@ -323,7 +284,7 @@ public class FzmmCommand {
         if (!stack.hasNbt()) {
             ctx.getSource().sendError(Text.translatable("commands.fzmm.item.withoutNbt"));
             return;
-        };
+        }
 
         assert stack.getNbt() != null;
         Text nbtMessage = NbtHelper.toPrettyPrintedText(stack.getNbt());
