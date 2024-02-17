@@ -25,7 +25,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class BlockStateEditor implements IItemEditorScreen {
     private static final String BLOCK_STATE_TRANSLATION_KEY = "fzmm.gui.itemEditor.block_state.state.";
@@ -43,13 +42,13 @@ public class BlockStateEditor implements IItemEditorScreen {
     private UIModel uiModel;
 
     @Override
-    public List<RequestedItem> getRequestedItems(Consumer<ItemStack> firstItemSetter) {
+    public List<RequestedItem> getRequestedItems() {
         if (this.requestedItems != null)
             return this.requestedItems;
 
         this.blockRequested = new RequestedItem(
                 itemStack -> itemStack.getItem() instanceof BlockItem blockItem && !blockItem.getBlock().getDefaultState().getProperties().isEmpty(),
-                this::setItem,
+                this::selectItemAndUpdateParameters,
                 null,
                 Text.translatable("fzmm.gui.itemEditor.block_state.title"),
                 true
@@ -93,15 +92,15 @@ public class BlockStateEditor implements IItemEditorScreen {
     }
 
     @Override
-    public void setItem(ItemStack stack) {
-        boolean otherItem = stack.getItem() != this.blockBuilder.item();
-        this.blockBuilder = this.blockBuilder.of(stack);
-        this.blockRequested.setStack(stack);
+    public void updateItemPreview() {
+        this.blockRequested.setStack(this.blockBuilder.get());
         this.blockRequested.updatePreview();
+    }
 
-        if (otherItem || stack.isEmpty())
-            this.updateBlockStateContent();
-        this.updatePreview();
+    @Override
+    public void selectItemAndUpdateParameters(ItemStack stack) {
+        this.blockBuilder = this.blockBuilder.of(stack);
+        this.updateBlockStateContent();
     }
 
     @Override
@@ -228,7 +227,7 @@ public class BlockStateEditor implements IItemEditorScreen {
                 this.updateStateLayout(property, valueName, valueName.equals("default"));
         }
 
-        this.updatePreview();
+        this.updateItemPreview();
     }
 
     private void updateStateLayout(Property<?> property, String valueName, boolean isDefault) {
@@ -267,7 +266,7 @@ public class BlockStateEditor implements IItemEditorScreen {
         else
             this.blockBuilder.add(propertyName, valueName);
 
-        this.setItem(this.blockBuilder.get());
+        this.selectItemAndUpdateParameters(this.blockBuilder.get());
         this.updatePropertiesContent();
         return true;
     }

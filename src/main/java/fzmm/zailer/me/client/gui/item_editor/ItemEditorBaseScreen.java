@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.item_editor;
 
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.ArmorEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.banner_editor.BannerEditorScreen;
@@ -118,33 +119,35 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
     }
 
     public void selectEditor(IItemEditorScreen editor) {
-        selectedEditor = editor.getClass();
-        this.currentEditor = editor;
-        this.contentLayout.clearChildren();
-        List<RequestedItem> requestedItems = this.currentEditor.getRequestedItems();
+        try {
+            selectedEditor = editor.getClass();
+            this.currentEditor = editor;
+            this.contentLayout.clearChildren();
+            List<RequestedItem> requestedItems = this.currentEditor.getRequestedItems();
+            FlowLayout editorLayout = this.currentEditor.getLayout(this,
+                    this.basePanelLayout.x() + this.basePanelLayout.width(),
+                    this.basePanelLayout.y(),
+                    this.width,
+                    this.height
+            );
 
-        this.contentLayout.child(this.currentEditor.getLayout(this,
-                this.basePanelLayout.x() + this.basePanelLayout.width(),
-                this.basePanelLayout.y(),
-                this.width,
-                this.height
-        ));
-
-        this.updateRequestedItemsComponents();
-        editor.setItem(this.selectedItem);
-        for (var requestedItem : requestedItems)
-            requestedItem.updatePreview();
+            if (editorLayout != null) {
+                this.contentLayout.child(editorLayout);
+                this.updateRequestedItemsComponents(requestedItems);
+                editor.selectItemAndUpdateParameters(this.selectedItem);
+                editor.updateItemPreview();
+            }
+        } catch (Exception e) {
+            FzmmClient.LOGGER.error("[ItemEditorBaseScreen] Failed to add editor layout", e);
+        }
     }
 
-    private void updateRequestedItemsComponents() {
+    private void updateRequestedItemsComponents(List<RequestedItem> requestedItemList) {
         assert this.client != null;
         this.requiredItemsLayout.clearChildren();
         List<Component> componentList = new ArrayList<>();
 
-        List<RequestedItem> requestedItems = this.currentEditor.getRequestedItems(itemStack -> this.selectedItem = itemStack);
-
-        boolean firstItem = true;
-        for (var requestedItem : requestedItems) {
+        for (var requestedItem : requestedItemList) {
 
             FlowLayout layout = Containers.horizontalFlow(Sizing.content(), Sizing.content());
             layout.gap(2);
@@ -158,36 +161,56 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
             selectItemButton.horizontalSizing(Sizing.fixed(100));
             layout.child(selectItemButton);
 
-            boolean firstItemFinal = firstItem;
             ButtonComponent giveButton = Components.button(GIVE_ITEM_TEXT, button -> FzmmUtils.giveItem(requestedItem.stack()));
             giveButton.horizontalSizing(Sizing.fixed(30));
             layout.child(giveButton);
 
-            requestedItem.setUpdatePreviewConsumer(itemStack -> {
-                if (firstItemFinal)
-                    this.selectedItem = itemStack;
+            requestedItem.setUpdatePreviewConsumer(itemStack ->
+                    this.updatePreviewExecute(itemStack, requestedItemList, requestedItem, itemComponent, selectItemButton)
+            );
 
-                this.updateRequestedItem(itemStack, requestedItem, itemComponent, selectItemButton);
-            });
+            ItemStack stack = requestedItem.stack();
+            this.updateRequestedItemButton(selectItemButton, requestedItem, stack);
+            itemComponent.stack(stack);
 
             componentList.add(layout);
-
-            if (firstItem)
-                firstItem = false;
         }
 
         this.requiredItemsLayout.children(componentList);
     }
 
+    private void updatePreviewExecute(ItemStack itemStack, List<RequestedItem> requestedItemList,
+                                      RequestedItem requestedItem, ItemComponent itemComponent, ButtonComponent selectItemButton) {
+        boolean firstItem = true;
+        for (int i = 0; i != requestedItemList.size(); i++) {
+            RequestedItem entry = requestedItemList.get(i);
+            if (firstItem && (entry == requestedItem || (requestedItemList.size() - 1) == i)) {
+                this.selectedItem = itemStack;
+                break;
+            } else if (!entry.isEmpty()) {
+                firstItem = false;
+            }
+        }
+
+        this.updateRequestedItem(itemStack, requestedItem, itemComponent, selectItemButton);
+    }
+
     public void updateRequestedItem(ItemStack stack, RequestedItem requestedItem, ItemComponent itemComponent, ButtonComponent selectItemButton) {
-        itemComponent.stack(stack).setTooltipFromStack(true);
-        selectItemButton.setMessage(requestedItem.predicate().test(stack) ? requestedItem.title() : requestedItem.title().copy()
-                .setStyle(Style.EMPTY.withColor(0xD83F27)).append(" ⚠"));
+        itemComponent.stack(stack);
+        this.updateRequestedItemButton(selectItemButton, requestedItem, stack);
         this.updateEditorsComponents();
     }
 
+    private void updateRequestedItemButton(ButtonComponent selectItemButton, RequestedItem requestedItem, ItemStack stack) {
+        selectItemButton.setMessage(
+                requestedItem.predicate().test(stack) ?
+                        requestedItem.title() :
+                        requestedItem.title().copy().setStyle(Style.EMPTY.withColor(0xD83F27)).append(" ⚠")
+        );
+    }
+
     private void updateEditorsComponents() {
-        this.applicableEditorsLabel.text(Text.translatable(APPLICABLE_EDITORS_TEXT, this.selectedItem.getItem().getName()));
+        this.applicableEditorsLabel.text(Text.translatable(APPLICABLE_EDITORS_TEXT, this.selectedItem.getItem().getName().getString()));
 
         this.updateEditorsComponents(this.applicableEditorsLayout, this.filterEditors(true), true);
         this.updateEditorsComponents(this.nonApplicableEditorsLayout, this.filterEditors(false), false);

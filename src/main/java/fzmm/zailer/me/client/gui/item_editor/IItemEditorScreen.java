@@ -6,15 +6,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public interface IItemEditorScreen {
 
-    default List<RequestedItem> getRequestedItems() {
-        return this.getRequestedItems(itemStack -> {});
-    }
 
-    List<RequestedItem> getRequestedItems(Consumer<ItemStack> firstItemSetter);
+    List<RequestedItem> getRequestedItems();
 
     default boolean isApplicable(ItemStack stack) {
         if (this.getRequestedItems().isEmpty())
@@ -34,9 +30,14 @@ public interface IItemEditorScreen {
     String getId();
 
     /**
+     * update the preview of the item in the requested item
+     */
+    void updateItemPreview();
+
+    /**
      * set the first item of {@link IItemEditorScreen#getRequestedItems()}
      */
-    void setItem(ItemStack stack);
+    void selectItemAndUpdateParameters(ItemStack stack);
 
     boolean keyPressed(int keyCode, int scanCode, int modifiers);
 }

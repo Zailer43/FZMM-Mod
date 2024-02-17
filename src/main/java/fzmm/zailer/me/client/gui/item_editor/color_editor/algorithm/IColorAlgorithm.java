@@ -10,6 +10,8 @@ public interface IColorAlgorithm {
 
     void removeTag(ItemStack stack);
 
+    boolean hasTag(ItemStack stack);
+
     boolean isApplicable(ItemStack stack);
 
     String getId();

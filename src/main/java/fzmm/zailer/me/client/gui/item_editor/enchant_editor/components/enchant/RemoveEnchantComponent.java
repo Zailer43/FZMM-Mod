@@ -30,7 +30,7 @@ public class RemoveEnchantComponent extends AbstractEnchantComponent {
 
             if (index >= 0) {
                 builder.remove(index);
-                editor.updatePreview();
+                editor.updateItemPreview();
 
                 editor.getAppliedEnchantsLayout().removeChild(this);
 
@@ -53,7 +53,7 @@ public class RemoveEnchantComponent extends AbstractEnchantComponent {
 
             if (index >= 0) {
                 builder.setLevel(index, parsedValue);
-                this.editor.updatePreview();
+                this.editor.updateItemPreview();
             }
         });
     }

@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.item_editor.color_editor.algorithm;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.potion.PotionUtil;
 
 public class PotionColorAlgorithm implements IColorAlgorithm{
@@ -18,6 +19,11 @@ public class PotionColorAlgorithm implements IColorAlgorithm{
     @Override
     public void removeTag(ItemStack stack) {
         stack.getOrCreateNbt().remove(PotionUtil.CUSTOM_POTION_COLOR_KEY);
+    }
+
+    @Override
+    public boolean hasTag(ItemStack stack) {
+        return stack.getOrCreateNbt().contains(PotionUtil.CUSTOM_POTION_COLOR_KEY, NbtElement.NUMBER_TYPE);
     }
 
     @Override

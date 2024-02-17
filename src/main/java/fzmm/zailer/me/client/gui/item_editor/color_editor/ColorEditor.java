@@ -24,7 +24,6 @@ import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 @SuppressWarnings({"UnstableApiUsage"})
 public class ColorEditor implements IItemEditorScreen {
@@ -37,13 +36,13 @@ public class ColorEditor implements IItemEditorScreen {
     private CheckboxComponent checkboxComponent;
 
     @Override
-    public List<RequestedItem> getRequestedItems(Consumer<ItemStack> firstItemSetter) {
+    public List<RequestedItem> getRequestedItems() {
         if (this.requestedItems != null)
             return this.requestedItems;
 
         this.colorableRequested = new RequestedItem(
                 itemStack -> AutoDetectColorAlgorithm.algorithm.isApplicable(itemStack),
-                this::setItem,
+                this::selectItemAndUpdateParameters,
                 null,
                 Text.translatable("fzmm.gui.itemEditor.color.title"),
                 true
@@ -87,13 +86,13 @@ public class ColorEditor implements IItemEditorScreen {
         this.checkboxComponent = rootComponent.childById(CheckboxComponent.class, "toggle");
         BaseFzmmScreen.checkNull(this.checkboxComponent, "checkbox", "toggle");
         this.checkboxComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
-           this.updateColor();
+           this.updateItemPreview();
 
             return true;
         });
         this.checkboxComponent.checked(true);
 
-        this.colorComponent = ColorRow.setup(rootComponent, "color", Color.WHITE, false, 500, s -> this.updateColor());
+        this.colorComponent = ColorRow.setup(rootComponent, "color", Color.WHITE, false, 500, s -> this.updateItemPreview());
 
         this.colorButtons = new ArrayList<>();
         this.colorableStack = Items.AIR.getDefaultStack();
@@ -114,15 +113,6 @@ public class ColorEditor implements IItemEditorScreen {
         return ((Color) this.colorComponent.parsedValue()).rgb();
     }
 
-    private void updateColor() {
-        if (this.checkboxComponent.isChecked())
-            this.currentAlgorithm.setColor(this.colorableStack, this.getColor());
-        else
-            this.currentAlgorithm.removeTag(this.colorableStack);
-
-        this.setItem(this.colorableStack);
-    }
-
     public ButtonComponent setupAndGetButton(FlowLayout rootComponent, IColorAlgorithm algorithm) {
         ButtonComponent button = rootComponent.childById(ButtonComponent.class, algorithm.getId());
         BaseFzmmScreen.checkNull(button, "button", algorithm.getId());
@@ -138,7 +128,7 @@ public class ColorEditor implements IItemEditorScreen {
             buttonComponent.active = false;
 
             this.currentAlgorithm = algorithm;
-            this.updateColor();
+            this.updateItemPreview();
         });
 
         return button;
@@ -150,10 +140,27 @@ public class ColorEditor implements IItemEditorScreen {
     }
 
     @Override
-    public void setItem(ItemStack stack) {
+    public void updateItemPreview() {
+        if (this.checkboxComponent.isChecked())
+            this.currentAlgorithm.setColor(this.colorableStack, this.getColor());
+        else
+            this.currentAlgorithm.removeTag(this.colorableStack);
+
+        this.colorableRequested.updatePreview();
+    }
+
+    @Override
+    public void selectItemAndUpdateParameters(ItemStack stack) {
         this.colorableStack = stack.copy();
         this.colorableRequested.setStack(this.colorableStack);
-        this.colorableRequested.updatePreview();
+
+        boolean hasTag = AutoDetectColorAlgorithm.algorithm.hasTag(stack);
+        this.checkboxComponent.checked(hasTag);
+
+        if (hasTag) {
+            int color = AutoDetectColorAlgorithm.algorithm.getColor(stack);
+            this.colorComponent.setText(Color.ofRgb(color).asHexString(false));
+        }
     }
 
     @Override

@@ -37,7 +37,6 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class ArmorEditorScreen implements IItemEditorScreen {
@@ -65,7 +64,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
     private FlowLayout armorMaterialLayout;
 
     @Override
-    public List<RequestedItem> getRequestedItems(Consumer<ItemStack> firstItemSetter) {
+    public List<RequestedItem> getRequestedItems() {
         if (this.requestedItemList != null)
             return this.requestedItemList;
 
@@ -78,10 +77,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
 
         this.helmetRequest = new RequestedItem(
                 (itemStack) -> this.test(itemStack, EquipmentSlot.HEAD, recipeTypes),
-                itemStack -> {
-                    firstItemSetter.accept(itemStack);
-                    this.setSelectedItem(itemStack, this.helmetRequest, this.helmetBuilder);
-                },
+                itemStack -> this.setSelectedItem(itemStack, this.helmetRequest, this.helmetBuilder),
                 null,
                 playerInventory.getArmorStack(PlayerInventory.ARMOR_SLOTS[3]),
                 Text.translatable("fzmm.gui.itemEditor.armor.item.helmet"),
@@ -185,15 +181,13 @@ public class ArmorEditorScreen implements IItemEditorScreen {
     }
 
     @Override
-    public void setItem(ItemStack stack) {
-        if (this.requestedItemList == null)
-            return;
+    public void updateItemPreview() {
+        this.selectedArmorPart.setStack(this.selectedArmorPartBuilder.get());
+        this.selectedArmorPart.updatePreview();
+    }
 
-        if (stack.isEmpty()) {
-            this.update();
-            return;
-        }
-
+    @Override
+    public void selectItemAndUpdateParameters(ItemStack stack) {
         if (this.bootsRequest.predicate().test(stack))
             this.setSelectedItem(stack, this.bootsRequest, this.bootsBuilder);
         else if (this.leggingsRequest.predicate().test(stack))
@@ -214,7 +208,6 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         this.selectedArmorPartBuilder = builder;
         builder.of(stack);
         this.selectArmorPartExecute(this.selectedArmorPart, this.selectedArmorPartBuilder);
-        this.update();
     }
 
     public boolean test(ItemStack itemStack, EquipmentSlot slot, List<SmithingRecipe> recipeTypes) {
@@ -260,8 +253,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
     }
 
     public void update() {
-        this.selectedArmorPart.setStack(this.selectedArmorPartBuilder.get());
-        this.selectedArmorPart.updatePreview();
+        this.updateItemPreview();
 
         this.toggleArmorPartButtons(this.selectedArmorPart);
         this.armorMaterialOption.updateSelectedOption(this.selectedArmorPartBuilder.item());

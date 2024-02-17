@@ -76,7 +76,7 @@ public class RequestedItem {
     }
 
     public boolean isEmpty() {
-        return this.stack == null;
+        return this.stack == null || this.stack.isEmpty();
     }
 
     public Text title() {

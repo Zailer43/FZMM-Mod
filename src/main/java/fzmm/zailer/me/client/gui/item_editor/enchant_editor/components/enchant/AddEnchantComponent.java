@@ -29,7 +29,7 @@ public class AddEnchantComponent extends AbstractEnchantComponent {
             if (this.isDisabled)
                 return;
             builder.add(this.getEnchantment(), this.getLevel());
-            editor.updatePreview();
+            editor.updateItemPreview();
 
             if (!editor.isAllowDuplicates()) {
                 editor.getAddEnchantsLayout().removeChild(this);

@@ -34,7 +34,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -58,7 +57,7 @@ public class EnchantEditor implements IItemEditorScreen {
     private final EnchantmentBuilder enchantBuilder = EnchantmentBuilder.builder();
 
     @Override
-    public List<RequestedItem> getRequestedItems(Consumer<ItemStack> firstItemSetter) {
+    public List<RequestedItem> getRequestedItems() {
         if (this.requestedItems != null)
             return this.requestedItems;
 
@@ -71,7 +70,7 @@ public class EnchantEditor implements IItemEditorScreen {
 
                     return false;
                 },
-                this::setItem,
+                this::selectItemAndUpdateParameters,
                 null,
                 Text.translatable("fzmm.gui.itemEditor.label.anyItem"),
                 true
@@ -110,7 +109,7 @@ public class EnchantEditor implements IItemEditorScreen {
         glintComponent.onPress(buttonComponent -> {
             this.glint = !this.glint;
             this.enchantBuilder.glint(this.glint);
-            this.updatePreview();
+            this.updateItemPreview();
         });
         glintComponent.tooltip(Text.translatable("fzmm.gui.itemEditor.enchant.option.glint"));
         glintComponent.horizontalSizing(Sizing.fixed(20));
@@ -122,7 +121,7 @@ public class EnchantEditor implements IItemEditorScreen {
             this.allowDuplicates = !this.allowDuplicates;
             this.enchantBuilder.allowDuplicates(this.allowDuplicates);
             this.selectedCategoryButton.onPress();
-            this.updatePreview();
+            this.updateItemPreview();
         });
         allowDuplicatesComponent.tooltip(Text.translatable("fzmm.gui.itemEditor.enchant.option.allowDuplicates"));
         allowDuplicatesComponent.horizontalSizing(Sizing.fixed(20));
@@ -143,7 +142,7 @@ public class EnchantEditor implements IItemEditorScreen {
         onlyCompatibleEnchantsComponent.onPress(buttonComponent -> {
             this.onlyCompatibleEnchants = !this.onlyCompatibleEnchants;
             this.selectedCategoryButton.onPress();
-            this.updatePreview();
+            this.updateItemPreview();
         });
         onlyCompatibleEnchantsComponent.tooltip(Text.translatable("fzmm.gui.itemEditor.enchant.option.onlyCompatibleEnchants"));
         onlyCompatibleEnchantsComponent.horizontalSizing(Sizing.fixed(20));
@@ -168,7 +167,7 @@ public class EnchantEditor implements IItemEditorScreen {
             this.enchantBuilder.removeAll();
             this.appliedEnchantsLayout.clearChildren();
             this.selectedCategoryButton.onPress();
-            this.updatePreview();
+            this.updateItemPreview();
         });
 
         // filters
@@ -208,7 +207,7 @@ public class EnchantEditor implements IItemEditorScreen {
                     ((AddEnchantComponent) enchantComponent).addExecute();
             }
 
-            this.updatePreview();
+            this.updateItemPreview();
         });
 
         // categories
@@ -250,25 +249,23 @@ public class EnchantEditor implements IItemEditorScreen {
         return "enchant";
     }
 
-    public void updatePreview() {
-        this.setItem(this.enchantBuilder.get());
+    @Override
+    public void updateItemPreview() {
+        this.itemRequested.setStack(this.enchantBuilder.get());
+        this.itemRequested.updatePreview();
     }
 
     @Override
-    public void setItem(ItemStack stack) {
-        if (this.enchantBuilder.stack() != stack) {
-            this.enchantBuilder.stack(stack);
+    public void selectItemAndUpdateParameters(ItemStack stack) {
+        this.enchantBuilder.stack(stack);
 
-            this.glint = this.enchantBuilder.glint();
-            this.allowDuplicates = this.enchantBuilder.allowDuplicates();
-            this.ignoreMaxLevel = this.enchantBuilder.isOverMaxLevel();
-            this.onlyCompatibleEnchants = this.enchantBuilder.onlyCompatibleEnchants();
+        this.glint = this.enchantBuilder.glint();
+        this.allowDuplicates = this.enchantBuilder.allowDuplicates();
+        this.ignoreMaxLevel = this.enchantBuilder.isOverMaxLevel();
+        this.onlyCompatibleEnchants = this.enchantBuilder.onlyCompatibleEnchants();
 
-            this.selectedCategoryButton.onPress();
-            this.updateAppliedEnchants();
-        }
-        this.itemRequested.setStack(stack);
-        this.itemRequested.updatePreview();
+        this.selectedCategoryButton.onPress();
+        this.updateAppliedEnchants();
     }
 
     @Override

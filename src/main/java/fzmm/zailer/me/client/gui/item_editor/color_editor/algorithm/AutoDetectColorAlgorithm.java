@@ -39,6 +39,15 @@ public class AutoDetectColorAlgorithm implements IColorAlgorithm {
     }
 
     @Override
+    public boolean hasTag(ItemStack stack) {
+        for (var algorithm : colorAlgorithms) {
+            if (algorithm.isApplicable(stack) && algorithm.hasTag(stack))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean isApplicable(ItemStack stack) {
         for (var algorithm : colorAlgorithms) {
             if (algorithm.isApplicable(stack))

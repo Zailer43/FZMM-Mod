@@ -105,7 +105,7 @@ public class EnchantSortOverlay extends OverlayContainer<FlowLayout> {
         this.disableSorters(sorterComponent, sortOption);
         sortConsumer.accept(sortOption);
         this.updateEnchantsLayout(enchantsLayout);
-        this.editor.updatePreview();
+        this.editor.updateItemPreview();
     }
 
     private void updateEnchantsLayout(FlowLayout enchantsLayout) {

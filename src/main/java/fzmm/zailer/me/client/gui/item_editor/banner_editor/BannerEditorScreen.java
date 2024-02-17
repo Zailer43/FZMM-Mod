@@ -27,14 +27,11 @@ import net.minecraft.item.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
 
 public class BannerEditorScreen implements IItemEditorScreen {
     private static final String BANNER_PREVIEW_ID = "banner-preview";
@@ -53,7 +50,6 @@ public class BannerEditorScreen implements IItemEditorScreen {
     private ArrayDeque<BannerBuilder> undoArray;
     private ArrayDeque<BannerBuilder> redoArray;
     private ItemEditorBaseScreen baseScreen;
-    @Nullable
     private RequestedItem bannerRequest = null;
 
     public BannerEditorScreen() {
@@ -151,13 +147,12 @@ public class BannerEditorScreen implements IItemEditorScreen {
     }
 
     @Override
-    public List<RequestedItem> getRequestedItems(Consumer<ItemStack> firstItemSetter) {
+    public List<RequestedItem> getRequestedItems() {
         if (this.bannerRequest != null)
             return List.of(this.bannerRequest);
 
         List<ItemStack> defaultItems = new ArrayList<>();
 
-        AtomicBoolean isFirstAtomic = new AtomicBoolean(true);
         for (var dye : FzmmUtils.getColorsInOrder())
             defaultItems.add(BannerBuilder.getBannerByDye(dye).getDefaultStack());
 
@@ -172,11 +167,6 @@ public class BannerEditorScreen implements IItemEditorScreen {
 
                     this.bannerBuilder = BannerBuilder.of(itemStack);
                     this.updatePreview(this.bannerBuilder);
-
-                    if (isFirstAtomic.get()) {
-                        firstItemSetter.accept(this.bannerRequest.stack());
-                        isFirstAtomic.set(false);
-                    }
                 },
                 defaultItems,
                 this.bannerBuilder.get(),
@@ -197,13 +187,17 @@ public class BannerEditorScreen implements IItemEditorScreen {
         this.bannerPreview.stack(builder.get());
         this.baseScreen.getTab(selectedTab, IBannerEditorTab.class).update(this, builder, this.selectedColor);
 
-        if (this.bannerRequest != null) {
-            this.bannerRequest.setStack(this.bannerPreview.stack());
-        }
+        this.updateItemPreview();
     }
 
     @Override
-    public void setItem(ItemStack stack) {
+    public void updateItemPreview() {
+        this.bannerRequest.setStack(this.bannerPreview.stack());
+        this.bannerRequest.updatePreview();
+    }
+
+    @Override
+    public void selectItemAndUpdateParameters(ItemStack stack) {
         boolean isShield = stack.getItem() instanceof ShieldItem;
         if (this.isShieldButton.enabled() != isShield)
             this.isShieldButton.onPress();
