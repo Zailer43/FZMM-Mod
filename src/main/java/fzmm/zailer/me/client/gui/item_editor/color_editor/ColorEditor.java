@@ -1,6 +1,5 @@
 package fzmm.zailer.me.client.gui.item_editor.color_editor;
 
-import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
@@ -8,7 +7,6 @@ import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.item_editor.color_editor.algorithm.*;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
-import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.CheckboxComponent;
@@ -16,11 +14,8 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
-import io.wispforest.owo.ui.parsing.UIModel;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.*;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +37,7 @@ public class ColorEditor implements IItemEditorScreen {
 
         this.colorableRequested = new RequestedItem(
                 itemStack -> AutoDetectColorAlgorithm.algorithm.isApplicable(itemStack),
-                this::selectItemAndUpdateParameters,
+                (stack) -> this.updateItemPreview(),
                 null,
                 Text.translatable("fzmm.gui.itemEditor.color.title"),
                 true
@@ -58,17 +53,8 @@ public class ColorEditor implements IItemEditorScreen {
     }
 
     @Override
-    public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, int x, int y, int width, int height) {
-        UIModel uiModel = BaseUIModelScreen.DataSource.asset(new Identifier(FzmmClient.MOD_ID, "item_editor/color_editor")).get();
-        if (uiModel == null) {
-            FzmmClient.LOGGER.error("[ColorEditor] Failed to load UIModel");
-            return null;
-        }
-
-        assert MinecraftClient.getInstance().world != null;
-        FlowLayout rootComponent = uiModel.createAdapterWithoutScreen(x, y, width, height, FlowLayout.class).rootComponent;
-
-        FlowLayout colorInputLayout = rootComponent.childById(FlowLayout.class, "color-input");
+    public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, FlowLayout editorLayout) {
+        FlowLayout colorInputLayout = editorLayout.childById(FlowLayout.class, "color-input");
         BaseFzmmScreen.checkNull(colorInputLayout, "flow-layout", "color-input");
 
         ColorRow colorRow = new ColorRow("", "color", "color", false, false);
@@ -83,7 +69,7 @@ public class ColorEditor implements IItemEditorScreen {
                         .margins(Insets.of(0))
         );
 
-        this.checkboxComponent = rootComponent.childById(CheckboxComponent.class, "toggle");
+        this.checkboxComponent = editorLayout.childById(CheckboxComponent.class, "toggle");
         BaseFzmmScreen.checkNull(this.checkboxComponent, "checkbox", "toggle");
         this.checkboxComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
            this.updateItemPreview();
@@ -92,21 +78,21 @@ public class ColorEditor implements IItemEditorScreen {
         });
         this.checkboxComponent.checked(true);
 
-        this.colorComponent = ColorRow.setup(rootComponent, "color", Color.WHITE, false, 500, s -> this.updateItemPreview());
+        this.colorComponent = ColorRow.setup(editorLayout, "color", Color.WHITE, false, 500, s -> this.updateItemPreview());
 
         this.colorButtons = new ArrayList<>();
         this.colorableStack = Items.AIR.getDefaultStack();
         this.currentAlgorithm = AutoDetectColorAlgorithm.algorithm;
 
-        this.colorButtons.add(this.setupAndGetButton(rootComponent, AutoDetectColorAlgorithm.algorithm));
+        this.colorButtons.add(this.setupAndGetButton(editorLayout, AutoDetectColorAlgorithm.algorithm));
 
         for (var algorithm : AutoDetectColorAlgorithm.colorAlgorithms) {
-            this.colorButtons.add(this.setupAndGetButton(rootComponent, algorithm));
+            this.colorButtons.add(this.setupAndGetButton(editorLayout, algorithm));
         }
 
         this.colorButtons.get(0).onPress();
 
-        return rootComponent;
+        return editorLayout;
     }
 
     private int getColor() {

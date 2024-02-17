@@ -14,7 +14,6 @@ import fzmm.zailer.me.client.gui.item_editor.banner_editor.tabs.BannerEditorTabs
 import fzmm.zailer.me.client.gui.item_editor.banner_editor.tabs.IBannerEditorTab;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import fzmm.zailer.me.utils.FzmmUtils;
-import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
@@ -22,11 +21,9 @@ import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
-import io.wispforest.owo.ui.parsing.UIModel;
 import net.minecraft.item.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayDeque;
@@ -57,36 +54,30 @@ public class BannerEditorScreen implements IItemEditorScreen {
     }
 
     @Override
-    public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, int x, int y, int width, int height) {
+    public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, FlowLayout editorLayout) {
         this.baseScreen = baseScreen;
-        UIModel uiModel = BaseUIModelScreen.DataSource.asset(new Identifier(FzmmClient.MOD_ID, "item_editor/banner_editor")).get();
-        if (uiModel == null) {
-            FzmmClient.LOGGER.error("[BannerEditorScreen] Failed to load UIModel");
-            return null;
-        }
 
-        FlowLayout rootComponent = uiModel.createAdapterWithoutScreen(x, y, width, height, FlowLayout.class).rootComponent;
         //preview
-        this.bannerPreview = rootComponent.childById(ItemComponent.class, BANNER_PREVIEW_ID);
+        this.bannerPreview = editorLayout.childById(ItemComponent.class, BANNER_PREVIEW_ID);
         BaseFzmmScreen.checkNull(this.bannerPreview, "flow-layout", BANNER_PREVIEW_ID);
 
         //preview buttons
         this.undoArray = new ArrayDeque<>();
-        this.undoButton = rootComponent.childById(ButtonComponent.class, UNDO_BUTTON_ID);
+        this.undoButton = editorLayout.childById(ButtonComponent.class, UNDO_BUTTON_ID);
         BaseFzmmScreen.checkNull(this.undoButton, "button", UNDO_BUTTON_ID);
         this.undoButton.onPress(buttonComponent -> this.undo());
 
         this.redoArray = new ArrayDeque<>();
-        this.redoButton = rootComponent.childById(ButtonComponent.class, REDO_BUTTON_ID);
+        this.redoButton = editorLayout.childById(ButtonComponent.class, REDO_BUTTON_ID);
         BaseFzmmScreen.checkNull(this.redoButton, "button", REDO_BUTTON_ID);
         this.redoButton.onPress(buttonComponent -> this.redo());
 
         this.clearUndo();
 
-        FlowLayout contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
+        FlowLayout contentLayout = editorLayout.childById(FlowLayout.class, CONTENT_ID);
         BaseFzmmScreen.checkNull(contentLayout, "flow-layout", CONTENT_ID);
 
-        FlowLayout colorLayout = rootComponent.childById(FlowLayout.class, COLOR_LAYOUT_ID);
+        FlowLayout colorLayout = editorLayout.childById(FlowLayout.class, COLOR_LAYOUT_ID);
         BaseFzmmScreen.checkNull(colorLayout, "flow-layout", COLOR_LAYOUT_ID);
         List<Component> colorList = new ArrayList<>();
         DyeColor[] dyeColorsInOrder = FzmmUtils.getColorsInOrder();
@@ -124,26 +115,26 @@ public class BannerEditorScreen implements IItemEditorScreen {
 
         //tabs
         this.baseScreen.setTabs(selectedTab);
-        ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
+        ScreenTabRow.setup(editorLayout, "tabs", selectedTab);
         for (var bannerEditorTab : BannerEditorTabs.values()) {
             IScreenTab tab = this.baseScreen.getTab(bannerEditorTab, IBannerEditorTab.class);
-            tab.setupComponents(rootComponent);
-            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button -> {
-                selectedTab = this.baseScreen.selectScreenTab(rootComponent, tab, selectedTab);
+            tab.setupComponents(editorLayout);
+            ButtonRow.setup(editorLayout, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button -> {
+                selectedTab = this.baseScreen.selectScreenTab(editorLayout, tab, selectedTab);
                 this.updatePreview(this.bannerBuilder);
             });
         }
-        this.baseScreen.selectScreenTab(rootComponent, selectedTab, selectedTab);
+        this.baseScreen.selectScreenTab(editorLayout, selectedTab, selectedTab);
 
         //other
-        this.isShieldButton = BooleanRow.setup(rootComponent, IS_SHIELD_ID, false, button -> {
+        this.isShieldButton = BooleanRow.setup(editorLayout, IS_SHIELD_ID, false, button -> {
             boolean isShield = ((BooleanButton) button).enabled();
             this.updatePreview(this.bannerBuilder.isShield(isShield));
         });
         this.isShieldButton.horizontalSizing(Sizing.fill(33));
 
         this.updatePreview(this.bannerBuilder);
-        return rootComponent;
+        return editorLayout;
     }
 
     @Override

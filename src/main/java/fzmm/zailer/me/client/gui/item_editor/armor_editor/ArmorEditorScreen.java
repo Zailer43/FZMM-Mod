@@ -1,7 +1,6 @@
 package fzmm.zailer.me.client.gui.item_editor.armor_editor;
 
 import fzmm.zailer.me.builders.ArmorBuilder;
-import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
@@ -9,7 +8,6 @@ import fzmm.zailer.me.client.gui.item_editor.armor_editor.options.ArmorEditorOpt
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.options.ArmorEditorOptionTrimMaterial;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.options.ArmorEditorOptionTrimPattern;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
-import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.EntityComponent;
@@ -19,7 +17,6 @@ import io.wispforest.owo.ui.container.StackLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
-import io.wispforest.owo.ui.parsing.UIModel;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -32,7 +29,6 @@ import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.SmithingRecipe;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,17 +117,8 @@ public class ArmorEditorScreen implements IItemEditorScreen {
     }
 
     @Override
-    public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, int x, int y, int width, int height) {
-        UIModel uiModel = BaseUIModelScreen.DataSource.asset(new Identifier(FzmmClient.MOD_ID, "item_editor/armor_editor")).get();
-        if (uiModel == null) {
-            FzmmClient.LOGGER.error("[ArmorEditorScreen] Failed to load UIModel");
-            return null;
-        }
-
-        assert MinecraftClient.getInstance().world != null;
-        FlowLayout rootComponent = uiModel.createAdapterWithoutScreen(x, y, width, height, FlowLayout.class).rootComponent;
-
-        EntityComponent<?> armorPreviewComponent = rootComponent.childById(EntityComponent.class, ARMOR_PREVIEW_ID);
+    public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, FlowLayout editorLayout) {
+        EntityComponent<?> armorPreviewComponent = editorLayout.childById(EntityComponent.class, ARMOR_PREVIEW_ID);
         BaseFzmmScreen.checkNull(armorPreviewComponent, "entity", ARMOR_PREVIEW_ID);
         this.armorStandPreview = (ArmorStandEntity) armorPreviewComponent.entity();
         this.armorStandPreview.setHideBasePlate(true);
@@ -143,7 +130,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         this.selectedArmorPartBuilder = this.helmetBuilder;
 
         this.armorPartButtons = new HashMap<>();
-        FlowLayout selectPartLayout = rootComponent.childById(FlowLayout.class, SELECT_PART_ID);
+        FlowLayout selectPartLayout = editorLayout.childById(FlowLayout.class, SELECT_PART_ID);
         BaseFzmmScreen.checkNull(selectPartLayout, "flow-layout", SELECT_PART_ID);
         List<Component> selectPartChildren = new ArrayList<>();
         selectPartChildren.add(this.getPartComponent(Items.DIAMOND_HELMET, helmetRequest, helmetBuilder));
@@ -152,17 +139,17 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         selectPartChildren.add(this.getPartComponent(Items.DIAMOND_BOOTS, bootsRequest, bootsBuilder));
         selectPartLayout.children(selectPartChildren);
 
-        this.armorMaterialLayout = rootComponent.childById(FlowLayout.class, SELECT_ARMOR_MATERIAL_ID);
+        this.armorMaterialLayout = editorLayout.childById(FlowLayout.class, SELECT_ARMOR_MATERIAL_ID);
         BaseFzmmScreen.checkNull(this.armorMaterialLayout, "flow-layout", SELECT_ARMOR_MATERIAL_ID);
 
-        FlowLayout trimMaterialLayout = rootComponent.childById(FlowLayout.class, SELECT_TRIM_MATERIAL_ID);
+        FlowLayout trimMaterialLayout = editorLayout.childById(FlowLayout.class, SELECT_TRIM_MATERIAL_ID);
         BaseFzmmScreen.checkNull(trimMaterialLayout, "flow-layout", SELECT_TRIM_MATERIAL_ID);
 
-        FlowLayout trimPatternLayout = rootComponent.childById(FlowLayout.class, SELECT_TRIM_PATTERN_ID);
+        FlowLayout trimPatternLayout = editorLayout.childById(FlowLayout.class, SELECT_TRIM_PATTERN_ID);
         BaseFzmmScreen.checkNull(trimPatternLayout, "flow-layout", SELECT_TRIM_PATTERN_ID);
 
         this.selectArmorPartExecute(this.helmetRequest, this.helmetBuilder);
-        this.updateSelectedArmorReference();
+        this.update();
 
         this.armorMaterialOption.generateLayout(this.armorMaterialLayout);
         this.trimMaterialOption.generateLayout(trimMaterialLayout);
@@ -172,7 +159,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         this.trimMaterialOption.setExecuteCallback(this::update);
         this.trimPatternOption.setExecuteCallback(this::update);
 
-        return rootComponent;
+        return editorLayout;
     }
 
     @Override
@@ -224,7 +211,10 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         ButtonComponent button = stackLayout.childById(ButtonComponent.class, id);
         BaseFzmmScreen.checkNull(button, "button", id);
         this.armorPartButtons.put(requestedItem.predicate(), button);
-        button.onPress(buttonComponent -> this.selectArmorPartExecute(requestedItem, builder));
+        button.onPress(buttonComponent -> {
+            this.selectArmorPartExecute(requestedItem, builder);
+            this.update();
+        });
         return stackLayout;
     }
 
@@ -269,7 +259,6 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         this.selectedArmorPartBuilder = builder;
         this.updateSelectedArmorReference();
         this.armorMaterialOption.generateLayout(this.armorMaterialLayout);
-        this.update();
     }
 
     private void toggleArmorPartButtons(RequestedItem requestedItem) {

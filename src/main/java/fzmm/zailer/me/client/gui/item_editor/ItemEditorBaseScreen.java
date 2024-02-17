@@ -17,18 +17,17 @@ import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
-import io.wispforest.owo.ui.core.Component;
-import io.wispforest.owo.ui.core.Sizing;
-import io.wispforest.owo.ui.core.Surface;
-import io.wispforest.owo.ui.core.VerticalAlignment;
+import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemEditorBaseScreen extends BaseFzmmScreen {
     private static final int APPLICABLE_EDITORS_CATEGORY_BACKGROUND_COLOR = 0xff7d7d7d;
@@ -119,27 +118,62 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
     }
 
     public void selectEditor(IItemEditorScreen editor) {
-        try {
-            selectedEditor = editor.getClass();
-            this.currentEditor = editor;
-            this.contentLayout.clearChildren();
-            List<RequestedItem> requestedItems = this.currentEditor.getRequestedItems();
-            FlowLayout editorLayout = this.currentEditor.getLayout(this,
-                    this.basePanelLayout.x() + this.basePanelLayout.width(),
-                    this.basePanelLayout.y(),
-                    this.width,
-                    this.height
-            );
+        selectedEditor = editor.getClass();
+        this.currentEditor = editor;
+        this.contentLayout.clearChildren();
+        List<RequestedItem> requestedItems = this.currentEditor.getRequestedItems();
+        Optional<FlowLayout> editorLayoutOptional = this.currentEditor.getLayoutModel(
+                this.basePanelLayout.x() + this.basePanelLayout.width(),
+                this.basePanelLayout.y(),
+                this.width,
+                this.height
+        );
 
-            if (editorLayout != null) {
-                this.contentLayout.child(editorLayout);
-                this.updateRequestedItemsComponents(requestedItems);
-                editor.selectItemAndUpdateParameters(this.selectedItem);
-                editor.updateItemPreview();
-            }
+        boolean failedGettingLayout = false;
+        try {
+            FlowLayout editorLayout = editorLayoutOptional.orElseThrow();
+            editorLayout = this.currentEditor.getLayout(this, editorLayout);
+            this.contentLayout.child(editorLayout);
         } catch (Exception e) {
-            FzmmClient.LOGGER.error("[ItemEditorBaseScreen] Failed to add editor layout", e);
+            FzmmClient.LOGGER.error("[ItemEditorBaseScreen] Failed to get editor layout", e);
+            this.addErrorMessage(Text.translatable("fzmm.gui.itemEditor.label.error.editorLayout"));
+            failedGettingLayout = true;
         }
+
+        this.updateRequestedItemsComponents(requestedItems);
+
+        if (failedGettingLayout)
+            return;
+
+        this.selectItemAndUpdateParameters(this.selectedItem);
+        editor.updateItemPreview();
+    }
+
+    private void selectItemAndUpdateParameters(ItemStack stack) {
+        try {
+            this.currentEditor.selectItemAndUpdateParameters(stack);
+        } catch (Exception e) {
+            FzmmClient.LOGGER.error("[ItemEditorBaseScreen] Failed to select item", e);
+            this.updateEditorsComponents();
+            Text message = Text.translatable("fzmm.gui.itemEditor.label.error.selectItem",
+                    stack.getName(), Registries.ITEM.getId(stack.getItem()).toString());
+
+            this.addErrorMessage(message);
+        }
+    }
+
+    private void addErrorMessage(Text message) {
+        message = message.copy().setStyle(Style.EMPTY.withColor(0xD83F27));
+
+        LabelComponent label = Components.label(message);
+        label.horizontalSizing(Sizing.fill(100));
+        FlowLayout errorLayout = Containers.horizontalFlow(Sizing.fill(100), Sizing.content());
+        errorLayout.padding(Insets.of(10));
+        errorLayout.surface(Surface.DARK_PANEL);
+        errorLayout.child(label);
+
+        this.contentLayout.clearChildren();
+        this.contentLayout.child(errorLayout);
     }
 
     private void updateRequestedItemsComponents(List<RequestedItem> requestedItemList) {
@@ -165,9 +199,10 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
             giveButton.horizontalSizing(Sizing.fixed(30));
             layout.child(giveButton);
 
-            requestedItem.setUpdatePreviewConsumer(itemStack ->
-                    this.updatePreviewExecute(itemStack, requestedItemList, requestedItem, itemComponent, selectItemButton)
-            );
+            requestedItem.setUpdatePreviewConsumer(itemStack -> {
+                this.selectItemAndUpdateParameters(itemStack);
+                this.updatePreviewExecute(itemStack, requestedItemList, requestedItem, itemComponent, selectItemButton);
+            });
 
             ItemStack stack = requestedItem.stack();
             this.updateRequestedItemButton(selectItemButton, requestedItem, stack);

@@ -1,12 +1,10 @@
 package fzmm.zailer.me.client.gui.item_editor.block_state_editor;
 
 import fzmm.zailer.me.builders.BlockStateItemBuilder;
-import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
-import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
@@ -14,7 +12,6 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIModel;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -22,7 +19,6 @@ import net.minecraft.state.property.Property;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 import java.util.*;
 
@@ -64,26 +60,18 @@ public class BlockStateEditor implements IItemEditorScreen {
     }
 
     @Override
-    public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, int x, int y, int width, int height) {
-        UIModel uiModel = BaseUIModelScreen.DataSource.asset(new Identifier(FzmmClient.MOD_ID, "item_editor/block_state_editor")).get();
-        if (uiModel == null) {
-            FzmmClient.LOGGER.error("[BlockStateEditor] Failed to load UIModel");
-            return null;
-        }
-        this.uiModel = uiModel;
+    public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, FlowLayout editorLayout) {
+        this.uiModel = this.getUIModel().orElseThrow();
 
-        assert MinecraftClient.getInstance().world != null;
-        FlowLayout rootComponent = uiModel.createAdapterWithoutScreen(x, y, width, height, FlowLayout.class).rootComponent;
-
-        this.blockPreviewLayout = rootComponent.childById(FlowLayout.class, BLOCK_PREVIEW_LAYOUT_ID);
+        this.blockPreviewLayout = editorLayout.childById(FlowLayout.class, BLOCK_PREVIEW_LAYOUT_ID);
         BaseFzmmScreen.checkNull(this.blockPreviewLayout, "flow-layout", BLOCK_PREVIEW_LAYOUT_ID);
 
-        this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
+        this.contentLayout = editorLayout.childById(FlowLayout.class, CONTENT_ID);
         BaseFzmmScreen.checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
 
         this.blockBuilder.item(Items.AIR);
 
-        return rootComponent;
+        return editorLayout;
     }
 
     @Override

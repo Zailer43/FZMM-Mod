@@ -2,7 +2,6 @@ package fzmm.zailer.me.client.gui.item_editor.enchant_editor;
 
 import com.google.common.collect.ImmutableList;
 import fzmm.zailer.me.builders.EnchantmentBuilder;
-import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.FzmmIcons;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
@@ -14,14 +13,12 @@ import fzmm.zailer.me.client.gui.item_editor.enchant_editor.components.enchant.R
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.itemgroup.Icon;
-import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
-import io.wispforest.owo.ui.parsing.UIModel;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.enchantment.Enchantment;
@@ -86,16 +83,7 @@ public class EnchantEditor implements IItemEditorScreen {
     }
 
     @Override
-    public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, int x, int y, int width, int height) {
-        UIModel uiModel = BaseUIModelScreen.DataSource.asset(new Identifier(FzmmClient.MOD_ID, "item_editor/enchant_editor")).get();
-        if (uiModel == null) {
-            FzmmClient.LOGGER.error("[EnchantEditor] Failed to load UIModel");
-            return null;
-        }
-
-        assert MinecraftClient.getInstance().world != null;
-        FlowLayout rootComponent = uiModel.createAdapterWithoutScreen(x, y, width, height, FlowLayout.class).rootComponent;
-
+    public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, FlowLayout editorLayout) {
         this.appliedEnchantsComponents = new ArrayList<>();
         this.glint = false;
         this.allowDuplicates = false;
@@ -104,7 +92,7 @@ public class EnchantEditor implements IItemEditorScreen {
         this.enchantsLabelHorizontalSize = 0;
 
         // top boolean buttons
-        ButtonComponent glintComponent = rootComponent.childById(ButtonComponent.class, "glint");
+        ButtonComponent glintComponent = editorLayout.childById(ButtonComponent.class, "glint");
         BaseFzmmScreen.checkNull(glintComponent, "button", "glint");
         glintComponent.onPress(buttonComponent -> {
             this.glint = !this.glint;
@@ -115,7 +103,7 @@ public class EnchantEditor implements IItemEditorScreen {
         glintComponent.horizontalSizing(Sizing.fixed(20));
         this.setRenderButton(glintComponent, () -> this.glint, 48);
 
-        ButtonComponent allowDuplicatesComponent = rootComponent.childById(ButtonComponent.class, "allow-duplicates");
+        ButtonComponent allowDuplicatesComponent = editorLayout.childById(ButtonComponent.class, "allow-duplicates");
         BaseFzmmScreen.checkNull(allowDuplicatesComponent, "button", "allow-duplicates");
         allowDuplicatesComponent.onPress(buttonComponent -> {
             this.allowDuplicates = !this.allowDuplicates;
@@ -127,7 +115,7 @@ public class EnchantEditor implements IItemEditorScreen {
         allowDuplicatesComponent.horizontalSizing(Sizing.fixed(20));
         this.setRenderButton(allowDuplicatesComponent, () -> this.allowDuplicates, 80);
 
-        ButtonComponent ignoreMaxLevelComponent = rootComponent.childById(ButtonComponent.class, "ignore-max-level");
+        ButtonComponent ignoreMaxLevelComponent = editorLayout.childById(ButtonComponent.class, "ignore-max-level");
         BaseFzmmScreen.checkNull(ignoreMaxLevelComponent, "button", "ignore-max-level");
         ignoreMaxLevelComponent.onPress(buttonComponent -> {
             this.ignoreMaxLevel = !this.ignoreMaxLevel;
@@ -137,7 +125,7 @@ public class EnchantEditor implements IItemEditorScreen {
         ignoreMaxLevelComponent.horizontalSizing(Sizing.fixed(20));
         this.setRenderButton(ignoreMaxLevelComponent, () -> this.ignoreMaxLevel, 112);
 
-        ButtonComponent onlyCompatibleEnchantsComponent = rootComponent.childById(ButtonComponent.class, "only-compatible-enchants");
+        ButtonComponent onlyCompatibleEnchantsComponent = editorLayout.childById(ButtonComponent.class, "only-compatible-enchants");
         BaseFzmmScreen.checkNull(onlyCompatibleEnchantsComponent, "button", "only-compatible-enchants");
         onlyCompatibleEnchantsComponent.onPress(buttonComponent -> {
             this.onlyCompatibleEnchants = !this.onlyCompatibleEnchants;
@@ -150,9 +138,9 @@ public class EnchantEditor implements IItemEditorScreen {
 
         // other top buttons
         Icon sortIcon = Icon.of(Items.HOPPER);
-        this.sortButton = rootComponent.childById(ButtonComponent.class, "sort-enchants");
+        this.sortButton = editorLayout.childById(ButtonComponent.class, "sort-enchants");
         BaseFzmmScreen.checkNull(this.sortButton, "button", "sort-enchants");
-        this.sortButton.onPress(buttonComponent -> this.addSortOverlay((FlowLayout) rootComponent.root()));
+        this.sortButton.onPress(buttonComponent -> this.addSortOverlay((FlowLayout) editorLayout.root()));
         this.sortButton.horizontalSizing(Sizing.fixed(20));
         this.sortButton.renderer((context, button, delta) -> {
             ButtonComponent.Renderer.VANILLA.draw(context, button, delta);
@@ -161,7 +149,7 @@ public class EnchantEditor implements IItemEditorScreen {
 
 
         // right top button
-        ButtonComponent removeAllButton = rootComponent.childById(ButtonComponent.class, "remove-all");
+        ButtonComponent removeAllButton = editorLayout.childById(ButtonComponent.class, "remove-all");
         BaseFzmmScreen.checkNull(removeAllButton, "button", "remove-all");
         removeAllButton.onPress(buttonComponent -> {
             this.enchantBuilder.removeAll();
@@ -171,14 +159,14 @@ public class EnchantEditor implements IItemEditorScreen {
         });
 
         // filters
-        this.searchTextBox = rootComponent.childById(TextBoxComponent.class, "search");
+        this.searchTextBox = editorLayout.childById(TextBoxComponent.class, "search");
         BaseFzmmScreen.checkNull(this.searchTextBox, "text-box", "search");
         this.searchTextBox.onChanged().subscribe(value -> {
             this.selectedCategoryButton.onPress();
             this.updateAppliedEnchants();
         });
 
-        this.setLevelsTextBox = rootComponent.childById(ConfigTextBox.class, "set-levels");
+        this.setLevelsTextBox = editorLayout.childById(ConfigTextBox.class, "set-levels");
         BaseFzmmScreen.checkNull(this.setLevelsTextBox, "text-box", "set-levels");
         this.setLevelsTextBox.configureForNumber(Integer.class);
         this.setLevelsTextBox.setText("1");
@@ -194,11 +182,11 @@ public class EnchantEditor implements IItemEditorScreen {
         this.setLevelsTextBox.onChanged().subscribe(value -> this.setLevelsExecute(this.ignoreMaxLevel));
 
         // content
-        this.appliedEnchantsLayout = rootComponent.childById(FlowLayout.class, "applied-enchants");
+        this.appliedEnchantsLayout = editorLayout.childById(FlowLayout.class, "applied-enchants");
         BaseFzmmScreen.checkNull(this.appliedEnchantsLayout, "flowLayout", "applied-enchants");
 
         // add all
-        ButtonComponent addAllButton = rootComponent.childById(ButtonComponent.class, "add-all");
+        ButtonComponent addAllButton = editorLayout.childById(ButtonComponent.class, "add-all");
         BaseFzmmScreen.checkNull(addAllButton, "button", "add-all");
         addAllButton.onPress(buttonComponent -> {
             List<Component> children = this.addEnchantsLayout.children();
@@ -211,11 +199,11 @@ public class EnchantEditor implements IItemEditorScreen {
         });
 
         // categories
-        this.categoriesLayout = rootComponent.childById(FlowLayout.class, "categories");
+        this.categoriesLayout = editorLayout.childById(FlowLayout.class, "categories");
         BaseFzmmScreen.checkNull(this.categoriesLayout, "flowLayout", "categories");
 
         // add enchantments layout
-        this.addEnchantsLayout = rootComponent.childById(FlowLayout.class, "add-enchantments-layout");
+        this.addEnchantsLayout = editorLayout.childById(FlowLayout.class, "add-enchantments-layout");
         BaseFzmmScreen.checkNull(this.addEnchantsLayout, "flowLayout", "add-enchantments-layout");
 
         List<Enchantment> enchantments = this.getSortedEnchantments();
@@ -225,7 +213,7 @@ public class EnchantEditor implements IItemEditorScreen {
         this.updateAppliedEnchants();
         this.addCategories();
 
-        return rootComponent;
+        return editorLayout;
     }
 
     private void setLevelsExecute(boolean ignoreMaxLevel) {
