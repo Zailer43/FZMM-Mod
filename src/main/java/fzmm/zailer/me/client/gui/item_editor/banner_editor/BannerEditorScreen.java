@@ -151,14 +151,7 @@ public class BannerEditorScreen implements IItemEditorScreen {
 
         this.bannerRequest = new RequestedItem(
                 itemStack -> itemStack.getItem() instanceof ShieldItem || itemStack.getItem() instanceof BannerItem,
-                itemStack -> {
-                    boolean isShield = itemStack.getItem() instanceof ShieldItem;
-                    if (this.isShieldButton.enabled() != isShield)
-                        this.isShieldButton.onPress();
-
-                    this.bannerBuilder = BannerBuilder.of(itemStack);
-                    this.updatePreview(this.bannerBuilder);
-                },
+                this::selectItemAndUpdateParameters,
                 defaultItems,
                 this.bannerBuilder.get(),
                 Text.translatable("fzmm.gui.itemEditor.banner.title"),

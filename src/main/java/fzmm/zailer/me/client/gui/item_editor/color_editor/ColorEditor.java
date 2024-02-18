@@ -37,7 +37,7 @@ public class ColorEditor implements IItemEditorScreen {
 
         this.colorableRequested = new RequestedItem(
                 itemStack -> AutoDetectColorAlgorithm.algorithm.isApplicable(itemStack),
-                (stack) -> this.updateItemPreview(),
+                this::selectItemAndUpdateParameters,
                 null,
                 Text.translatable("fzmm.gui.itemEditor.color.title"),
                 true

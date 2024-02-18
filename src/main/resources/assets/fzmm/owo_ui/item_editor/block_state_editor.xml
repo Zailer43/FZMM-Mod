@@ -13,10 +13,6 @@
                                 <surface>
                                     <panel dark="true"/>
                                 </surface>
-
-                                <padding>
-                                    <all>10</all>
-                                </padding>
                             </flow-layout>
                         </children>
                     </flow-layout>
@@ -64,12 +60,26 @@
                     </flow-layout>
 
                     <label id="{{property}}-{{value}}-label">
+                        <sizing>
+                            <horizontal method="fill">100</horizontal>
+                        </sizing>
+
+                        <horizontal-text-alignment>center</horizontal-text-alignment>
                     </label>
                 </children>
+
+                <sizing>
+                    <horizontal method="fixed">60</horizontal>
+                </sizing>
 
                 <horizontal-alignment>center</horizontal-alignment>
 
                 <gap>2</gap>
+
+                <margins>
+                    <vertical>2</vertical>
+                    <horizontal>2</horizontal>
+                </margins>
             </flow-layout>
         </block-state-button>
     </templates>

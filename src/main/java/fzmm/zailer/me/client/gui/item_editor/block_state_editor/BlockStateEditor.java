@@ -15,6 +15,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -83,12 +84,14 @@ public class BlockStateEditor implements IItemEditorScreen {
     public void updateItemPreview() {
         this.blockRequested.setStack(this.blockBuilder.get());
         this.blockRequested.updatePreview();
+        this.updatePreview();
     }
 
     @Override
     public void selectItemAndUpdateParameters(ItemStack stack) {
         this.blockBuilder = this.blockBuilder.of(stack);
         this.updateBlockStateContent();
+        this.updatePreview();
     }
 
     @Override
@@ -103,7 +106,9 @@ public class BlockStateEditor implements IItemEditorScreen {
         Optional<BlockState> blockStateOptional = this.blockBuilder.blockState();
 
         if (blockStateOptional.isEmpty() || blockStateOptional.get().getProperties().isEmpty()) {
-            components.add(Components.label(Text.translatable("fzmm.gui.itemEditor.block_state.label.empty")));
+            components.add(Components.label(Text.translatable("fzmm.gui.itemEditor.block_state.label.empty"))
+                    .margins(Insets.of(10).withLeft(40))
+            );
             this.contentLayout.children(components);
             return;
         }
@@ -132,7 +137,6 @@ public class BlockStateEditor implements IItemEditorScreen {
             components.add(layout);
         }
 
-        this.contentLayout.gap(8);
         this.contentLayout.children(components);
     }
 
@@ -191,8 +195,6 @@ public class BlockStateEditor implements IItemEditorScreen {
         BaseFzmmScreen.checkNull(labelComponent, "label", labelId);
         this.setTranslation(labelComponent, labelKey, labelName, false);
 
-        valueLayout.margins(Insets.of(2));
-
         return valueLayout;
     }
 
@@ -229,16 +231,23 @@ public class BlockStateEditor implements IItemEditorScreen {
             value = blockState.getBlock().getDefaultState().get(property).toString().toLowerCase();
 
         String propertyName = property.getName();
-        FlowLayout stateLayout = this.statesLayoutOfProperties.get(property).get(valueName);
-        stateLayout.clearChildren();
         Component blockComponent = Components.block(BlockItem.with(blockState, property, value), this.blockBuilder.nbt())
                 .sizing(Sizing.fixed(40), Sizing.fixed(40));
+
+        FlowLayout stateLayout = this.statesLayoutOfProperties.get(property).get(valueName);
+        stateLayout.clearChildren();
         stateLayout.child(blockComponent);
         boolean propertyUsed = this.blockBuilder.contains(propertyName);
+
+        boolean waterlogged = property == Properties.WATERLOGGED && valueName.equals("true")
+                || (property != Properties.WATERLOGGED && this.blockBuilder.isState(Properties.WATERLOGGED.getName(), "true"));
+
+        // there is always one active, if the property is not in use, it is the default, otherwise it is the selected one
         if ((isDefault && !propertyUsed) || (this.blockBuilder.isState(propertyName, valueName) && propertyUsed && !isDefault)) {
-            stateLayout.surface(Surface.flat(0x6050af68));
+            stateLayout.surface(Surface.flat(waterlogged ? 0x6050A4AF : 0x6050af68));
         } else {
-            stateLayout.surface(Surface.flat(60000000))
+            int disabledColor = waterlogged ? 0x602A4CD5 : 0;
+            stateLayout.surface(Surface.flat(disabledColor))
                     .alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
                     .cursorStyle(CursorStyle.HAND)
                     .sizing(Sizing.fixed(40), Sizing.fixed(40));
@@ -254,7 +263,6 @@ public class BlockStateEditor implements IItemEditorScreen {
         else
             this.blockBuilder.add(propertyName, valueName);
 
-        this.selectItemAndUpdateParameters(this.blockBuilder.get());
         this.updatePropertiesContent();
         return true;
     }

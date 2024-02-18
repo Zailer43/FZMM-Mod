@@ -199,10 +199,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
             giveButton.horizontalSizing(Sizing.fixed(30));
             layout.child(giveButton);
 
-            requestedItem.setUpdatePreviewConsumer(itemStack -> {
-                this.selectItemAndUpdateParameters(itemStack);
-                this.updatePreviewExecute(itemStack, requestedItemList, requestedItem, itemComponent, selectItemButton);
-            });
+            requestedItem.setUpdatePreviewConsumer(itemStack -> this.updatePreviewExecute(itemStack, requestedItemList, requestedItem, itemComponent, selectItemButton));
 
             ItemStack stack = requestedItem.stack();
             this.updateRequestedItemButton(selectItemButton, requestedItem, stack);
