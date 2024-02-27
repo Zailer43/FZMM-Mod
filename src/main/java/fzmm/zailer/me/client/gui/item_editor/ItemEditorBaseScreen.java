@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.gui.item_editor.armor_editor.ArmorEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.banner_editor.BannerEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.block_state_editor.BlockStateEditor;
 import fzmm.zailer.me.client.gui.item_editor.color_editor.ColorEditor;
+import fzmm.zailer.me.client.gui.item_editor.effect_editor.EffectEditor;
 import fzmm.zailer.me.client.gui.item_editor.enchant_editor.EnchantEditor;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import fzmm.zailer.me.client.gui.utils.selectItem.SelectItemScreen;
@@ -65,6 +66,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         itemEditorScreens.add(new BannerEditorScreen());
         itemEditorScreens.add(new BlockStateEditor());
         itemEditorScreens.add(new ColorEditor());
+        itemEditorScreens.add(new EffectEditor());
         itemEditorScreens.add(new EnchantEditor());
 
         return itemEditorScreens;

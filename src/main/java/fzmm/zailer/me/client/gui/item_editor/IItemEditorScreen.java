@@ -46,7 +46,11 @@ public interface IItemEditorScreen {
     }
 
     default String getUIModelPath() {
-        return "item_editor/" + this.getId() + "_editor";
+        return "item_editor/" + this.getUIModelId() + "_editor";
+    }
+
+    default String getUIModelId() {
+        return this.getId();
     }
 
     FlowLayout getLayout(ItemEditorBaseScreen baseScreen, FlowLayout editorLayout);

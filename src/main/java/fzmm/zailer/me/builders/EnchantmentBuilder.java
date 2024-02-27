@@ -1,6 +1,9 @@
 package fzmm.zailer.me.builders;
 
+import fzmm.zailer.me.client.gui.item_editor.common.levelable.ILevelable;
+import fzmm.zailer.me.client.gui.item_editor.common.levelable.ILevelableBuilder;
 import fzmm.zailer.me.utils.TagsConstant;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -10,13 +13,15 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnchantmentBuilder {
+public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, EnchantmentBuilder.EnchantmentData> {
 
     private ItemStack stack;
     private final List<EnchantmentData> enchantments;
@@ -34,9 +39,14 @@ public class EnchantmentBuilder {
         return new EnchantmentBuilder();
     }
 
-    public EnchantmentBuilder add(Enchantment enchantment, int level) {
-        this.enchantments.add(new EnchantmentData(enchantment, level));
+    @Override
+    public EnchantmentBuilder add(EnchantmentData enchantment) {
+        this.enchantments.add(enchantment);
         return this;
+    }
+
+    public EnchantmentBuilder add(Enchantment enchantment, int level) {
+        return this.add(new EnchantmentData(enchantment, level));
     }
 
     public EnchantmentBuilder add(Enchantment enchantment) {
@@ -67,60 +77,63 @@ public class EnchantmentBuilder {
     }
 
     public EnchantmentBuilder remove(Enchantment enchantment) {
-        this.enchantments.removeIf(enchantmentData -> enchantmentData.getEnchantment() == enchantment);
+        this.enchantments.removeIf(enchantmentData -> enchantmentData.getValue() == enchantment);
         return this;
     }
 
+    @Override
     public EnchantmentBuilder remove(int index) {
         if (index >= 0 && index < this.enchantments.size())
             this.enchantments.remove(index);
         return this;
     }
 
-    public EnchantmentBuilder removeAll() {
-        this.enchantments.clear();
-        return this;
-    }
-
+    @Override
     public EnchantmentBuilder clear() {
         this.enchantments.clear();
         return this;
     }
 
-    public EnchantmentData getEnchant(int index) {
+    @Override
+    public EnchantmentData getValue(int index) {
         if (index >= 0 && index < this.enchantments.size())
             return this.enchantments.get(index);
         return new EnchantmentData(Enchantments.AQUA_AFFINITY, 1);
     }
 
-    public List<EnchantmentData> enchantments() {
+    @Override
+    public List<EnchantmentData> values() {
         return new ArrayList<>(this.enchantments);
     }
 
-    public void enchantments(List<EnchantmentData> enchantments) {
+    @Override
+    public EnchantmentBuilder values(List<EnchantmentData> enchantments) {
         this.enchantments.clear();
         this.enchantments.addAll(enchantments);
+        return this;
     }
 
+    @Override
     public boolean contains(Enchantment enchantment) {
         for (var enchantmentData : this.enchantments)
-            if (enchantmentData.getEnchantment() == enchantment)
+            if (enchantmentData.getValue() == enchantment)
                 return true;
         return false;
-    }
-
-    public EnchantmentBuilder setLevel(int index, int level) {
-        if (index >= 0 && index < this.enchantments.size())
-            this.enchantments.get(index).setLevel(level);
-        return this;
     }
 
     public EnchantmentBuilder removeDuplicates() {
         List<EnchantmentData> newEnchantments = new ArrayList<>();
 
-        for (var enchantmentData : this.enchantments) {
-            if (!newEnchantments.contains(enchantmentData)) {
-                newEnchantments.add(enchantmentData);
+        for (var effectData : this.enchantments) {
+            boolean found = false;
+            for (var enchantmentData : newEnchantments) {
+                if (effectData.getValue().equals(enchantmentData.getValue())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                newEnchantments.add(effectData);
             }
         }
 
@@ -132,7 +145,7 @@ public class EnchantmentBuilder {
 
     public boolean isCompatibleWith(Enchantment enchantment) {
         for (var enchantmentData : this.enchantments) {
-            Enchantment enchant = enchantmentData.getEnchantment();
+            Enchantment enchant = enchantmentData.getValue();
             if (enchantment != enchant && !enchant.canCombine(enchantment))
                 return false;
         }
@@ -142,7 +155,7 @@ public class EnchantmentBuilder {
     public boolean hasDuplicates() {
         for (int i = 0; i != this.enchantments.size(); i++) {
             for (int j = i + 1; j != this.enchantments.size(); j++) {
-                if (i != j && this.enchantments.get(i).getEnchantment() == this.enchantments.get(j).getEnchantment())
+                if (i != j && this.enchantments.get(i).getValue() == this.enchantments.get(j).getValue())
                     return true;
             }
         }
@@ -151,7 +164,7 @@ public class EnchantmentBuilder {
 
     public boolean isOverMaxLevel() {
         for (var enchantmentData : this.enchantments) {
-            if (getMaxLevel(enchantmentData.level) != enchantmentData.level)
+            if (this.getMaxLevel(enchantmentData.level) != enchantmentData.level)
                 return true;
         }
         return false;
@@ -159,12 +172,13 @@ public class EnchantmentBuilder {
 
     public boolean onlyCompatibleEnchants() {
         for (var enchantmentData : this.enchantments) {
-            if (!this.isCompatibleWith(enchantmentData.getEnchantment()))
+            if (!this.isCompatibleWith(enchantmentData.getValue()))
                 return false;
         }
         return true;
     }
 
+    @Override
     public EnchantmentBuilder allowDuplicates(boolean allowDuplicates) {
         this.allowDuplicates = allowDuplicates;
         return this;
@@ -174,18 +188,20 @@ public class EnchantmentBuilder {
         return this.allowDuplicates;
     }
 
+    @Override
     public EnchantmentBuilder stack(ItemStack stack) {
         this.stack = stack.copy();
 
         NbtCompound compound = this.stack.getOrCreateNbt();
         NbtList enchants = compound.getList(ItemStack.ENCHANTMENTS_KEY, NbtElement.COMPOUND_TYPE);
-        this.addAll(enchants);
+        this.clear().addAll(enchants);
 
         this.glint(enchants.size() == 1 && enchants.get(0) instanceof NbtCompound nbt && nbt.isEmpty());
 
         return this.allowDuplicates(this.hasDuplicates());
     }
 
+    @Override
     public ItemStack stack() {
         return this.stack;
     }
@@ -212,12 +228,16 @@ public class EnchantmentBuilder {
                 enchants.add(enchantmentData.createNbt());
         }
 
-        this.stack.setSubNbt(ItemStack.ENCHANTMENTS_KEY, enchants);
+        if (enchants.isEmpty())
+            this.stack.removeSubNbt(ItemStack.ENCHANTMENTS_KEY);
+        else
+            this.stack.setSubNbt(ItemStack.ENCHANTMENTS_KEY, enchants);
 
-        return this.stack;
+        return this.stack.copy();
     }
 
-    public static int getMaxLevel(int level) {
+    @Override
+    public int getMaxLevel(int level) {
         NbtCompound nbt = new NbtCompound();
         // I didn't see a static where the max level is declared,
         // so doing this should at least avoid breaking compatibility
@@ -226,7 +246,7 @@ public class EnchantmentBuilder {
         return EnchantmentHelper.getLevelFromNbt(nbt);
     }
 
-    public static final class EnchantmentData {
+    public static final class EnchantmentData implements ILevelable<Enchantment> {
         private final Enchantment enchantment;
         private int level;
 
@@ -240,18 +260,38 @@ public class EnchantmentBuilder {
             return EnchantmentHelper.createNbt(EnchantmentHelper.getEnchantmentId(this.enchantment), level);
         }
 
-        public Enchantment getEnchantment() {
+        @Override
+        public Enchantment getValue() {
             return this.enchantment;
         }
 
-        public String getName() {
-            return this.enchantment.getName(1).getString();
+        @Override
+        public Text getName() {
+            Text text = this.enchantment.getName(1);
+            return text.copyContentOnly().setStyle(text.getStyle()); // remove levelable level of levelable name
         }
 
+        @Override
+        public String getTranslationKey() {
+            return this.enchantment.getTranslationKey();
+        }
+
+        @Override
+        public boolean isAcceptableItem(ItemStack stack) {
+            return this.enchantment.isAcceptableItem(stack);
+        }
+
+        @Override
+        public @Nullable Sprite getSprite() {
+            return null;
+        }
+
+        @Override
         public int getLevel() {
             return this.level;
         }
 
+        @Override
         public void setLevel(int level) {
             this.level = level;
         }

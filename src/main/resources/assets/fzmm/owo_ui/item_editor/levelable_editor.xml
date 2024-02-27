@@ -8,29 +8,31 @@
                         <children>
                             <flow-layout direction="horizontal">
                                 <children>
-                                    <button id="glint">
-                                    </button>
-                                    <button id="allow-duplicates">
-                                    </button>
-                                    <button id="ignore-max-level">
-                                    </button>
-                                    <button id="only-compatible-enchants">
-                                    </button>
+                                    <flow-layout direction="horizontal" id="boolean-buttons">
+                                        <children>
+                                            <button id="allow-duplicates">
+                                            </button>
+                                            <button id="ignore-max-level">
+                                            </button>
+                                        </children>
+
+                                        <gap>2</gap>
+                                    </flow-layout>
 
                                     <flow-layout direction="horizontal">
                                         <children>
-                                            <button id="sort-enchants">
+                                            <button id="sort-levelables">
                                                 <margins>
                                                     <left>4</left>
                                                 </margins>
                                             </button>
                                         </children>
 
-                                        <tooltip-text translate="true">fzmm.gui.itemEditor.enchant.option.sortEnchants</tooltip-text>
+                                        <tooltip-text translate="true">fzmm.gui.itemEditor.levelable.option.sort</tooltip-text>
                                     </flow-layout>
 
                                     <button id="remove-all">
-                                        <text translate="true">fzmm.gui.itemEditor.enchant.option.removeAll</text>
+                                        <text translate="true">fzmm.gui.itemEditor.levelable.option.removeAll</text>
                                         <positioning type="relative">100,0</positioning>
                                     </button>
                                 </children>
@@ -43,7 +45,7 @@
                             </flow-layout>
 
 
-                            <flow-layout direction="horizontal">
+                            <flow-layout direction="horizontal" id="top-options">
                                 <children>
                                     <label>
                                         <text translate="true">fzmm.gui.label.search</text>
@@ -56,7 +58,7 @@
                                     </text-box>
 
                                     <label>
-                                        <text translate="true">fzmm.gui.itemEditor.enchant.option.setLevels</text>
+                                        <text translate="true">fzmm.gui.itemEditor.levelable.option.setLevels</text>
                                     </label>
                                     <fzmm.text-option id="set-levels">
                                         <sizing>
@@ -72,7 +74,7 @@
 
 
                             <scroll direction="vertical">
-                                <flow-layout direction="ltr-text-flow" id="applied-enchants">
+                                <flow-layout direction="ltr-text-flow" id="applied-levelables">
                                     <children>
                                     </children>
 
@@ -105,7 +107,7 @@
                                     <flow-layout direction="vertical">
                                         <children>
                                             <button id="add-all">
-                                                <text translate="true">fzmm.gui.itemEditor.enchant.option.addAll</text>
+                                                <text translate="true">fzmm.gui.itemEditor.levelable.option.addAll</text>
                                                 <sizing>
                                                     <horizontal method="fixed">100</horizontal>
                                                 </sizing>
@@ -155,7 +157,7 @@
                                     </flow-layout>
 
                                     <scroll direction="vertical">
-                                        <flow-layout direction="ltr-text-flow" id="add-enchantments-layout">
+                                        <flow-layout direction="ltr-text-flow" id="add-levelables-layout">
                                             <children>
                                             </children>
 
