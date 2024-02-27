@@ -76,7 +76,6 @@ public class ColorEditor implements IItemEditorScreen {
 
             return true;
         });
-        this.checkboxComponent.checked(true);
 
         this.colorComponent = ColorRow.setup(editorLayout, "color", Color.WHITE, false, 500, s -> this.updateItemPreview());
 
@@ -90,7 +89,8 @@ public class ColorEditor implements IItemEditorScreen {
             this.colorButtons.add(this.setupAndGetButton(editorLayout, algorithm));
         }
 
-        this.colorButtons.get(0).onPress();
+        this.colorButtons.get(0).active = false;
+        this.currentAlgorithm = AutoDetectColorAlgorithm.algorithm;
 
         return editorLayout;
     }
@@ -132,13 +132,13 @@ public class ColorEditor implements IItemEditorScreen {
         else
             this.currentAlgorithm.removeTag(this.colorableStack);
 
+        this.colorableRequested.setStack(this.colorableStack);
         this.colorableRequested.updatePreview();
     }
 
     @Override
     public void selectItemAndUpdateParameters(ItemStack stack) {
         this.colorableStack = stack.copy();
-        this.colorableRequested.setStack(this.colorableStack);
 
         boolean hasTag = AutoDetectColorAlgorithm.algorithm.hasTag(stack);
         this.checkboxComponent.checked(hasTag);

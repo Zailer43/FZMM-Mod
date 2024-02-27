@@ -119,6 +119,11 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
 
     public void selectEditor(IItemEditorScreen editor) {
         selectedEditor = editor.getClass();
+
+        // We make a copy of the selected item to prevent it from being overwritten
+        // by an editor in case the editor calls editor#updateItemPreview before calling editor#selectItemAndUpdateParameters
+        ItemStack selectedItemCopy = this.selectedItem.copy();
+
         this.currentEditor = editor;
         this.contentLayout.clearChildren();
         List<RequestedItem> requestedItems = this.currentEditor.getRequestedItems();
@@ -145,7 +150,9 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         if (failedGettingLayout)
             return;
 
-        this.selectItemAndUpdateParameters(this.selectedItem);
+        this.selectItemAndUpdateParameters(selectedItemCopy);
+        this.selectedItem = selectedItemCopy;
+
         editor.updateItemPreview();
     }
 
