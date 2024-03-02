@@ -16,6 +16,7 @@ import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,7 @@ public abstract class BaseLevelableComponent<V, D extends ILevelable<V>, B exten
     protected boolean isDisabled;
     protected LevelableEditor<V, D, B> editor;
     protected B builder;
+    @Nullable
     protected FlowLayout spriteLayout;
 
     public BaseLevelableComponent(D levelable, LevelableEditor<V, D, B> editor, B builder) {
