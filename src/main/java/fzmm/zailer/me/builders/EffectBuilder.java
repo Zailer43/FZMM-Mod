@@ -6,9 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.PotionItem;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -267,7 +265,8 @@ public class EffectBuilder implements ILevelableBuilder<StatusEffect, EffectBuil
 
         @Override
         public boolean isAcceptableItem(ItemStack stack) {
-            return stack.getItem() instanceof PotionItem;
+            Item item = stack.getItem();
+            return item instanceof PotionItem || item instanceof TippedArrowItem;
         }
 
         @Override

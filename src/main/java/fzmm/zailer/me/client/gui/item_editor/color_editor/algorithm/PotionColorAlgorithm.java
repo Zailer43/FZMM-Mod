@@ -1,7 +1,9 @@
 package fzmm.zailer.me.client.gui.item_editor.color_editor.algorithm;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
+import net.minecraft.item.TippedArrowItem;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.potion.PotionUtil;
 
@@ -28,7 +30,8 @@ public class PotionColorAlgorithm implements IColorAlgorithm{
 
     @Override
     public boolean isApplicable(ItemStack stack) {
-        return stack.getItem() instanceof PotionItem;
+        Item item = stack.getItem();
+        return item instanceof PotionItem || item instanceof TippedArrowItem;
     }
 
     @Override

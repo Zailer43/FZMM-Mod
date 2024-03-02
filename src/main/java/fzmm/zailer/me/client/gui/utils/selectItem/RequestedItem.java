@@ -42,8 +42,12 @@ public class RequestedItem {
         List<ItemStack> applicableItems = new ArrayList<>();
 
         for (Item item : Registries.ITEM) {
-            if (this.predicate.test(item.getDefaultStack()))
-                applicableItems.add(item.getDefaultStack());
+            // some items like tipped arrow show you a default item with nbt,
+            // like for example poison arrow instead of tipped arrow with no effect
+            ItemStack stackWithoutNbt = new ItemStack(item);
+
+            if (this.predicate.test(stackWithoutNbt))
+                applicableItems.add(stackWithoutNbt);
         }
 
         return applicableItems;
