@@ -1,16 +1,19 @@
 package fzmm.zailer.me.client.gui.item_editor.armor_editor.options;
 
 import blue.endless.jankson.annotation.Nullable;
+import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.ArmorEditorScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.StackLayout;
 import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.trim.ArmorTrimMaterial;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.text.Text;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -45,7 +48,7 @@ public class ArmorEditorOptionTrimMaterial extends AbstractArmorEditorOptionList
 
     @Override
     public Component getLayout(@Nullable ArmorTrimMaterial value, String id, boolean selected) {
-        StackLayout stackLayout = this.parent.getButtonWithItemOver((value == null ? Items.BARRIER : value.ingredient().value()).getDefaultStack(), id, selected);
+        StackLayout stackLayout = this.parent.getButtonWithItemOver(this.getButtonItem(value), id, selected);
 
         ButtonComponent button = stackLayout.childById(ButtonComponent.class, id);
         BaseFzmmScreen.checkNull(button, "button", id);
@@ -53,6 +56,16 @@ public class ArmorEditorOptionTrimMaterial extends AbstractArmorEditorOptionList
         button.onPress(buttonComponent -> this.execute(value));
 
         return stackLayout;
+    }
+
+    private ItemStack getButtonItem(@Nullable ArmorTrimMaterial value) {
+        if (value == null) {
+            return DisplayBuilder.of(Items.BARRIER.getDefaultStack())
+                    .setName(Text.translatable("fzmm.gui.itemEditor.armor.label.emptyTrim"))
+                    .get();
+        } else {
+            return value.ingredient().value().getDefaultStack();
+        }
     }
 
     @Override

@@ -195,6 +195,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         this.selectedArmorPartBuilder = builder;
         builder.of(stack);
         this.selectArmorPartExecute(this.selectedArmorPart, this.selectedArmorPartBuilder);
+        this.update();
     }
 
     public boolean test(ItemStack itemStack, EquipmentSlot slot, List<SmithingRecipe> recipeTypes) {
