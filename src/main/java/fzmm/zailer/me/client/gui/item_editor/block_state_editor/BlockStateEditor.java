@@ -94,11 +94,6 @@ public class BlockStateEditor implements IItemEditorScreen {
         this.updatePreview();
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return false;
-    }
-
     public void updateBlockStateContent() {
         this.contentLayout.clearChildren();
         this.statesLayoutOfProperties.clear();

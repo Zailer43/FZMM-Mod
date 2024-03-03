@@ -1,5 +1,6 @@
 package fzmm.zailer.me.builders;
 
+import fzmm.zailer.me.utils.InventoryUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.item.Item;
@@ -17,52 +18,71 @@ import java.util.Optional;
 
 public class ContainerBuilder {
     private final List<ItemStack> itemList;
-    private Item containerItem;
-    private int maxItemByContainer;
+    private ItemStack stack;
+    private int containerSize;
 
     private ContainerBuilder() {
         this.itemList = new ArrayList<>();
-        this.containerItem = Items.WHITE_SHULKER_BOX;
-        this.maxItemByContainer = ShulkerBoxBlockEntity.INVENTORY_SIZE;
+        this.stack = Items.WHITE_SHULKER_BOX.getDefaultStack();
+        this.containerSize = ShulkerBoxBlockEntity.INVENTORY_SIZE;
     }
 
     public static ContainerBuilder builder() {
         return new ContainerBuilder();
     }
 
-    public ContainerBuilder containerItem(Item item) {
-        this.containerItem = item;
+    public ContainerBuilder of(ItemStack stack, boolean addEmptySlots) {
+        this.stack = stack.copy();
+        this.containerSize = InventoryUtils.getContainerSize(stack.getItem());
+
+        this.clear().addAll(InventoryUtils.getItemsFromContainer(stack, addEmptySlots));
+
+        this.containerSize = Math.max(this.containerSize, this.itemList.size());
         return this;
     }
 
-    public ContainerBuilder maxItemByContainer(int value) {
-        this.maxItemByContainer = value;
+    public ContainerBuilder clear() {
+        this.itemList.clear();
         return this;
     }
 
-    public List<ItemStack> getAsList() {
+    public List<ItemStack> getAsContainerList() {
         List<NbtList> itemsTagList = this.getItemsTagList();
         List<ItemStack> containerList = new ArrayList<>();
+
+        ItemStack defaultStack = this.stack;
 
         for (var itemTag : itemsTagList) {
             NbtCompound blockEntityTag = new NbtCompound();
             blockEntityTag.put(ShulkerBoxBlockEntity.ITEMS_KEY, itemTag);
 
-            ItemStack stack = this.containerItem.getDefaultStack();
-            stack.setSubNbt(TagsConstant.BLOCK_ENTITY, blockEntityTag);
-            containerList.add(stack);
+            defaultStack = defaultStack.copy();
+            defaultStack.setSubNbt(TagsConstant.BLOCK_ENTITY, blockEntityTag);
+            containerList.add(defaultStack);
         }
 
         return containerList;
     }
 
-    public List<NbtList> getItemsTagList() {
+    public ItemStack get() {
+        if (this.itemList.isEmpty()) {
+            this.stack.getOrCreateSubNbt(TagsConstant.BLOCK_ENTITY).remove(ShulkerBoxBlockEntity.ITEMS_KEY);
+            return this.stack;
+        }
+
+        NbtList itemsTag = this.getItemsTag(this.itemList);
+        this.stack.getOrCreateSubNbt(TagsConstant.BLOCK_ENTITY).put(ShulkerBoxBlockEntity.ITEMS_KEY, itemsTag);
+
+        return this.stack;
+    }
+
+    private List<NbtList> getItemsTagList() {
         List<NbtList> itemsTagList = new ArrayList<>();
-        int containersAmount = (int) Math.ceil((float) this.itemList.size() / this.maxItemByContainer);
+        int containersAmount = (int) Math.ceil((float) this.itemList.size() / this.containerSize);
 
         for (int i = 0; i != containersAmount; i++) {
-            int sublistEnd = Math.min((i + 1) * this.maxItemByContainer, this.itemList.size());
-            List<ItemStack> stackSublist = this.itemList.subList(i * this.maxItemByContainer, sublistEnd);
+            int sublistEnd = Math.min((i + 1) * this.containerSize, this.itemList.size());
+            List<ItemStack> stackSublist = this.itemList.subList(i * this.containerSize, sublistEnd);
             itemsTagList.add(this.getItemsTag(stackSublist));
         }
 
@@ -72,15 +92,28 @@ public class ContainerBuilder {
     public NbtList getItemsTag(List<ItemStack> stackList) {
         NbtList itemsTag = new NbtList();
         for (int i = 0; i != stackList.size(); i++) {
-            NbtCompound tag = stackList.get(i).writeNbt(new NbtCompound());
+            ItemStack stack = stackList.get(i);
+            if (stack.isEmpty())
+                continue;
+            NbtCompound tag = stack.writeNbt(new NbtCompound());
             tag.putByte(TagsConstant.INVENTORY_SLOT, (byte) i);
             itemsTag.add(tag);
         }
         return itemsTag;
     }
 
+    public int containerMaxSize() {
+        return this.containerSize;
+    }
+
+    public int incrementContainerSize() {
+        this.itemList.add(ItemStack.EMPTY);
+        return ++this.containerSize;
+    }
+
     public ContainerBuilder add(ItemStack stack) {
-        return this.addAll(List.of(stack));
+        this.itemList.add(stack);
+        return this;
     }
 
     public ContainerBuilder addAll(List<ItemStack> stacks) {
@@ -88,9 +121,28 @@ public class ContainerBuilder {
         return this;
     }
 
+    public ContainerBuilder set(int index, ItemStack stack) {
+        this.itemList.set(index, stack);
+        return this;
+    }
+
+    public boolean contains(ItemStack stack) {
+        for (ItemStack containerStack : this.itemList) {
+            // must not be the same reference, since the stack to which it is compared may already be in the container.
+            if (stack != containerStack && ItemStack.canCombine(containerStack, stack))
+                return true;
+        }
+
+        return false;
+    }
+
+    public List<ItemStack> items() {
+        return new ArrayList<>(this.itemList);
+    }
+
     public ContainerBuilder addLoreToItems(Item itemToApply, String lore, int color) {
         for (ItemStack stack : this.itemList) {
-            if (stack.getItem() == itemToApply) {
+            if (stack.getItem() == itemToApply && !stack.isEmpty()) {
                 NbtCompound tag = DisplayBuilder.of(stack).addLore(lore, color).getNbt();
                 stack.setNbt(tag);
             }
@@ -100,6 +152,9 @@ public class ContainerBuilder {
 
     public ContainerBuilder setNameStyleToItems(Style style) {
         for (ItemStack stack : this.itemList) {
+            if (stack.isEmpty())
+                continue;
+
             Optional<String> optionalName = DisplayBuilder.of(stack).getName();
             if (optionalName.isEmpty())
                 continue;

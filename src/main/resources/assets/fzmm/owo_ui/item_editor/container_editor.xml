@@ -1,0 +1,182 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="horizontal">
+            <children>
+                <scroll direction="vertical">
+                    <flow-layout direction="horizontal">
+                        <children>
+                            <!-- inventory -->
+                            <flow-layout direction="vertical">
+                                <children>
+                                    <flow-layout direction="ltr-text-flow" id="container-inventory">
+                                        <children>
+                                        </children>
+
+                                        <sizing>
+                                            <horizontal method="fixed">16</horizontal>
+                                            <vertical method="fixed">16</vertical>
+                                        </sizing>
+
+                                        <padding>
+                                            <all>10</all>
+                                        </padding>
+
+                                        <surface>
+                                            <panel/>
+                                        </surface>
+                                    </flow-layout>
+
+                                    <flow-layout direction="vertical" id="player-container">
+                                        <children>
+                                            <flow-layout direction="ltr-text-flow" id="player-inventory">
+                                                <children>
+                                                </children>
+
+                                                <sizing>
+                                                    <horizontal method="fixed">16</horizontal>
+                                                    <vertical method="fixed">16</vertical>
+                                                </sizing>
+
+                                                <padding>
+                                                    <all>10</all>
+                                                </padding>
+
+                                                <surface>
+                                                    <panel/>
+                                                </surface>
+                                            </flow-layout>
+
+                                            <flow-layout direction="horizontal">
+                                                <children>
+                                                    <flow-layout direction="horizontal" id="player-armor">
+                                                        <children>
+                                                        </children>
+
+                                                        <padding>
+                                                            <all>10</all>
+                                                        </padding>
+
+                                                        <surface>
+                                                            <panel/>
+                                                        </surface>
+                                                    </flow-layout>
+
+                                                    <flow-layout direction="horizontal" id="player-offhand">
+                                                        <children>
+                                                        </children>
+
+                                                        <padding>
+                                                            <all>10</all>
+                                                        </padding>
+
+                                                        <surface>
+                                                            <panel/>
+                                                        </surface>
+                                                    </flow-layout>
+                                                </children>
+
+                                                <sizing>
+                                                    <horizontal method="fill">100</horizontal>
+                                                </sizing>
+
+                                                <horizontal-alignment>left</horizontal-alignment>
+
+                                                <gap>4</gap>
+                                            </flow-layout>
+                                        </children>
+
+                                        <gap>4</gap>
+                                    </flow-layout>
+                                </children>
+
+                                <horizontal-alignment>center</horizontal-alignment>
+
+                                <gap>4</gap>
+                            </flow-layout>
+
+                            <!-- options -->
+                            <flow-layout direction="vertical">
+                                <children>
+                                    <fzmm.boolean-button id="vanilla-max-count">
+                                        <enabled-text translate="true">fzmm.gui.itemEditor.container.option.vanillaMaxStackCount.enabled</enabled-text>
+                                        <disabled-text translate="true">fzmm.gui.itemEditor.container.option.vanillaMaxStackCount.disabled</disabled-text>
+
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                        </sizing>
+                                    </fzmm.boolean-button>
+
+                                    <button id="sort-container">
+                                        <text translate="true">fzmm.gui.itemEditor.container.option.sortContainer</text>
+
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                        </sizing>
+                                    </button>
+
+                                    <button id="increment-container-size">
+                                        <text translate="true">fzmm.gui.itemEditor.container.option.incrementContainerSize</text>
+                                        <tooltip-text translate="true">fzmm.gui.itemEditor.container.option.incrementContainerSize.tooltip</tooltip-text>
+
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                        </sizing>
+                                    </button>
+
+                                    <button id="remove-duplicates">
+                                        <text translate="true">fzmm.gui.itemEditor.container.option.removeDuplicates</text>
+
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                        </sizing>
+
+                                        <margins>
+                                            <top>20</top>
+                                        </margins>
+                                    </button>
+
+                                    <box id="delete-item">
+                                        <color>#60E5241A</color>
+                                        <fill>true</fill>
+                                        <tooltip-text translate="true">fzmm.gui.itemEditor.container.option.deleteItem</tooltip-text>
+
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                            <vertical method="fixed">30</vertical>
+                                        </sizing>
+                                    </box>
+                                </children>
+
+                                <sizing>
+                                    <horizontal method="fixed">150</horizontal>
+                                </sizing>
+
+                                <gap>4</gap>
+                            </flow-layout>
+                        </children>
+
+                        <sizing>
+                            <horizontal method="fill">100</horizontal>
+                        </sizing>
+
+                        <gap>12</gap>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">100</vertical>
+                        <horizontal method="fill">100</horizontal>
+                    </sizing>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+            </children>
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+        </flow-layout>
+    </components>
+</owo-ui>

@@ -181,13 +181,12 @@ public class PlayerStatue {
         Style colorStyle = Style.EMPTY.withColor(color);
 
         List<ItemStack> containerList = ContainerBuilder.builder()
-                .containerItem(FzmmUtils.getItem(FzmmClient.CONFIG.playerStatue.defaultContainer()))
-                //.maxItemByContainer(FzmmClient.CONFIG.playerStatue.defaultContainer())//todo
+                .of(FzmmUtils.getItem(FzmmClient.CONFIG.playerStatue.defaultContainer()).getDefaultStack(), false)
                 .addAll(statueList)
                 .setNameStyleToItems(colorStyle)
                 .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.item.playerStatue.lore.1").getString(), color)
                 .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.item.playerStatue.lore.2").getString(), color)
-                .getAsList();
+                .getAsContainerList();
 
         if (containerList.isEmpty())
             return ItemStack.EMPTY;
@@ -211,7 +210,7 @@ public class PlayerStatue {
     }
 
     public static ItemStack updateStatue(ItemStack container, Vector3f pos, HorizontalDirectionOption direction, String name) {
-        List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container);
+        List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container, false);
         List<ItemStack> statueList = new ArrayList<>();
 
         for (ItemStack stack : containerItems) {
@@ -225,7 +224,7 @@ public class PlayerStatue {
     }
 
     public static boolean isPlayerStatue(ItemStack container) {
-        List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container);
+        List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container, false);
 
         if (containerItems.isEmpty())
             return false;

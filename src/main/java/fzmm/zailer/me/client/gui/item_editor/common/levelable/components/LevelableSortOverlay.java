@@ -114,6 +114,7 @@ public class LevelableSortOverlay<V, D extends ILevelable<V>, B extends ILevelab
         this.updateLevelablesLayout(levelablesLayout);
     }
 
+    @SuppressWarnings("unchecked")
     private void updateLevelablesLayout(FlowLayout levelablesLayout) {
         this.builder.values(this.levelableList);
 
@@ -121,7 +122,6 @@ public class LevelableSortOverlay<V, D extends ILevelable<V>, B extends ILevelab
 
         for (int i = 0; i != this.levelableList.size(); i++) {
             if (layoutComponents.get(i) instanceof SortLevelableComponent<?, ?, ?> levelableEntry) {
-                //noinspection unchecked
                 SortLevelableComponent<V, D, B> entry = (SortLevelableComponent<V, D, B>) levelableEntry;
                 D sortedValue = this.builder.getValue(i);
                 SortLevelableComponent<V, D, B> levelableCopy = new SortLevelableComponent<>(sortedValue, this.editor, this.builder);

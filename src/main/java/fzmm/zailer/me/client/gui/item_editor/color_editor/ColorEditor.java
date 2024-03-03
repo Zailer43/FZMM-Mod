@@ -149,8 +149,4 @@ public class ColorEditor implements IItemEditorScreen {
         }
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return false;
-    }
 }

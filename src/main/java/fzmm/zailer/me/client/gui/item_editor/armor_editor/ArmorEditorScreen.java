@@ -185,11 +185,6 @@ public class ArmorEditorScreen implements IItemEditorScreen {
             this.setSelectedItem(stack, this.helmetRequest, this.helmetBuilder);
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return false;
-    }
-
     private void setSelectedItem(ItemStack stack, RequestedItem requestedItem, ArmorBuilder builder) {
         this.selectedArmorPart = requestedItem;
         this.selectedArmorPartBuilder = builder;

@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.gui.item_editor.armor_editor.ArmorEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.banner_editor.BannerEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.block_state_editor.BlockStateEditor;
 import fzmm.zailer.me.client.gui.item_editor.color_editor.ColorEditor;
+import fzmm.zailer.me.client.gui.item_editor.container_editor.ContainerEditor;
 import fzmm.zailer.me.client.gui.item_editor.effect_editor.EffectEditor;
 import fzmm.zailer.me.client.gui.item_editor.enchant_editor.EnchantEditor;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
@@ -19,6 +20,7 @@ import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -66,6 +68,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         itemEditorScreens.add(new BannerEditorScreen());
         itemEditorScreens.add(new BlockStateEditor());
         itemEditorScreens.add(new ColorEditor());
+        itemEditorScreens.add(new ContainerEditor());
         itemEditorScreens.add(new EffectEditor());
         itemEditorScreens.add(new EnchantEditor());
 
@@ -274,7 +277,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         layout.verticalAlignment(VerticalAlignment.CENTER);
 
         layout.child(Components.item(itemEditorScreen.getExampleItem()));
-        layout.child(Components.label(itemEditorScreen.getTitle()));
+        layout.child(Components.label(itemEditorScreen.getEditorLabel()));
 
         int backgroundColor = NON_APPLICABLE_EDITORS_CATEGORY_BACKGROUND_COLOR;
 
@@ -310,6 +313,12 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
     }
 
     @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+        this.currentEditor.render(context, mouseX, mouseY, delta);
+    }
+
+    @Override
     public String getBaseScreenTranslationKey() {
         return super.getBaseScreenTranslationKey() + "." + this.currentEditor.getId();
     }
@@ -320,5 +329,37 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
             return true;
 
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        if (this.currentEditor.keyReleased(keyCode, scanCode, modifiers))
+            return true;
+
+        return super.keyReleased(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        if (this.currentEditor.mouseDragged(mouseX, mouseY, button, deltaX, deltaY))
+            return true;
+
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.currentEditor.mouseClicked(mouseX, mouseY, button))
+            return true;
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (this.currentEditor.mouseReleased(mouseX, mouseY, button))
+            return true;
+
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 }

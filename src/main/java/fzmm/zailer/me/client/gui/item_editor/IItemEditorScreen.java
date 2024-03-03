@@ -5,6 +5,7 @@ import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.parsing.UIModel;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -26,7 +27,7 @@ public interface IItemEditorScreen {
 
     ItemStack getExampleItem();
 
-    default Text getTitle() {
+    default Text getEditorLabel() {
         return Text.translatable("fzmm.gui.itemEditor." + this.getId() + ".title");
     }
 
@@ -67,5 +68,27 @@ public interface IItemEditorScreen {
      */
     void selectItemAndUpdateParameters(ItemStack stack);
 
-    boolean keyPressed(int keyCode, int scanCode, int modifiers);
+    default boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        return false;
+    }
+
+    default boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        return false;
+    }
+
+    default boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        return false;
+    }
+
+    default boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return false;
+    }
+
+    default boolean mouseReleased(double mouseX, double mouseY, int button) {
+        return false;
+    }
+
+    default void render(DrawContext context, int mouseX, int mouseY, float delta) {
+
+    }
 }

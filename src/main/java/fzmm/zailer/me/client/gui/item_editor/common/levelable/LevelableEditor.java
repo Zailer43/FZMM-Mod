@@ -230,11 +230,6 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
 
     protected abstract void updateParameters(B builder);
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return false;
-    }
-
     private void setLabelSize(List<D> levelables) {
         int labelWidth = 0;
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;

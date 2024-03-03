@@ -26,7 +26,7 @@ public class PlayerStatuePlacerScreen extends AbstractAutoPlacer {
     public PlayerStatuePlacerScreen(ItemStack playerStatueStack) {
         super("utils/base_auto_placer", "playerStatuePlacer", null);
         this.playerStatueStack = playerStatueStack;
-        this.containerItems = InventoryUtils.getItemsFromContainer(this.playerStatueStack);
+        this.containerItems = InventoryUtils.getItemsFromContainer(this.playerStatueStack, false);
     }
 
     public static AutoPlacerHud.Activation getActivation() {

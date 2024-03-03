@@ -25,8 +25,8 @@ public class HologramPlacerScreen extends AbstractAutoPlacer {
         this.hologramStack = hologramStack;
         this.containerItems = new ArrayList<>();
 
-        for (var stack : InventoryUtils.getItemsFromContainer(hologramStack)) {
-            this.containerItems.addAll(InventoryUtils.getItemsFromContainer(stack));
+        for (var stack : InventoryUtils.getItemsFromContainer(hologramStack, false)) {
+            this.containerItems.addAll(InventoryUtils.getItemsFromContainer(stack, false));
         }
     }
 
@@ -69,13 +69,13 @@ public class HologramPlacerScreen extends AbstractAutoPlacer {
 
 
     public static boolean isHologram(ItemStack container) {
-        List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container);
+        List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container, false);
 
         if (containerItems.isEmpty())
             return false;
 
         for (var containerStack : containerItems) {
-            List<ItemStack> subContainerItems = InventoryUtils.getItemsFromContainer(containerStack);
+            List<ItemStack> subContainerItems = InventoryUtils.getItemsFromContainer(containerStack, false);
 
             if (subContainerItems.isEmpty())
                 return false;

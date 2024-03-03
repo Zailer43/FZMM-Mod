@@ -91,11 +91,17 @@ public class FzmmUtils {
 
     public static void updateHand(ItemStack stack) {
         MinecraftClient client = MinecraftClient.getInstance();
-        assert client.interactionManager != null;
         assert client.player != null;
 
         PlayerInventory playerInventory = client.player.getInventory();
-        client.interactionManager.clickCreativeStack(stack, PlayerInventory.MAIN_SIZE + playerInventory.selectedSlot);
+        updateSlot(PlayerInventory.MAIN_SIZE + playerInventory.selectedSlot, stack);
+    }
+
+    public static void updateSlot(int index, ItemStack stack) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client.interactionManager != null;
+
+        client.interactionManager.clickCreativeStack(stack, index);
     }
 
     public static Text disableItalicConfig(Text message) {

@@ -61,14 +61,12 @@ public class ImagetextSignTab implements IImagetextTab {
         int color = FzmmClient.CONFIG.colors.imagetextMessages().rgb();
 
         List<ItemStack> signContainers = ContainerBuilder.builder()
-                .containerItem(Items.LIGHT_GRAY_SHULKER_BOX)//todo
-                .maxItemByContainer(27)
+                .of(Items.LIGHT_GRAY_SHULKER_BOX.getDefaultStack(), false)//todo
                 .addAll(this.getSignItems(logic))
-                .getAsList();
+                .getAsContainerList();
 
         ItemStack signMainContainer = ContainerBuilder.builder()
-                .containerItem(Items.LIGHT_GRAY_SHULKER_BOX)//TODO
-                .maxItemByContainer(27)
+                .of(Items.LIGHT_GRAY_SHULKER_BOX.getDefaultStack(), false)//TODO
                 .add(
                         DisplayBuilder.builder()
                                 .item(Items.PAPER)
@@ -79,7 +77,7 @@ public class ImagetextSignTab implements IImagetextTab {
                                         ), color)
                                 .get()
                 ).addAll(signContainers)
-                .getAsList().get(0);
+                .getAsContainerList().get(0);
 
         signMainContainer = DisplayBuilder.of(signMainContainer)
                 .setName(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "container.name"), color)

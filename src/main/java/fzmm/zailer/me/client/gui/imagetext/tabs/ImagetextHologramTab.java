@@ -51,16 +51,14 @@ public class ImagetextHologramTab implements IImagetextTab {
         int color = FzmmClient.CONFIG.colors.imagetextHologram().rgb();
 
         List<ItemStack> hologramContainers = ContainerBuilder.builder()
-                .containerItem(Items.WHITE_SHULKER_BOX)//todo
-                .maxItemByContainer(27)
+                .of(Items.WHITE_SHULKER_BOX.getDefaultStack(), false)//todo
                 .addAll(this.getHologramItems(logic, x, y, z))
-                .getAsList();
+                .getAsContainerList();
 
         ItemStack hologramMainContainer = ContainerBuilder.builder()
-                .containerItem(Items.WHITE_SHULKER_BOX)//TODO
-                .maxItemByContainer(27)
+                .of(Items.WHITE_SHULKER_BOX.getDefaultStack(), false)//TODO
                 .addAll(hologramContainers)
-                .getAsList().get(0);
+                .getAsContainerList().get(0);
 
         hologramMainContainer = DisplayBuilder.of(hologramMainContainer)
                 .setName(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "name"), color)
