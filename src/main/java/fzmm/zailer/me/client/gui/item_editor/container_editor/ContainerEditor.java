@@ -201,6 +201,7 @@ public class ContainerEditor implements IItemEditorScreen {
         }
 
         layout.children(slotComponents);
+        layout.allowOverflow(true);
     }
 
     private void addSlot(FlowLayout layout, @Nullable FlowLayout quickMoveLayout, SlotUpdateCallback updateStackCallback) {

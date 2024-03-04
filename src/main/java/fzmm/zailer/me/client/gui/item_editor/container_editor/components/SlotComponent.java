@@ -51,6 +51,7 @@ public class SlotComponent extends FlowLayout {
         this.setupInteractions();
 
         this.child(this.item);
+        this.allowOverflow(true);
     }
 
     public void setEmptySprite(Identifier emptySprite) {
