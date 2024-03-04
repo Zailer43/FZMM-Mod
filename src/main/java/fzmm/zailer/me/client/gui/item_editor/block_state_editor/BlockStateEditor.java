@@ -3,7 +3,7 @@ package fzmm.zailer.me.client.gui.item_editor.block_state_editor;
 import fzmm.zailer.me.builders.BlockStateItemBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
-import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;

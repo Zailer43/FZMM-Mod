@@ -3,7 +3,7 @@ package fzmm.zailer.me.client.gui.item_editor.effect_editor;
 import fzmm.zailer.me.builders.EffectBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
-import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.LevelableEditor;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.levelable.AppliedLevelableComponent;
 import fzmm.zailer.me.client.gui.item_editor.effect_editor.components.AppliedEffectComponent;

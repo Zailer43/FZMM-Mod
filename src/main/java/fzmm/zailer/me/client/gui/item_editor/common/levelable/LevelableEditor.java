@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import fzmm.zailer.me.client.FzmmIcons;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
-import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.LevelableSortOverlay;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.levelable.BaseLevelableComponent;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.levelable.AddLevelableComponent;

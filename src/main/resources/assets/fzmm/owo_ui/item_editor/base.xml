@@ -5,52 +5,67 @@
             <children>
                 <stack-layout>
                     <children>
-                        <scroll direction="vertical" id="base-panel">
-                            <flow-layout direction="vertical">
-                                <children>
+                        <flow-layout direction="horizontal">
+                            <children>
+                                <scroll direction="vertical">
+                                    <flow-layout direction="vertical" id="base-panel">
+                                        <children>
 
-                                    <template name="category-button">
-                                        <translation>required_items</translation>
-                                        <id>required-items</id>
-                                    </template>
-                                    <template name="category-button">
-                                        <translation>applicable_editors</translation>
-                                        <id>applicable-editors</id>
-                                    </template>
-                                    <template name="category-button">
-                                        <translation>non_applicable_editors</translation>
-                                        <id>non-applicable-editors</id>
-                                    </template>
+                                            <template name="category-button">
+                                                <id>required-items</id>
+                                            </template>
+                                            <template name="category-button">
+                                                <id>applicable-editors</id>
+                                            </template>
+                                            <template name="category-button">
+                                                <id>non-applicable-editors</id>
+                                            </template>
 
-                                </children>
+                                        </children>
 
-                                <vertical-alignment>top</vertical-alignment>
-                                <horizontal-alignment>center</horizontal-alignment>
+                                        <vertical-alignment>top</vertical-alignment>
+                                        <horizontal-alignment>center</horizontal-alignment>
 
-                                <sizing>
-                                    <horizontal method="fill">100</horizontal>
-                                </sizing>
+                                        <sizing>
+                                            <horizontal method="fill">200</horizontal>
+                                        </sizing>
 
-                            </flow-layout>
+                                        <padding>
+                                            <all>6</all>
+                                        </padding>
 
-                            <sizing>
-                                <horizontal method="fixed">200</horizontal>
-                                <vertical method="fill">100</vertical>
-                            </sizing>
+                                        <positioning type="layout">100,0</positioning>
 
-                            <scrollbar>
-                                <flat>#FFFFFF</flat>
-                            </scrollbar>
+                                    </flow-layout>
 
-                            <surface>
-                                <panel dark="true"/>
-                            </surface>
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                    </sizing>
 
-                            <padding>
-                                <all>6</all>
-                            </padding>
+                                    <scrollbar>
+                                        <flat>#FFFFFF</flat>
+                                    </scrollbar>
 
-                        </scroll>
+                                    <surface>
+                                        <panel dark="true"/>
+                                    </surface>
+                                </scroll>
+
+                                <fzmm.boolean-button id="collapse-button">
+
+                                    <enabled-text translate="true">fzmm.gui.button.collapse.expand</enabled-text>
+                                    <disabled-text translate="true">fzmm.gui.button.collapse.collapse</disabled-text>
+
+                                    <sizing>
+                                        <horizontal method="fixed">20</horizontal>
+                                        <vertical method="fixed">20</vertical>
+                                    </sizing>
+                                </fzmm.boolean-button>
+                            </children>
+
+                            <horizontal-alignment>left</horizontal-alignment>
+                            <vertical-alignment>top</vertical-alignment>
+                        </flow-layout>
 
                         <flow-layout direction="vertical" id="content">
                             <children>
@@ -61,13 +76,11 @@
                                 <horizontal method="fill">100</horizontal>
                             </sizing>
 
-                            <padding>
-                                <all>8</all>
-                            </padding>
-
                             <margins>
-                                <left>200</left>
-                                <bottom>24</bottom>
+                                <top>20</top>
+                                <bottom>8</bottom>
+                                <left>208</left>
+                                <right>8</right>
                             </margins>
                         </flow-layout>
 
@@ -113,9 +126,10 @@
         <category-button>
             <flow-layout direction="vertical">
                 <children>
-                    <label id="{{id}}-label">
-                        <text translate="true">fzmm.gui.itemEditor.base.label.{{translation}}</text>
-                    </label>
+                    <flow-layout direction="horizontal" id="{{id}}-label-layout">
+                        <children>
+                        </children>
+                    </flow-layout>
 
                     <flow-layout direction="vertical" id="{{id}}">
                         <children>

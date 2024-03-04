@@ -9,7 +9,7 @@ import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
-import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.item_editor.banner_editor.tabs.BannerEditorTabs;
 import fzmm.zailer.me.client.gui.item_editor.banner_editor.tabs.IBannerEditorTab;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;

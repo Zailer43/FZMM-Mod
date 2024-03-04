@@ -3,7 +3,7 @@ package fzmm.zailer.me.client.gui.item_editor.armor_editor;
 import fzmm.zailer.me.builders.ArmorBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
-import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.options.ArmorEditorOptionArmorMaterial;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.options.ArmorEditorOptionTrimMaterial;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.options.ArmorEditorOptionTrimPattern;

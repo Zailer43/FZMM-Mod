@@ -9,7 +9,7 @@ import fzmm.zailer.me.client.gui.headgallery.HeadGalleryScreen;
 import fzmm.zailer.me.client.gui.headgenerator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.HistoryScreen;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
-import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.playerstatue.PlayerStatueScreen;
 import fzmm.zailer.me.client.gui.textformat.TextFormatScreen;
 import io.wispforest.owo.config.ui.ConfigScreen;

@@ -1,24 +1,26 @@
-package fzmm.zailer.me.client.gui.item_editor;
+package fzmm.zailer.me.client.gui.item_editor.base;
 
+import com.google.common.collect.ImmutableList;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.BooleanButton;
+import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.ArmorEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.banner_editor.BannerEditorScreen;
+import fzmm.zailer.me.client.gui.item_editor.base.components.CollapsibleLabelComponent;
+import fzmm.zailer.me.client.gui.item_editor.base.components.EditorRowComponent;
+import fzmm.zailer.me.client.gui.item_editor.base.components.ICollapsible;
+import fzmm.zailer.me.client.gui.item_editor.base.components.RequestedItemComponent;
 import fzmm.zailer.me.client.gui.item_editor.block_state_editor.BlockStateEditor;
 import fzmm.zailer.me.client.gui.item_editor.color_editor.ColorEditor;
 import fzmm.zailer.me.client.gui.item_editor.container_editor.ContainerEditor;
 import fzmm.zailer.me.client.gui.item_editor.effect_editor.EffectEditor;
 import fzmm.zailer.me.client.gui.item_editor.enchant_editor.EnchantEditor;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
-import fzmm.zailer.me.client.gui.utils.selectItem.SelectItemScreen;
-import fzmm.zailer.me.utils.FzmmUtils;
-import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -32,29 +34,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ItemEditorBaseScreen extends BaseFzmmScreen {
-    private static final int APPLICABLE_EDITORS_CATEGORY_BACKGROUND_COLOR = 0xff7d7d7d;
-    private static final int SELECTED_CATEGORY_BACKGROUND_COLOR = 0xff5da25f;
-    private static final int NON_APPLICABLE_EDITORS_CATEGORY_BACKGROUND_COLOR = 0xff585858;
-    private static final Text GIVE_ITEM_TEXT = Text.translatable("fzmm.gui.itemEditor.base.label.give");
+public class ItemEditorBaseScreen extends BaseFzmmScreen implements ICollapsible {
+    private static final String REQUIRED_ITEMS_TEXT = "fzmm.gui.itemEditor.base.label.required_items";
     private static final String APPLICABLE_EDITORS_TEXT = "fzmm.gui.itemEditor.base.label.applicable_editors";
+    private static final String NON_APPLICABLE_EDITORS_TEXT = "fzmm.gui.itemEditor.base.label.non_applicable_editors";
     private static final int BASE_PANEL_WIDTH = 200;
     private static final String BASE_PANEL_ID = "base-panel";
     private static final String REQUIRED_ITEMS_ID = "required-items";
+    private static final String REQUIRED_ITEMS_LABEL_LAYOUT_ID = REQUIRED_ITEMS_ID +"-label-layout";
     private static final String APPLICABLE_EDITORS_ID = "applicable-editors";
-    private static final String APPLICABLE_EDITORS_LABEL_ID = "applicable-editors-label";
+    private static final String APPLICABLE_EDITORS_LABEL_LAYOUT_ID = APPLICABLE_EDITORS_ID +"-label-layout";
     private static final String NON_APPLICABLE_EDITORS_ID = "non-applicable-editors";
+    private static final String NON_APPLICABLE_EDITORS_LABEL_LAYOUT_ID = NON_APPLICABLE_EDITORS_ID +"-label-layout";
     private static final String CONTENT_ID = "content";
     private static Class<? extends IItemEditorScreen> selectedEditor = null;
     protected final List<IItemEditorScreen> itemEditorScreens;
-    private ScrollContainer<?> basePanelLayout;
+    private FlowLayout basePanelLayout;
     private FlowLayout requiredItemsLayout;
     private FlowLayout applicableEditorsLayout;
     private FlowLayout nonApplicableEditorsLayout;
     private FlowLayout contentLayout;
+    private LabelComponent requiredItemsLabel;
     private LabelComponent applicableEditorsLabel;
+    private LabelComponent nonApplicableEditorsLabel;
     private IItemEditorScreen currentEditor;
     private ItemStack selectedItem;
+    private BooleanButton collapseButton;
 
     public ItemEditorBaseScreen(@Nullable Screen parent) {
         super("item_editor/base", "itemEditor", parent);
@@ -81,10 +86,11 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         assert this.client.player != null;
         this.selectedItem = this.client.player.getMainHandStack().copy();
 
-        this.basePanelLayout = rootComponent.childById(ScrollContainer.class, BASE_PANEL_ID);
-        checkNull(this.basePanelLayout, "scroll", BASE_PANEL_ID);
+        this.basePanelLayout = rootComponent.childById(FlowLayout.class, BASE_PANEL_ID);
+        checkNull(this.basePanelLayout, "flow-layout", BASE_PANEL_ID);
         this.basePanelLayout.horizontalSizing(Sizing.fixed(BASE_PANEL_WIDTH));
 
+        // base editor layout
         this.requiredItemsLayout = rootComponent.childById(FlowLayout.class, REQUIRED_ITEMS_ID);
         checkNull(this.requiredItemsLayout, "flow-layout", REQUIRED_ITEMS_ID);
         this.applicableEditorsLayout = rootComponent.childById(FlowLayout.class, APPLICABLE_EDITORS_ID);
@@ -92,13 +98,82 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         this.nonApplicableEditorsLayout = rootComponent.childById(FlowLayout.class, NON_APPLICABLE_EDITORS_ID);
         checkNull(this.nonApplicableEditorsLayout, "flow-layout", NON_APPLICABLE_EDITORS_ID);
 
-        this.applicableEditorsLabel = rootComponent.childById(LabelComponent.class, APPLICABLE_EDITORS_LABEL_ID);
-        checkNull(this.applicableEditorsLabel, "label", APPLICABLE_EDITORS_LABEL_ID);
+        // labels
+        FlowLayout requiredItemsLabelLayout = rootComponent.childById(FlowLayout.class, REQUIRED_ITEMS_LABEL_LAYOUT_ID);
+        checkNull(requiredItemsLabelLayout, "flow-layout", REQUIRED_ITEMS_LABEL_LAYOUT_ID);
+        this.requiredItemsLabel = new CollapsibleLabelComponent(Text.translatable(REQUIRED_ITEMS_TEXT),
+                Text.translatable(REQUIRED_ITEMS_TEXT + ".collapsed"));
+        requiredItemsLabelLayout.child(this.requiredItemsLabel);
 
+        FlowLayout applicableEditorsLabelLayout = rootComponent.childById(FlowLayout.class, APPLICABLE_EDITORS_LABEL_LAYOUT_ID);
+        checkNull(applicableEditorsLabelLayout, "flow-layout", APPLICABLE_EDITORS_LABEL_LAYOUT_ID);
+        this.applicableEditorsLabel = new CollapsibleLabelComponent(Text.translatable(APPLICABLE_EDITORS_TEXT),
+                Text.translatable(APPLICABLE_EDITORS_TEXT + ".collapsed"));
+        applicableEditorsLabelLayout.child(this.applicableEditorsLabel);
+
+        FlowLayout nonApplicableEditorsLabelLayout = rootComponent.childById(FlowLayout.class, NON_APPLICABLE_EDITORS_LABEL_LAYOUT_ID);
+        checkNull(nonApplicableEditorsLabelLayout, "flow-layout", NON_APPLICABLE_EDITORS_LABEL_LAYOUT_ID);
+        this.nonApplicableEditorsLabel = new CollapsibleLabelComponent(Text.translatable(NON_APPLICABLE_EDITORS_TEXT),
+                Text.translatable(NON_APPLICABLE_EDITORS_TEXT + ".collapsed"));
+        nonApplicableEditorsLabelLayout.child(this.nonApplicableEditorsLabel);
+
+        // content
         this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
         checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
 
+        // collapse base layout
+        this.collapseButton = rootComponent.childById(BooleanButton.class, "collapse-button");
+        checkNull(this.collapseButton, "button", "collapse-button");
+        this.collapseButton.enabled(false);
+
+        int animationCollapsed = 32;
+        Animation<Sizing> basePanelAnimation = this.basePanelLayout.horizontalSizing()
+                .animate(300, Easing.CUBIC, Sizing.fixed(animationCollapsed));
+        Animation<Insets> editorContentAnimation = this.contentLayout.margins()
+                .animate(300, Easing.CUBIC, this.contentLayout.margins().get().withLeft(animationCollapsed + 8));
+        Animation.Composed collapseAnimation = Animation.compose(basePanelAnimation, editorContentAnimation);
+
+        this.collapseButton.onPress(buttonComponent -> {
+            boolean enabled = this.collapseButton.enabled();
+            if (enabled) {
+                collapseAnimation.forwards();
+                this.collapse();
+            } else {
+                collapseAnimation.backwards();
+                this.expand();
+            }
+        });
+
         this.selectEditor();
+    }
+
+    @Override
+    public void collapse() {
+        List<Component> componentList = this.getCollapsibleComponents();
+        for (var component : componentList) {
+            if (component instanceof ICollapsible collapsibleComponent)
+                collapsibleComponent.collapse();
+        }
+    }
+
+    @Override
+    public void expand() {
+        List<Component> componentList = this.getCollapsibleComponents();
+        for (var component : componentList) {
+            if (component instanceof ICollapsible collapsibleComponent)
+                collapsibleComponent.expand();
+        }
+    }
+
+    private List<Component> getCollapsibleComponents() {
+        ImmutableList.Builder<Component> listBuilder = ImmutableList.builder();
+        listBuilder.addAll(this.applicableEditorsLayout.children());
+        listBuilder.addAll(this.nonApplicableEditorsLayout.children());
+        listBuilder.addAll(this.requiredItemsLayout.children());
+        listBuilder.add(this.requiredItemsLabel);
+        listBuilder.add(this.applicableEditorsLabel);
+        listBuilder.add(this.nonApplicableEditorsLabel);
+        return listBuilder.build();
     }
 
     private void selectEditor() {
@@ -194,28 +269,8 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         List<Component> componentList = new ArrayList<>();
 
         for (var requestedItem : requestedItemList) {
-
-            FlowLayout layout = Containers.horizontalFlow(Sizing.content(), Sizing.content());
-            layout.gap(2);
-
-            ItemComponent itemComponent = Components.item(ItemStack.EMPTY).setTooltipFromStack(true);
-            layout.child(itemComponent);
-            layout.verticalAlignment(VerticalAlignment.CENTER);
-
-            ButtonComponent selectItemButton = Components.button(Text.empty(),
-                    button -> this.client.setScreen(new SelectItemScreen(this, List.of(requestedItem), (itemStack) -> this.updateEditorsComponents())));
-            selectItemButton.horizontalSizing(Sizing.fixed(100));
-            layout.child(selectItemButton);
-
-            ButtonComponent giveButton = Components.button(GIVE_ITEM_TEXT, button -> FzmmUtils.giveItem(requestedItem.stack()));
-            giveButton.horizontalSizing(Sizing.fixed(30));
-            layout.child(giveButton);
-
-            requestedItem.setUpdatePreviewConsumer(itemStack -> this.updatePreviewExecute(itemStack, requestedItemList, requestedItem, itemComponent, selectItemButton));
-
-            ItemStack stack = requestedItem.stack();
-            this.updateRequestedItemButton(selectItemButton, requestedItem, stack);
-            itemComponent.stack(stack);
+            RequestedItemComponent layout = new RequestedItemComponent(requestedItemList, requestedItem,
+                    stack -> this.selectedItem = stack, this::updateEditorsComponents);
 
             componentList.add(layout);
         }
@@ -223,41 +278,13 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         this.requiredItemsLayout.children(componentList);
     }
 
-    private void updatePreviewExecute(ItemStack itemStack, List<RequestedItem> requestedItemList,
-                                      RequestedItem requestedItem, ItemComponent itemComponent, ButtonComponent selectItemButton) {
-        boolean firstItem = true;
-        for (int i = 0; i != requestedItemList.size(); i++) {
-            RequestedItem entry = requestedItemList.get(i);
-            if (firstItem && (entry == requestedItem || (requestedItemList.size() - 1) == i)) {
-                this.selectedItem = itemStack;
-                break;
-            } else if (!entry.isEmpty()) {
-                firstItem = false;
-            }
-        }
-
-        this.updateRequestedItem(itemStack, requestedItem, itemComponent, selectItemButton);
-    }
-
-    public void updateRequestedItem(ItemStack stack, RequestedItem requestedItem, ItemComponent itemComponent, ButtonComponent selectItemButton) {
-        itemComponent.stack(stack);
-        this.updateRequestedItemButton(selectItemButton, requestedItem, stack);
-        this.updateEditorsComponents();
-    }
-
-    private void updateRequestedItemButton(ButtonComponent selectItemButton, RequestedItem requestedItem, ItemStack stack) {
-        selectItemButton.setMessage(
-                requestedItem.predicate().test(stack) ?
-                        requestedItem.title() :
-                        requestedItem.title().copy().setStyle(Style.EMPTY.withColor(0xD83F27)).append(" ⚠")
-        );
-    }
-
     private void updateEditorsComponents() {
         this.applicableEditorsLabel.text(Text.translatable(APPLICABLE_EDITORS_TEXT, this.selectedItem.getItem().getName().getString()));
 
         this.updateEditorsComponents(this.applicableEditorsLayout, this.filterEditors(true), true);
         this.updateEditorsComponents(this.nonApplicableEditorsLayout, this.filterEditors(false), false);
+
+        this.collapseButton.enabled(this.collapseButton.enabled());
     }
 
     public void updateEditorsComponents(FlowLayout layout, List<IItemEditorScreen> applicableEditors, boolean applicable) {
@@ -271,24 +298,10 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         layout.children(componentList);
     }
 
-    public FlowLayout getEditorRow(IItemEditorScreen itemEditorScreen, boolean isApplicable, boolean isSelected) {
-        FlowLayout layout = Containers.horizontalFlow(Sizing.fill(100), Sizing.content());
-        layout.gap(2);
-        layout.verticalAlignment(VerticalAlignment.CENTER);
+    public EditorRowComponent getEditorRow(IItemEditorScreen itemEditorScreen, boolean isApplicable, boolean isSelected) {
+        EditorRowComponent editorRowComponent = new EditorRowComponent(itemEditorScreen, isApplicable, isSelected);
 
-        layout.child(Components.item(itemEditorScreen.getExampleItem()));
-        layout.child(Components.label(itemEditorScreen.getEditorLabel()));
-
-        int backgroundColor = NON_APPLICABLE_EDITORS_CATEGORY_BACKGROUND_COLOR;
-
-        if (isSelected)
-            backgroundColor = SELECTED_CATEGORY_BACKGROUND_COLOR;
-        else if (isApplicable)
-            backgroundColor = APPLICABLE_EDITORS_CATEGORY_BACKGROUND_COLOR;
-
-        layout.surface(Surface.flat(backgroundColor));
-
-        layout.mouseDown().subscribe((mouseX, mouseY, button) -> {
+        editorRowComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
             if (itemEditorScreen.getClass() != selectedEditor) {
                 this.selectEditor(itemEditorScreen);
                 return true;
@@ -297,7 +310,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen {
         });
 
 
-        return layout;
+        return editorRowComponent;
     }
 
     private List<IItemEditorScreen> filterEditors(boolean isApplicable) {

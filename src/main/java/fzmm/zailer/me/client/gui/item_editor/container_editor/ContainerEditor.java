@@ -4,7 +4,7 @@ import fzmm.zailer.me.builders.ContainerBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
-import fzmm.zailer.me.client.gui.item_editor.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.item_editor.container_editor.components.SlotComponent;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import fzmm.zailer.me.utils.FzmmUtils;
