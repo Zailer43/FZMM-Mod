@@ -230,8 +230,17 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen implements ICollapsible
         if (failedGettingLayout)
             return;
 
-        this.selectItemAndUpdateParameters(selectedItemCopy);
-        this.selectedItem = selectedItemCopy;
+        assert this.client != null;
+        assert this.client.player != null;
+
+        // In case a player has an item in his hand, but the editor assigns an item by another method
+        // (like getting it from the armor), it will not be replaced, however, if the selected item is
+        // not the same as the one in a player's hand, then it will be replaced so that the user does
+        // not lose the item that was being edited.
+        if (requestedItems.get(0).isEmpty() || !ItemStack.areEqual(selectedItemCopy, this.client.player.getMainHandStack())) {
+            this.selectItemAndUpdateParameters(selectedItemCopy);
+            this.selectedItem = selectedItemCopy;
+        }
 
         editor.updateItemPreview();
     }
