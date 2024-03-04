@@ -61,7 +61,7 @@ public class BannerBuilder {
 
     public ItemStack get() {
         ItemStack stack = this.item.getDefaultStack();
-        NbtCompound blockEntityTag = new NbtCompound();
+        NbtCompound blockEntityTag = this.nbt.getCompound(TagsConstant.BLOCK_ENTITY);
         NbtList patterns = new NbtList();
 
         if (this.isShield) {
@@ -73,8 +73,14 @@ public class BannerBuilder {
         this.formatPatterns();
         patterns.addAll(this.patterns);
 
-        blockEntityTag.put(TagsConstant.BANNER_PATTERN, patterns);
-        this.nbt.put(TagsConstant.BLOCK_ENTITY, blockEntityTag);
+        if (patterns.isEmpty()) {
+            blockEntityTag.remove(TagsConstant.BANNER_PATTERN);
+            if (blockEntityTag.isEmpty())
+                this.nbt.remove(TagsConstant.BLOCK_ENTITY);
+        } else {
+            blockEntityTag.put(TagsConstant.BANNER_PATTERN, patterns);
+            this.nbt.put(TagsConstant.BLOCK_ENTITY, blockEntityTag);
+        }
 
         stack.setNbt(this.nbt);
         return stack;
@@ -96,6 +102,7 @@ public class BannerBuilder {
 
     public BannerBuilder nbt(NbtCompound nbt) {
         this.nbt = nbt;
+        this.nbt.getCompound(TagsConstant.BLOCK_ENTITY).remove(TagsConstant.BANNER_PATTERN);
         return this;
     }
 
@@ -170,7 +177,8 @@ public class BannerBuilder {
     public BannerBuilder copy() {
         BannerBuilder copy = builder()
                 .item(this.item)
-                .isShield(this.isShield);
+                .isShield(this.isShield)
+                .nbt(this.nbt.copy());
 
         for (var pattern : this.patterns) {
             if (pattern instanceof NbtCompound patternCompound) {

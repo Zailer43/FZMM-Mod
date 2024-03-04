@@ -65,12 +65,15 @@ public class ContainerBuilder {
     }
 
     public ItemStack get() {
-        if (this.itemList.isEmpty()) {
-            this.stack.getOrCreateSubNbt(TagsConstant.BLOCK_ENTITY).remove(ShulkerBoxBlockEntity.ITEMS_KEY);
+        NbtList itemsTag = this.getItemsTag(this.itemList);
+
+        if (itemsTag.isEmpty()) {
+            NbtCompound nbtCompound = this.stack.getOrCreateNbt();
+            nbtCompound.getCompound(TagsConstant.BLOCK_ENTITY).remove(ShulkerBoxBlockEntity.ITEMS_KEY);
+
             return this.stack;
         }
 
-        NbtList itemsTag = this.getItemsTag(this.itemList);
         this.stack.getOrCreateSubNbt(TagsConstant.BLOCK_ENTITY).put(ShulkerBoxBlockEntity.ITEMS_KEY, itemsTag);
 
         return this.stack;
