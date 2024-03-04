@@ -22,10 +22,11 @@ public class FzmmConfigModel {
     @Nest
     public GeneralNest general = new GeneralNest();
 
+    @Nest
+    public ItemEditorBaseNest itemEditorBase = new ItemEditorBaseNest();
 
     @Nest
     public ItemEditorBannerNest itemEditorBanner = new ItemEditorBannerNest();
-
 
     @Nest
     public ColorsNest colors = new ColorsNest();
@@ -53,6 +54,10 @@ public class FzmmConfigModel {
         public boolean giveClientSide = false;
         public boolean showSymbolButton = true;
         public boolean showItemSize = true;
+    }
+
+    public static class ItemEditorBaseNest {
+        public boolean autoCollapseIfEditorDoesNotFit = true;
     }
 
     public static class ItemEditorBannerNest {

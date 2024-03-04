@@ -7,10 +7,7 @@ import fzmm.zailer.me.client.gui.components.BooleanButton;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.armor_editor.ArmorEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.banner_editor.BannerEditorScreen;
-import fzmm.zailer.me.client.gui.item_editor.base.components.CollapsibleLabelComponent;
-import fzmm.zailer.me.client.gui.item_editor.base.components.EditorRowComponent;
-import fzmm.zailer.me.client.gui.item_editor.base.components.ICollapsible;
-import fzmm.zailer.me.client.gui.item_editor.base.components.RequestedItemComponent;
+import fzmm.zailer.me.client.gui.item_editor.base.components.*;
 import fzmm.zailer.me.client.gui.item_editor.block_state_editor.BlockStateEditor;
 import fzmm.zailer.me.client.gui.item_editor.color_editor.ColorEditor;
 import fzmm.zailer.me.client.gui.item_editor.container_editor.ContainerEditor;
@@ -33,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ItemEditorBaseScreen extends BaseFzmmScreen implements ICollapsible {
     private static final String REQUIRED_ITEMS_TEXT = "fzmm.gui.itemEditor.base.label.required_items";
@@ -243,6 +241,16 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen implements ICollapsible
         }
 
         editor.updateItemPreview();
+
+        this.collapseEditorIfNeeded();
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        // it is necessary to finish initializing the screen in order
+        // to obtain the width of the components, otherwise it gives 0
+        this.collapseEditorIfNeeded();
     }
 
     private void selectItemAndUpdateParameters(ItemStack stack) {
@@ -332,6 +340,25 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen implements ICollapsible
         }
 
         return filteredEditors;
+    }
+
+    private void collapseEditorIfNeeded() {
+        if (this.collapseButton.enabled() || !FzmmClient.CONFIG.itemEditorBase.autoCollapseIfEditorDoesNotFit())
+            return;
+
+        AtomicBoolean result = new AtomicBoolean(false);
+        this.contentLayout.forEachDescendantWhere(component -> {}, component -> {
+            if (result.get())
+                return false;
+
+            if (component.width() + component.x() > this.width)
+                result.set(true);
+
+            return true;
+        });
+
+        if (result.get())
+            this.collapseButton.enabled(true);
     }
 
     @Override
