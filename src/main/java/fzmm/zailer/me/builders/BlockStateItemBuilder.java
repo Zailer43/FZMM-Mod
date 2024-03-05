@@ -2,12 +2,10 @@ package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.FzmmItemGroup;
+import fzmm.zailer.me.mixin.block_state_editor.VerticallyAttachableBlockItemAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.state.StateManager;
@@ -133,7 +131,18 @@ public class BlockStateItemBuilder {
         if (!(this.get().getItem() instanceof BlockItem blockItem))
             return Optional.empty();
 
-        BlockState state = blockItem.getBlock().getDefaultState();
+        return this.blockState(blockItem.getBlock());
+    }
+
+    public Optional<BlockState> wallBlockState() {
+        if (!(this.get().getItem() instanceof VerticallyAttachableBlockItem wallBlockItem))
+            return Optional.empty();
+
+        return this.blockState(((VerticallyAttachableBlockItemAccessor) wallBlockItem).getWallBlock());
+    }
+
+    private Optional<BlockState> blockState(Block block) {
+        BlockState state = block.getDefaultState();
         StateManager<Block, BlockState> stateManager = state.getBlock().getStateManager();
 
         for (var propertyString : this.blockStateTag.getKeys()) {

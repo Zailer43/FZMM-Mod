@@ -6,6 +6,25 @@
                 <scroll direction="vertical">
                     <flow-layout direction="vertical">
                         <children>
+                            <flow-layout direction="horizontal">
+                                <children>
+                                    <button id="block-button">
+                                        <text translate="true">fzmm.gui.itemEditor.block_state.option.block</text>
+                                    </button>
+
+                                    <button id="wall-block-button">
+                                        <text translate="true">fzmm.gui.itemEditor.block_state.option.wallBlock</text>
+                                    </button>
+                                </children>
+
+                                <gap>4</gap>
+
+                                <sizing>
+                                    <horizontal method="fill">100</horizontal>
+                                </sizing>
+
+                                <horizontal-alignment>center</horizontal-alignment>
+                            </flow-layout>
                             <flow-layout direction="vertical" id="content">
                                 <children>
                                 </children>
@@ -15,6 +34,8 @@
                                 </surface>
                             </flow-layout>
                         </children>
+
+                        <gap>4</gap>
                     </flow-layout>
 
                     <sizing>

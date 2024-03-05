@@ -4,6 +4,7 @@
   "package": "fzmm.zailer.me.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "block_state_editor.VerticallyAttachableBlockItemAccessor",
     "screenshotHud.ChatHudMixin",
     "screenshotHud.GameRendererMixin",
     "AutoPlacerMixin",

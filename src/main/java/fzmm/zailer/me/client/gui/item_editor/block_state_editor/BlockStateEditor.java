@@ -5,16 +5,17 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
+import fzmm.zailer.me.mixin.block_state_editor.VerticallyAttachableBlockItemAccessor;
+import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIModel;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.text.MutableText;
@@ -25,9 +26,6 @@ import java.util.*;
 
 public class BlockStateEditor implements IItemEditorScreen {
     private static final String BLOCK_STATE_TRANSLATION_KEY = "fzmm.gui.itemEditor.block_state.state.";
-    private static final String BLOCK_PREVIEW_LAYOUT_ID = "block-preview-layout";
-    private static final String CONTENT_ID = "content";
-    private static final String BLOCK_STATE_BUTTON_ID = "block-state-button";
     // black magic to prevent scrolling to the top of the screen when
     // updating because of layout.clearChildren() + layout.children(children)
     private final HashMap<Property<?>, HashMap<String, FlowLayout>> statesLayoutOfProperties = new HashMap<>();
@@ -36,6 +34,9 @@ public class BlockStateEditor implements IItemEditorScreen {
     private BlockStateItemBuilder blockBuilder = BlockStateItemBuilder.builder();
     private FlowLayout blockPreviewLayout;
     private FlowLayout contentLayout;
+    private ButtonComponent blockButton;
+    private ButtonComponent wallBlockButton;
+    private boolean wallBlockSelected;
     private UIModel uiModel;
 
     @Override
@@ -44,7 +45,21 @@ public class BlockStateEditor implements IItemEditorScreen {
             return this.requestedItems;
 
         this.blockRequested = new RequestedItem(
-                itemStack -> itemStack.getItem() instanceof BlockItem blockItem && !blockItem.getBlock().getDefaultState().getProperties().isEmpty(),
+                itemStack -> {
+                    Item item = itemStack.getItem();
+                    if (item instanceof BlockItem blockItem) {
+                        if (this.hasBlockState(blockItem.getBlock()))
+                            return true;
+                    }
+
+                    if (item instanceof VerticallyAttachableBlockItem wallItem) {
+                        Block wallBlock = ((VerticallyAttachableBlockItemAccessor) wallItem).getWallBlock();
+
+                        return this.hasBlockState(wallBlock);
+                    }
+
+                    return false;
+                },
                 this::selectItemAndUpdateParameters,
                 null,
                 Text.translatable("fzmm.gui.itemEditor.block_state.title"),
@@ -64,12 +79,33 @@ public class BlockStateEditor implements IItemEditorScreen {
     public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, FlowLayout editorLayout) {
         this.uiModel = this.getUIModel().orElseThrow();
 
-        this.blockPreviewLayout = editorLayout.childById(FlowLayout.class, BLOCK_PREVIEW_LAYOUT_ID);
-        BaseFzmmScreen.checkNull(this.blockPreviewLayout, "flow-layout", BLOCK_PREVIEW_LAYOUT_ID);
+        this.blockPreviewLayout = editorLayout.childById(FlowLayout.class, "block-preview-layout");
+        BaseFzmmScreen.checkNull(this.blockPreviewLayout, "flow-layout", "block-preview-layout");
 
-        this.contentLayout = editorLayout.childById(FlowLayout.class, CONTENT_ID);
-        BaseFzmmScreen.checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
+        this.contentLayout = editorLayout.childById(FlowLayout.class, "content");
+        BaseFzmmScreen.checkNull(this.contentLayout, "flow-layout", "content");
 
+        this.blockButton = editorLayout.childById(ButtonComponent.class, "block-button");
+        BaseFzmmScreen.checkNull(this.blockButton, "button", "block-button");
+        this.blockButton.onPress(buttonComponent -> {
+            this.wallBlockSelected = false;
+            this.wallBlockButton.active = true;
+            this.blockButton.active = false;
+            this.updateBlockStateContent();
+            this.updatePreview();
+        });
+
+        this.wallBlockButton = editorLayout.childById(ButtonComponent.class, "wall-block-button");
+        BaseFzmmScreen.checkNull(this.wallBlockButton, "button", "wall-block-button");
+        this.wallBlockButton.onPress(buttonComponent -> {
+            this.wallBlockSelected = true;
+            this.wallBlockButton.active = false;
+            this.blockButton.active = true;
+            this.updateBlockStateContent();
+            this.updatePreview();
+        });
+
+        this.wallBlockSelected = false;
         this.blockBuilder.item(Items.AIR);
 
         return editorLayout;
@@ -90,15 +126,29 @@ public class BlockStateEditor implements IItemEditorScreen {
     @Override
     public void selectItemAndUpdateParameters(ItemStack stack) {
         this.blockBuilder = this.blockBuilder.of(stack);
+        this.blockButton.active = this.blockBuilder.blockState().isPresent() && this.wallBlockSelected;
+        this.wallBlockButton.active = this.blockBuilder.wallBlockState().isPresent() && !this.wallBlockSelected;
+
         this.updateBlockStateContent();
         this.updatePreview();
+    }
+
+    private boolean hasBlockState(Block block) {
+        return !block.getDefaultState().getProperties().isEmpty();
+    }
+
+    private Optional<BlockState> getBlockState() {
+        if (this.wallBlockSelected)
+            return this.blockBuilder.wallBlockState();
+
+        return this.blockBuilder.blockState();
     }
 
     public void updateBlockStateContent() {
         this.contentLayout.clearChildren();
         this.statesLayoutOfProperties.clear();
         List<Component> components = new ArrayList<>();
-        Optional<BlockState> blockStateOptional = this.blockBuilder.blockState();
+        Optional<BlockState> blockStateOptional = this.getBlockState();
 
         if (blockStateOptional.isEmpty() || blockStateOptional.get().getProperties().isEmpty()) {
             components.add(Components.label(Text.translatable("fzmm.gui.itemEditor.block_state.label.empty"))
@@ -129,6 +179,8 @@ public class BlockStateEditor implements IItemEditorScreen {
             layout.mouseEnter().subscribe(() -> layout.surface(Surface.flat(0x20000000)));
             layout.mouseLeave().subscribe(() -> layout.surface(Surface.flat(0)));
 
+            layout.horizontalAlignment(HorizontalAlignment.CENTER);
+
             components.add(layout);
         }
 
@@ -144,7 +196,7 @@ public class BlockStateEditor implements IItemEditorScreen {
     }
 
     public void updatePreview() {
-        this.blockBuilder.blockState().ifPresent(blockState -> {
+        this.getBlockState().ifPresent(blockState -> {
             Component blockPreviewComponent = Components.block(blockState, this.blockBuilder.nbt())
                     .sizing(Sizing.fixed(30), Sizing.fixed(30));
             this.blockPreviewLayout.clearChildren();
@@ -182,7 +234,7 @@ public class BlockStateEditor implements IItemEditorScreen {
         }
         parameters.put("property", propertyName);
         parameters.put("value", valueParameter);
-        FlowLayout valueLayout = this.uiModel.expandTemplate(FlowLayout.class, BLOCK_STATE_BUTTON_ID, parameters);
+        FlowLayout valueLayout = this.uiModel.expandTemplate(FlowLayout.class, "block-state-button", parameters);
 
         this.setStateLayout(key, labelName, property, valueLayout, isDefault);
 
@@ -202,7 +254,7 @@ public class BlockStateEditor implements IItemEditorScreen {
     }
 
     public void updatePropertiesContent() {
-        Optional<BlockState> blockStateOptional = this.blockBuilder.blockState();
+        Optional<BlockState> blockStateOptional = this.getBlockState();
         if (blockStateOptional.isEmpty())
             return;
 
@@ -216,7 +268,7 @@ public class BlockStateEditor implements IItemEditorScreen {
     }
 
     private void updateStateLayout(Property<?> property, String valueName, boolean isDefault) {
-        Optional<BlockState> blockStateOptional = this.blockBuilder.blockState();
+        Optional<BlockState> blockStateOptional = this.getBlockState();
         if (blockStateOptional.isEmpty())
             return;
         BlockState blockState = blockStateOptional.get();
