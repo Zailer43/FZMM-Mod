@@ -3,5 +3,6 @@ accessWidener v1 named
 accessible method net/minecraft/client/util/ScreenshotRecorder getScreenshotFilename (Ljava/io/File;)Ljava/io/File;
 accessible method net/minecraft/client/MinecraftClient doItemUse ()V
 accessible method net/minecraft/item/BlockItem with (Lnet/minecraft/block/BlockState;Lnet/minecraft/state/property/Property;Ljava/lang/String;)Lnet/minecraft/block/BlockState;
+accessible method net/minecraft/client/world/ClientWorld getMapStates ()Ljava/util/Map;
 
 accessible field net/minecraft/client/gui/screen/ingame/BookScreen MAX_TEXT_WIDTH I

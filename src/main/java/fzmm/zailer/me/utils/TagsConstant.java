@@ -41,4 +41,6 @@ public class TagsConstant {
 
     public static final String ENCHANTMENTS_LVL = "lvl"; // EnchantmentHelper.LEVEL_KEY
 
+    public static final String FILLED_MAP_ID = "map"; // FilledMapItem.MAP_KEY
+
 }

@@ -1,0 +1,155 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <flow-layout direction="horizontal">
+                    <children>
+                        <flow-layout direction="vertical">
+                            <children>
+                                <flow-layout direction="horizontal" id="preview">
+                                    <children>
+
+                                    </children>
+                                </flow-layout>
+
+                                <fzmm.text-option id="id-text-box">
+                                    <sizing>
+                                        <horizontal method="fill">100</horizontal>
+                                    </sizing>
+                                </fzmm.text-option>
+                            </children>
+                            <gap>4</gap>
+
+                            <horizontal-alignment>center</horizontal-alignment>
+
+                            <sizing>
+                                <horizontal method="fixed">50</horizontal>
+                            </sizing>
+                        </flow-layout>
+
+                        <flow-layout direction="vertical">
+                            <children>
+                                <button id="save-png">
+                                    <text translate="true">fzmm.gui.itemEditor.filled_map.option.savePng</text>
+                                    <sizing>
+                                        <horizontal method="fill">100</horizontal>
+                                    </sizing>
+                                </button>
+
+                                <button id="save-nbt">
+                                    <text translate="true">fzmm.gui.itemEditor.filled_map.option.saveNbt</text>
+                                    <sizing>
+                                        <horizontal method="fill">100</horizontal>
+                                    </sizing>
+                                </button>
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fixed">130</horizontal>
+                            </sizing>
+
+                            <gap>4</gap>
+                        </flow-layout>
+                    </children>
+
+                    <gap>10</gap>
+
+                    <padding>
+                        <all>10</all>
+                    </padding>
+
+                    <surface>
+                        <panel dark="true"/>
+                    </surface>
+                </flow-layout>
+
+                <flow-layout direction="vertical">
+                    <children>
+                        <flow-layout direction="horizontal">
+                            <children>
+
+                                <button id="previous-page">
+                                    <text translate="true">fzmm.gui.button.arrow2.left</text>
+                                    <sizing>
+                                        <horizontal method="fixed">20</horizontal>
+                                    </sizing>
+                                </button>
+
+                                <label id="page-label">
+                                    <text>0/0</text>
+                                </label>
+
+                                <button id="next-page">
+                                    <text translate="true">fzmm.gui.button.arrow2.right</text>
+                                    <sizing>
+                                        <horizontal method="fixed">20</horizontal>
+                                    </sizing>
+                                </button>
+
+                            </children>
+
+                            <gap>32</gap>
+
+                            <vertical-alignment>center</vertical-alignment>
+                            <horizontal-alignment>center</horizontal-alignment>
+
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                                <vertical method="fixed">24</vertical>
+                            </sizing>
+                        </flow-layout>
+
+                        <scroll direction="vertical">
+                            <flow-layout direction="vertical">
+                                <children>
+                                    <label>
+                                        <text translate="true">fzmm.gui.itemEditor.filled_map.label.mapListInfo</text>
+                                        <tooltip-text translate="true">fzmm.gui.itemEditor.filled_map.label.mapListInfo.tooltip</tooltip-text>
+                                    </label>
+
+                                    <flow-layout direction="ltr-text-flow" id="map-content">
+                                        <children>
+
+                                        </children>
+
+                                        <sizing>
+                                            <horizontal method="fill">100</horizontal>
+                                        </sizing>
+                                    </flow-layout>
+                                </children>
+                            </flow-layout>
+
+                            <padding>
+                                <all>6</all>
+                            </padding>
+
+                            <sizing>
+                                <vertical method="fill">70</vertical>
+                            </sizing>
+
+                            <scrollbar>
+                                <flat>#FFFFFF</flat>
+                            </scrollbar>
+
+                            <surface>
+                                <panel dark="true"/>
+                            </surface>
+                        </scroll>
+                    </children>
+
+                    <sizing>
+                        <vertical method="fill">70</vertical>
+                        <horizontal method="fill">100</horizontal>
+                    </sizing>
+
+                    <horizontal-alignment>center</horizontal-alignment>
+                </flow-layout>
+            </children>
+
+            <vertical-alignment>top</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+        </flow-layout>
+    </components>
+</owo-ui>
