@@ -2,15 +2,20 @@ package fzmm.zailer.me.client.gui.item_editor.enchant_editor;
 
 import fzmm.zailer.me.builders.EnchantmentBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.EnumWidget;
+import fzmm.zailer.me.client.gui.components.IMode;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.LevelableEditor;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.levelable.AddLevelableComponent;
+import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.levelable.AppliedLevelableComponent;
 import fzmm.zailer.me.client.gui.item_editor.enchant_editor.components.AddEnchantComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Sizing;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.item.ItemStack;
@@ -25,10 +30,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuilder.EnchantmentData, EnchantmentBuilder> implements IItemEditorScreen {
     private boolean glint;
     private boolean onlyCompatibleEnchants;
+    private EnumWidget levelRangeEnumComponent;
 
 
     public EnchantEditor() {
@@ -50,7 +57,7 @@ public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuild
 
         FlowLayout layout = super.getLayout(baseScreen, editorLayout);
 
-        // top boolean buttons
+        // top buttons
         FlowLayout booleanLayout = layout.childById(FlowLayout.class, "boolean-buttons");
         BaseFzmmScreen.checkNull(booleanLayout, "booleanLayout", "boolean-buttons");
 
@@ -70,8 +77,29 @@ public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuild
         onlyCompatibleEnchantsComponent.tooltip(Text.translatable("fzmm.gui.itemEditor.enchant.option.onlyCompatibleEnchants"));
         this.setBooleanButton(onlyCompatibleEnchantsComponent, () -> this.onlyCompatibleEnchants, 144);
 
-        booleanLayout.child(glintComponent);
-        booleanLayout.child(onlyCompatibleEnchantsComponent);
+        Function<Text, Text> getLevelRangeText = text -> Text.translatable("fzmm.gui.itemEditor.effect.option.maxLevel", text);
+        this.levelRangeEnumComponent = new EnumWidget() {
+            @Override
+            public void setMessage(Text message) {
+                super.setMessage(getLevelRangeText.apply(message));
+            }
+        };
+        this.levelRangeEnumComponent.init(LevelRange.BYTE);
+        this.levelRangeEnumComponent.onPress(buttonComponent -> {
+            LevelRange levelRange = (LevelRange) this.levelRangeEnumComponent.getValue();
+
+            this.setLevelRange(levelRange.getMinLevel(), levelRange.maxLevelFunc);
+        });
+        int levelRangeEnumWidth = 0;
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        for (var value : LevelRange.values()) {
+            Text translation = getLevelRangeText.apply(Text.translatable(value.getTranslationKey()));
+            levelRangeEnumWidth = Math.max(levelRangeEnumWidth, textRenderer.getWidth(translation));
+        }
+        this.levelRangeEnumComponent.horizontalSizing(Sizing.fixed(levelRangeEnumWidth + BaseFzmmScreen.BUTTON_TEXT_PADDING));
+
+
+        booleanLayout.children(List.of(glintComponent, onlyCompatibleEnchantsComponent, this.levelRangeEnumComponent));
 
         return layout;
     }
@@ -85,6 +113,7 @@ public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuild
     protected void updateParameters(EnchantmentBuilder builder) {
         this.glint = builder.glint();
         this.onlyCompatibleEnchants = builder.onlyCompatibleEnchants();
+        this.levelRangeEnumComponent.setValue(builder.isOverMaxLevel() ? LevelRange.SHORT : LevelRange.BYTE);
     }
 
     @Override
@@ -133,6 +162,14 @@ public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuild
     protected AddLevelableComponent<Enchantment, EnchantmentBuilder.EnchantmentData, EnchantmentBuilder> getAddLevelableComponent(
             EnchantmentBuilder.EnchantmentData levelable, @Nullable Runnable callback) {
         return new AddEnchantComponent(levelable, callback, this, this.levelableBuilder);
+    }
+
+    @Override
+    protected AppliedLevelableComponent<Enchantment, EnchantmentBuilder.EnchantmentData, EnchantmentBuilder> getAppliedLevelableComponent(EnchantmentBuilder.EnchantmentData levelable, @Nullable Runnable callback) {
+        var value = super.getAppliedLevelableComponent(levelable, callback);
+        LevelRange levelRange = (LevelRange) this.levelRangeEnumComponent.getValue();
+        value.setLevelRange(levelRange.getMinLevel(), levelRange.getMaxLevel(levelable));
+        return value;
     }
 
     @Override
@@ -191,4 +228,32 @@ public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuild
         return this.onlyCompatibleEnchants;
     }
 
+    private enum LevelRange implements IMode {
+        SHORT("short", 0, enchantmentData -> 32767),
+        BYTE("byte", 0, enchantmentData -> 255),
+        VANILLA("vanilla", 1, EnchantmentBuilder.EnchantmentData::getMaxLevel);
+
+        private final String name;
+        private final Function<EnchantmentBuilder.EnchantmentData, Integer> maxLevelFunc;
+        private final int minLevel;
+
+        LevelRange(String name, int minLevel, Function<EnchantmentBuilder.EnchantmentData, Integer> maxLevelFunc) {
+            this.name = name;
+            this.minLevel = minLevel;
+            this.maxLevelFunc = maxLevelFunc;
+        }
+
+        @Override
+        public String getTranslationKey() {
+            return "fzmm.gui.itemEditor.effect.option.maxLevel." + this.name;
+        }
+
+        public int getMaxLevel(EnchantmentBuilder.EnchantmentData levelable) {
+            return this.maxLevelFunc.apply(levelable);
+        }
+
+        public int getMinLevel() {
+            return this.minLevel;
+        }
+    }
 }

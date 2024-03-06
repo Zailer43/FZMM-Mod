@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -44,7 +45,7 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
     private ImmutableList<AddLevelableComponent<V, D, B>> addLevelablesComponents;
     private List<AppliedLevelableComponent<V, D, B>> appliedLevelablesComponents;
     private boolean allowDuplicates;
-    private boolean ignoreMaxLevel;
+    protected boolean ignoreMaxLevel;
     protected int levelablesLabelHorizontalSize;
     protected ButtonComponent selectedCategoryButton;
     private ButtonComponent sortButton;
@@ -82,7 +83,7 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
     public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, FlowLayout editorLayout) {
         this.appliedLevelablesComponents = new ArrayList<>();
         this.allowDuplicates = false;
-        this.ignoreMaxLevel = false;
+        this.ignoreMaxLevel = true;
         this.levelablesLabelHorizontalSize = 0;
 
         // top boolean buttons
@@ -96,11 +97,6 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
         });
         allowDuplicatesComponent.tooltip(Text.translatable("fzmm.gui.itemEditor.levelable.option.allowDuplicates"));
         this.setBooleanButton(allowDuplicatesComponent, () -> this.allowDuplicates, 80);
-
-        ButtonComponent ignoreMaxLevelComponent = editorLayout.childById(ButtonComponent.class, "ignore-max-level");
-        BaseFzmmScreen.checkNull(ignoreMaxLevelComponent, "button", "ignore-max-level");
-        ignoreMaxLevelComponent.tooltip(Text.translatable("fzmm.gui.itemEditor.levelable.option.ignoreMaxLevel"));
-        this.setBooleanButton(ignoreMaxLevelComponent, () -> this.ignoreMaxLevel, 112);
 
         // other top buttons
         Icon sortIcon = Icon.of(Items.HOPPER);
@@ -132,12 +128,12 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
             this.updateAppliedLevelables();
         });
 
-        ConfigTextBox setLevelsTextBox = editorLayout.childById(ConfigTextBox.class, "set-levels");
-        BaseFzmmScreen.checkNull(setLevelsTextBox, "text-box", "set-levels");
-        setLevelsTextBox.configureForNumber(Integer.class);
-        setLevelsTextBox.setText("1");
-        setLevelsTextBox.setCursorToStart(false);
-        setLevelsTextBox.applyPredicate(s -> {
+        ConfigTextBox setLevelToAllTextBox = editorLayout.childById(ConfigTextBox.class, "set-level-to-all");
+        BaseFzmmScreen.checkNull(setLevelToAllTextBox, "text-box", "set-level-to-all");
+        setLevelToAllTextBox.configureForNumber(Integer.class);
+        setLevelToAllTextBox.setText("1");
+        setLevelToAllTextBox.setCursorToStart(false);
+        setLevelToAllTextBox.applyPredicate(s -> {
             try {
                 int value = Integer.parseInt(s);
                 return value >= Short.MIN_VALUE && value <= Short.MAX_VALUE;
@@ -145,13 +141,7 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
                 return false;
             }
         });
-        setLevelsTextBox.onChanged().subscribe(value -> this.setLevelsExecute(setLevelsTextBox, this.ignoreMaxLevel));
-
-
-        ignoreMaxLevelComponent.onPress(buttonComponent -> {
-            this.ignoreMaxLevel = !this.ignoreMaxLevel;
-            this.setLevelsExecute(setLevelsTextBox, this.ignoreMaxLevel);
-        });
+        setLevelToAllTextBox.onChanged().subscribe(value -> this.setLevelsExecute(setLevelToAllTextBox, this.ignoreMaxLevel));
 
         // content
         this.appliedLevelablesLayout = editorLayout.childById(FlowLayout.class, "applied-levelables");
@@ -193,11 +183,11 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
         return "levelable";
     }
 
-    private void setLevelsExecute(ConfigTextBox setLevelsTextBox, boolean ignoreMaxLevel) {
+    protected void setLevelsExecute(ConfigTextBox setLevelsTextBox, boolean ignoreMaxLevel) {
         int level = (int) setLevelsTextBox.parsedValue();
         level = MathHelper.clamp(level, Short.MIN_VALUE, Short.MAX_VALUE);
         if (!ignoreMaxLevel)
-            level = this.levelableBuilder.getMaxLevel(level);
+            level = this.getMaxLevel(level);
 
         String valueStr = String.valueOf(level);
         for (var child : this.appliedLevelablesLayout.children()) {
@@ -205,6 +195,26 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
                 component.setUpdateItemCallback(false);
                 component.setLevel(valueStr);
                 component.setUpdateItemCallback(true);
+            }
+        }
+        this.updateItemPreview();
+    }
+
+    protected int getMaxLevel(int level) {
+        return this.levelableBuilder.getMaxLevel(level);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void setLevelRange(int min, Function<D, Integer> maxFunc) {
+        for (var component : this.getAppliedLevelablesLayout().children()) {
+            if (component instanceof AppliedLevelableComponent<?,?,?> appliedComponent) {
+                D data = (D) appliedComponent.getLevelable();
+                appliedComponent.setLevelRange(min, maxFunc.apply(data));
+
+                // range is adjusted with the onChanged
+                appliedComponent.setUpdateItemCallback(false);
+                appliedComponent.onLevelChanged();
+                appliedComponent.setUpdateItemCallback(true);
             }
         }
         this.updateItemPreview();
@@ -221,7 +231,6 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
         this.levelableBuilder.stack(stack);
 
         this.allowDuplicates = this.levelableBuilder.allowDuplicates();
-        this.ignoreMaxLevel = this.levelableBuilder.isOverMaxLevel();
         this.updateParameters(this.levelableBuilder);
 
         this.selectedCategoryButton.onPress();
@@ -319,10 +328,7 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
         buttonComponent.horizontalSizing(Sizing.fixed(20));
         buttonComponent.renderer((context, button, delta) -> {
                     boolean enabled = isEnabled.get();
-                    context.fill(button.x(), button.y(),
-                            button.x() + button.width(), button.y() + button.height(),
-                            enabled ? 0x80006000 : 0x80600000
-                    );
+                    ButtonComponent.Renderer.VANILLA.draw(context, button, delta);
                     context.drawTexture(FzmmIcons.TEXTURE, button.x() + 2, button.y() + 2, 48, enabled ? v : v + 16, 16, 16);
                 }
         );

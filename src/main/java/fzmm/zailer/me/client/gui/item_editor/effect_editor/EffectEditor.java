@@ -61,13 +61,22 @@ public class EffectEditor extends LevelableEditor<StatusEffect, EffectBuilder.Ef
         showParticlesButton.tooltip(Text.translatable("fzmm.gui.itemEditor.effect.option.showParticles"));
         this.setBooleanButton(showParticlesButton, () -> this.showParticles, 176);
 
-        booleanButtonsLayout.child(showParticlesButton);
+        ButtonComponent ignoreMaxLevelComponent = Components.button(Text.empty(), buttonComponent -> {
+            this.ignoreMaxLevel = !this.ignoreMaxLevel;
+
+            this.setLevelRange(0, effectData -> this.getMaxLevel(Short.MAX_VALUE));
+        });
+        BaseFzmmScreen.checkNull(ignoreMaxLevelComponent, "button", "ignore-max-level");
+        ignoreMaxLevelComponent.tooltip(Text.translatable("fzmm.gui.itemEditor.levelable.option.ignoreMaxLevel"));
+        this.setBooleanButton(ignoreMaxLevelComponent, () -> this.ignoreMaxLevel, 112);
+
+        booleanButtonsLayout.children(List.of(showParticlesButton, ignoreMaxLevelComponent));
 
         // top options
         FlowLayout topOptionsLayout = editorLayout.childById(FlowLayout.class, "top-options");
         BaseFzmmScreen.checkNull(topOptionsLayout, "flow-layout", "top-options");
 
-        LabelComponent labelComponent = Components.label(Text.translatable("fzmm.gui.itemEditor.effect.label.setDurations"));
+        LabelComponent labelComponent = Components.label(Text.translatable("fzmm.gui.itemEditor.effect.label.setDurationToAll"));
         ConfigTextBox setDurationsTextBox = new ConfigTextBox();
         AppliedEffectComponent.configureForTime(setDurationsTextBox);
         setDurationsTextBox.horizontalSizing(Sizing.fixed(40));
@@ -84,6 +93,7 @@ public class EffectEditor extends LevelableEditor<StatusEffect, EffectBuilder.Ef
     @Override
     protected void updateParameters(EffectBuilder builder) {
         this.showParticles = builder.showParticles();
+        this.ignoreMaxLevel = builder.isOverMaxLevel();
     }
 
     private void setDurationsExecute(ConfigTextBox setDurationsTextBox) {
@@ -99,6 +109,11 @@ public class EffectEditor extends LevelableEditor<StatusEffect, EffectBuilder.Ef
             }
         }
         this.updateItemPreview();
+    }
+
+    @Override
+    protected int getMaxLevel(int level) {
+        return this.ignoreMaxLevel ? 255 : super.getMaxLevel(level);
     }
 
     @Override
@@ -144,7 +159,10 @@ public class EffectEditor extends LevelableEditor<StatusEffect, EffectBuilder.Ef
 
     @Override
     protected AppliedLevelableComponent<StatusEffect, EffectBuilder.EffectData, EffectBuilder> getAppliedLevelableComponent(EffectBuilder.EffectData levelable, @Nullable Runnable callback) {
-        return new AppliedEffectComponent(levelable, callback, this, this.levelableBuilder);
+        var value = new AppliedEffectComponent(levelable, callback, this, this.levelableBuilder);
+        value.setLevelRange(0, this.getMaxLevel(Short.MAX_VALUE));
+
+        return value;
     }
 
     @Override

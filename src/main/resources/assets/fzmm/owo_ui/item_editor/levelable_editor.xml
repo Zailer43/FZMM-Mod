@@ -3,210 +3,270 @@
     <components>
         <flow-layout direction="horizontal">
             <children>
-                <scroll direction="vertical">
-                    <flow-layout direction="vertical">
-                        <children>
-                            <flow-layout direction="horizontal">
-                                <children>
-                                    <flow-layout direction="horizontal" id="boolean-buttons">
-                                        <children>
-                                            <button id="allow-duplicates">
-                                            </button>
-                                            <button id="ignore-max-level">
-                                            </button>
-                                        </children>
-
-                                        <gap>2</gap>
-                                    </flow-layout>
-
-                                    <flow-layout direction="horizontal">
-                                        <children>
-                                            <button id="sort-levelables">
-                                                <margins>
-                                                    <left>4</left>
-                                                </margins>
-                                            </button>
-                                        </children>
-
-                                        <tooltip-text translate="true">fzmm.gui.itemEditor.levelable.option.sort</tooltip-text>
-                                    </flow-layout>
-
-                                    <button id="remove-all">
-                                        <text translate="true">fzmm.gui.itemEditor.levelable.option.removeAll</text>
-                                        <positioning type="relative">100,0</positioning>
-                                    </button>
-                                </children>
-
-                                <sizing>
-                                    <horizontal method="fill">100</horizontal>
-                                </sizing>
-
-                                <gap>4</gap>
-                            </flow-layout>
-
-
-                            <flow-layout direction="horizontal" id="top-options">
-                                <children>
-                                    <label>
-                                        <text translate="true">fzmm.gui.label.search</text>
-                                    </label>
-
-                                    <text-box id="search">
-                                        <sizing>
-                                            <horizontal method="fixed">80</horizontal>
-                                        </sizing>
-                                    </text-box>
-
-                                    <label>
-                                        <text translate="true">fzmm.gui.itemEditor.levelable.option.setLevels</text>
-                                    </label>
-                                    <fzmm.text-option id="set-levels">
-                                        <sizing>
-                                            <horizontal method="fixed">40</horizontal>
-                                        </sizing>
-                                    </fzmm.text-option>
-                                </children>
-
-                                <vertical-alignment>center</vertical-alignment>
-
-                                <gap>4</gap>
-                            </flow-layout>
-
-
-                            <scroll direction="vertical">
-                                <flow-layout direction="ltr-text-flow" id="applied-levelables">
+                <flow-layout direction="vertical">
+                    <children>
+                        <flow-layout direction="horizontal">
+                            <children>
+                                <flow-layout direction="horizontal" id="boolean-buttons">
                                     <children>
+                                        <button id="allow-duplicates">
+                                        </button>
                                     </children>
 
+                                    <gap>2</gap>
+                                </flow-layout>
+
+                                <flow-layout direction="horizontal">
+                                    <children>
+                                        <button id="sort-levelables">
+                                            <margins>
+                                                <left>4</left>
+                                            </margins>
+                                        </button>
+                                    </children>
+
+                                    <tooltip-text translate="true">fzmm.gui.itemEditor.levelable.option.sort</tooltip-text>
+                                </flow-layout>
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                            </sizing>
+
+                            <gap>4</gap>
+                        </flow-layout>
+
+
+                        <flow-layout direction="horizontal" id="top-options">
+                            <children>
+                                <label>
+                                    <text translate="true">fzmm.gui.itemEditor.levelable.option.setLevelToAll</text>
+                                </label>
+                                <fzmm.text-option id="set-level-to-all">
                                     <sizing>
-                                        <horizontal method="fill">100</horizontal>
+                                        <horizontal method="fixed">40</horizontal>
+                                    </sizing>
+                                </fzmm.text-option>
+                            </children>
+
+                            <vertical-alignment>center</vertical-alignment>
+
+                            <gap>4</gap>
+
+                            <margins>
+                                <vertical>4</vertical>
+                            </margins>
+                        </flow-layout>
+
+
+                        <flow-layout direction="horizontal">
+                            <children>
+                                <flow-layout direction="vertical">
+                                    <children>
+                                        <flow-layout direction="vertical">
+                                            <children>
+                                                <label>
+                                                    <text translate="true">fzmm.gui.label.search</text>
+                                                    <margins>
+                                                        <vertical>2</vertical>
+                                                    </margins>
+
+                                                    <sizing>
+                                                        <vertical method="fixed">9</vertical>
+                                                    </sizing>
+                                                </label>
+
+                                                <text-box id="search">
+                                                    <sizing>
+                                                        <vertical method="fixed">20</vertical>
+                                                        <horizontal method="expand">100</horizontal>
+                                                    </sizing>
+
+                                                    <margins>
+                                                        <bottom>4</bottom>
+                                                    </margins>
+                                                </text-box>
+                                            </children>
+                                        </flow-layout>
+
+                                        <scroll direction="vertical">
+                                            <flow-layout direction="vertical" id="categories">
+                                                <children>
+                                                </children>
+                                            </flow-layout>
+
+                                            <sizing>
+                                                <vertical method="expand">100</vertical>
+                                                <horizontal method="expand">100</horizontal>
+                                            </sizing>
+
+                                            <surface>
+                                                <panel dark="true"/>
+                                            </surface>
+
+                                            <padding>
+                                                <all>3</all>
+                                            </padding>
+
+                                            <scrollbar>
+                                                <flat>#FFFFFF</flat>
+                                            </scrollbar>
+                                        </scroll>
+                                    </children>
+
+                                    <margins>
+                                        <right>6</right>
+                                    </margins>
+
+                                    <sizing>
+                                        <vertical method="fill">100</vertical>
+                                        <horizontal method="fixed">100</horizontal>
                                     </sizing>
                                 </flow-layout>
 
-                                <sizing>
-                                    <vertical method="fill">40</vertical>
-                                    <horizontal method="fill">100</horizontal>
-                                </sizing>
+                                <flow-layout direction="vertical">
+                                    <children>
 
-                                <surface>
-                                    <panel dark="true"/>
-                                </surface>
+                                        <scroll direction="vertical">
+                                            <flow-layout direction="vertical">
+                                                <children>
+                                                    <flow-layout direction="horizontal">
+                                                        <children>
+                                                            <label>
+                                                                <text translate="true">fzmm.gui.itemEditor.enchant.label.enchantsApplied</text>
+                                                            </label>
 
-                                <padding>
-                                    <all>10</all>
-                                </padding>
+                                                            <button id="remove-all">
+                                                                <text translate="true">fzmm.gui.itemEditor.levelable.option.removeAll</text>
+                                                                <positioning type="relative">100,0</positioning>
+                                                            </button>
+                                                        </children>
 
-                                <scrollbar>
-                                    <flat>#FFFFFF</flat>
-                                </scrollbar>
-                            </scroll>
+                                                        <sizing>
+                                                            <horizontal method="expand">100</horizontal>
+                                                            <vertical method="fixed">20</vertical>
+                                                        </sizing>
+                                                    </flow-layout>
+                                                    <flow-layout direction="ltr-text-flow" id="applied-levelables">
+                                                        <children>
+                                                        </children>
 
-                            <flow-layout direction="horizontal">
-                                <children>
+                                                        <sizing>
+                                                            <horizontal method="expand">100</horizontal>
+                                                        </sizing>
+                                                    </flow-layout>
+                                                </children>
+                                            </flow-layout>
 
-                                    <flow-layout direction="vertical">
-                                        <children>
-                                            <button id="add-all">
-                                                <text translate="true">fzmm.gui.itemEditor.levelable.option.addAll</text>
-                                                <sizing>
-                                                    <horizontal method="fixed">100</horizontal>
-                                                </sizing>
-                                            </button>
+                                            <sizing>
+                                                <vertical method="expand">40</vertical>
+                                                <horizontal method="expand">100</horizontal>
+                                            </sizing>
 
-                                            <scroll direction="vertical">
-                                                <flow-layout direction="vertical" id="categories">
-                                                    <children>
-                                                    </children>
-                                                </flow-layout>
+                                            <surface>
+                                                <panel dark="true"/>
+                                            </surface>
 
-                                                <sizing>
-                                                    <vertical method="fill">100</vertical>
-                                                    <horizontal method="fixed">100</horizontal>
-                                                </sizing>
+                                            <padding>
+                                                <all>10</all>
+                                            </padding>
 
-                                                <surface>
-                                                    <panel dark="true"/>
-                                                </surface>
+                                            <scrollbar>
+                                                <flat>#FFFFFF</flat>
+                                            </scrollbar>
+                                        </scroll>
 
-                                                <padding>
-                                                    <all>3</all>
-                                                </padding>
-
-                                                <scrollbar>
-                                                    <flat>#FFFFFF</flat>
-                                                </scrollbar>
-
-                                                <positioning type="relative">0,0</positioning>
-
-                                                <margins>
-                                                    <top>24</top>
-                                                </margins>
-                                            </scroll>
-                                        </children>
-
-                                        <gap>4</gap>
-
-                                        <margins>
-                                            <right>6</right>
-                                        </margins>
-
-                                        <sizing>
-                                            <vertical method="fill">100</vertical>
-                                            <horizontal method="fixed">100</horizontal>
-                                        </sizing>
-                                    </flow-layout>
-
-                                    <scroll direction="vertical">
-                                        <flow-layout direction="ltr-text-flow" id="add-levelables-layout">
+                                        <flow-layout direction="vertical">
                                             <children>
+                                                <scroll direction="vertical">
+                                                    <flow-layout direction="vertical">
+                                                        <children>
+                                                            <flow-layout direction="horizontal">
+                                                                <children>
+                                                                    <label>
+                                                                        <text translate="true">fzmm.gui.itemEditor.enchant.label.availableEnchants</text>
+                                                                    </label>
+
+                                                                    <button id="add-all">
+                                                                        <text translate="true">fzmm.gui.itemEditor.levelable.option.addAll</text>
+
+                                                                        <positioning type="relative">100,0</positioning>
+                                                                    </button>
+                                                                </children>
+
+                                                                <sizing>
+                                                                    <horizontal method="expand">100</horizontal>
+                                                                    <vertical method="fixed">20</vertical>
+                                                                </sizing>
+                                                            </flow-layout>
+
+                                                            <flow-layout direction="ltr-text-flow" id="add-levelables-layout">
+                                                                <children>
+                                                                </children>
+
+                                                                <sizing>
+                                                                    <horizontal method="expand">100</horizontal>
+                                                                </sizing>
+
+                                                                <gap>6</gap>
+                                                            </flow-layout>
+                                                        </children>
+                                                    </flow-layout>
+
+                                                    <sizing>
+                                                        <vertical method="expand">100</vertical>
+                                                        <horizontal method="expand">100</horizontal>
+                                                    </sizing>
+
+                                                    <surface>
+                                                        <panel dark="true"/>
+                                                    </surface>
+
+                                                    <padding>
+                                                        <all>10</all>
+                                                    </padding>
+
+                                                    <margins>
+                                                        <top>4</top>
+                                                    </margins>
+
+                                                    <scrollbar>
+                                                        <flat>#FFFFFF</flat>
+                                                    </scrollbar>
+                                                </scroll>
                                             </children>
 
                                             <sizing>
-                                                <horizontal method="fill">100</horizontal>
+                                                <vertical method="expand">60</vertical>
+                                                <horizontal method="expand">100</horizontal>
                                             </sizing>
-
-                                            <gap>6</gap>
                                         </flow-layout>
+                                    </children>
 
-                                        <sizing>
-                                            <vertical method="expand">100</vertical>
-                                            <horizontal method="fill">100</horizontal>
-                                        </sizing>
+                                    <sizing>
+                                        <vertical method="expand">100</vertical>
+                                        <horizontal method="expand">100</horizontal>
+                                    </sizing>
+                                </flow-layout>
+                            </children>
 
-                                        <surface>
-                                            <panel dark="true"/>
-                                        </surface>
-
-                                        <padding>
-                                            <all>10</all>
-                                        </padding>
-
-                                        <scrollbar>
-                                            <flat>#FFFFFF</flat>
-                                        </scrollbar>
-                                    </scroll>
-                                </children>
-
-                                <sizing>
-                                    <vertical method="fill">40</vertical>
-                                    <horizontal method="fill">100</horizontal>
-                                </sizing>
-                            </flow-layout>
-
-                        </children>
-
-                        <gap>6</gap>
-                    </flow-layout>
+                            <sizing>
+                                <vertical method="expand">100</vertical>
+                                <horizontal method="expand">100</horizontal>
+                            </sizing>
+                        </flow-layout>
+                    </children>
 
                     <sizing>
-                        <vertical method="fill">100</vertical>
-                        <horizontal method="fill">100</horizontal>
+                        <vertical method="expand">100</vertical>
+                        <horizontal method="expand">100</horizontal>
                     </sizing>
 
-                    <scrollbar>
-                        <flat>#FFFFFF</flat>
-                    </scrollbar>
-                </scroll>
+                    <margins>
+                        <bottom>24</bottom>
+                    </margins>
+
+                </flow-layout>
             </children>
 
             <vertical-alignment>center</vertical-alignment>

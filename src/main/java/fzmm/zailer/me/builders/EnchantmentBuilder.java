@@ -296,5 +296,8 @@ public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, Enchan
             this.level = level;
         }
 
+        public int getMaxLevel() {
+            return this.enchantment.getMaxLevel();
+        }
     }
 }

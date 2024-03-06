@@ -73,7 +73,8 @@
                             </children>
 
                             <sizing>
-                                <horizontal method="fill">100</horizontal>
+                                <vertical method="expand">100</vertical>
+                                <horizontal method="expand">100</horizontal>
                             </sizing>
 
                             <margins>
