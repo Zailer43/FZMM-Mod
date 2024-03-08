@@ -57,6 +57,7 @@ public class ContainerEditor implements IItemEditorScreen {
                 itemStack -> InventoryUtils.getContainerSize(itemStack.getItem()) > 0,
                 this::selectItemAndUpdateParameters,
                 null,
+                Items.WHITE_SHULKER_BOX.getDefaultStack(),
                 Text.translatable("fzmm.gui.itemEditor.container.title"),
                 true
         );

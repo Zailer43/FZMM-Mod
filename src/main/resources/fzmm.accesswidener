@@ -7,3 +7,6 @@ accessible method net/minecraft/client/world/ClientWorld getMapStates ()Ljava/ut
 accessible method net/minecraft/client/gui/widget/ClickableWidget drawScrollableText (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIII)V
 
 accessible field net/minecraft/client/gui/screen/ingame/BookScreen MAX_TEXT_WIDTH I
+
+accessible class net/minecraft/client/render/model/json/ModelOverrideList$BakedOverride
+accessible class net/minecraft/client/render/model/json/ModelOverrideList$InlinedCondition

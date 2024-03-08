@@ -82,7 +82,7 @@ public class BannerBuilder {
             this.nbt.put(TagsConstant.BLOCK_ENTITY, blockEntityTag);
         }
 
-        stack.setNbt(this.nbt);
+        stack.setNbt(this.nbt.isEmpty() ? null : this.nbt);
         return stack;
     }
 

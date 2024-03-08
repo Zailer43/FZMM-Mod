@@ -68,8 +68,10 @@ public class ContainerBuilder {
         NbtList itemsTag = this.getItemsTag(this.itemList);
 
         if (itemsTag.isEmpty()) {
-            NbtCompound nbtCompound = this.stack.getOrCreateNbt();
-            nbtCompound.getCompound(TagsConstant.BLOCK_ENTITY).remove(ShulkerBoxBlockEntity.ITEMS_KEY);
+            NbtCompound nbtCompound = this.stack.getNbt();
+
+            if (nbtCompound != null)
+                nbtCompound.getCompound(TagsConstant.BLOCK_ENTITY).remove(ShulkerBoxBlockEntity.ITEMS_KEY);
 
             return this.stack;
         }

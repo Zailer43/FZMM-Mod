@@ -23,12 +23,15 @@ public class RequestedItem {
     private final List<ItemStack> defaultItems;
     @Nullable
     private ItemStack stack;
+    @Nullable
+    private final ItemStack defaultStack;
 
     public RequestedItem(Predicate<ItemStack> predicate, Consumer<ItemStack> executeConsumer, @Nullable List<ItemStack> defaultItems, @Nullable ItemStack stack, Text title, boolean required) {
         this.predicate = predicate;
         this.executeConsumer = executeConsumer;
         this.updatePreviewConsumer = null;
         this.stack = stack;
+        this.defaultStack = stack == null ? null : stack.copy();
         this.title = title;
         this.required = required;
         this.defaultItems = defaultItems == null ? this.getApplicableItems() : defaultItems;
@@ -77,6 +80,11 @@ public class RequestedItem {
 
     public void setStack(@Nullable ItemStack stack) {
         this.stack = stack;
+    }
+
+
+    public boolean isDefaultStack() {
+        return this.defaultStack != null && this.stack != null && ItemStack.areEqual(this.defaultStack, this.stack);
     }
 
     public boolean isEmpty() {

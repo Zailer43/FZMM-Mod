@@ -25,7 +25,7 @@ public class FilledMapBuilder {
     }
 
     public FilledMapBuilder of(ItemStack stack) {
-        this.stack = stack;
+        this.stack = stack.copy();
         return this;
     }
 
@@ -40,7 +40,8 @@ public class FilledMapBuilder {
         NbtCompound nbtCompound = this.stack.getNbt();
         assert nbtCompound != null;
 
-        return nbtCompound.contains(TagsConstant.FILLED_MAP_ID, NbtElement.INT_TYPE) ? Optional.of(nbtCompound.getInt(TagsConstant.FILLED_MAP_ID)) : Optional.empty();
+        return nbtCompound.contains(TagsConstant.FILLED_MAP_ID, NbtElement.INT_TYPE) ?
+                Optional.of(nbtCompound.getInt(TagsConstant.FILLED_MAP_ID)) : Optional.empty();
     }
 
     public FilledMapBuilder id(int id) {

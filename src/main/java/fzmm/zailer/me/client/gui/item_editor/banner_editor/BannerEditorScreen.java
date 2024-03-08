@@ -153,7 +153,7 @@ public class BannerEditorScreen implements IItemEditorScreen {
                 itemStack -> itemStack.getItem() instanceof ShieldItem || itemStack.getItem() instanceof BannerItem,
                 this::selectItemAndUpdateParameters,
                 defaultItems,
-                this.bannerBuilder.get(),
+                Items.WHITE_BANNER.getDefaultStack(),
                 Text.translatable("fzmm.gui.itemEditor.banner.title"),
                 true
         );
@@ -186,7 +186,7 @@ public class BannerEditorScreen implements IItemEditorScreen {
         if (this.isShieldButton.enabled() != isShield)
             this.isShieldButton.onPress();
 
-        this.bannerBuilder = BannerBuilder.of(stack.isEmpty() ? Items.WHITE_BANNER.getDefaultStack() : stack);
+        this.bannerBuilder = BannerBuilder.of(stack);
         this.updatePreview(this.bannerBuilder);
     }
 

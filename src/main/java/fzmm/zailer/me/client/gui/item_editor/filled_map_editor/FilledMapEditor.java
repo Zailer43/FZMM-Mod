@@ -3,17 +3,14 @@ package fzmm.zailer.me.client.gui.item_editor.filled_map_editor;
 import fzmm.zailer.me.builders.FilledMapBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.item_editor.common.selectable.SelectableEditor;
 import fzmm.zailer.me.client.gui.item_editor.filled_map_editor.components.MapComponent;
 import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
-import io.wispforest.owo.ui.core.Insets;
-import io.wispforest.owo.ui.core.Sizing;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.MapColor;
 import net.minecraft.client.MinecraftClient;
@@ -23,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapState;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -35,19 +31,13 @@ import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("UnstableApiUsage")
-public class FilledMapEditor implements IItemEditorScreen {
+public class FilledMapEditor extends SelectableEditor<MapComponent> {
     public static final Path SAVE_MAP_FOLDER_PATH = Path.of(FabricLoader.getInstance().getGameDir().toString(), FzmmClient.MOD_ID, "filled_map");
     private RequestedItem mapRequested = null;
     private List<RequestedItem> requestedItems = null;
     private List<FilledMapBuilder.FilledMapData> mapStates;
     private final FilledMapBuilder builder = FilledMapBuilder.builder();
-    private MapComponent previewMap;
     private ConfigTextBox mapIdTextBox;
-    private FlowLayout contentLayout;
-    private LabelComponent currentPageLabel;
-    private final int maxMapsByPage = 135;
-    private int currentPage;
-
 
 
     @Override
@@ -59,6 +49,7 @@ public class FilledMapEditor implements IItemEditorScreen {
                 itemStack -> itemStack.getItem() instanceof FilledMapItem,
                 this::selectItemAndUpdateParameters,
                 null,
+                Items.FILLED_MAP.getDefaultStack(),
                 Text.translatable("fzmm.gui.itemEditor.filled_map.title"),
                 true
         );
@@ -74,10 +65,10 @@ public class FilledMapEditor implements IItemEditorScreen {
 
     @Override
     public FlowLayout getLayout(ItemEditorBaseScreen baseScreen, FlowLayout editorLayout) {
-        // preview
-        FlowLayout previewLayout = editorLayout.childById(FlowLayout.class, "preview");
-        this.previewMap = new MapComponent();
-        previewLayout.child(this.previewMap);
+
+        this.mapStates = FilledMapBuilder.getSortedMapStates();
+
+        editorLayout = super.getLayout(baseScreen, editorLayout);
 
         // preview options
         this.mapIdTextBox = editorLayout.childById(ConfigTextBox.class, "id-text-box");
@@ -93,51 +84,38 @@ public class FilledMapEditor implements IItemEditorScreen {
 
         ButtonComponent savePngButton = editorLayout.childById(ButtonComponent.class, "save-png");
         BaseFzmmScreen.checkNull(savePngButton, "button", "save-png");
-        savePngButton.onPress(savePngButtonComponent -> this.saveMapAsPng(this.previewMap));
+        savePngButton.onPress(savePngButtonComponent -> this.saveMapAsPng(this.previewComponent));
 
         ButtonComponent saveNbtButton = editorLayout.childById(ButtonComponent.class, "save-nbt");
         BaseFzmmScreen.checkNull(saveNbtButton, "button", "save-nbt");
-        saveNbtButton.onPress(saveNbtButtonComponent -> this.saveMapAsNbt(this.previewMap));
-
-        // content
-        this.contentLayout = editorLayout.childById(FlowLayout.class, "map-content");
-        BaseFzmmScreen.checkNull(contentLayout, "flow-layout", "map-content");
-        Insets previewMargin = this.previewMap.margins().get();
-        int columns = 9;
-        int rows = (int) Math.ceil(this.maxMapsByPage / (float) columns);
-        this.contentLayout.sizing(
-                Sizing.fixed(columns * MapComponent.HORIZONTAL_SIZING + previewMargin.horizontal()),
-                Sizing.fixed(rows * MapComponent.VERTICAL_SIZING + previewMargin.vertical())
-        );
-
-        this.mapStates = FilledMapBuilder.getSortedMapStates();
-
-        for (int i = 0; i < this.maxMapsByPage; i++) {
-            MapComponent component = new MapComponent();
-            component.mouseDown().subscribe((mouseX, mouseY, button) -> {
-                component.getMapData().ifPresent(filledMapData -> this.mapIdTextBox.setText(String.valueOf(filledMapData.id())));
-                return true;
-            });
-            this.contentLayout.child(component);
-        }
-
-        // page buttons
-        this.currentPageLabel = editorLayout.childById(LabelComponent.class, "page-label");
-        BaseFzmmScreen.checkNull(this.currentPageLabel, "label", "page-label");
-
-        ButtonComponent previousPageButton = editorLayout.childById(ButtonComponent.class, "previous-page");
-        BaseFzmmScreen.checkNull(previousPageButton, "button", "previous-page");
-        previousPageButton.onPress(previousPageButtonComponent -> this.setPage(this.currentPage - 1));
-
-        ButtonComponent nextPageButton = editorLayout.childById(ButtonComponent.class, "next-page");
-        BaseFzmmScreen.checkNull(nextPageButton, "button", "next-page");
-        nextPageButton.onPress(nextPageButtonComponent -> this.setPage(this.currentPage + 1));
-
-        this.currentPage = -1;
-        this.setPage(0);
+        saveNbtButton.onPress(saveNbtButtonComponent -> this.saveMapAsNbt(this.previewComponent));
 
         return editorLayout;
     }
+
+    @Override
+    protected int getMaxByPage() {
+        return 100;
+    }
+
+    @Override
+    protected int getSelectableSize() {
+        return this.mapStates.size();
+    }
+
+    @Override
+    protected void select(MapComponent component) {
+        component.getMapData().ifPresent(filledMapData -> {
+            this.mapIdTextBox.setText(String.valueOf(filledMapData.id()));
+            this.mapIdTextBox.setCursorToStart(false);
+        });
+    }
+
+    @Override
+    protected MapComponent emptyComponent() {
+        return new MapComponent();
+    }
+
 
     @Override
     public String getId() {
@@ -148,9 +126,9 @@ public class FilledMapEditor implements IItemEditorScreen {
     public void updateItemPreview() {
         Optional<FilledMapBuilder.FilledMapData> data = this.builder.data();
         if (data.isEmpty())
-            this.previewMap.clearMap();
+            this.previewComponent.clearMap();
         else
-            this.previewMap.setMapState(data.get());
+            this.previewComponent.setMapState(data.get());
 
         this.mapRequested.setStack(this.builder.get());
         this.mapRequested.updatePreview();
@@ -158,29 +136,14 @@ public class FilledMapEditor implements IItemEditorScreen {
 
     @Override
     public void selectItemAndUpdateParameters(ItemStack stack) {
-        this.builder.of(stack.isEmpty() ? Items.FILLED_MAP.getDefaultStack() : stack);
-        this.builder.id().ifPresent(integer -> this.mapIdTextBox.setText(String.valueOf(integer)));
+        this.builder.of(stack);
+        this.builder.id().ifPresent(integer -> {
+            this.mapIdTextBox.setText(String.valueOf(integer));
+            this.mapIdTextBox.setCursorToStart(false);
+        });
     }
-
-    private void setPage(int page) {
-        int maxPage = this.mapStates.size() / this.maxMapsByPage;
-        page = MathHelper.clamp(page, 0, maxPage);
-        if (page == this.currentPage)
-            return;
-
-        this.currentPage = page;
-        this.currentPageLabel.text(Text.translatable("fzmm.gui.itemEditor.filled_map.label.page",
-                (this.currentPage + 1), (maxPage + 1)));
-
-        int startIndex = this.currentPage * this.maxMapsByPage;
-        List<Component> children = this.contentLayout.children();
-        for (int i = 0; i < this.maxMapsByPage; i++) {
-            int index = startIndex + i;
-            this.updateMap(children.get(i), index);
-        }
-    }
-
-    private void updateMap(Component component, int index) {
+    @Override
+    protected void updateComponent(Component component, int index) {
         if (!(component instanceof MapComponent mapComponent))
             return;
 

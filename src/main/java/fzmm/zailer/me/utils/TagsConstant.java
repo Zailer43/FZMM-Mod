@@ -43,4 +43,6 @@ public class TagsConstant {
 
     public static final String FILLED_MAP_ID = "map"; // FilledMapItem.MAP_KEY
 
+    public static final String CUSTOM_MODEL_DATA = "CustomModelData"; // ModelPredicateProviderRegistry.CUSTOM_MODEL_DATA_KEY
+
 }

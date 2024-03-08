@@ -11,6 +11,7 @@ import fzmm.zailer.me.client.gui.item_editor.base.components.*;
 import fzmm.zailer.me.client.gui.item_editor.block_state_editor.BlockStateEditor;
 import fzmm.zailer.me.client.gui.item_editor.color_editor.ColorEditor;
 import fzmm.zailer.me.client.gui.item_editor.container_editor.ContainerEditor;
+import fzmm.zailer.me.client.gui.item_editor.custom_model_data.CustomModelDataEditor;
 import fzmm.zailer.me.client.gui.item_editor.effect_editor.EffectEditor;
 import fzmm.zailer.me.client.gui.item_editor.enchant_editor.EnchantEditor;
 import fzmm.zailer.me.client.gui.item_editor.filled_map_editor.FilledMapEditor;
@@ -73,6 +74,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen implements ICollapsible
         itemEditorScreens.add(new BlockStateEditor());
         itemEditorScreens.add(new ColorEditor());
         itemEditorScreens.add(new ContainerEditor());
+        itemEditorScreens.add(new CustomModelDataEditor());
         itemEditorScreens.add(new EffectEditor());
         itemEditorScreens.add(new EnchantEditor());
         itemEditorScreens.add(new FilledMapEditor());
@@ -198,11 +200,16 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen implements ICollapsible
     }
 
     public void selectEditor(IItemEditorScreen editor) {
+        assert this.client != null;
+        assert this.client.player != null;
         selectedEditor = editor.getClass();
 
         // We make a copy of the selected item to prevent it from being overwritten
         // by an editor in case the editor calls editor#updateItemPreview before calling editor#selectItemAndUpdateParameters
         ItemStack selectedItemCopy = this.selectedItem.copy();
+
+        boolean previousSelectedItemIsDefault = this.currentEditor != null &&
+                this.currentEditor.getRequestedItems().get(0).isDefaultStack();
 
         this.currentEditor = editor;
         this.contentLayout.clearChildren();
@@ -227,20 +234,35 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen implements ICollapsible
 
         this.updateRequestedItemsComponents(requestedItems);
 
-        if (failedGettingLayout)
+        if (failedGettingLayout) {
+            this.updateEditorsComponents();
             return;
-
-        assert this.client != null;
-        assert this.client.player != null;
-
-        // In case a player has an item in his hand, but the editor assigns an item by another method
-        // (like getting it from the armor), it will not be replaced, however, if the selected item is
-        // not the same as the one in a player's hand, then it will be replaced so that the user does
-        // not lose the item that was being edited.
-        if (requestedItems.get(0).isEmpty() || !ItemStack.areEqual(selectedItemCopy, this.client.player.getMainHandStack())) {
-            this.selectItemAndUpdateParameters(selectedItemCopy);
-            this.selectedItem = selectedItemCopy;
         }
+
+        // In case a player has an item in his hand, but the editor assigns an item by default stack
+        // it will not be replaced.
+
+        // If the selected item is not the same as the one in a player's hand, then it will be replaced
+        // so that the user does not lose the item that was being edited.
+
+        // We also do not want to carry over the default stack of the previous editor to other editors
+        // if it remains unchanged because the user did not modify it.
+        ItemStack handStack = this.client.player.getMainHandStack();
+        boolean selectedItemIsModified = !ItemStack.areEqual(selectedItemCopy, handStack) && !previousSelectedItemIsDefault;
+
+        ItemStack selectedItemResult;
+
+        if (selectedItemIsModified) {
+            selectedItemResult = selectedItemCopy;
+        } else if (requestedItems.get(0).predicate().test(handStack)) {
+            selectedItemResult = handStack;
+        } else {
+            ItemStack defaultStack = requestedItems.get(0).stack();
+            selectedItemResult = defaultStack.isEmpty() ? handStack : defaultStack;
+        }
+
+        this.selectItemAndUpdateParameters(selectedItemResult, requestedItems);
+        this.selectedItem = selectedItemResult;
 
         editor.updateItemPreview();
 
@@ -255,8 +277,13 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen implements ICollapsible
         this.collapseEditorIfNeeded();
     }
 
-    private void selectItemAndUpdateParameters(ItemStack stack) {
+    private void selectItemAndUpdateParameters(ItemStack stack, List<RequestedItem> requestedItems) {
         try {
+            if (requestedItems.size() > 1) {
+                for (int i = 1; i < requestedItems.size(); i++)
+                    requestedItems.get(i).execute();
+            }
+
             this.currentEditor.selectItemAndUpdateParameters(stack);
         } catch (Exception e) {
             FzmmClient.LOGGER.error("[ItemEditorBaseScreen] Failed to select item", e);

@@ -5,7 +5,7 @@
             <children>
                 <flow-layout direction="horizontal">
                     <children>
-                        <flow-layout direction="vertical">
+                        <flow-layout direction="horizontal">
                             <children>
                                 <flow-layout direction="horizontal" id="preview">
                                     <children>
@@ -13,43 +13,15 @@
                                     </children>
                                 </flow-layout>
 
-                                <fzmm.text-option id="id-text-box">
-                                    <sizing>
-                                        <horizontal method="fill">100</horizontal>
-                                    </sizing>
-                                </fzmm.text-option>
+                                <fzmm.boolean-button id="show-all-custom-models">
+                                    <enabled-text translate="true">fzmm.gui.itemEditor.custom_model_data.option.showAllCustomModels.enabled</enabled-text>
+                                    <disabled-text translate="true">fzmm.gui.itemEditor.custom_model_data.option.showAllCustomModels.disabled</disabled-text>
+                                </fzmm.boolean-button>
                             </children>
                             <gap>4</gap>
 
                             <horizontal-alignment>center</horizontal-alignment>
-
-                            <sizing>
-                                <horizontal method="fixed">50</horizontal>
-                            </sizing>
-                        </flow-layout>
-
-                        <flow-layout direction="vertical">
-                            <children>
-                                <button id="save-png">
-                                    <text translate="true">fzmm.gui.itemEditor.filled_map.option.savePng</text>
-                                    <sizing>
-                                        <horizontal method="fill">100</horizontal>
-                                    </sizing>
-                                </button>
-
-                                <button id="save-nbt">
-                                    <text translate="true">fzmm.gui.itemEditor.filled_map.option.saveNbt</text>
-                                    <sizing>
-                                        <horizontal method="fill">100</horizontal>
-                                    </sizing>
-                                </button>
-                            </children>
-
-                            <sizing>
-                                <horizontal method="fixed">130</horizontal>
-                            </sizing>
-
-                            <gap>4</gap>
+                            <vertical-alignment>center</vertical-alignment>
                         </flow-layout>
                     </children>
 
@@ -103,9 +75,7 @@
                         <scroll direction="vertical">
                             <flow-layout direction="vertical">
                                 <children>
-                                    <label>
-                                        <text translate="true">fzmm.gui.itemEditor.filled_map.label.mapListInfo</text>
-                                        <tooltip-text translate="true">fzmm.gui.itemEditor.filled_map.label.mapListInfo.tooltip</tooltip-text>
+                                    <label id="warning-label">
                                     </label>
 
                                     <flow-layout direction="ltr-text-flow" id="selectable-content">

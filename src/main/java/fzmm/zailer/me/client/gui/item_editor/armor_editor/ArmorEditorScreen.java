@@ -123,10 +123,7 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         this.armorStandPreview = (ArmorStandEntity) armorPreviewComponent.entity();
         this.armorStandPreview.setHideBasePlate(true);
 
-        this.helmetBuilder.of(this.helmetRequest.stack());
-        this.chestplateBuilder.of(this.chestplateRequest.stack());
-        this.leggingsBuilder.of(this.leggingsRequest.stack());
-        this.bootsBuilder.of(this.bootsRequest.stack());
+        this.selectedArmorPart = this.helmetRequest;
         this.selectedArmorPartBuilder = this.helmetBuilder;
 
         this.armorPartButtons = new HashMap<>();
@@ -148,8 +145,8 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         FlowLayout trimPatternLayout = editorLayout.childById(FlowLayout.class, SELECT_TRIM_PATTERN_ID);
         BaseFzmmScreen.checkNull(trimPatternLayout, "flow-layout", SELECT_TRIM_PATTERN_ID);
 
-        this.selectArmorPartExecute(this.helmetRequest, this.helmetBuilder);
-        this.update();
+        this.updateSelectedArmorReference();
+        this.updateSelectedOptions();
 
         this.armorMaterialOption.generateLayout(this.armorMaterialLayout);
         this.trimMaterialOption.generateLayout(trimMaterialLayout);
@@ -175,6 +172,14 @@ public class ArmorEditorScreen implements IItemEditorScreen {
 
     @Override
     public void selectItemAndUpdateParameters(ItemStack stack) {
+        // in case the user, for reasons that science cannot explain,
+        // decided to put another piece of armor on the head, otherwise
+        // it will be added to the corresponding slot and to the head slot.
+        for (var requestedItem : this.requestedItemList) {
+            if (requestedItem.stack() == stack)
+                return;
+        }
+
         if (this.bootsRequest.predicate().test(stack))
             this.setSelectedItem(stack, this.bootsRequest, this.bootsBuilder);
         else if (this.leggingsRequest.predicate().test(stack))
@@ -238,13 +243,17 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         this.trimPatternOption.setSelectedArmor(this.selectedArmorPartBuilder, this.selectedArmorPart);
     }
 
+    public void updateSelectedOptions() {
+        this.armorMaterialOption.updateSelectedOption(this.selectedArmorPartBuilder.item());
+        this.trimMaterialOption.updateSelectedOption(this.selectedArmorPartBuilder.trimMaterial());
+        this.trimPatternOption.updateSelectedOption(this.selectedArmorPartBuilder.trimPattern());
+    }
+
     public void update() {
         this.updateItemPreview();
 
         this.toggleArmorPartButtons(this.selectedArmorPart);
-        this.armorMaterialOption.updateSelectedOption(this.selectedArmorPartBuilder.item());
-        this.trimMaterialOption.updateSelectedOption(this.selectedArmorPartBuilder.trimMaterial());
-        this.trimPatternOption.updateSelectedOption(this.selectedArmorPartBuilder.trimPattern());
+        this.updateSelectedOptions();
 
         this.trimPatternOption.updatePreview();
         this.updateArmorStandArmor(this.armorStandPreview);

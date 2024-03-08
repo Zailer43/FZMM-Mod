@@ -4,9 +4,6 @@
   "package": "fzmm.zailer.me.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "block_state_editor.VerticallyAttachableBlockItemAccessor",
-    "screenshotHud.ChatHudMixin",
-    "screenshotHud.GameRendererMixin",
     "AutoPlacerMixin",
     "ChatScreenMixin",
     "HandledScreenAccessor",
@@ -16,7 +13,12 @@
     "ItemStackMixin",
     "PlayerInventoryAccessor",
     "PlayerSkinTextureAccessor",
-    "SocialInteractionsPlayerListEntryMixin"
+    "SocialInteractionsPlayerListEntryMixin",
+    "block_state_editor.VerticallyAttachableBlockItemAccessor",
+    "custom_model_data_editor.BakedOverrideAccessor",
+    "custom_model_data_editor.ModelOverrideListAccessor",
+    "screenshotHud.ChatHudMixin",
+    "screenshotHud.GameRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
