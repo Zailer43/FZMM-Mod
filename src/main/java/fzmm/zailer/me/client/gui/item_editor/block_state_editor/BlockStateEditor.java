@@ -152,7 +152,7 @@ public class BlockStateEditor implements IItemEditorScreen {
 
         if (blockStateOptional.isEmpty() || blockStateOptional.get().getProperties().isEmpty()) {
             components.add(Components.label(Text.translatable("fzmm.gui.itemEditor.block_state.label.empty"))
-                    .margins(Insets.of(10).withLeft(40))
+                    .margins(Insets.of(10, 10, 40, 40))
             );
             this.contentLayout.children(components);
             return;

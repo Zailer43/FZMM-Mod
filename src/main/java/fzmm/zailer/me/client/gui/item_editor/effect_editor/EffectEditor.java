@@ -4,6 +4,7 @@ import fzmm.zailer.me.builders.EffectBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.components.ScrollableButtonComponent;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.LevelableEditor;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.levelable.AppliedLevelableComponent;
 import fzmm.zailer.me.client.gui.item_editor.effect_editor.components.AppliedEffectComponent;
@@ -117,32 +118,32 @@ public class EffectEditor extends LevelableEditor<StatusEffect, EffectBuilder.Ef
     }
 
     @Override
-    protected List<ButtonComponent> addCategories() {
+    protected List<ScrollableButtonComponent> getCategories() {
         final String baseTranslationKey = "fzmm.gui.itemEditor.effect.category.";
-        List<ButtonComponent> buttonList = new ArrayList<>();
+        List<ScrollableButtonComponent> buttonList = new ArrayList<>();
 
-        ButtonComponent allButton = Components.button(Text.translatable("fzmm.gui.button.category.all"),
+        ScrollableButtonComponent allButton = new ScrollableButtonComponent(Text.translatable("fzmm.gui.button.category.all"),
                 buttonComponent ->  this.applyCategory((levelable, itemStack) -> true, buttonList, buttonComponent));
         buttonList.add(allButton);
         allButton.onPress(); // default category
 
 
-        buttonList.add(Components.button(Text.translatable(baseTranslationKey + "beneficial"), buttonComponent -> {
+        buttonList.add(new ScrollableButtonComponent(Text.translatable(baseTranslationKey + "beneficial"), buttonComponent -> {
            ILevelablePredicate<StatusEffect> predicate = (effect, itemStack) -> effect.isBeneficial();
            this.applyCategory(predicate, buttonList, buttonComponent);
         }));
 
-        buttonList.add(Components.button(Text.translatable(baseTranslationKey + "harmful"), buttonComponent -> {
+        buttonList.add(new ScrollableButtonComponent(Text.translatable(baseTranslationKey + "harmful"), buttonComponent -> {
             ILevelablePredicate<StatusEffect> predicate = (effect, itemStack) -> effect.getCategory() == StatusEffectCategory.HARMFUL;
             this.applyCategory(predicate, buttonList, buttonComponent);
         }));
 
-        buttonList.add(Components.button(Text.translatable(baseTranslationKey + "neutral"), buttonComponent -> {
+        buttonList.add(new ScrollableButtonComponent(Text.translatable(baseTranslationKey + "neutral"), buttonComponent -> {
             ILevelablePredicate<StatusEffect> predicate = (effect, itemStack) -> effect.getCategory() == StatusEffectCategory.NEUTRAL;
             this.applyCategory(predicate, buttonList, buttonComponent);
         }));
 
-        buttonList.add(Components.button(Text.translatable(baseTranslationKey + "instant"), buttonComponent -> {
+        buttonList.add(new ScrollableButtonComponent(Text.translatable(baseTranslationKey + "instant"), buttonComponent -> {
             ILevelablePredicate<StatusEffect> predicate = (effect, itemStack) -> effect.isInstant();
             this.applyCategory(predicate, buttonList, buttonComponent);
         }));

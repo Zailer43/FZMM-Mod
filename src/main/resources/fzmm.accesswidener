@@ -4,5 +4,6 @@ accessible method net/minecraft/client/util/ScreenshotRecorder getScreenshotFile
 accessible method net/minecraft/client/MinecraftClient doItemUse ()V
 accessible method net/minecraft/item/BlockItem with (Lnet/minecraft/block/BlockState;Lnet/minecraft/state/property/Property;Ljava/lang/String;)Lnet/minecraft/block/BlockState;
 accessible method net/minecraft/client/world/ClientWorld getMapStates ()Ljava/util/Map;
+accessible method net/minecraft/client/gui/widget/ClickableWidget drawScrollableText (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;IIIII)V
 
 accessible field net/minecraft/client/gui/screen/ingame/BookScreen MAX_TEXT_WIDTH I

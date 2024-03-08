@@ -1,7 +1,6 @@
 package fzmm.zailer.me.client.gui.components;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.parsing.UIModel;
@@ -14,26 +13,24 @@ import org.w3c.dom.Element;
 
 import java.util.Map;
 
-public class BooleanButton extends ButtonComponent {
+public class BooleanButton extends ScrollableButtonComponent {
 
     protected boolean enabled = false;
     protected final Text enabledText;
     protected final Text disabledText;
 
     public BooleanButton(Text text, Color enabledColor) {
-        super(Text.empty(), button -> {});
-        this.verticalSizing(Sizing.fixed(20));
-        this.enabledText = text.copy().setStyle(Style.EMPTY.withColor(enabledColor.rgb()).withItalic(true));
-        this.disabledText = text.copy().setStyle(Style.EMPTY);
-        this.updateMessage();
+        this(text.copy().setStyle(Style.EMPTY.withColor(enabledColor.rgb()).withItalic(true)), text.copy().setStyle(Style.EMPTY));
     }
 
     public BooleanButton(Text enabledText, Text disabledText) {
         super(Text.empty(), button -> {});
-        this.verticalSizing(Sizing.fixed(20));
         this.enabledText = enabledText;
         this.disabledText = disabledText;
         this.updateMessage();
+
+        this.verticalSizing(Sizing.fixed(20));
+        this.setContentHorizontalSizing();
     }
 
     @Override

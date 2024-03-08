@@ -5,6 +5,7 @@ import fzmm.zailer.me.client.FzmmIcons;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.components.ScrollableButtonComponent;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.LevelableSortOverlay;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.levelable.BaseLevelableComponent;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.levelable.AddLevelableComponent;
@@ -13,7 +14,6 @@ import fzmm.zailer.me.client.gui.utils.selectItem.RequestedItem;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.itemgroup.Icon;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -173,7 +173,7 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
         this.setLabelSize(levelables);
         this.setupAddLevelables(levelables);
         this.updateAppliedLevelables();
-        categoriesLayout.children(this.addCategories());
+        categoriesLayout.children(this.getCategories());
 
         return editorLayout;
     }
@@ -261,9 +261,9 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
         this.addLevelablesComponents = addLevelableComponentBuilder.build();
     }
 
-    protected abstract List<ButtonComponent> addCategories();
+    protected abstract List<ScrollableButtonComponent> getCategories();
 
-    protected void addModsLevelablesToCategories(List<ButtonComponent> categoryButtonList) {
+    protected void addModsLevelablesToCategories(List<ScrollableButtonComponent> categoryButtonList) {
         Set<String> modsIdSet = new HashSet<>();
         for (var identifier : this.getRegistry().getIds()) {
             modsIdSet.add(identifier.getNamespace());
@@ -274,7 +274,7 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
                     Text.translatable("fzmm.gui.button.category.vanilla") :
                     Text.translatable("fzmm.gui.button.category.mod", modId);
 
-            categoryButtonList.add(Components.button(translation, buttonComponent -> {
+            categoryButtonList.add(new ScrollableButtonComponent(translation, buttonComponent -> {
                 ILevelablePredicate<V> predicate = (value, itemStack) -> {
                     Identifier valueId = this.getRegistry().getId(value);
                     return valueId != null && modId.equals(valueId.getNamespace());
@@ -294,7 +294,7 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
 
     public abstract Text getLevelableName(D levelable);
 
-    protected void applyCategory(ILevelablePredicate<V> stackPredicate, List<ButtonComponent> buttonList, ButtonComponent button) {
+    protected void applyCategory(ILevelablePredicate<V> stackPredicate, List<ScrollableButtonComponent> buttonList, ButtonComponent button) {
         for (var entry : buttonList)
             entry.active = true;
 

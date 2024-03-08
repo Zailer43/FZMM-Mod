@@ -78,7 +78,7 @@
                     <vertical-alignment>center</vertical-alignment>
                     <horizontal-alignment>center</horizontal-alignment>
 
-                    <positioning type="relative">0,0</positioning>
+                    <positioning type="relative">100,0</positioning>
                 </flow-layout>
             </children>
 
@@ -94,6 +94,10 @@
                 <children>
                     <label>
                         <text translate="true">{{translation}}</text>
+
+                        <sizing>
+                            <horizontal method="expand">100</horizontal>
+                        </sizing>
                     </label>
 
                     <flow-layout direction="ltr-text-flow" id="{{id}}">

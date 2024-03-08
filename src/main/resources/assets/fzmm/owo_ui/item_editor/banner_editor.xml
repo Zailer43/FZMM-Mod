@@ -163,7 +163,7 @@
                     </sizing>
 
                     <margins>
-                        <vertical>30</vertical>
+                        <bottom>24</bottom>
                     </margins>
 
                     <scrollbar>

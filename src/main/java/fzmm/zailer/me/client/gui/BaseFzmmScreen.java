@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.EnumWidget;
+import fzmm.zailer.me.client.gui.components.ScrollableButtonComponent;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.tabs.*;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
@@ -26,6 +27,7 @@ import io.wispforest.owo.ui.parsing.UIParsing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -257,6 +259,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<FlowLayout> {
         UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "screenshot-zone"), element -> new ScreenshotZoneComponent());
         UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "color-list"), ColorListContainer::parse);
         UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "font-text-box"), element -> new FontTextBoxComponent(Sizing.fixed(100)));
+        UIParsing.registerFactory(new Identifier(FzmmClient.MOD_ID, "scrollable-text-button"), element -> new ScrollableButtonComponent(Text.empty(), buttonComponent -> {}));
 
     }
 

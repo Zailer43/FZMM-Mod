@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.item_editor.base.components;
 
 import io.wispforest.owo.ui.component.LabelComponent;
+import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.text.Text;
 
@@ -16,6 +17,7 @@ public class CollapsibleLabelComponent extends LabelComponent implements ICollap
         this.collapsedText = collapsedText;
         this.expandedText = expandedText;
         this.text(expandedText);
+        this.horizontalSizing(Sizing.expand(100));
     }
 
     @Override

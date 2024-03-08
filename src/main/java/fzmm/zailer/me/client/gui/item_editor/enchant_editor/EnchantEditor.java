@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.gui.components.EnumWidget;
 import fzmm.zailer.me.client.gui.components.IMode;
 import fzmm.zailer.me.client.gui.item_editor.IItemEditorScreen;
 import fzmm.zailer.me.client.gui.item_editor.base.ItemEditorBaseScreen;
+import fzmm.zailer.me.client.gui.components.ScrollableButtonComponent;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.LevelableEditor;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.levelable.AddLevelableComponent;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.components.levelable.AppliedLevelableComponent;
@@ -117,32 +118,41 @@ public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuild
     }
 
     @Override
-    protected List<ButtonComponent> addCategories() {
+    protected List<ScrollableButtonComponent> getCategories() {
         final String baseTranslationKey = "fzmm.gui.itemEditor.enchant.category.";
-        List<ButtonComponent> buttonList = new ArrayList<>();
+        List<ScrollableButtonComponent> buttonList = new ArrayList<>();
 
-        buttonList.add(Components.button(Text.translatable("fzmm.gui.button.category.all"),
+        buttonList.add(new ScrollableButtonComponent(Text.translatable("fzmm.gui.button.category.all"),
                 buttonComponent -> this.applyCategory((enchantment, itemStack) -> true, buttonList, buttonComponent)));
 
-        ButtonComponent applicableButton = Components.button(Text.translatable(baseTranslationKey + "applicable"), buttonComponent -> {
+        ScrollableButtonComponent applicableButton = new ScrollableButtonComponent(Text.translatable(baseTranslationKey + "applicable"), buttonComponent -> {
             ILevelablePredicate<Enchantment> predicate = Enchantment::isAcceptableItem;
             this.applyCategory(predicate, buttonList, buttonComponent);
         });
         buttonList.add(applicableButton);
         applicableButton.onPress(); // default category
 
-        buttonList.add(Components.button(Text.translatable(baseTranslationKey + "curse"), buttonComponent -> {
+        buttonList.add(new ScrollableButtonComponent(Text.translatable(baseTranslationKey + "curse"), buttonComponent -> {
             ILevelablePredicate<Enchantment> predicate = (enchantment, itemStack) -> enchantment.isCursed();
             this.applyCategory(predicate, buttonList, buttonComponent);
         }));
 
-        buttonList.add(Components.button(Text.translatable(baseTranslationKey + "normal"), buttonComponent -> {
+        buttonList.add(new ScrollableButtonComponent(Text.translatable(baseTranslationKey + "normal"), buttonComponent -> {
             ILevelablePredicate<Enchantment> predicate = (enchantment, itemStack) -> !enchantment.isCursed();
             this.applyCategory(predicate, buttonList, buttonComponent);
         }));
 
         for (var target : EnchantmentTarget.values()) {
-            buttonList.add(Components.button(Text.translatable(baseTranslationKey + "target." + target.name().toLowerCase()), buttonComponent -> {
+            String valueKey = target.name().toLowerCase();
+            String translationKey = baseTranslationKey + "target." + valueKey;
+            Text translation = Text.translatable(translationKey);
+
+            // if there is no translation the value is used,
+            // most likely mods that add enchantments will not have translation
+            if (translation.getString().equals(translationKey))
+                translation = Text.literal(valueKey);
+
+            buttonList.add(new ScrollableButtonComponent(translation, buttonComponent -> {
                 ILevelablePredicate<Enchantment> predicate = (enchantment, itemStack) -> enchantment.target == target;
                 this.applyCategory(predicate, buttonList, buttonComponent);
             }));

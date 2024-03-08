@@ -107,24 +107,24 @@
                                         </sizing>
                                     </fzmm.boolean-button>
 
-                                    <button id="sort-container">
+                                    <fzmm.scrollable-text-button id="sort-container">
                                         <text translate="true">fzmm.gui.itemEditor.container.option.sortContainer</text>
 
                                         <sizing>
                                             <horizontal method="fill">100</horizontal>
                                         </sizing>
-                                    </button>
+                                    </fzmm.scrollable-text-button>
 
-                                    <button id="increment-container-size">
+                                    <fzmm.scrollable-text-button id="increment-container-size">
                                         <text translate="true">fzmm.gui.itemEditor.container.option.incrementContainerSize</text>
                                         <tooltip-text translate="true">fzmm.gui.itemEditor.container.option.incrementContainerSize.tooltip</tooltip-text>
 
                                         <sizing>
                                             <horizontal method="fill">100</horizontal>
                                         </sizing>
-                                    </button>
+                                    </fzmm.scrollable-text-button>
 
-                                    <button id="remove-duplicates">
+                                    <fzmm.scrollable-text-button id="remove-duplicates">
                                         <text translate="true">fzmm.gui.itemEditor.container.option.removeDuplicates</text>
 
                                         <sizing>
@@ -134,7 +134,7 @@
                                         <margins>
                                             <top>20</top>
                                         </margins>
-                                    </button>
+                                    </fzmm.scrollable-text-button>
 
                                     <box id="delete-item">
                                         <color>#60E5241A</color>
