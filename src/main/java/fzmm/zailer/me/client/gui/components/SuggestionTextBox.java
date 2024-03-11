@@ -151,7 +151,7 @@ public class SuggestionTextBox extends FlowLayout {
                 ((FlowLayout) this.root()).removeChild(this.suggestionsContainer);
             this.mouseHoverSuggestion = false;
         });
-        this.suggestionsContainer.focusGained().subscribe(source -> this.onClickSuggestion());
+        this.suggestionsContainer.focusGained().subscribe(source -> this.clearSuggestions());
     }
 
     private Optional<FlowLayout> getSuggestionsContainerParent() {
@@ -229,15 +229,12 @@ public class SuggestionTextBox extends FlowLayout {
     // mouseDown it will never be called
     //
     // in other words, I can't call this.textBox.onFocusGained(FocusSource.MOUSE_CLICK); here
-    private void onClickSuggestion() {
+    private void clearSuggestions() {
         this.update(0, 0, 0);
         this.mouseHoverSuggestion = false;
         this.suggestionsLayout.clearChildren();
         this.textBox.setCursorToStart(false);
         this.textBox.onFocusLost();
-
-        if (this.suggestionSelectedCallback != null)
-            this.suggestionSelectedCallback.run();
     }
 
     private Component getSuggestionComponent(String suggestion, Text suggestionText) {
@@ -246,7 +243,10 @@ public class SuggestionTextBox extends FlowLayout {
         FlowLayout layout = Containers.verticalFlow(Sizing.fill(100), Sizing.fixed(SUGGESTION_HEIGHT));
         layout.mouseDown().subscribe((mouseX, mouseY, button) -> {
             this.textBox.text(suggestion);
-            this.onClickSuggestion();
+            if (this.suggestionSelectedCallback != null)
+                this.suggestionSelectedCallback.run();
+            
+            this.clearSuggestions();
             return true;
         });
 
