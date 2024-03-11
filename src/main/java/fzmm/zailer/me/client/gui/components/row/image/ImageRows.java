@@ -88,6 +88,7 @@ public class ImageRows extends FlowLayout {
         }
 
         imageModeButtons.get(defaultValue).onPress();
+        suggestionTextBox.setSuggestionSelectedCallback(imageWidget::onPress);
 
         return new ImageRowsElements(imageWidget, suggestionTextBox.getTextBox(), selectedMode, imageModeButtons, suggestionTextBox);
     }
