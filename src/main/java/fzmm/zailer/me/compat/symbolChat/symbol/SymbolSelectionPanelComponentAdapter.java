@@ -7,9 +7,9 @@ import io.wispforest.owo.ui.base.BaseParentComponent;
 import io.wispforest.owo.ui.core.*;
 import net.replaceitem.symbolchat.SymbolChat;
 import net.replaceitem.symbolchat.gui.SymbolSelectionPanel;
-import net.replaceitem.symbolchat.gui.tab.SearchTab;
-import net.replaceitem.symbolchat.gui.tab.SymbolTab;
 import net.replaceitem.symbolchat.gui.widget.SymbolSearchBar;
+import net.replaceitem.symbolchat.gui.widget.SymbolTabWidget;
+import net.replaceitem.symbolchat.resource.SymbolTab;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class SymbolSelectionPanelComponentAdapter extends BaseParentComponent {
 
     @SuppressWarnings("unchecked")
     public SymbolSelectionPanelComponentAdapter(SymbolSelectionPanel symbolSelectionPanel, SymbolChatCompat symbolChatCompat) {
-        super(Sizing.fixed(SymbolSelectionPanel.WIDTH), Sizing.fixed(SymbolChat.config.getSymbolPanelHeight()));
+        super(Sizing.fixed(SymbolSelectionPanel.getWidthForTabs(8)), Sizing.fixed(SymbolChat.config.getSymbolPanelHeight()));
         this.selectionPanel = symbolSelectionPanel;
         this.symbolChatCompat = symbolChatCompat;
 
@@ -36,13 +36,17 @@ public class SymbolSelectionPanelComponentAdapter extends BaseParentComponent {
         try {
             Field tabsField = this.selectionPanel.getClass().getDeclaredField("tabs");
             tabsField.setAccessible(true);
-            List<SymbolTab> tabs = (List<SymbolTab>) tabsField.get(this.selectionPanel);
+            List<SymbolTabWidget> tabs = (List<SymbolTabWidget>) tabsField.get(this.selectionPanel);
 
-            for (var tab : tabs) {
-                if (tab instanceof SearchTab) {
-                    Field searchField = SearchTab.class.getDeclaredField("searchBar");
+            for (var tabWidget : tabs) {
+                Field tabField = SymbolTabWidget.class.getDeclaredField("tab");
+                tabField.setAccessible(true);
+                SymbolTab tab = (SymbolTab) tabField.get(tabWidget);
+
+                if (tab.hasSearchBar()) {
+                    Field searchField = SymbolTabWidget.class.getDeclaredField("searchBar");
                     searchField.setAccessible(true);
-                    this.searchBar = (SymbolSearchBar) searchField.get(tab);
+                    this.searchBar = (SymbolSearchBar) searchField.get(tabWidget);
                     break;
                 }
             }
