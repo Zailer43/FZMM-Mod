@@ -16,10 +16,9 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.replaceitem.symbolchat.SymbolChat;
-import net.replaceitem.symbolchat.font.FontProcessor;
-import net.replaceitem.symbolchat.font.Fonts;
 import net.replaceitem.symbolchat.gui.SymbolSelectionPanel;
 import net.replaceitem.symbolchat.gui.widget.DropDownWidget;
+import net.replaceitem.symbolchat.resource.FontProcessor;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -82,7 +81,8 @@ public class SymbolChatCompat {
 
     private void addFontSelectionDropDownComponent(BaseFzmmScreen screen) {
         this.fontSelectionOriginalWidth = 180;
-        this.fontSelectionDropDownParent = new DropDownWidget<>(0, 0, this.fontSelectionOriginalWidth, 15, Fonts.fontProcessors, SymbolChat.selectedFont);
+        this.fontSelectionDropDownParent = new DropDownWidget<>(0, 0, this.fontSelectionOriginalWidth, 15,
+                SymbolChat.fontManager.getFontProcessors(), SymbolChat.selectedFont);
 
         this.fontSelectionDropDownParent.visible = false;
         this.fontSelectionDropDownParent.expanded = true;
@@ -226,17 +226,14 @@ public class SymbolChatCompat {
         }
 
         try {
-            Class<?> fontProcessorClass = Class.forName("net.replaceitem.symbolchat.font.FontProcessor");
-            Class<?> fontsClass = Class.forName("net.replaceitem.symbolchat.font.Fonts");
+            List<FontProcessor> fontProcessors = SymbolChat.fontManager.getFontProcessors();
+            FontProcessor selectedFontProcessor = fontProcessors.get(MathHelper.clamp(this.fontSelectionDropDownParent.selected, 0, fontProcessors.size() - 1));
 
-            List<?> fontProcessors = (List<?>) fontsClass.getField("fontProcessors").get(null);
-            Object selectedFontProcessor = fontProcessors.get(MathHelper.clamp(this.fontSelectionDropDownParent.selected, 0, fontProcessors.size() - 1));
-
-            text = (String) fontProcessorClass.getMethod("convertString", String.class).invoke(selectedFontProcessor, text);
+            text = selectedFontProcessor.convertString(text);
             writeConsumer.accept(text);
 
 
-            if (selectedFontProcessor == fontsClass.getField("INVERSE").get(null)) {
+            if (selectedFontProcessor.isReverseDirection()) {
                 int pos = widget.getCursor() - text.length();
                 widget.setSelectionStart(pos);
                 widget.setSelectionEnd(pos);
