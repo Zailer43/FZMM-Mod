@@ -79,13 +79,16 @@ public abstract class AbstractHeadListEntry extends FlowLayout implements IListE
             UISounds.playInteractionSound();
             return true;
         });
+
+        this.mouseEnter().subscribe(() -> this.surface(Surface.flat(0x40000000)));
+        this.mouseLeave().subscribe(() -> {
+            if (!this.hovered)
+                this.surface(Surface.flat(0));
+        });
     }
 
     @Override
     public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
-        if (this.hovered)
-            context.fill(this.x, this.y, this.x + this.width, this.y + this.height, 0x40000000);
-
         super.draw(context, mouseX, mouseY, partialTicks, delta);
     }
 

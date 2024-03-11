@@ -38,13 +38,22 @@ public class HeadComponentEntry extends AbstractHeadListEntry {
         this.favoriteButton = Components.button(Text.empty(), this::favoriteButtonExecute);
         this.setupFavoriteButton(this.favoriteButton);
         this.favoriteButton.positioning(Positioning.relative(100, 0));
+        this.favoriteButton.verticalSizing(Sizing.fixed(16));
         this.updateFavoriteText(this.favoriteButton, false);
         this.favoriteButton.visible = false;
 
         this.mouseEnter().subscribe(() -> this.favoriteButton.visible = true);
-        this.mouseLeave().subscribe(() -> this.favoriteButton.visible = false);
+        this.mouseLeave().subscribe(() -> {
+            if (!this.hovered)
+                this.favoriteButton.visible = false;
+        });
 
         this.child(this.favoriteButton);
+
+        for (var entry : this.children()) {
+            entry.mouseEnter().subscribe(() -> this.mouseEnterEvents.sink().onMouseEnter());
+            entry.mouseLeave().subscribe(() -> this.mouseLeaveEvents.sink().onMouseLeave());
+        }
 
         this.hide = false;
     }

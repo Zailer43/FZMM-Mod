@@ -40,6 +40,10 @@ public class HeadCompoundComponentEntry extends AbstractHeadListEntry{
 
         this.child(moveButtons);
 
+        for (var entry : moveButtons.children()) {
+            entry.mouseEnter().subscribe(() -> this.mouseEnterEvents.sink().onMouseEnter());
+            entry.mouseLeave().subscribe(() -> this.mouseLeaveEvents.sink().onMouseLeave());
+        }
         this.parent = parentLayout;
     }
 
