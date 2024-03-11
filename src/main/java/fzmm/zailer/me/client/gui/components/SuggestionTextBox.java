@@ -41,6 +41,9 @@ public class SuggestionTextBox extends FlowLayout {
     private boolean mouseHoverSuggestion;
     private int maxSuggestionLines;
     private int selectedSuggestionIndex;
+    @Nullable
+    private Runnable suggestionSelectedCallback;
+
 
     @SuppressWarnings("UnstableApiUsage")
     public SuggestionTextBox(Sizing horizontalSizing, SuggestionPosition position, int maxSuggestionLines, @Nullable KeyPress onKeyPress) {
@@ -61,11 +64,12 @@ public class SuggestionTextBox extends FlowLayout {
         this.suggestionsContainer.scrollbar(ScrollContainer.Scrollbar.flat(Color.WHITE));
         this.child(this.textBox);
         this.selectedSuggestionIndex = -1;
+        this.suggestionSelectedCallback = null;
 
         this.setMaxSuggestionLines(maxSuggestionLines);
         this.setSuggestionPosition(position);
 
-        this.textBox.onChanged().subscribe(this::onTextChanged);
+        this.textBox.onChanged().subscribe(this::updateSuggestions);
         this.removeSuggestionOnLostFocusEvents();
 
         this.textBox.keyPress().subscribe((keyCode, scanCode, modifiers) -> {
@@ -77,7 +81,11 @@ public class SuggestionTextBox extends FlowLayout {
     }
 
     private boolean onTextBoxKeyPress(int keyCode) {
-        if (keyCode == GLFW.GLFW_KEY_TAB || keyCode == GLFW.GLFW_KEY_DOWN) {
+        if (keyCode == GLFW.GLFW_KEY_TAB && this.suggestionsLayout.children().isEmpty()) {
+            this.updateSuggestions(this.textBox.getText());
+            return !this.suggestionsLayout.children().isEmpty();
+
+        } else if (keyCode == GLFW.GLFW_KEY_TAB || keyCode == GLFW.GLFW_KEY_DOWN) {
             return this.changeSelectedSuggestionIndex(this.selectedSuggestionIndex, this.selectedSuggestionIndex + 1);
 
         } else if (keyCode == GLFW.GLFW_KEY_UP) {
@@ -158,7 +166,7 @@ public class SuggestionTextBox extends FlowLayout {
         return Optional.of(root);
     }
 
-    private void onTextChanged(String newMessage) {
+    private void updateSuggestions(String newMessage) {
         try {
             int messageLength = newMessage.length();
             String newMessageToLowerCase = newMessage.toLowerCase();
@@ -227,6 +235,9 @@ public class SuggestionTextBox extends FlowLayout {
         this.suggestionsLayout.clearChildren();
         this.textBox.setCursorToStart(false);
         this.textBox.onFocusLost();
+
+        if (this.suggestionSelectedCallback != null)
+            this.suggestionSelectedCallback.run();
     }
 
     private Component getSuggestionComponent(String suggestion, Text suggestionText) {
@@ -328,6 +339,10 @@ public class SuggestionTextBox extends FlowLayout {
     @SuppressWarnings("UnstableApiUsage")
     public ConfigTextBox getTextBox() {
         return this.textBox;
+    }
+
+    public void setSuggestionSelectedCallback(@Nullable Runnable suggestionSelectedCallback) {
+        this.suggestionSelectedCallback = suggestionSelectedCallback;
     }
 
     @Override
