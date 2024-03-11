@@ -94,7 +94,7 @@ public class BannerEditorScreen implements IItemEditorScreen {
 
             colorBox.mouseDown().subscribe((mouseX, mouseY, button) -> {
                 this.selectedColor = dyeColor;
-                this.updatePreview(this.bannerBuilder);
+                this.updatePreview(this.bannerBuilder, false);
 
                 for (var component : colorList) {
                     if (component instanceof FlowLayout layout)
@@ -164,9 +164,9 @@ public class BannerEditorScreen implements IItemEditorScreen {
         this.updatePreview(builder, true);
     }
 
-    private void updatePreview(BannerBuilder builder, boolean canClearUndo) {
-        if (canClearUndo && !this.redoArray.isEmpty())
-            this.clearUndo();
+    private void updatePreview(BannerBuilder builder, boolean canClearRedo) {
+        if (canClearRedo && !this.redoArray.isEmpty())
+            this.clearRedo();
 
         this.bannerPreview.stack(builder.get());
         this.baseScreen.getTab(selectedTab, IBannerEditorTab.class).update(this, builder, this.selectedColor);
@@ -267,9 +267,13 @@ public class BannerEditorScreen implements IItemEditorScreen {
 
     public void clearUndo() {
         this.undoArray.clear();
-        this.redoArray.clear();
-
         this.undoButton.active = false;
+
+        this.clearRedo();
+    }
+
+    public void clearRedo() {
+        this.redoArray.clear();
         this.redoButton.active = false;
     }
 }
