@@ -69,7 +69,7 @@
       "source": {
         "offset": "HEAD",
         "hat_layer": false,
-        "x": 12,
+        "x": 8,
         "y": 0,
         "width": 4,
         "height": 8
@@ -84,7 +84,8 @@
       },
       "degrees": 90,
       "add_hat_layer": true,
-      "mirror_vertical": true
+      "mirror_vertical": true,
+      "mirror_horizontal": true
     },
     {
       "comment": "half bottom",
@@ -92,7 +93,7 @@
       "source": {
         "offset": "HEAD",
         "hat_layer": false,
-        "x": 20,
+        "x": 16,
         "y": 0,
         "width": 4,
         "height": 8
@@ -107,7 +108,8 @@
       },
       "degrees": 90,
       "add_hat_layer": true,
-      "mirror_vertical": true
+      "mirror_vertical": true,
+      "mirror_horizontal": true
     }
   ]
 }
