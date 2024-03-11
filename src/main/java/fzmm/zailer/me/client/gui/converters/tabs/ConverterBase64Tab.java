@@ -28,8 +28,7 @@ public class ConverterBase64Tab implements IScreenTab {
 
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_DECODED_ID), true, button -> {
             try {
-                byte[] decodedValue = Base64.getDecoder().decode(messageField.getText());
-                String decodedMessage = new String(decodedValue, StandardCharsets.UTF_8);
+                String decodedMessage = decode(messageField.getText());
                 keyboard.setClipboard(decodedMessage);
             } catch (Exception ignored) {
             }
@@ -37,11 +36,20 @@ public class ConverterBase64Tab implements IScreenTab {
 
         ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_ENCODED_ID), true, button -> {
             try {
-                byte[] messageByte = messageField.getText().getBytes(StandardCharsets.UTF_8);
-                String encodedMessage = Base64.getEncoder().encodeToString(messageByte);
+                String encodedMessage = encode(messageField.getText());
                 keyboard.setClipboard(encodedMessage);
             } catch (Exception ignored) {
             }
         });
+    }
+
+    public static String decode(String base64) throws IllegalArgumentException{
+        byte[] decodedValue = Base64.getDecoder().decode(base64);
+        return new String(decodedValue, StandardCharsets.UTF_8);
+    }
+
+    public static String encode(String message) throws IllegalArgumentException{
+        byte[] messageByte = message.getBytes(StandardCharsets.UTF_8);
+        return Base64.getEncoder().encodeToString(messageByte);
     }
 }

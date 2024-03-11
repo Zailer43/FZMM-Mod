@@ -31,9 +31,12 @@ public class TagsConstant {
     public static final String TEXT_DISPLAY_SEE_THROUGH = "see_through";
     public static final String TEXT_DISPLAY_ALIGNMENT = "alignment";
 
-    public static final String HEAD_PROPERTIES = "Properties";
-    public static final String HEAD__PROPERTIES_SIGNATURE = "Signature";
+    public static final String HEAD_SKULL_OWNER_PROPERTIES = "Properties";
+    public static final String HEAD_PROPERTIES_SIGNATURE = "Signature";
     public static final String HEAD_PROPERTIES_TEXTURES = "textures";
+    public static final String HEAD_TEXTURE_VALUE = "Value"; // NbtHelper.writeGameProfile
+    public static final String HEAD_SKULL_OWNER_NAME = "Name"; // NbtHelper.writeGameProfile
+    public static final String HEAD_SKULL_OWNER_ID = "Id"; // NbtHelper.writeGameProfile
 
     public static final String TRIM_COMPOUND = "Trim";
 

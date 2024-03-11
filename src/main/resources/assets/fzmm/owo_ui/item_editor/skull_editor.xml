@@ -1,0 +1,182 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <scroll direction="vertical">
+                    <flow-layout direction="vertical">
+                        <children>
+                            <flow-layout direction="horizontal">
+                                <children>
+
+                                    <template name="label-and-text-box">
+                                        <label-translation-key>noteBlockSound</label-translation-key>
+                                        <text-box-id>note-block-sound</text-box-id>
+                                        <label-size>90</label-size>
+                                        <text-box-size>55</text-box-size>
+                                    </template>
+
+                                    <flow-layout direction="horizontal" id="play-note-block-sound-layout">
+                                        <children>
+                                        </children>
+                                    </flow-layout>
+
+                                    <button id="select-note-block-sound">
+                                        <text translate="true">fzmm.gui.itemEditor.skull.button.selectSound</text>
+                                    </button>
+                                </children>
+
+                                <vertical-alignment>center</vertical-alignment>
+                                <gap>4</gap>
+
+                                <surface>
+                                    <panel dark="true"/>
+                                </surface>
+
+                                <sizing>
+                                    <horizontal method="expand">100</horizontal>
+                                </sizing>
+
+                                <padding>
+                                    <all>6</all>
+                                </padding>
+                            </flow-layout>
+
+                            <flow-layout direction="vertical">
+                                <children>
+                                    <flow-layout direction="horizontal">
+                                        <children>
+                                            <template name="label-and-text-box">
+                                                <label-translation-key>headName</label-translation-key>
+                                                <text-box-id>head-name</text-box-id>
+                                                <label-size>60</label-size>
+                                                <text-box-size>55</text-box-size>
+                                            </template>
+
+                                            <button id="load-from-name">
+                                                <text translate="true">fzmm.gui.itemEditor.skull.button.loadFromName</text>
+                                            </button>
+                                        </children>
+                                        <gap>4</gap>
+                                        <vertical-alignment>center</vertical-alignment>
+                                    </flow-layout>
+
+                                    <flow-layout direction="horizontal">
+                                        <children>
+                                            <template name="label-and-text-box">
+                                                <label-translation-key>headUuid</label-translation-key>
+                                                <text-box-id>head-uuid</text-box-id>
+                                                <label-size>60</label-size>
+                                                <text-box-size>55</text-box-size>
+                                            </template>
+
+                                            <button id="random-uuid">
+                                                <text translate="true">fzmm.gui.button.random</text>
+                                            </button>
+
+                                            <fzmm.boolean-button translate="true" id="uuid-format">
+                                                <enabled-text translate="true">fzmm.gui.itemEditor.skull.button.headUuid.uuid</enabled-text>
+                                                <disabled-text translate="true">fzmm.gui.itemEditor.skull.button.headUuid.array</disabled-text>
+                                            </fzmm.boolean-button>
+                                        </children>
+                                        <gap>4</gap>
+                                        <vertical-alignment>center</vertical-alignment>
+                                    </flow-layout>
+
+                                    <flow-layout direction="horizontal">
+                                        <children>
+                                            <label>
+                                                <text translate="true">fzmm.gui.itemEditor.skull.label.headValue</text>
+
+                                                <sizing>
+                                                    <horizontal method="fixed">60</horizontal>
+                                                </sizing>
+                                            </label>
+
+                                            <text-area id="head-value">
+                                                <sizing>
+                                                    <horizontal method="expand">55</horizontal>
+                                                    <vertical method="fixed">150</vertical>
+                                                </sizing>
+
+                                                <max-lines>1</max-lines>
+                                            </text-area>
+                                        </children>
+                                        <gap>4</gap>
+                                        <vertical-alignment>center</vertical-alignment>
+                                    </flow-layout>
+
+                                    <flow-layout direction="horizontal">
+                                        <children>
+                                            <template name="label-and-text-box">
+                                                <label-translation-key>headTexture</label-translation-key>
+                                                <text-box-id>head-texture</text-box-id>
+                                                <label-size>60</label-size>
+                                                <text-box-size>55</text-box-size>
+                                            </template>
+
+                                            <label id="texture-status">
+                                                <text translate="true">fzmm.gui.itemEditor.skull.label.headTexture.invalid</text>
+                                            </label>
+                                        </children>
+                                        <gap>4</gap>
+                                        <vertical-alignment>center</vertical-alignment>
+                                    </flow-layout>
+                                </children>
+                                <vertical-alignment>center</vertical-alignment>
+
+                                <surface>
+                                    <panel dark="true"/>
+                                </surface>
+
+                                <sizing>
+                                    <horizontal method="expand">100</horizontal>
+                                </sizing>
+
+                                <padding>
+                                    <all>6</all>
+                                </padding>
+                            </flow-layout>
+                        </children>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="expand">100</vertical>
+                    </sizing>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+            </children>
+
+            <vertical-alignment>top</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+        </flow-layout>
+    </components>
+
+    <templates>
+        <template name="label-and-text-box">
+            <flow-layout direction="horizontal">
+                <children>
+                    <label>
+                        <text translate="true">fzmm.gui.itemEditor.skull.label.{{label-translation-key}}</text>
+
+                        <sizing>
+                            <horizontal method="fixed">{{label-size}}</horizontal>
+                        </sizing>
+                    </label>
+
+                    <fzmm.text-option id="{{text-box-id}}">
+                        <sizing>
+                            <horizontal method="expand">{{text-box-size}}</horizontal>
+                        </sizing>
+                    </fzmm.text-option>
+                </children>
+                <gap>4</gap>
+                <vertical-alignment>center</vertical-alignment>
+            </flow-layout>
+        </template>
+    </templates>
+</owo-ui>

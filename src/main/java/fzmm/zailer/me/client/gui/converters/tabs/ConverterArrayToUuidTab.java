@@ -18,7 +18,6 @@ public class ConverterArrayToUuidTab implements IScreenTab {
     private static final String COPY_ID = "arrayToUuid.copy";
     private ConfigTextBox[] textBoxArray;
 
-
     @Override
     public String getId() {
         return "arrayToUuid";
@@ -44,15 +43,20 @@ public class ConverterArrayToUuidTab implements IScreenTab {
             for (int i = 0; i != ARRAY_SIZE; i++)
                 intArray[i] = (int) this.textBoxArray[i].parsedValue();
 
-            long msb = Integer.toUnsignedLong(intArray[0]);
-            long lsb = Integer.toUnsignedLong(intArray[2]);
-            msb = (msb << 32) | Integer.toUnsignedLong(intArray[1]);
-            lsb = (lsb << 32) | Integer.toUnsignedLong(intArray[3]);
-
-            MinecraftClient.getInstance().keyboard.setClipboard(new UUID(msb, lsb).toString());
+            UUID uuid = arrayToUUID(intArray);
+            MinecraftClient.getInstance().keyboard.setClipboard(uuid.toString());
         });
     }
     public String getArrayId(int index) {
         return String.format(ARRAY_ID, "." + index);
+    }
+
+    public static UUID arrayToUUID(int[] array) {
+        long msb = Integer.toUnsignedLong(array[0]);
+        long lsb = Integer.toUnsignedLong(array[2]);
+        msb = (msb << 32) | Integer.toUnsignedLong(array[1]);
+        lsb = (lsb << 32) | Integer.toUnsignedLong(array[3]);
+
+        return new UUID(msb, lsb);
     }
 }
