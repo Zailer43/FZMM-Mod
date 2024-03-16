@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.logic.headGenerator.model.parameters.OffsetParamete
 import fzmm.zailer.me.utils.SkinPart;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ModelArea extends ModelPoint {
     protected final byte width;
@@ -50,5 +51,23 @@ public class ModelArea extends ModelPoint {
             });
         }
         return copy;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ModelArea modelArea)) return false;
+
+        return this.width == modelArea.width &&
+                this.height == modelArea.height &&
+                this.y == modelArea.y &&
+                this.x == modelArea.x &&
+                this.offset == modelArea.offset
+                && this.hatLayer == modelArea.hatLayer;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.width, this.height);
     }
 }

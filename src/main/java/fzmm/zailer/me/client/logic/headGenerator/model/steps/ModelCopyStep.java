@@ -90,9 +90,14 @@ public class ModelCopyStep implements IModelStep {
 
     public static ModelCopyStep parse(JsonObject jsonObject) {
         ModelArea source = ModelArea.parse(jsonObject.get("source").getAsJsonObject());
-        ModelArea destination = jsonObject.has("destination") ?
-                ModelArea.parse(jsonObject.get("destination").getAsJsonObject())
-                : new ModelArea(source.offset(), source.hatLayer(), source.getX(), source.getY(), source.width(), source.height());
+        ModelArea destination = null;
+
+        if (jsonObject.has("destination"))
+            destination = ModelArea.parse(jsonObject.get("destination").getAsJsonObject());
+
+        if (destination == null || source.equals(destination))
+            destination = source;
+
 
         boolean addHatLayer = jsonObject.has("add_hat_layer") && jsonObject.get("add_hat_layer").getAsBoolean();
         boolean overlapSourceHat = jsonObject.has("overlap_source_hat") && jsonObject.get("overlap_source_hat").getAsBoolean();
