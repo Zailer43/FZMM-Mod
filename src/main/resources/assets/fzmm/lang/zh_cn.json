@@ -46,7 +46,7 @@
   "fzmm.gui.button.colorList.add": "添加颜色",
   "fzmm.gui.button.colorList.amount": "现在有 %s 种颜色",
   "fzmm.gui.button.copy": "复制",
-  "fzmm.gui.button.execute": "运行",
+  "fzmm.gui.button.execute": "确认",
   "fzmm.gui.button.faq": "FAQ",
   "fzmm.gui.button.favorite.disabled": "☆",
   "fzmm.gui.button.favorite.enabled": "★",

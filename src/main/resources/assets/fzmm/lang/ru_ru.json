@@ -46,7 +46,7 @@
   "fzmm.gui.button.colorList.add": "Добавить цвет",
   "fzmm.gui.button.colorList.amount": "%s цветов",
   "fzmm.gui.button.copy": "Скопировать",
-  "fzmm.gui.button.execute": "Создать",
+  "fzmm.gui.button.execute": "Готово",
   "fzmm.gui.button.faq": "ЧаВо",
   "fzmm.gui.button.favorite.disabled": "☆",
   "fzmm.gui.button.favorite.enabled": "★",
