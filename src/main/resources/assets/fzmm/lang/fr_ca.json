@@ -46,7 +46,7 @@
   "fzmm.gui.button.colorList.add": "Ajouter une couleur",
   "fzmm.gui.button.colorList.amount": "Il y a %s couleurs",
   "fzmm.gui.button.copy": "Copier",
-  "fzmm.gui.button.execute": "Exécuter",
+  "fzmm.gui.button.execute": "Terminé",
   "fzmm.gui.button.faq": "FAQ",
   "fzmm.gui.button.favorite.disabled": "☆",
   "fzmm.gui.button.favorite.enabled": "★",
