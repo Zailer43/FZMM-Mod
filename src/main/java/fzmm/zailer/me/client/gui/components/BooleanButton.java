@@ -45,9 +45,13 @@ public class BooleanButton extends ScrollableButtonComponent {
     }
 
     public void enabled(boolean enabled) {
+        this.enabledIgnoreCallback(enabled);
+        this.onPress.onPress(this);
+    }
+
+    public void enabledIgnoreCallback(boolean enabled) {
         this.enabled = enabled;
         this.updateMessage();
-        this.onPress.onPress(this);
     }
 
     public boolean enabled() {

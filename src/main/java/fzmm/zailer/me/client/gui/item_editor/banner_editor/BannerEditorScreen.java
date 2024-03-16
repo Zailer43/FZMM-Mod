@@ -127,10 +127,8 @@ public class BannerEditorScreen implements IItemEditorScreen {
         this.baseScreen.selectScreenTab(editorLayout, selectedTab, selectedTab);
 
         //other
-        this.isShieldButton = BooleanRow.setup(editorLayout, IS_SHIELD_ID, false, button -> {
-            boolean isShield = ((BooleanButton) button).enabled();
-            this.updatePreview(this.bannerBuilder.isShield(isShield));
-        });
+        this.isShieldButton = BooleanRow.setup(editorLayout, IS_SHIELD_ID, false,
+                button -> this.isShieldButtonExecute(this.isShieldButton.enabled(), true));
         this.isShieldButton.horizontalSizing(Sizing.fill(33));
 
         this.updatePreview(this.bannerBuilder);
@@ -217,6 +215,11 @@ public class BannerEditorScreen implements IItemEditorScreen {
         return false;
     }
 
+    private void isShieldButtonExecute(boolean value, boolean canClearRedo) {
+        this.isShieldButton.enabledIgnoreCallback(value);
+        this.updatePreview(this.bannerBuilder.isShield(value), canClearRedo);
+    }
+
     private void undo() {
         BannerBuilder currentBanner = this.bannerBuilder.copy();
 
@@ -231,7 +234,7 @@ public class BannerEditorScreen implements IItemEditorScreen {
 
         BannerBuilder bannerBuilder = this.undoArray.removeFirst();
         this.bannerBuilder = bannerBuilder;
-        this.updatePreview(bannerBuilder, false);
+        this.isShieldButtonExecute(bannerBuilder.isShield(), false);
         this.redoArray.addFirst(currentBanner);
 
         this.redoButton.active = true;
@@ -246,7 +249,7 @@ public class BannerEditorScreen implements IItemEditorScreen {
         BannerBuilder bannerBuilder = this.redoArray.removeFirst();
         BannerBuilder currentBanner = this.bannerBuilder.copy();
         this.bannerBuilder = bannerBuilder;
-        this.updatePreview(bannerBuilder, false);
+        this.isShieldButtonExecute(bannerBuilder.isShield(), false);
         this.undoArray.addFirst(currentBanner);
 
         this.undoButton.active = true;
