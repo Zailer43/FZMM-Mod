@@ -136,10 +136,8 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         this.selectScreenTab(rootComponent, selectedTab, selectedTab);
 
         //other
-        this.isShieldButton = BooleanRow.setup(rootComponent, IS_SHIELD_ID, false, button -> {
-            boolean isShield = ((BooleanButton) button).enabled();
-            this.updatePreview(this.bannerBuilder.isShield(isShield));
-        });
+        this.isShieldButton = BooleanRow.setup(rootComponent, IS_SHIELD_ID, false,
+                button -> this.isShieldButtonExecute(this.isShieldButton.enabled(), true));
 
         this.clearUndo();
         this.updatePreview(this.bannerBuilder);
@@ -202,6 +200,11 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
+    private void isShieldButtonExecute(boolean value, boolean canClearRedo) {
+        this.isShieldButton.enabledIgnoreCallback(value);
+        this.updatePreview(this.bannerBuilder.isShield(value), canClearRedo);
+    }
+
     private void undo() {
         BannerBuilder currentBanner = this.bannerBuilder.copy();
 
@@ -216,7 +219,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
 
         BannerBuilder bannerBuilder = this.undoArray.removeFirst();
         this.bannerBuilder = bannerBuilder;
-        this.updatePreview(bannerBuilder, false);
+        this.isShieldButtonExecute(bannerBuilder.isShield(), false);
         this.redoArray.addFirst(currentBanner);
 
         this.redoButton.active = true;
@@ -231,7 +234,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         BannerBuilder bannerBuilder = this.redoArray.removeFirst();
         BannerBuilder currentBanner = this.bannerBuilder.copy();
         this.bannerBuilder = bannerBuilder;
-        this.updatePreview(bannerBuilder, false);
+        this.isShieldButtonExecute(bannerBuilder.isShield(), false);
         this.undoArray.addFirst(currentBanner);
 
         this.undoButton.active = true;
