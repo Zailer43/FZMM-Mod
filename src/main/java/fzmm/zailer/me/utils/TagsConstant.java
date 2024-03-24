@@ -48,4 +48,6 @@ public class TagsConstant {
 
     public static final String CUSTOM_MODEL_DATA = "CustomModelData"; // ModelPredicateProviderRegistry.CUSTOM_MODEL_DATA_KEY
 
+    public static final String UNBREAKABLE = "Unbreakable"; // ItemStack.UNBREAKABLE_KEY
+
 }

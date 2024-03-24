@@ -1,0 +1,113 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="horizontal">
+            <children>
+                <scroll direction="vertical">
+                    <flow-layout direction="vertical">
+                        <children>
+                            <flow-layout direction="vertical" id="content">
+                                <children>
+
+                                    <fzmm.number-slider id="damage-slider">
+                                        <sizing>
+                                            <horizontal method="expand">100</horizontal>
+                                        </sizing>
+                                    </fzmm.number-slider>
+                                    
+                                    <flow-layout direction="horizontal">
+                                        <children>
+                                            <label>
+                                                <text translate="true">fzmm.gui.itemEditor.durability.label.damage</text>
+                                            </label>
+
+                                            <fzmm.text-option id="damage">
+
+                                                <sizing>
+                                                    <horizontal method="fixed">60</horizontal>
+                                                </sizing>
+                                            </fzmm.text-option>
+
+                                            <label>
+                                                <text>/</text>
+                                            </label>
+
+                                            <label id="max-damage">
+
+                                                <sizing>
+                                                    <horizontal method="fixed">60</horizontal>
+                                                </sizing>
+                                            </label>
+
+                                            <!-- fzmm.text-option id="max-damage">
+
+                                                <sizing>
+                                                    <horizontal method="fixed">70</horizontal>
+                                                </sizing>
+                                            </fzmm.text-option -->
+
+                                            <flow-layout direction="horizontal">
+                                                <children>
+                                                    <fzmm.text-option id="damage-percentage">
+                                                        <sizing>
+                                                            <horizontal method="fixed">40</horizontal>
+                                                        </sizing>
+                                                    </fzmm.text-option>
+
+                                                    <label>
+                                                        <text>%</text>
+                                                    </label>
+
+                                                </children>
+
+                                                <positioning type="relative">100,0</positioning>
+
+                                                <vertical-alignment>center</vertical-alignment>
+
+                                                <gap>4</gap>
+                                            </flow-layout>
+                                        </children>
+
+                                        <sizing>
+                                            <horizontal method="expand">100</horizontal>
+                                        </sizing>
+
+                                        <vertical-alignment>center</vertical-alignment>
+
+                                        <gap>4</gap>
+                                    </flow-layout>
+
+                                    <checkbox id="unbreakable">
+                                        <text translate="true">fzmm.gui.itemEditor.durability.label.unbreakable</text>
+                                    </checkbox>
+                                </children>
+                                <gap>4</gap>
+
+                                <surface>
+                                    <panel dark="true"/>
+                                </surface>
+
+                                <padding>
+                                    <all>10</all>
+                                </padding>
+                            </flow-layout>
+                        </children>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">100</vertical>
+                        <horizontal method="fill">100</horizontal>
+                    </sizing>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+            </children>
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+        </flow-layout>
+    </components>
+</owo-ui>

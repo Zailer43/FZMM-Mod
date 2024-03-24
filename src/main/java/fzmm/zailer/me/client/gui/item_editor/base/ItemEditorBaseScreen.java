@@ -12,6 +12,7 @@ import fzmm.zailer.me.client.gui.item_editor.block_state_editor.BlockStateEditor
 import fzmm.zailer.me.client.gui.item_editor.color_editor.ColorEditor;
 import fzmm.zailer.me.client.gui.item_editor.container_editor.ContainerEditor;
 import fzmm.zailer.me.client.gui.item_editor.custom_model_data.CustomModelDataEditor;
+import fzmm.zailer.me.client.gui.item_editor.durability_editor.DurabilityEditor;
 import fzmm.zailer.me.client.gui.item_editor.effect_editor.EffectEditor;
 import fzmm.zailer.me.client.gui.item_editor.enchant_editor.EnchantEditor;
 import fzmm.zailer.me.client.gui.item_editor.filled_map_editor.FilledMapEditor;
@@ -76,6 +77,7 @@ public class ItemEditorBaseScreen extends BaseFzmmScreen implements ICollapsible
         itemEditorScreens.add(new ColorEditor());
         itemEditorScreens.add(new ContainerEditor());
         itemEditorScreens.add(new CustomModelDataEditor());
+        itemEditorScreens.add(new DurabilityEditor());
         itemEditorScreens.add(new EffectEditor());
         itemEditorScreens.add(new EnchantEditor());
         itemEditorScreens.add(new FilledMapEditor());
