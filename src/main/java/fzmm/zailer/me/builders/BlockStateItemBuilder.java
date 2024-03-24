@@ -20,11 +20,14 @@ public class BlockStateItemBuilder {
     private NbtCompound blockStateTag;
     private NbtCompound nbt;
     private String itemName;
+    private int count;
 
     private BlockStateItemBuilder() {
         this.item = Items.AIR;
         this.blockStateTag = new NbtCompound();
         this.itemName = null;
+        this.nbt = null;
+        this.count = 1;
     }
 
     public static BlockStateItemBuilder builder() {
@@ -34,6 +37,7 @@ public class BlockStateItemBuilder {
     public ItemStack get() {
         ItemStack stack = this.item.getDefaultStack();
         stack.setNbt(this.nbt);
+        stack.setCount(this.count);
 
         if (this.itemName != null) {
             DisplayBuilder displayBuilder = DisplayBuilder.of(stack);
@@ -53,7 +57,8 @@ public class BlockStateItemBuilder {
 
     public BlockStateItemBuilder of(ItemStack stack) {
         this.item(stack.getItem())
-                .nbt(stack.getOrCreateNbt());
+                .nbt(stack.getOrCreateNbt())
+                .count(stack.getCount());
         return this;
     }
 
@@ -70,6 +75,11 @@ public class BlockStateItemBuilder {
 
     public Item item() {
         return this.item;
+    }
+
+    public BlockStateItemBuilder count(int count) {
+        this.count = count;
+        return this;
     }
 
     public BlockStateItemBuilder nbt(NbtCompound nbt) {

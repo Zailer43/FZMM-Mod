@@ -38,13 +38,13 @@ public class EditorRowComponent extends FlowLayout implements ICollapsible {
     @Override
     public void collapse() {
         this.clearChildren();
-        this.child(Components.item(this.exampleItem).tooltip(this.label));
+        this.child(Components.item(this.exampleItem).showOverlay(true).tooltip(this.label));
     }
 
     @Override
     public void expand() {
         this.clearChildren();
-        this.child(Components.item(this.exampleItem));
+        this.child(Components.item(this.exampleItem).showOverlay(true));
         this.child(Components.label(this.label));
     }
 }

@@ -40,7 +40,7 @@ public class RequestedItemComponent extends FlowLayout implements ICollapsible {
         this.gap(2);
         this.verticalAlignment(VerticalAlignment.CENTER);
 
-        this.stackPreview = Components.item(ItemStack.EMPTY).setTooltipFromStack(true);
+        this.stackPreview = Components.item(ItemStack.EMPTY).setTooltipFromStack(true).showOverlay(true);
 
         MinecraftClient client = MinecraftClient.getInstance();
 

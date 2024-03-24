@@ -25,12 +25,14 @@ public class BannerBuilder {
     private Item item;
     private boolean isShield;
     private NbtCompound nbt;
+    private int count;
 
     private BannerBuilder() {
         this.patterns = new NbtList();
         this.item = Items.WHITE_BANNER;
         this.isShield = false;
         this.nbt = new NbtCompound();
+        this.count = 1;
     }
 
     public static BannerBuilder builder() {
@@ -56,7 +58,8 @@ public class BannerBuilder {
                 .addPatterns(patterns)
                 .item(item)
                 .isShield(isShield)
-                .nbt(nbt);
+                .nbt(nbt)
+                .count(stack.getCount());
     }
 
     public ItemStack get() {
@@ -83,11 +86,17 @@ public class BannerBuilder {
         }
 
         stack.setNbt(this.nbt.isEmpty() ? null : this.nbt);
+        stack.setCount(this.count);
         return stack;
     }
 
     public BannerBuilder item(Item item) {
         this.item = item;
+        return this;
+    }
+
+    public BannerBuilder count(int count) {
+        this.count = count;
         return this;
     }
 
@@ -178,7 +187,8 @@ public class BannerBuilder {
         BannerBuilder copy = builder()
                 .item(this.item)
                 .isShield(this.isShield)
-                .nbt(this.nbt.copy());
+                .nbt(this.nbt.copy())
+                .count(this.count);
 
         for (var pattern : this.patterns) {
             if (pattern instanceof NbtCompound patternCompound) {

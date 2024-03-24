@@ -179,6 +179,8 @@ public class SelectItemScreen extends BaseFzmmScreen {
             return true;
         });
 
+        itemComponent.showOverlay(true);
+
         return itemComponent;
     }
 

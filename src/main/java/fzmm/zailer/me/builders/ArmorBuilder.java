@@ -25,6 +25,7 @@ public class ArmorBuilder {
     private ArmorTrimPattern trimPattern = null;
     private Item item = Items.AIR;
     private boolean hasTrim = false;
+    private int count = 1;
 
     private ArmorBuilder() {
     }
@@ -40,6 +41,7 @@ public class ArmorBuilder {
 
         this.trimMaterial = null;
         this.trimPattern = null;
+        this.count = stack.getCount();
 
         if (!nbt.contains(TagsConstant.TRIM_COMPOUND))
             return this;
@@ -63,7 +65,8 @@ public class ArmorBuilder {
         return this.nbt(builder.nbt.copy())
                 .item(builder.item())
                 .trimMaterial(builder.trimMaterial())
-                .trimPattern(builder.trimPattern());
+                .trimPattern(builder.trimPattern())
+                .count(builder.count());
     }
 
     public ArmorBuilder copy() {
@@ -72,7 +75,8 @@ public class ArmorBuilder {
                 .item(this.item)
                 .trimMaterial(this.trimMaterial)
                 .trimPattern(this.trimPattern)
-                .hasTrim(this.hasTrim);
+                .hasTrim(this.hasTrim)
+                .count(this.count);
     }
 
     public ArmorBuilder nbt(NbtCompound nbt) {
@@ -83,6 +87,15 @@ public class ArmorBuilder {
     public ArmorBuilder item(Item item) {
         this.item = item;
         return this;
+    }
+
+    public ArmorBuilder count(int count) {
+        this.count = count;
+        return this;
+    }
+
+    public int count() {
+        return this.count;
     }
 
     public Item item() {
@@ -114,6 +127,7 @@ public class ArmorBuilder {
         DynamicRegistryManager registryManager = MinecraftClient.getInstance().world.getRegistryManager();
         ItemStack stack = this.item.getDefaultStack();
         stack.setNbt(nbt);
+        stack.setCount(this.count);
 
         if (this.trimMaterial == null || this.trimPattern == null) {
             stack.removeSubNbt(TagsConstant.TRIM_COMPOUND);
