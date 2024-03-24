@@ -3,12 +3,20 @@ package fzmm.zailer.me.client.gui.item_editor.common.levelable;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public interface ILevelable<T> {
 
 
-    T getValue();
+    /**
+     * value can be null in case it is obtained from an item and that ID is not found.
+     */
+    Optional<T> getValue();
+
+    Identifier valueId();
 
     Text getName();
 
@@ -22,4 +30,6 @@ public interface ILevelable<T> {
 
     @Nullable
     Sprite getSprite();
+
+    boolean canHaveSprite();
 }

@@ -86,6 +86,7 @@ public class ArmorBuilder {
 
     public ArmorBuilder item(Item item) {
         this.item = item;
+        this.count(Math.max(1, this.count));
         return this;
     }
 

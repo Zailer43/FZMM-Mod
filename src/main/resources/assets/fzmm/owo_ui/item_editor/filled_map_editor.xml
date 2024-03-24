@@ -113,15 +113,15 @@
 
                                         </children>
 
-                                        <padding>
-                                            <all>6</all>
-                                        </padding>
-
                                         <sizing>
                                             <horizontal method="expand">100</horizontal>
                                         </sizing>
                                     </flow-layout>
                                 </children>
+
+                                <padding>
+                                    <all>6</all>
+                                </padding>
                             </flow-layout>
 
                             <sizing>

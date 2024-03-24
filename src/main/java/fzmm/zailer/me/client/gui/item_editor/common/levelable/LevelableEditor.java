@@ -28,10 +28,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -340,22 +337,26 @@ public abstract class LevelableEditor<V, D extends ILevelable<V>, B extends ILev
         for (var component : this.addLevelablesComponents) {
             D levelable = component.getLevelable();
             boolean isDisabled = false;
+            Optional<V> levelableValueOptional = levelable.getValue();
 
-            // only levelables that are valid with the selected category are accepted
-            if (!categoryPredicate.test(levelable.getValue(), this.levelableBuilder.stack()))
-                continue;
+            if (levelableValueOptional.isPresent()) {
+                V levelableValue = levelableValueOptional.get();
+                // only levelables that are valid with the selected category are accepted
+                if (!categoryPredicate.test(levelableValue, this.levelableBuilder.stack()))
+                    continue;
 
-            if (this.disableFilter(levelable))
-                isDisabled = true;
+                if (this.disableFilter(levelable))
+                    isDisabled = true;
 
-            // in case the option to allow duplicate levelables is disabled,
-            // no levelables already applied will be displayed
-            if (!this.allowDuplicates && this.levelableBuilder.contains(levelable.getValue()))
-                continue;
+                // in case the option to allow duplicate levelables is disabled,
+                // no levelables already applied will be displayed
+                if (!this.allowDuplicates && this.levelableBuilder.contains(levelableValue))
+                    continue;
 
-            // only levelables matching the search filter are displayed
-            if (!component.filter(search))
-                continue;
+                // only levelables matching the search filter are displayed
+                if (!component.filter(search))
+                    continue;
+            }
 
             component.setDisabled(isDisabled);
             levelableComponents.add(component);

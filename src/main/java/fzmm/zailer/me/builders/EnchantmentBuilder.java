@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, EnchantmentBuilder.EnchantmentData> {
 
@@ -45,12 +46,12 @@ public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, Enchan
         return this;
     }
 
-    public EnchantmentBuilder add(Enchantment enchantment, int level) {
-        return this.add(new EnchantmentData(enchantment, level));
+    public EnchantmentBuilder add(@Nullable Enchantment enchantment, Identifier id, int level) {
+        return this.add(new EnchantmentData(enchantment, id, level));
     }
 
-    public EnchantmentBuilder add(Enchantment enchantment) {
-        this.add(enchantment, 1);
+    public EnchantmentBuilder add(@Nullable Enchantment enchantment, Identifier id) {
+        this.add(enchantment, id, 1);
         return this;
     }
 
@@ -63,21 +64,18 @@ public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, Enchan
 
                 // is not used EnchantmentHelper.getLevelFromNbt() because it makes a MathHelper.clamp
                 int level = compound.getShort(TagsConstant.ENCHANTMENTS_LVL);
-                this.add(Registries.ENCHANTMENT.get(enchantId), level);
+                this.add(Registries.ENCHANTMENT.get(enchantId), enchantId, level);
             }
         }
 
         return this;
     }
 
-    public EnchantmentBuilder addAll(List<Enchantment> enchantments, int level) {
-        for (Enchantment enchantment : enchantments)
-            this.add(enchantment, level);
-        return this;
-    }
-
     public EnchantmentBuilder remove(Enchantment enchantment) {
-        this.enchantments.removeIf(enchantmentData -> enchantmentData.getValue() == enchantment);
+        this.enchantments.removeIf(enchantmentData -> {
+            Optional<Enchantment> enchantmentOptional = enchantmentData.getValue();
+            return enchantmentOptional.isPresent() && enchantmentOptional.get() == enchantment;
+        });
         return this;
     }
 
@@ -98,7 +96,7 @@ public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, Enchan
     public EnchantmentData getValue(int index) {
         if (index >= 0 && index < this.enchantments.size())
             return this.enchantments.get(index);
-        return new EnchantmentData(Enchantments.AQUA_AFFINITY, 1);
+        return new EnchantmentData(Enchantments.AQUA_AFFINITY, Registries.ENCHANTMENT.getId(Enchantments.AQUA_AFFINITY), 1);
     }
 
     @Override
@@ -115,9 +113,12 @@ public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, Enchan
 
     @Override
     public boolean contains(Enchantment enchantment) {
-        for (var enchantmentData : this.enchantments)
-            if (enchantmentData.getValue() == enchantment)
+        for (var enchantmentData : this.enchantments) {
+            Optional<Enchantment> enchantmentOptional = enchantmentData.getValue();
+            if (enchantmentOptional.isPresent() && enchantmentOptional.get() == enchantment)
                 return true;
+
+        }
         return false;
     }
 
@@ -145,8 +146,10 @@ public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, Enchan
 
     public boolean isCompatibleWith(Enchantment enchantment) {
         for (var enchantmentData : this.enchantments) {
-            Enchantment enchant = enchantmentData.getValue();
-            if (enchantment != enchant && !enchant.canCombine(enchantment))
+            Optional<Enchantment> enchantmentOptional = enchantmentData.getValue();
+            if (enchantmentOptional.isPresent() &&
+                    enchantment != enchantmentOptional.get() &&
+                    !enchantmentOptional.get().canCombine(enchantment))
                 return false;
         }
         return true;
@@ -172,7 +175,8 @@ public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, Enchan
 
     public boolean onlyCompatibleEnchants() {
         for (var enchantmentData : this.enchantments) {
-            if (!this.isCompatibleWith(enchantmentData.getValue()))
+            Optional<Enchantment> enchantmentOptional = enchantmentData.getValue();
+            if (enchantmentOptional.isPresent() && !this.isCompatibleWith(enchantmentOptional.get()))
                 return false;
         }
         return true;
@@ -247,43 +251,62 @@ public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, Enchan
     }
 
     public static final class EnchantmentData implements ILevelable<Enchantment> {
+        @Nullable
         private final Enchantment enchantment;
+        private final Identifier id;
         private int level;
 
-        public EnchantmentData(Enchantment enchantment, int level) {
+        public EnchantmentData(@Nullable Enchantment enchantment, Identifier id, int level) {
             this.enchantment = enchantment;
+            this.id = id;
             this.level = level;
         }
 
         public NbtCompound createNbt() {
             int level = MathHelper.clamp(this.level, Short.MIN_VALUE, Short.MAX_VALUE); // avoid short overflow
-            return EnchantmentHelper.createNbt(EnchantmentHelper.getEnchantmentId(this.enchantment), level);
+            return EnchantmentHelper.createNbt(this.id, level);
         }
 
         @Override
-        public Enchantment getValue() {
-            return this.enchantment;
+        public Optional<Enchantment> getValue() {
+            return Optional.ofNullable(this.enchantment);
+        }
+
+        @Override
+        public Identifier valueId() {
+            return this.id;
         }
 
         @Override
         public Text getName() {
-            Text text = this.enchantment.getName(1);
+            Text text = this.getValue()
+                    .map(enchantment -> enchantment.getName(1))
+                    .orElseGet(() -> Text.literal(this.id.toString()));
             return text.copyContentOnly().setStyle(text.getStyle()); // remove levelable level of levelable name
         }
 
         @Override
         public String getTranslationKey() {
-            return this.enchantment.getTranslationKey();
+            return this.getValue()
+                    .map(Enchantment::getTranslationKey)
+                    .orElseGet(this.id::toTranslationKey);
         }
 
         @Override
         public boolean isAcceptableItem(ItemStack stack) {
-            return this.enchantment.isAcceptableItem(stack);
+            return this.getValue()
+                    .map(enchantment -> enchantment.isAcceptableItem(stack))
+                    .orElse(true);
         }
 
         @Override
         public @Nullable Sprite getSprite() {
             return null;
+        }
+
+        @Override
+        public boolean canHaveSprite() {
+            return false;
         }
 
         @Override
@@ -297,7 +320,10 @@ public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, Enchan
         }
 
         public int getMaxLevel() {
-            return this.enchantment.getMaxLevel();
+
+            return this.getValue()
+                    .map(Enchantment::getMaxLevel)
+                    .orElse(255);
         }
     }
 }

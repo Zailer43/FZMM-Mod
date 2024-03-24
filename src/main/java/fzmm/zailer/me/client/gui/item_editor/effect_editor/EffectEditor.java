@@ -181,9 +181,8 @@ public class EffectEditor extends LevelableEditor<StatusEffect, EffectBuilder.Ef
         Registry<StatusEffect> registry = this.getRegistry();
         List<EffectBuilder.EffectData> enchantments = new ArrayList<>();
 
-        for (var entry : registry.getEntrySet()) {
-            enchantments.add(new EffectBuilder.EffectData(entry.getValue(), 0));
-        }
+        for (var entry : registry.getEntrySet())
+            enchantments.add(new EffectBuilder.EffectData(entry.getValue(), entry.getKey().getValue(), 0));
 
         return enchantments;
     }

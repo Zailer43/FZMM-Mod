@@ -50,4 +50,6 @@ public class TagsConstant {
 
     public static final String UNBREAKABLE = "Unbreakable"; // ItemStack.UNBREAKABLE_KEY
 
+    public static final String EFFECT_ID = "id"; // StatusEffectInstance.ID_NBT_KEY
+
 }

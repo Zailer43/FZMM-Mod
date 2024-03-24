@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuilder.EnchantmentData, EnchantmentBuilder> implements IItemEditorScreen {
@@ -184,11 +185,15 @@ public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuild
 
     @Override
     public Text getLevelableName(EnchantmentBuilder.EnchantmentData levelable) {
-        Enchantment value = levelable.getValue();
+        Optional<Enchantment> valueOptional = levelable.getValue();
         List<Text> textList = new ArrayList<>();
         for (var entry : this.getEntries()) {
-            Enchantment enchantment = entry.getValue();
-            if (enchantment != value && !value.canCombine(enchantment)) {
+            Optional<Enchantment> enchantmentOptional = entry.getValue();
+            if (enchantmentOptional.isPresent() &&
+                    valueOptional.isPresent() &&
+                    enchantmentOptional.get() != valueOptional.get() &&
+                    !valueOptional.get().canCombine(enchantmentOptional.get())) {
+
                 textList.add(Text.translatable("fzmm.gui.itemEditor.enchant.option.incompatible.value", entry.getName()));
             }
         }
@@ -223,7 +228,7 @@ public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuild
         List<EnchantmentBuilder.EnchantmentData> enchantments = new ArrayList<>();
 
         for (var entry : registry.getEntrySet()) {
-            enchantments.add(new EnchantmentBuilder.EnchantmentData(entry.getValue(), 1));
+            enchantments.add(new EnchantmentBuilder.EnchantmentData(entry.getValue(), entry.getKey().getValue(), 1));
         }
 
         return enchantments;
@@ -231,7 +236,10 @@ public class EnchantEditor extends LevelableEditor<Enchantment, EnchantmentBuild
 
     @Override
     protected boolean disableFilter(EnchantmentBuilder.EnchantmentData levelable) {
-        return this.onlyCompatibleEnchants && !this.levelableBuilder.isCompatibleWith(levelable.getValue());
+        Optional<Enchantment> valueOptional = levelable.getValue();
+        return this.onlyCompatibleEnchants &&
+                valueOptional.isPresent() &&
+                !this.levelableBuilder.isCompatibleWith(valueOptional.get());
     }
 
     public boolean isOnlyCompatibleEnchants() {

@@ -62,8 +62,9 @@ public class SortLevelableComponent<V, D extends ILevelable<V>, B extends ILevel
         this.setLevelable(value.getLevelable());
         this.levelLabel.text(value.levelLabel.text());
 
-        if (this.spriteLayout != null)
+        if (this.spriteLayout != null) {
             this.spriteLayout.clearChildren();
-        this.getSpriteComponent().ifPresent(spriteComponent -> this.spriteLayout.child(spriteComponent));
+            this.getSpriteComponent().ifPresent(spriteComponent -> this.spriteLayout.child(spriteComponent));
+        }
     }
 }

@@ -2,20 +2,25 @@ package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.ILevelable;
 import fzmm.zailer.me.client.gui.item_editor.common.levelable.ILevelableBuilder;
+import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class EffectBuilder implements ILevelableBuilder<StatusEffect, EffectBuilder.EffectData> {
     private ItemStack stack;
@@ -60,18 +65,37 @@ public class EffectBuilder implements ILevelableBuilder<StatusEffect, EffectBuil
         return this;
     }
 
-    public EffectBuilder add(StatusEffectInstance effect) {
-        return this.add(new EffectData(effect));
+    public EffectBuilder add(StatusEffectInstance effect, Identifier id) {
+        return this.add(new EffectData(effect, id));
     }
 
     public EffectBuilder addAll(NbtList effects) {
         for (var element : effects) {
             if (element instanceof NbtCompound compound) {
                 StatusEffectInstance effectInstance = StatusEffectInstance.fromNbt(compound);
+                Identifier id = null;
+
+                // writes the nbt with an effect that will be ignored,
+                // because I need to use the identifier and not the effect,
+                // since the identifier is going to be written
+                if (effectInstance == null && compound.contains(TagsConstant.EFFECT_ID)) {
+                    NbtCompound compoundCopy = compound.copy();
+
+                    id = Identifier.tryParse(compoundCopy.getString(TagsConstant.EFFECT_ID));
+                    Identifier effectId =  Registries.STATUS_EFFECT.getId(StatusEffects.ABSORPTION);
+                    assert effectId != null;
+
+                    compoundCopy.putString(TagsConstant.EFFECT_ID, effectId.toString());
+                    effectInstance = StatusEffectInstance.fromNbt(compoundCopy);
+                }
+
                 if (effectInstance == null)
                     continue;
 
-                this.add(effectInstance);
+                if (id == null)
+                    id = Registries.STATUS_EFFECT.getId(effectInstance.getEffectType());
+
+                this.add(effectInstance, id);
             }
         }
 
@@ -197,9 +221,11 @@ public class EffectBuilder implements ILevelableBuilder<StatusEffect, EffectBuil
 
     @Override
     public boolean contains(StatusEffect value) {
-        for (var effectData : this.effects)
-            if (effectData.getValue() == value)
+        for (var effectData : this.effects) {
+            Optional<StatusEffect> effectOptional = effectData.getValue();
+            if (effectOptional.isPresent() && effectOptional.get() == value)
                 return true;
+        }
         return false;
     }
 
@@ -213,15 +239,18 @@ public class EffectBuilder implements ILevelableBuilder<StatusEffect, EffectBuil
 
     public static class EffectData implements ILevelable<StatusEffect> {
 
+        @Nullable
         private final StatusEffect effect;
+        private final Identifier id;
         private int amplifier;
         private boolean ambient;
         private int duration;
         private boolean showParticles;
         private boolean showIcon;
 
-        public EffectData(StatusEffectInstance effectInstance) {
-            this.effect = effectInstance.getEffectType();
+        public EffectData(StatusEffectInstance effectInstance, Identifier id) {
+            this.effect = Registries.STATUS_EFFECT.get(id) == effectInstance.getEffectType() ? effectInstance.getEffectType() : null;
+            this.id = id;
             this.amplifier = effectInstance.getAmplifier();
             this.ambient = effectInstance.isAmbient();
             this.duration = effectInstance.getDuration();
@@ -229,8 +258,9 @@ public class EffectBuilder implements ILevelableBuilder<StatusEffect, EffectBuil
             this.showIcon = effectInstance.shouldShowIcon();
         }
 
-        public EffectData(StatusEffect effect, int amplifier) {
+        public EffectData(@Nullable StatusEffect effect, Identifier id, int amplifier) {
             this.effect = effect;
+            this.id = id;
             this.amplifier = amplifier;
             this.ambient = false;
             this.duration = 200;
@@ -239,13 +269,20 @@ public class EffectBuilder implements ILevelableBuilder<StatusEffect, EffectBuil
         }
 
         @Override
-        public StatusEffect getValue() {
-            return this.effect;
+        public Optional<StatusEffect> getValue() {
+            return Optional.ofNullable(this.effect);
+        }
+
+        @Override
+        public Identifier valueId() {
+            return this.id;
         }
 
         @Override
         public Text getName() {
-            return this.effect.getName();
+            return this.getValue()
+                    .map(StatusEffect::getName)
+                    .orElseGet(() -> Text.literal(this.id.toString()));
         }
 
         @Override
@@ -260,7 +297,9 @@ public class EffectBuilder implements ILevelableBuilder<StatusEffect, EffectBuil
 
         @Override
         public String getTranslationKey() {
-            return this.effect.getTranslationKey();
+            return this.getValue()
+                    .map(StatusEffect::getTranslationKey)
+                    .orElseGet(this.id::toTranslationKey);
         }
 
         @Override
@@ -271,7 +310,14 @@ public class EffectBuilder implements ILevelableBuilder<StatusEffect, EffectBuil
 
         @Override
         public @Nullable Sprite getSprite() {
-            return MinecraftClient.getInstance().getStatusEffectSpriteManager().getSprite(this.effect);
+            return this.getValue()
+                    .map(statusEffect -> MinecraftClient.getInstance().getStatusEffectSpriteManager().getSprite(statusEffect))
+                    .orElse(null);
+        }
+
+        @Override
+        public boolean canHaveSprite() {
+            return true;
         }
 
         public boolean ambient() {
@@ -308,9 +354,17 @@ public class EffectBuilder implements ILevelableBuilder<StatusEffect, EffectBuil
 
         private NbtCompound createNbt() {
             NbtCompound compound = new NbtCompound();
-            StatusEffectInstance instance = new StatusEffectInstance(this.effect, this.duration, this.amplifier,
+
+            // write the nbt with an effect that later will be overwritten,
+            // because I need to use the identifier and not the effect,
+            // since in case the effect is null it will not use the identifier
+            StatusEffectInstance instance = new StatusEffectInstance(StatusEffects.ABSORPTION, this.duration, this.amplifier,
                     this.ambient, this.showParticles, this.showIcon);
-            return instance.writeNbt(compound);
+            instance.writeNbt(compound);
+
+            compound.putString(TagsConstant.EFFECT_ID, this.id.toString());
+
+            return compound;
         }
     }
 }

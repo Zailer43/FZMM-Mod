@@ -17,7 +17,8 @@ public class AddEnchantComponent extends AddLevelableComponent<Enchantment, Ench
     protected void onExecute() {
         if (((EnchantEditor) this.editor).isOnlyCompatibleEnchants()) {
             for (var child : this.editor.getAddLevelablesComponents()) {
-                child.setDisabled(!this.builder.isCompatibleWith(child.getLevelable().getValue()));
+                child.getLevelable().getValue()
+                        .ifPresent(enchantment -> child.setDisabled(!this.builder.isCompatibleWith(enchantment)));
             }
         }
     }
