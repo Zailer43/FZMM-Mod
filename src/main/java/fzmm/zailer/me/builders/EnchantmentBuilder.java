@@ -282,7 +282,8 @@ public class EnchantmentBuilder implements ILevelableBuilder<Enchantment, Enchan
             Text text = this.getValue()
                     .map(enchantment -> enchantment.getName(1))
                     .orElseGet(() -> Text.literal(this.id.toString()));
-            return text.copyContentOnly().setStyle(text.getStyle()); // remove levelable level of levelable name
+            // remove enchant level of enchant name ("Enchant III" -> "Enchant")
+            return text.copyContentOnly().setStyle(text.getStyle());
         }
 
         @Override

@@ -57,8 +57,8 @@ public abstract class BaseLevelableComponent<V, D extends ILevelable<V>, B exten
             this.spriteLayout = Containers.horizontalFlow(Sizing.fixed(20), Sizing.fixed(20));
             this.getSpriteComponent().ifPresent(spriteComponent -> this.spriteLayout.child(spriteComponent).margins(Insets.of(2)));
             layout.child(this.spriteLayout);
-            layout.child(this.label);
         }
+        layout.child(this.label);
 
         layout.gap(2);
         layout.verticalAlignment(VerticalAlignment.CENTER);
