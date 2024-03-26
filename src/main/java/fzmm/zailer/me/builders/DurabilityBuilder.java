@@ -44,7 +44,7 @@ public class DurabilityBuilder {
     }
 
     public DurabilityBuilder doDamage(int amount) {
-        this.stack.getOrCreateNbt().putInt(ItemStack.DAMAGE_KEY, Math.max(0, this.damage() - amount));
+        this.stack.getOrCreateNbt().putInt(ItemStack.DAMAGE_KEY, Math.max(0, this.damage() + amount));
         return this;
     }
 
