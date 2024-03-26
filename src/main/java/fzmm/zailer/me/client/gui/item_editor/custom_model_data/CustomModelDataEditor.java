@@ -26,7 +26,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class CustomModelDataEditor extends SelectableEditor<CustomModelItemComponent> {
@@ -203,15 +202,20 @@ public class CustomModelDataEditor extends SelectableEditor<CustomModelItemCompo
         if (customModelDataIndex == -1)
             return customModels;
 
+        List<Integer> customModelData = new ArrayList<>();
         for (var override : bakedOverrides) {
             ModelOverrideList.InlinedCondition[] conditions = ((BakedOverrideAccessor) override).getConditions();
             for (var condition : conditions) {
                 if (condition.index == customModelDataIndex)
-                    customModels.add(new Pair<>((int) condition.threshold, itemStack.getItem()));
+                    customModelData.add((int) condition.threshold);
             }
         }
 
-        customModels.sort(Comparator.comparingInt(Pair::getLeft));
+        customModels = customModelData.stream()
+                .distinct()
+                .sorted()
+                .map(integer -> new Pair<>(integer, itemStack.getItem()))
+                .toList();
 
         return customModels;
     }

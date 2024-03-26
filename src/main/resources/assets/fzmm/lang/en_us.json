@@ -317,6 +317,7 @@
   "fzmm.gui.itemEditor.container.title": "Container",
   "fzmm.gui.itemEditor.custom_model_data.item": "Item with model",
   "fzmm.gui.itemEditor.custom_model_data.label.defaultValue": "Default model",
+  "fzmm.gui.itemEditor.custom_model_data.label.item": "Item: %s",
   "fzmm.gui.itemEditor.custom_model_data.label.value": "Model: %s",
   "fzmm.gui.itemEditor.custom_model_data.label.warning.itemHasNoCustomModels": "This item does not have any Custom Model in the present resources packs.",
   "fzmm.gui.itemEditor.custom_model_data.label.warning.noCustomModels": "You don't have any Custom Models loaded in any of your resources packs.",

@@ -10,6 +10,7 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class CustomModelItemComponent extends ItemComponent {
@@ -32,9 +33,10 @@ public class CustomModelItemComponent extends ItemComponent {
         this.modelValue = modelValue;
         this.stack(CustomModelDataBuilder.builder().of(stack).value(modelValue).get());
         this.cursorStyle(CursorStyle.HAND);
-        this.tooltip(Text.translatable(modelValue == null ? "fzmm.gui.itemEditor.custom_model_data.label.defaultValue"
-                : "fzmm.gui.itemEditor.custom_model_data.label.value", modelValue)
-        );
+        Text tooltipFirstLine = Text.translatable(modelValue == null ? "fzmm.gui.itemEditor.custom_model_data.label.defaultValue"
+                : "fzmm.gui.itemEditor.custom_model_data.label.value", modelValue);
+        Text tooltipSecondLine = Text.translatable("fzmm.gui.itemEditor.custom_model_data.label.item", stack.getItem().getName());
+        this.tooltip(List.of(tooltipFirstLine, tooltipSecondLine));
     }
 
     public Optional<Integer> getModel() {
