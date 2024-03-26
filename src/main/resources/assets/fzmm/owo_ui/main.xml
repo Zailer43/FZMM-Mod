@@ -126,6 +126,7 @@
                 <children>
                     <label>
                         <text translate="true">fzmm.gui.title.{{name}}</text>
+                        <cursor-style>hand</cursor-style>
                     </label>
                 </children>
 

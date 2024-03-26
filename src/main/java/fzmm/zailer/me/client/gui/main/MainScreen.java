@@ -62,7 +62,6 @@ public class MainScreen extends BaseFzmmScreen {
                     this.client.setScreen(data.screen.get());
                     return true;
                 });
-                buttonLayout.cursorStyle(CursorStyle.HAND);
                 Surface defaultSurface = Surface.flat(0x40000000).and(Surface.outline(0x40FFFFFF));
                 buttonLayout.surface(defaultSurface);
                 buttonLayout.mouseEnter().subscribe(() -> buttonLayout.surface(Surface.flat(0x20004000).and(Surface.outline(0x40008000))));
@@ -84,6 +83,10 @@ public class MainScreen extends BaseFzmmScreen {
                 iconLayout.child(textureComponent);
 
                 buttonLayout.child(iconLayout);
+
+                buttonLayout.cursorStyle(CursorStyle.HAND);
+                iconLayout.cursorStyle(CursorStyle.HAND);
+                textureComponent.cursorStyle(CursorStyle.HAND);
             }
         }
     }

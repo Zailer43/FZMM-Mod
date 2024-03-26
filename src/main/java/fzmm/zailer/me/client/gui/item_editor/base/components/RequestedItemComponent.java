@@ -124,6 +124,8 @@ public class RequestedItemComponent extends FlowLayout implements ICollapsible {
                 rootLayout.child(overlayContainer);
         });
         button.horizontalSizing(Sizing.fixed(20));
+
+        this.stackPreview.cursorStyle(CursorStyle.HAND);
         layout.child(button);
         layout.child(this.stackPreview);
         layout.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
@@ -134,6 +136,7 @@ public class RequestedItemComponent extends FlowLayout implements ICollapsible {
     @Override
     public void expand() {
         this.clearChildren();
+        this.stackPreview.cursorStyle(CursorStyle.POINTER);
         this.children(List.of(this.stackPreview, this.selectItemButton, this.giveButton));
     }
 }

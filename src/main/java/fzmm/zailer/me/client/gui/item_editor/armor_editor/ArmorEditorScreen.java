@@ -15,6 +15,7 @@ import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.StackLayout;
 import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
@@ -223,7 +224,8 @@ public class ArmorEditorScreen implements IItemEditorScreen {
         Component itemComponent = Components.item(stack)
                 .setTooltipFromStack(true)
                 .sizing(Sizing.fixed(16), Sizing.fixed(16))
-                .margins(Insets.of(2));
+                .margins(Insets.of(2))
+                .cursorStyle(CursorStyle.HAND);
 
         ButtonComponent buttonComponent = Components.button(Text.empty(), button -> {
         });

@@ -279,7 +279,8 @@ public class BlockStateEditor implements IItemEditorScreen {
 
         String propertyName = property.getName();
         Component blockComponent = Components.block(BlockItem.with(blockState, property, value), this.blockBuilder.nbt())
-                .sizing(Sizing.fixed(40), Sizing.fixed(40));
+                .sizing(Sizing.fixed(40), Sizing.fixed(40))
+                .cursorStyle(CursorStyle.HAND);
 
         FlowLayout stateLayout = this.statesLayoutOfProperties.get(property).get(valueName);
         stateLayout.clearChildren();
