@@ -269,8 +269,9 @@ public class HeadBuilder {
         }
 
         NbtCompound skullOwner = nbt.getCompound(PlayerHeadItem.SKULL_OWNER_KEY);
+        NbtCompound blockEntityTag = nbt.getCompound(TagsConstant.BLOCK_ENTITY);
 
-        this.noteBlockSound(nbt.getString(SkullBlockEntity.NOTE_BLOCK_SOUND_KEY))
+        this.noteBlockSound(blockEntityTag.getString(SkullBlockEntity.NOTE_BLOCK_SOUND_KEY))
             .headName(skullOwner.getString(TagsConstant.HEAD_SKULL_OWNER_NAME));
 
         if (skullOwner.containsUuid(TagsConstant.HEAD_SKULL_OWNER_ID))
