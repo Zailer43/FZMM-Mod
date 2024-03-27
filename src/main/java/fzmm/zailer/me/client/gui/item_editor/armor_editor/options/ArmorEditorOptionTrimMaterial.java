@@ -31,7 +31,7 @@ public class ArmorEditorOptionTrimMaterial extends AbstractArmorEditorOptionList
         Optional<Registry<ArmorTrimMaterial>> trimPatternRegistryOptional = MinecraftClient.getInstance().world.getRegistryManager().getOptional(RegistryKeys.TRIM_MATERIAL);
         return trimPatternRegistryOptional
                 .map(armorTrimMaterials -> armorTrimMaterials.stream()
-                .sorted(Comparator.comparing(ArmorTrimMaterial::assetName))
+                        .sorted(Comparator.comparing(ArmorTrimMaterial::assetName))
                         .toList()
                 ).orElseGet(ArrayList::new);
     }

@@ -10,6 +10,7 @@ import net.minecraft.item.trim.ArmorTrimMaterial;
 import net.minecraft.item.trim.ArmorTrimPattern;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -134,7 +135,9 @@ public class ArmorBuilder {
             stack.removeSubNbt(TagsConstant.TRIM_COMPOUND);
             this.hasTrim = false;
         } else {
-            ArmorTrim trim = new ArmorTrim(RegistryEntry.of(this.trimMaterial), RegistryEntry.of(this.trimPattern));
+            RegistryEntry<ArmorTrimMaterial> trimMaterial = registryManager.get(RegistryKeys.TRIM_MATERIAL).getEntry(this.trimMaterial);
+            RegistryEntry<ArmorTrimPattern> trimPattern = registryManager.get(RegistryKeys.TRIM_PATTERN).getEntry(this.trimPattern);
+            ArmorTrim trim = new ArmorTrim(trimMaterial, trimPattern);
             this.hasTrim = ArmorTrim.apply(registryManager, stack, trim);
         }
 
