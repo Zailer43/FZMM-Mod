@@ -1,0 +1,77 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20.3/owo-ui.xsd">
+    <components>
+        <flow-layout direction="horizontal">
+            <children>
+                <scroll direction="vertical">
+                    <flow-layout direction="vertical">
+                        <children>
+                            <flow-layout direction="vertical" id="content">
+                                <children>
+                                    <flow-layout direction="ltr-text-flow">
+                                        <children>
+                                            <button id="select-all">
+                                                <text translate="true">fzmm.gui.itemEditor.hide_flags.label.selectAll</text>
+
+                                                <sizing>
+                                                    <horizontal method="fixed">120</horizontal>
+                                                </sizing>
+                                            </button>
+
+                                            <button id="unselect-all">
+                                                <text translate="true">fzmm.gui.itemEditor.hide_flags.label.unselectAll</text>
+
+                                                <sizing>
+                                                    <horizontal method="fixed">120</horizontal>
+                                                </sizing>
+                                            </button>
+                                        </children>
+                                        <gap>4</gap>
+                                        <horizontal-alignment>center</horizontal-alignment>
+
+                                        <sizing>
+                                            <horizontal method="expand">100</horizontal>
+                                        </sizing>
+                                    </flow-layout>
+
+                                    <flow-layout direction="ltr-text-flow" id="flags">
+                                        <children>
+
+                                        </children>
+                                        <gap>4</gap>
+
+                                        <sizing>
+                                            <horizontal method="expand">100</horizontal>
+                                        </sizing>
+                                    </flow-layout>
+                                </children>
+                                <gap>4</gap>
+
+                                <surface>
+                                    <panel dark="true"/>
+                                </surface>
+
+                                <padding>
+                                    <all>10</all>
+                                </padding>
+                            </flow-layout>
+                        </children>
+                    </flow-layout>
+
+                    <sizing>
+                        <vertical method="fill">100</vertical>
+                        <horizontal method="fill">100</horizontal>
+                    </sizing>
+
+                    <scrollbar>
+                        <flat>#FFFFFF</flat>
+                    </scrollbar>
+                </scroll>
+            </children>
+
+            <vertical-alignment>center</vertical-alignment>
+            <horizontal-alignment>center</horizontal-alignment>
+
+        </flow-layout>
+    </components>
+</owo-ui>
