@@ -10,9 +10,11 @@ jobs:
   build:
     strategy:
       matrix:
-        # Use these Java versions
+        # Minecraft only supports one version because GitHub wants it,
+        # thank you very much (I don't understand how to get the index
+        # of a matrix in the artifacts, thank you for understanding)
         java: [
-          '21',    # Current Java LTS & minimum supported by Minecraft
+          21,    # Current Java LTS & minimum supported by Minecraft
         ]
         # and run on both Linux, Windows and Mac
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -33,7 +35,7 @@ jobs:
       - name: build
         run: ./gradlew build
       - name: capture build artifacts
-        if: ${{ runner.os == 'Linux' && matrix.java == 0 }} # Only upload artifacts built from latest java on one OS
+        if: ${{ runner.os == 'Linux' }} # Only upload artifacts built from one OS
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
