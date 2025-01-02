@@ -13,6 +13,7 @@ import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BannerPatterns;
+import net.minecraft.component.type.BannerPatternsComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registry;
@@ -64,7 +65,8 @@ public class AddPatternsTab implements IBannerEditorTab {
                         .get();
 
                 Component itemComponent = Components.item(banner)
-                        .sizing(Sizing.fixed(32), Sizing.fixed(32));
+                        .sizing(Sizing.fixed(32), Sizing.fixed(32))
+                        .tooltip(BannerBuilder.tooltipOf(new BannerPatternsComponent.Layer(pattern, color)));
 
                 itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
                     UISounds.playButtonSound();
