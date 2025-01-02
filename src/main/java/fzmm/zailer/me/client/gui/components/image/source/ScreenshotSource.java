@@ -174,9 +174,8 @@ public class ScreenshotSource implements IInteractiveImageLoader {
 
                 FzmmUtils.setScreen(this.previousScreen);
                 this.previousScreen = null;
+                this.setImage(image);
             });
-
-            this.setImage(image);
         });
     }
 
