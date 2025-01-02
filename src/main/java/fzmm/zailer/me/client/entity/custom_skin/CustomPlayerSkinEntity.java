@@ -5,7 +5,6 @@ import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.Identifier;
 
 import java.util.UUID;
 
@@ -24,23 +23,12 @@ public class CustomPlayerSkinEntity extends OtherClientPlayerEntity implements I
     }
 
     @Override
-    public Identifier getTextures() {
-        return this.textures.texture();
+    public SkinTextures skin() {
+        return this.textures;
     }
 
     @Override
-    public void setSkin(Identifier skin, boolean isSlim) {
-        this.textures = new SkinTextures(skin,
-                null,
-                null,
-                null,
-                isSlim ? SkinTextures.Model.SLIM : SkinTextures.Model.WIDE,
-                false
-        );
-    }
-
-    @Override
-    public void updateFormat(boolean isSlim) {
-        this.setSkin(this.textures.texture(), isSlim);
+    public void skin(SkinTextures textures) {
+        this.textures = textures;
     }
 }

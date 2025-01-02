@@ -2,12 +2,12 @@ package fzmm.zailer.me.client.entity.custom_skin;
 
 import fzmm.zailer.me.client.FzmmClient;
 import net.minecraft.client.util.DefaultSkinHelper;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
 public class CustomHeadEntity extends MobEntity implements ISkinMutable {
@@ -22,24 +22,18 @@ public class CustomHeadEntity extends MobEntity implements ISkinMutable {
                     .build()
     );
 
-    private Identifier customHeadTexture = DefaultSkinHelper.getTexture();
+    private SkinTextures textures = new SkinTextures(DefaultSkinHelper.getTexture(), null, null, null, SkinTextures.Model.WIDE, false);
 
     public CustomHeadEntity(World world) {
         super(CUSTOM_HEAD_ENTITY_TYPE, world);
     }
 
     @Override
-    public Identifier getTextures() {
-        return this.customHeadTexture;
+    public SkinTextures skin() {
+        return this.textures;
     }
 
-    @Override
-    public void setSkin(Identifier skin, boolean isSlim) {
-        this.customHeadTexture = skin;
-    }
-
-    @Override
-    public void updateFormat(boolean isSlim) {
-
+    public void skin(SkinTextures textures) {
+        this.textures = textures;
     }
 }

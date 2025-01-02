@@ -16,6 +16,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 
 import java.util.List;
@@ -128,6 +129,11 @@ public class HeadComponentEntry extends AbstractHeadComponentEntry {
         addCompoundButton.horizontalSizing(Sizing.fixed(Math.max(20, addLayerButtonWidth)));
 
         layout.children(List.of(overlayFavoriteButton, addCompoundButton));
+    }
+
+    @Override
+    protected Identifier getTextureId() {
+        return Identifier.of(FzmmClient.MOD_ID, "head_generator/preview/" +this.entry.getKey());
     }
 
     private void addCompoundButtonExecute(ButtonComponent button) {
