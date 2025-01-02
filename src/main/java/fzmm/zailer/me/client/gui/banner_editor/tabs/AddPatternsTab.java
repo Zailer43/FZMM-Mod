@@ -52,8 +52,9 @@ public class AddPatternsTab implements IBannerEditorTab {
                     .addPattern(color, pattern)
                     .get();
 
-            Component itemComponent = Components.item(banner)
-                    .sizing(Sizing.fixed(32), Sizing.fixed(32));
+                Component itemComponent = Components.item(banner)
+                        .sizing(Sizing.fixed(32), Sizing.fixed(32))
+                        .tooltip(BannerBuilder.tooltipOf(color, Registries.BANNER_PATTERN.getEntry(pattern)));
 
             itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
                 UISounds.playButtonSound();

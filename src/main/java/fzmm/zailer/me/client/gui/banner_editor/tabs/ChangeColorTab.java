@@ -6,7 +6,6 @@ import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShieldItem;
@@ -17,7 +16,6 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 
-import java.util.List;
 import java.util.Optional;
 
 public class ChangeColorTab extends AbstractModifyPatternsTab {
@@ -41,9 +39,6 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
     @Override
     protected void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color) {
         ItemStack itemComponentStack = itemComponent.stack();
-        List<TooltipComponent> tooltipComponents = itemComponent.tooltip() == null ? List.of() : itemComponent.tooltip();
-
-        itemComponent.tooltip(tooltipComponents);
 
         NbtList patterns = currentBanner.patterns();
         int index = -1;
