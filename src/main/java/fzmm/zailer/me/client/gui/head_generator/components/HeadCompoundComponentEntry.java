@@ -1,12 +1,12 @@
 package fzmm.zailer.me.client.gui.head_generator.components;
 
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
 import fzmm.zailer.me.client.gui.components.style.StyledContainers;
 import fzmm.zailer.me.client.gui.head_generator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.head_generator.category.IHeadCategory;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
-import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
@@ -15,12 +15,13 @@ import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 import java.awt.image.BufferedImage;
 
 public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
     private static final Text REMOVE_LAYER_BUTTON_TEXT = Text.translatable("fzmm.gui.button.remove");
-    private boolean modifiedPreview;
+    private static long COMPOUND_INDEX = 0;
 
     public HeadCompoundComponentEntry(AbstractHeadEntry entry, FlowLayout parentLayout, HeadGeneratorScreen parentScreen, BufferedImage initialPreview) {
         super(entry, Sizing.fixed(50), Sizing.fixed(45), parentScreen);
@@ -50,28 +51,7 @@ public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
             button.mouseLeave().subscribe(() -> this.mouseLeaveEvents.sink().onMouseLeave());
         }
         this.parent = parentLayout;
-        this.updatePreview(initialPreview, ImageUtils.isSlimSimpleCheck(initialPreview));
-    }
-
-    @Override
-    public void update(BufferedImage previousCompoundSkin, boolean isSlim) {
-        if (!this.modifiedPreview) {
-            super.update(previousCompoundSkin, isSlim);
-        }
-
-        this.modifiedPreview = false;
-    }
-
-    @Override
-    public void updatePreview(BufferedImage previewSkin, boolean isSlim) {
-        super.updatePreview(previewSkin, isSlim);
-        this.modifiedPreview = true;
-    }
-
-    @Override
-    protected void addOverlay(HeadGeneratorScreen parent) {
-        super.addOverlay(parent);
-        this.modifiedPreview = true;
+        this.updatePreview(initialPreview);
     }
 
     @Override
@@ -82,11 +62,11 @@ public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
     private void removeCompoundEntry(ButtonComponent button) {
         assert this.parent != null;
 
-        this.close();
         if (this.parent.children().isEmpty()) {
             Animation<Sizing> layoutAnimation = this.parent.horizontalSizing().animation();
-            if (layoutAnimation != null)
+            if (layoutAnimation != null) {
                 layoutAnimation.backwards();
+            }
         }
         this.parentScreen.removeCompound(this);
         this.overlayContainer.remove();
@@ -107,4 +87,8 @@ public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
         categoryLabel.text(Text.translatable(IHeadCategory.COMPOUND_CATEGORY.getTranslationKey() + ".label", categoryLabel.text(), IHeadCategory.COMPOUND_CATEGORY.getText()));
     }
 
+    @Override
+    protected Identifier getTextureId() {
+        return Identifier.of(FzmmClient.MOD_ID, "head_generator/compound/" + COMPOUND_INDEX++);
+    }
 }

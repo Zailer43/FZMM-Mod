@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.components.image.source;
 
 import fzmm.zailer.me.client.FzmmClient;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Util;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
@@ -46,9 +47,8 @@ public class ImageFileDialogSource implements IInteractiveImageLoader {
                     this.readImage(Path.of(imagePath));
                 }
             }
-        }, Util.getMainWorkerExecutor()).whenComplete((unused, throwable) -> {
-            consumer.accept(this.image);
-        });
+            MinecraftClient.getInstance().execute(() -> consumer.accept(this.image));
+        }, Util.getMainWorkerExecutor());
     }
 
     private void readImage(Path path) {

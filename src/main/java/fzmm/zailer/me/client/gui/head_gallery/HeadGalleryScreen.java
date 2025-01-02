@@ -411,8 +411,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         if (skinTextures.isEmpty())
             return;
 
-        this.frontEntityPreview.setSkin(skinTextures.get().texture(), false);
-        this.backEntityPreview.setSkin(skinTextures.get().texture(), false);
+        this.frontEntityPreview.skin(skinTextures.get());
+        this.backEntityPreview.skin(skinTextures.get());
     }
 
 

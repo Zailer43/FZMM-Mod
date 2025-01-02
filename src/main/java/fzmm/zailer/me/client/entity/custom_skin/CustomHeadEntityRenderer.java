@@ -25,7 +25,7 @@ public class CustomHeadEntityRenderer extends MobEntityRenderer<CustomHeadEntity
     @Override
     public void updateRenderState(CustomHeadEntity customHeadEntity, CustomHeadEntityRenderState state, float f) {
         super.updateRenderState(customHeadEntity, state, f);
-        state.texture = customHeadEntity.getTextures();
+        state.texture = customHeadEntity.skin().texture();
     }
 
     @Override
