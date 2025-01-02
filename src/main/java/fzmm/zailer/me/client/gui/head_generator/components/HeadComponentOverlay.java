@@ -263,7 +263,7 @@ public class HeadComponentOverlay extends StyledFlowLayout {
                 preview.flush();
                 preview = updatedSkin;
             }
-            headComponentEntry.updatePreview(preview, ImageUtils.isSlimSimpleCheck(preview));
+            headComponentEntry.updatePreview(preview);
 
             if (callback != null) {
                 callback.accept(button);
@@ -400,13 +400,14 @@ public class HeadComponentOverlay extends StyledFlowLayout {
         this.selectedSkinFormat = modelButton;
 
         if (this.previewEntity.entity() instanceof ISkinMutable skinMutable) {
-            skinMutable.updateFormat(isSlim);
+            skinMutable.model(isSlim);
         }
     }
 
     private BufferedImage updatePreview(AbstractHeadComponentEntry headComponentEntry) {
         BufferedImage baseSkin = this.getBaseSkin(this.selectedSkinPreEdit, headComponentEntry.isBodyPreview());
-        headComponentEntry.update(baseSkin, this.parentScreen.hasUnusedPixels());
+        headComponentEntry.basePreview(baseSkin, this.parentScreen.hasUnusedPixels());
+        headComponentEntry.updateModel(ImageUtils.isSlimSimpleCheck(baseSkin));
         return baseSkin;
     }
 }

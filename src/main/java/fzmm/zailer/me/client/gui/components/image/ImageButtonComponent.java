@@ -102,25 +102,21 @@ public class ImageButtonComponent extends ButtonComponent {
                 this.active = true;
                 loadingSnackBar.close();
                 SnackBarManager.getInstance().add(snackBarStatus.startTimer().build());
+                if (this.image != null) {
+                    this.image.flush();
+                }
+
+                this.image = image.orElse(null);
+
+                if (this.callback != null) {
+                    this.callback.accept(this.image);
+                }
             });
-
-            if (this.image != null) {
-                this.image.flush();
-            }
-
-            this.image = image.orElse(null);
-
-            if (this.callback != null) {
-                this.callback.accept(this.image);
-            }
         });
     }
 
     public void interactiveImageLoad(IInteractiveImageLoader interactiveImageLoader) {
-        MinecraftClient.getInstance().execute(() -> {
-            this.active = true;
-            SnackBarManager.getInstance().remove(SnackBarManager.IMAGE_ID);
-        });
+        SnackBarManager.getInstance().remove(SnackBarManager.IMAGE_ID);
         this.active = false;
         interactiveImageLoader.execute(bufferedImage -> {
             if (this.image != null) {

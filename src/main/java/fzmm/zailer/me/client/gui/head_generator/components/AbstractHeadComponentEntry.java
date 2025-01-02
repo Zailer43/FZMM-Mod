@@ -22,8 +22,6 @@ import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.client.texture.TextureManager;
-import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 
@@ -32,19 +30,18 @@ import java.awt.image.BufferedImage;
 public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implements IListEntry<AbstractHeadEntry> {
     public static final int HEAD_PREVIEW_SIZE = 24;
     public static final int BODY_PREVIEW_SIZE = 12;
+    protected final HeadGeneratorScreen parentScreen;
+    private final NativeImageBackedTexture previewTexture;
+    private final Identifier textureId;
     protected AbstractHeadEntry entry;
     private EntityComponent<Entity> previewComponent;
-    private NativeImageBackedTexture previewTexture;
-    private BufferedImage previewHead;
-    protected final HeadGeneratorScreen parentScreen;
     protected OverlayContainer<FlowLayout> overlayContainer;
     private boolean isBodyPreview;
-    private Identifier dynamicTexture = null;
 
     public AbstractHeadComponentEntry(AbstractHeadEntry entry, Sizing horizontalSizing, Sizing verticalSizing, HeadGeneratorScreen parent) {
         super(horizontalSizing, verticalSizing, Algorithm.VERTICAL);
 
-        this.setBodyPreview(entry.isEditingSkinBody());
+        ISkinMutable previewEntity = this.setBodyPreview(entry.isEditingSkinBody());
         this.setValue(entry);
 
         this.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
@@ -66,13 +63,19 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
         });
 
         this.hoveredSurface(FzmmStyles.DEFAULT_HOVERED);
+
+        BufferedImage defaultPreview = entry.getHeadSkin(new BufferedImage(SkinPart.MAX_WIDTH, SkinPart.MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB), false);
+        this.previewTexture = new NativeImageBackedTexture(ImageUtils.toNativeImage(defaultPreview));
+        this.textureId = this.getTextureId();
+        MinecraftClient.getInstance().getTextureManager().registerTexture(this.textureId, this.previewTexture);
+        previewEntity.texture(this.textureId);
     }
 
     public boolean isBodyPreview() {
         return this.isBodyPreview;
     }
 
-    private void setBodyPreview(boolean isBody) {
+    private ISkinMutable setBodyPreview(boolean isBody) {
         this.isBodyPreview = isBody;
         Entity previewEntity;
         int size;
@@ -92,6 +95,8 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
         this.previewComponent.cursorStyle(CursorStyle.HAND);
         this.previewComponent.margins(Insets.left(margins));
         this.child(this.previewComponent);
+
+        return (ISkinMutable) previewEntity;
     }
 
     public String getFilterValue() {
@@ -102,81 +107,40 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
         return this.entry.getCategoryId();
     }
 
-    public void update(BufferedImage baseSkin, boolean hasUnusedPixels) {
-        this.update(baseSkin, hasUnusedPixels, ImageUtils.isSlimSimpleCheck(baseSkin));
+    /**
+     * Update preview with base skin
+     */
+    public void basePreview(BufferedImage baseSkin, boolean hasUnusedPixels) {
+        this.updatePreview(this.entry.getHeadSkin(baseSkin, hasUnusedPixels));
     }
 
-    public void update(BufferedImage baseSkin, boolean hasUnusedPixels, boolean isSlim) {
-        if (this.updateHead(baseSkin, hasUnusedPixels)) {
-            this.updatePreview(isSlim);
-        } else {
-            this.close();
-        }
-    }
-
-    public boolean updateHead(BufferedImage baseSkin, boolean hasUnusedPixels) {
-        try {
-            if (this.previewHead != null) {
-                this.previewHead.flush();
-            }
-            this.previewHead = this.entry.getHeadSkin(baseSkin, hasUnusedPixels);
-        } catch (Exception e) {
-            FzmmClient.LOGGER.error("[AbstractHeadListEntry] Failed to update preview skin of '{}'", this.entry.getKey(), e);
-            return false;
-        }
-
-        return true;
-    }
-
-    public void updatePreview(boolean isSlim) {
-        if (this.previewHead != null) {
-            this.updatePreview(this.previewHead, isSlim);
-        }
-    }
-
-    public void updatePreview(BufferedImage previewSkin, boolean isSlim) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        TextureManager textureManager = client.getTextureManager();
-
-        this.close();
-        if (!(this.previewComponent.entity() instanceof ISkinMutable previewEntity)) {
-            FzmmClient.LOGGER.error("[AbstractHeadListEntry] Failed to update preview entity");
-            return;
-        }
-
+    /**
+     * @param previewSkin Update preview with {@link BufferedImage}
+     */
+    public void updatePreview(BufferedImage previewSkin) {
         NativeImage nativeImage = ImageUtils.toNativeImage(previewSkin);
-        nativeImage.untrack();
-        this.previewTexture = new NativeImageBackedTexture(nativeImage);
-        this.dynamicTexture = textureManager.registerDynamicTexture("fzmm_head", this.previewTexture);
-        previewEntity.setSkin(this.dynamicTexture, isSlim);
+        this.previewTexture.setImage(nativeImage);
+        this.previewTexture.upload();
+    }
 
-        textureManager.bindTexture(previewEntity.getTextures());
+    public void updateModel(boolean isSlim) {
+        if (this.previewComponent.entity() instanceof ISkinMutable previewEntity) {
+            previewEntity.model(isSlim);
+        }
     }
 
     protected EntityComponent<Entity> copyCustomHeadEntity() {
         return Components.entity(this.previewComponent.horizontalSizing().get(), this.previewComponent.entity());
     }
 
+    @Override
+    public void remove() {
+        super.remove();
+        this.close();
+    }
+
     public void close() {
-        if (this.previewTexture == null || this.dynamicTexture == null) {
-            return;
-        }
-
-        MinecraftClient.getInstance().getTextureManager().destroyTexture(this.dynamicTexture);
-        this.dynamicTexture = DefaultSkinHelper.getTexture();
-
-        if (this.previewComponent.entity() instanceof ISkinMutable previewEntity) {
-            previewEntity.setSkin(this.dynamicTexture, this.isBodyPreview);
-        }
-
-        this.previewTexture = null;
-
-        if (this.previewHead == null) {
-            return;
-        }
-
-        this.previewHead.flush();
-        this.previewHead = null;
+        MinecraftClient.getInstance().getTextureManager().destroyTexture(this.textureId);
     }
 
     public BufferedImage getPreview() {
@@ -211,6 +175,7 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
 
     protected abstract void addTopRightButtons(FlowLayout panel, FlowLayout layout);
 
+    protected abstract Identifier getTextureId();
 
     @Override
     public AbstractHeadEntry getValue() {

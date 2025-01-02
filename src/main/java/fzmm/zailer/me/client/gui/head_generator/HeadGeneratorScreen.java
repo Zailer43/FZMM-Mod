@@ -39,6 +39,7 @@ import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.util.FocusHandler;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -277,23 +278,6 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         BufferedImage bodyTexturePreEdit = editingBody ? selectedPreEdit : this.skinPreEdit(this.baseSkin, skinPreEditOption, isSlim, true);
         BufferedImage nonePreEdit = this.skinPreEdit(this.baseSkin, SkinPreEditOption.NONE, isSlim, editingBody);
 
-        // generate textures for head entries in scheduler thread
-        scheduler.schedule(() -> {
-            for (int i = 0; i != this.headComponentEntries.size(); i++) {
-                HeadComponentEntry entry = this.headComponentEntries.get(i);
-                BufferedImage baseTexture;
-                if (forcePreEditNone && entry.getValue() instanceof HeadModelEntry) {
-                    baseTexture = nonePreEdit;
-                } else if (entry.getValue().isEditingSkinBody()) {
-                    baseTexture = bodyTexturePreEdit;
-                } else {
-                    baseTexture = selectedPreEdit;
-                }
-                // FIXME: ConcurrentModificationException: in INestedParameters.getNestedParameters(INestedParameters.java:21)
-                entry.updateHead(baseTexture, this.hasUnusedPixels);
-            }
-        }, 0, TimeUnit.MILLISECONDS);
-
         // update head previews in client thread with 1ms of delay between each
         AtomicInteger index = new AtomicInteger(1);
         for (int i = 0; i != this.headComponentEntries.size(); i++) {
@@ -301,7 +285,19 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
             scheduler.schedule(() -> {
                 // components must be updated in the client thread otherwise it may cause a crash
-                this.client.execute(() -> entry.updatePreview(isSlim));
+                this.client.execute(() -> {
+                    BufferedImage baseTexture;
+                    if (forcePreEditNone && entry.getValue() instanceof HeadModelEntry) {
+                        baseTexture = nonePreEdit;
+                    } else if (entry.getValue().isEditingSkinBody()) {
+                        baseTexture = bodyTexturePreEdit;
+                    } else {
+                        baseTexture = selectedPreEdit;
+                    }
+                    // FIXME: ConcurrentModificationException: in INestedParameters.getNestedParameters(INestedParameters.java:21)
+                    entry.basePreview(baseTexture, this.hasUnusedPixels);
+                    entry.updateModel(isSlim);
+                });
             }, (long) HEAD_PREVIEW_SCHEDULE_DELAY_MILLIS * index.getAndIncrement(), TimeUnit.MILLISECONDS);
         }
 
@@ -317,8 +313,11 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         ISkinPreEdit none = SkinPreEditOption.NONE.getPreEdit();
         ISkinPreEdit overlap = SkinPreEditOption.OVERLAP.getPreEdit();
 
-        for (var headEntry : this.getHeadCompoundEntries()) {
-            headEntry.update(texture, isSlim);
+        for (var headEntry : this.headCompoundComponentEntries) {
+            MinecraftClient.getInstance().execute(() -> {
+                headEntry.basePreview(texture, this.hasUnusedPixels);
+                headEntry.updateModel(isSlim);
+            });
 
             none.apply(graphics, headEntry.getPreview());
             overlap.apply(graphics, texture, editBody);
@@ -373,11 +372,6 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         skinPreEditButtons.put(preEditOption, preEditButton);
         preEditLayout.child(preEditButton);
     }
-
-    public List<HeadCompoundComponentEntry> getHeadCompoundEntries() {
-        return this.headCompoundComponentEntries;
-    }
-
 
     private void closeTextures() {
         if (this.contentLayout == null)
@@ -532,9 +526,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
     public void removeCompound(HeadCompoundComponentEntry entry) {
         assert this.parent != null;
-        entry.close();
-        this.compoundHeadsLayout.removeChild(entry);
         this.headCompoundComponentEntries.remove(entry);
+        entry.remove();
 
         if (this.headCompoundComponentEntries.isEmpty()) {
             this.compoundExpandAnimation.backwards();
@@ -591,17 +584,16 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     @Override
     public void close() {
         super.close();
-
-        if (!this.favoritesHeadsOnOpenScreen.equals(FzmmClient.CONFIG.headGenerator.favoriteSkins())) {
-            FzmmClient.CONFIG.save();
-        }
+        this.closeTextures();
     }
 
     @Override
     public void removed() {
-        this.closeTextures();
-
         super.removed();
+
+        if (!this.favoritesHeadsOnOpenScreen.equals(FzmmClient.CONFIG.headGenerator.favoriteSkins())) {
+            FzmmClient.CONFIG.save();
+        }
     }
 
     private void onChangeSkinField(String value) {
