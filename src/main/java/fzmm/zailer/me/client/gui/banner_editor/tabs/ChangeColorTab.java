@@ -5,7 +5,6 @@ import fzmm.zailer.me.client.gui.banner_editor.BannerEditorScreen;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BannerPatternsComponent;
 import net.minecraft.item.ItemStack;
@@ -40,9 +39,6 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
                                           BannerPatternsComponent.Layer componentLayer, BannerBuilder currentBanner,
                                           DyeColor componentColor) {
         ItemStack itemComponentStack = itemComponent.stack();
-        List<TooltipComponent> tooltipComponents = itemComponent.tooltip() == null ? List.of() : itemComponent.tooltip();
-
-        itemComponent.tooltip(tooltipComponents);
 
         List<BannerPatternsComponent.Layer> layers = currentBanner.layers();
         int index = -1;
