@@ -3,7 +3,7 @@ package fzmm.zailer.me.utils.list;
 import java.util.List;
 
 public class ListUtils {
-    public static <VALUE, LIST extends IListEntry<VALUE>> void moveEntryInUnmodifiableList(List<LIST> list, int entryIndex, int direction, Runnable callback) {
+    public static <VALUE, LIST extends IListEntry<VALUE>> void moveEntryInUnmodifiableList(List<LIST> list, int entryIndex, int direction) {
         if (direction == -1 && entryIndex > 0) {
             VALUE previousEntry = list.get(entryIndex - 1).getValue();
             VALUE entry = list.get(entryIndex).getValue();
@@ -17,17 +17,15 @@ public class ListUtils {
             list.get(entryIndex + 1).setValue(entry);
             list.get(entryIndex).setValue(previousEntry);
         }
-
-        callback.run();
     }
 
-    public static <VALUE, LIST extends IListEntry<VALUE>> void upEntry(List<? extends LIST> list, LIST entry, Runnable callback) {
+    public static <VALUE, LIST extends IListEntry<VALUE>> void upEntry(List<? extends LIST> list, LIST entry) {
         int entryIndex = list.indexOf(entry);
-        moveEntryInUnmodifiableList(list, entryIndex, -1, callback);
+        moveEntryInUnmodifiableList(list, entryIndex, -1);
     }
 
-    public static <VALUE, LIST extends IListEntry<VALUE>> void downEntry(List<? extends LIST> list, LIST entry, Runnable callback) {
+    public static <VALUE, LIST extends IListEntry<VALUE>> void downEntry(List<? extends LIST> list, LIST entry) {
         int entryIndex = list.indexOf(entry);
-        moveEntryInUnmodifiableList(list, entryIndex, 1, callback);
+        moveEntryInUnmodifiableList(list, entryIndex, 1);
     }
 }
