@@ -40,9 +40,9 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
 
     public AbstractHeadComponentEntry(AbstractHeadEntry entry, Sizing horizontalSizing, Sizing verticalSizing, HeadGeneratorScreen parent) {
         super(horizontalSizing, verticalSizing, Algorithm.VERTICAL);
-
-        ISkinMutable previewEntity = this.setBodyPreview(entry.isEditingSkinBody());
-        this.setValue(entry);
+        this.entry = entry;
+        this.textureId = this.getTextureId();
+        this.setBodyPreview(entry.isEditingSkinBody());
 
         this.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
         this.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
@@ -66,16 +66,14 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
 
         BufferedImage defaultPreview = entry.getHeadSkin(new BufferedImage(SkinPart.MAX_WIDTH, SkinPart.MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB), false);
         this.previewTexture = new NativeImageBackedTexture(ImageUtils.toNativeImage(defaultPreview));
-        this.textureId = this.getTextureId();
         MinecraftClient.getInstance().getTextureManager().registerTexture(this.textureId, this.previewTexture);
-        previewEntity.texture(this.textureId);
     }
 
     public boolean isBodyPreview() {
         return this.isBodyPreview;
     }
 
-    private ISkinMutable setBodyPreview(boolean isBody) {
+    public void setBodyPreview(boolean isBody) {
         this.isBodyPreview = isBody;
         Entity previewEntity;
         int size;
@@ -89,14 +87,14 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
             size = HEAD_PREVIEW_SIZE;
             margins = 0;
         }
+        ((ISkinMutable) previewEntity).texture(this.textureId);
 
         this.removeChild(this.previewComponent);
         this.previewComponent = Components.entity(Sizing.fixed(size), previewEntity);
-        this.previewComponent.cursorStyle(CursorStyle.HAND);
-        this.previewComponent.margins(Insets.left(margins));
+        this.previewComponent.cursorStyle(CursorStyle.HAND)
+                .margins(Insets.left(margins))
+                .tooltip(this.entry.getDisplayName());
         this.child(this.previewComponent);
-
-        return (ISkinMutable) previewEntity;
     }
 
     public String getFilterValue() {

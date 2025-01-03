@@ -56,20 +56,13 @@ public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
 
     @Override
     protected void onCloseOverlay() {
-        this.parentScreen.updatePreviews();
+        this.parentScreen.updateCompoundPreviews(this, 1);
+        this.parentScreen.updateContentPreviews();
     }
 
     private void removeCompoundEntry(ButtonComponent button) {
-        assert this.parent != null;
-
-        if (this.parent.children().isEmpty()) {
-            Animation<Sizing> layoutAnimation = this.parent.horizontalSizing().animation();
-            if (layoutAnimation != null) {
-                layoutAnimation.backwards();
-            }
-        }
-        this.parentScreen.removeCompound(this);
         this.overlayContainer.remove();
+        this.parentScreen.removeCompound(this);
     }
 
     @Override
