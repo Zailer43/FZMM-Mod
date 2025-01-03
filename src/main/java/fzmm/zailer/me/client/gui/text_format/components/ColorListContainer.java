@@ -134,7 +134,8 @@ public class ColorListContainer extends FlowLayout {
                 list.add(colorEntry);
             }
         }
-        ListUtils.upEntry(list, entry, () -> this.callback.accept(""));
+        ListUtils.upEntry(list, entry);
+        this.callback.accept("");
     }
 
     public void downEntry(ColorListEntry entry) {
@@ -144,7 +145,8 @@ public class ColorListContainer extends FlowLayout {
                 list.add(colorEntry);
             }
         }
-        ListUtils.downEntry(list, entry, () -> this.callback.accept(""));
+        ListUtils.downEntry(list, entry);
+        this.callback.accept("");
     }
 
     public void updateDisplay() {

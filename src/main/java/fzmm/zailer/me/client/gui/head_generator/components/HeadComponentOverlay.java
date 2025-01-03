@@ -350,8 +350,8 @@ public class HeadComponentOverlay extends StyledFlowLayout {
         return preEditLayout;
     }
 
-    private BufferedImage getBaseSkin(SkinPreEditOption skinPreEditOption, boolean isBodyPreview) {
-        return this.parentScreen.skinPreEdit(skinPreEditOption, isBodyPreview);
+    private BufferedImage getBaseSkin(AbstractHeadComponentEntry entry, SkinPreEditOption skinPreEditOption, boolean isBodyPreview) {
+        return this.parentScreen.preEdit(entry, skinPreEditOption, isBodyPreview);
     }
 
     private FlowLayout getSkinFormatOptions(AbstractHeadComponentEntry headComponentEntry) {
@@ -404,10 +404,10 @@ public class HeadComponentOverlay extends StyledFlowLayout {
         }
     }
 
-    private BufferedImage updatePreview(AbstractHeadComponentEntry headComponentEntry) {
-        BufferedImage baseSkin = this.getBaseSkin(this.selectedSkinPreEdit, headComponentEntry.isBodyPreview());
-        headComponentEntry.basePreview(baseSkin, this.parentScreen.hasUnusedPixels());
-        headComponentEntry.updateModel(ImageUtils.isSlimSimpleCheck(baseSkin));
+    private BufferedImage updatePreview(AbstractHeadComponentEntry entry) {
+        BufferedImage baseSkin = this.getBaseSkin(entry, this.selectedSkinPreEdit, entry.isBodyPreview());
+        entry.basePreview(baseSkin, this.parentScreen.hasUnusedPixels());
+        entry.updateModel(ImageUtils.isSlimSimpleCheck(baseSkin));
         return baseSkin;
     }
 }
