@@ -133,7 +133,7 @@ public class HeadComponentEntry extends AbstractHeadComponentEntry {
 
     @Override
     protected Identifier getTextureId() {
-        return Identifier.of(FzmmClient.MOD_ID, "head_generator/preview/" +this.entry.getKey());
+        return Identifier.of(FzmmClient.MOD_ID, "head_generator/preview/" + this.entry.getKey());
     }
 
     private void addCompoundButtonExecute(ButtonComponent button) {
