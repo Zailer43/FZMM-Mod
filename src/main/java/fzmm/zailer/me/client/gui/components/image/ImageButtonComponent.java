@@ -27,7 +27,7 @@ public class ImageButtonComponent extends ButtonComponent {
     private @Nullable BufferedImage image;
     private IImageGetter mode;
     private Function<BufferedImage, ImageStatus> imageLoadEvent;
-    private Consumer<BufferedImage> callback;
+    private Consumer<Optional<BufferedImage>> callback;
 
     public ImageButtonComponent() {
         super(Text.empty(), button -> {
@@ -109,7 +109,7 @@ public class ImageButtonComponent extends ButtonComponent {
                 this.image = image.orElse(null);
 
                 if (this.callback != null) {
-                    this.callback.accept(this.image);
+                    this.callback.accept(Optional.ofNullable(this.image));
                 }
             });
         });
@@ -128,7 +128,7 @@ public class ImageButtonComponent extends ButtonComponent {
             this.active = true;
 
             if (this.callback != null) {
-                this.callback.accept(this.image);
+                this.callback.accept(Optional.ofNullable(this.image));
             }
         });
     }
@@ -141,7 +141,7 @@ public class ImageButtonComponent extends ButtonComponent {
         this.imageLoadEvent = callback;
     }
 
-    public void setButtonCallback(Consumer<BufferedImage> callback) {
+    public void setButtonCallback(Consumer<Optional<BufferedImage>> callback) {
         this.callback = callback;
     }
 
