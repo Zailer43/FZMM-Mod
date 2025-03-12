@@ -45,8 +45,13 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
 
         ImageButtonComponent skinButton = this.skinElements.imageButton();
         skinButton.setImageLoadedEvent(this::skinCallback);
-        skinButton.setButtonCallback(skin -> {
+        skinButton.setButtonCallback(skinOptional -> {
             this.executeButton.active = this.canExecute();
+            if (skinOptional.isEmpty()) {
+                return;
+            }
+
+            BufferedImage skin = skinOptional.get();
             if (skin.getWidth() == 64 && skin.getHeight() == 32) {
                 skinButton.setImage(InternalModels.OLD_FORMAT_TO_NEW_FORMAT.getHeadSkin(skin, ImageUtils.hasUnusedPixel(skin)));
             }
@@ -56,13 +61,15 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
 
     @Override
     public void execute(HorizontalDirectionOption direction, float x, float y, float z, String name) {
-        if (!this.canExecute())
+        if (!this.canExecute()) {
             return;
+        }
 
         Optional<BufferedImage> image = this.skinElements.imageButton().getImage();
 
-        if (image.isEmpty())
+        if (image.isEmpty()) {
             return;
+        }
 
         CREATE_COMPLETABLE_FUTURE = CompletableFuture.runAsync(() -> {
             this.executeButton.active = false;

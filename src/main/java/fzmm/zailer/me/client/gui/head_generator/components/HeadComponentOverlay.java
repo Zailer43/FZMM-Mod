@@ -192,8 +192,8 @@ public class HeadComponentOverlay extends StyledFlowLayout {
             parametersLayout.child(imageRows);
 
             ImageRowsElements elements = ImageRows.setup(parametersLayout, buttonId, enumButtonId, ImageMode.NAME);
-            elements.imageButton().setButtonCallback(bufferedImage -> {
-                textureParameters.update(texture.id(), bufferedImage);
+            elements.imageButton().setButtonCallback(skinOptional -> {
+                textureParameters.update(texture.id(), skinOptional.orElse(null));
                 this.updatePreview(headComponentEntry);
             });
 
