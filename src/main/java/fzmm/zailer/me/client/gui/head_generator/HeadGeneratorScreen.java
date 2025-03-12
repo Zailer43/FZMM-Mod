@@ -109,7 +109,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         this.baseSkin = new BufferedImage(SkinPart.MAX_WIDTH, SkinPart.MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         //general
         this.skinElements = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, ImageMode.NAME);
-        this.skinElements.imageButton().setButtonCallback(this::imageCallback);
+        this.skinElements.imageButton().setButtonCallback(skinOptional -> skinOptional.ifPresent(this::skinCallback));
         this.previousSkinName = "";
         this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "", 512);
         this.skinElements.valueField().onChanged().subscribe(this::onChangeSkinField);
@@ -206,13 +206,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         return Text.translatable("fzmm.gui.headGenerator.label.category", Text.translatable(category.getTranslationKey()));
     }
 
-    private void imageCallback(BufferedImage skinBase) {
-        assert this.client != null;
-
-        if (skinBase == null) {
-            return;
-        }
-
+    private void skinCallback(BufferedImage skinBase) {
         if (ImageUtils.isEquals(skinBase, this.baseSkin)) {
             return;
         }
