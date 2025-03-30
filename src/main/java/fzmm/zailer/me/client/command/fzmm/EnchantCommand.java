@@ -34,7 +34,7 @@ public class EnchantCommand implements ISubCommand {
             @SuppressWarnings("unchecked")
             RegistryEntry.Reference<Enchantment> enchant = ctx.getArgument("enchantment", RegistryEntry.Reference.class);
 
-            this.addEnchant(enchant, (short) 1);
+            this.setEnchant(enchant, (short) 1);
             return 1;
 
         }).then(ClientCommandManager.argument("level", IntegerArgumentType.integer(0, 255)).executes(ctx -> {
@@ -43,18 +43,18 @@ public class EnchantCommand implements ISubCommand {
             RegistryEntry.Reference<Enchantment> enchant = ctx.getArgument("enchantment", RegistryEntry.Reference.class);
             int level = ctx.getArgument("level", int.class);
 
-            this.addEnchant(enchant, (short) level);
+            this.setEnchant(enchant, (short) level);
             return 1;
         }))).build();
     }
 
-    private void addEnchant(RegistryEntry.Reference<Enchantment> enchant, short level) {
+    private void setEnchant(RegistryEntry.Reference<Enchantment> enchant, short level) {
         //{Enchantments:[{message:"minecraft:aqua_affinity",lvl:1s}]}
         ItemStack stack = ItemUtils.from(Hand.MAIN_HAND);
 
         stack.apply(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT, component -> {
             ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(component);
-            builder.add(enchant, level);
+            builder.set(enchant, level);
             return builder.build();
         });
 
