@@ -6,6 +6,7 @@ import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.component.type.BannerPatternsComponent;
 import net.minecraft.util.DyeColor;
+import org.jetbrains.annotations.Nullable;
 
 public class RemovePatternsTab extends AbstractModifyPatternsTab {
 
@@ -21,14 +22,18 @@ public class RemovePatternsTab extends AbstractModifyPatternsTab {
     }
 
     @Override
-    public boolean shouldAddBaseColor() {
+    public boolean shouldAddBase() {
         return false;
     }
 
     @Override
     protected void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent,
-                                          BannerPatternsComponent.Layer componentLayer,
+                                          @Nullable BannerPatternsComponent.Layer componentLayer,
                                           BannerBuilder currentBanner, DyeColor selectedColor) {
+        if (componentLayer == null) {
+            return;
+        }
+
         itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
             UISounds.playButtonSound();
             parent.addUndo(currentBanner);

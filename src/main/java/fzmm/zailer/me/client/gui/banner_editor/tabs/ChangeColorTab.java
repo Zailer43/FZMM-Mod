@@ -7,10 +7,12 @@ import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BannerPatternsComponent;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,28 +32,16 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
     }
 
     @Override
-    public boolean shouldAddBaseColor() {
+    public boolean shouldAddBase() {
         return true;
     }
 
     @Override
     protected void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent,
-                                          BannerPatternsComponent.Layer componentLayer, BannerBuilder currentBanner,
+                                          @Nullable BannerPatternsComponent.Layer componentLayer, BannerBuilder currentBanner,
                                           DyeColor componentColor) {
         ItemStack itemComponentStack = itemComponent.stack();
-
-        List<BannerPatternsComponent.Layer> layers = currentBanner.layers();
-        int index = -1;
-        int patternsSize = layers.size();
-
-        for (int i = 0; i != patternsSize; i++) {
-            if (layers.get(i) == componentLayer) {
-                index = i;
-                break;
-            }
-        }
-
-        boolean isBaseBanner = index == -1;
+        boolean isBaseBanner = componentLayer == null;
 
         itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
             this.componentExecute(parent, currentBanner, componentColor, componentLayer);
@@ -64,21 +54,24 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
             modifiedStack.apply(DataComponentTypes.BASE_COLOR, null, dyeColor -> componentColor);
         } else if (isBaseBanner) {
             modifiedStack = itemComponentStack.copyComponentsToNewStack(BannerBuilder.getBannerByDye(componentColor), itemComponentStack.getCount());
-        } else {
+        } else { // Add preview of edited color
             modifiedStack = itemComponentStack.copy();
-            int finalIndex = index;
+            int index = currentBanner.indexOf(componentLayer);
+            if (index == -1) {
+                return;
+            }
 
             modifiedStack.apply(DataComponentTypes.BANNER_PATTERNS, BannerPatternsComponent.DEFAULT, component -> {
                List<BannerPatternsComponent.Layer> layersCopy = new ArrayList<>(component.layers());
 
-               if (layersCopy.size() < finalIndex) {
+               if (layersCopy.size() < index) {
                    return component;
                }
 
-               BannerPatternsComponent.Layer layer = layersCopy.get(finalIndex);
+               BannerPatternsComponent.Layer layer = layersCopy.get(index);
                BannerPatternsComponent.Layer modifiedLayer = new BannerPatternsComponent.Layer(layer.pattern(), componentColor);
 
-               layersCopy.set(finalIndex, modifiedLayer);
+               layersCopy.set(index, modifiedLayer);
 
                 return new BannerPatternsComponent(layersCopy);
             });
@@ -89,12 +82,12 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
     }
 
     private void componentExecute(BannerEditorScreen parent, BannerBuilder currentBanner, DyeColor selectedColor,
-                                  BannerPatternsComponent.Layer componentLayer) {
+                                  @Nullable BannerPatternsComponent.Layer componentLayer) {
         UISounds.playButtonSound();
 
         parent.addUndo(currentBanner);
 
-        DyeColor componentColor = componentLayer.color();
+        DyeColor componentColor = componentLayer == null ? currentBanner.baseBannerColor() : componentLayer.color();
         boolean isBaseBannerColor = currentBanner.baseBannerColor() == componentColor;
 
         if (Screen.hasShiftDown()) {
@@ -103,7 +96,7 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
             }
 
             currentBanner.replaceColors(componentColor, selectedColor);
-        } else if (isBaseBannerColor) {
+        } else if (componentLayer == null) {
             currentBanner.baseBannerColor(selectedColor);
         } else {
             currentBanner.replaceColor(componentLayer, selectedColor);
@@ -113,8 +106,8 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
     }
 
     @Override
-    protected Text getTooltip(BannerPatternsComponent.Layer layer) {
-        Text defaultTooltip = super.getTooltip(layer);
+    protected Text getTooltip(@Nullable BannerPatternsComponent.Layer layer, Item item) {
+        Text defaultTooltip = super.getTooltip(layer, item);
         MutableText result = defaultTooltip.copy();
 
         result.append("\n\n")

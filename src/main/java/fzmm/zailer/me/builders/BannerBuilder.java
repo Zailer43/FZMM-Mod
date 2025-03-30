@@ -1,18 +1,13 @@
 package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.block.AbstractBannerBlock;
 import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BannerPatternsComponent;
 import net.minecraft.item.*;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
@@ -66,18 +61,9 @@ public class BannerBuilder {
             stack.apply(DataComponentTypes.BASE_COLOR, null, component -> this.baseBannerColor());
         }
 
-        stack.apply(DataComponentTypes.BANNER_PATTERNS, BannerPatternsComponent.DEFAULT, component -> {
-            List<BannerPatternsComponent.Layer> layers = new ArrayList<>(this.layers);
-            DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
-
-            registryManager.get(RegistryKeys.BANNER_PATTERN).getEntry(BannerPatterns.BASE).ifPresent(entry -> {
-                if (!layers.isEmpty() && layers.get(0).pattern() == entry) {
-                    layers.remove(0);
-                }
-            });
-
-            return new BannerPatternsComponent(layers);
-        });
+        stack.apply(DataComponentTypes.BANNER_PATTERNS, BannerPatternsComponent.DEFAULT, component ->
+                new BannerPatternsComponent(new ArrayList<>(this.layers))
+        );
 
         return stack;
     }
@@ -94,18 +80,6 @@ public class BannerBuilder {
 
     public boolean isShield() {
         return this.isShield;
-    }
-
-    public BannerBuilder addLayer(DyeColor color, RegistryKey<BannerPattern> patternRegistry) {
-        DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
-        Optional<RegistryEntry.Reference<BannerPattern>> pattern = registryManager.get(RegistryKeys.BANNER_PATTERN).getEntry(patternRegistry);
-
-        if (pattern.isEmpty()) {
-            FzmmClient.LOGGER.error("[Banner builder] No banner pattern found '{}'", patternRegistry.getValue());
-            return this;
-        }
-
-        return this.addLayer(color, pattern.get());
     }
 
     public BannerBuilder addLayer(DyeColor color, RegistryEntry<BannerPattern> pattern) {
@@ -135,7 +109,7 @@ public class BannerBuilder {
         }
     }
 
-    private int indexOf(BannerPatternsComponent.Layer layer) {
+    public int indexOf(BannerPatternsComponent.Layer layer) {
         for (int i = 0; i != this.layers.size(); i++) {
             if (this.layers.get(i) == layer) {
                 return i;
@@ -188,7 +162,11 @@ public class BannerBuilder {
     }
 
     public DyeColor baseBannerColor() {
-        if (this.item instanceof BannerItem bannerItem)
+        return baseBannerColor(this.item);
+    }
+
+    public static DyeColor baseBannerColor(Item item) {
+        if (item instanceof BannerItem bannerItem)
             return bannerItem.getColor();
 
         return DyeColor.WHITE;
