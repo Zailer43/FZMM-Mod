@@ -108,22 +108,8 @@ public class HeadUtils {
                     dataOutputStream.writeBytes("\r\n--" + BOUNDARY + "--\r\n");
                 }
 
-                this.httpResponseCode = conn.getResponseCode();
-                if (this.httpResponseCode / 100 == 2) {
-                    try (InputStreamReader streamReader = new InputStreamReader(conn.getInputStream())) {
-                        StringBuilder stringBuilder = new StringBuilder();
-                        int character;
-                        while ((character = streamReader.read()) != -1) {
-                            stringBuilder.append((char) character);
-                        }
-                        this.useResponse(stringBuilder.toString());
-                        FzmmClient.LOGGER.info("[HeadUtils] '{}' head generated using mineskin", skinName);
-                    } catch (NullPointerException e) {
-                        FzmmClient.LOGGER.error("[HeadUtils] Failed to get head values from mineskin api", e);
-                    }
-                } else {
-                    FzmmClient.LOGGER.error("[HeadUtils] HTTP error {} generating skin in '{}'", this.httpResponseCode, skinName);
-                }
+                this.readResponse(skinName, conn);
+
             } catch (IOException e) {
                 FzmmClient.LOGGER.error("[HeadUtils] Head '{}' could not be generated", skinName, e);
                 this.skinValue = "";
@@ -144,18 +130,49 @@ public class HeadUtils {
         }, Util.getDownloadWorkerExecutor());
     }
 
-    private void useResponse(String reply) {
+    private void readResponse(String skinName, HttpURLConnection conn) throws IOException {
+        this.httpResponseCode = conn.getResponseCode();
+        boolean isSuccess = this.httpResponseCode / 100 == 2;
+        try (InputStreamReader streamReader = new InputStreamReader(isSuccess ? conn.getInputStream() : conn.getErrorStream())) {
+            StringBuilder stringBuilder = new StringBuilder();
+            int character;
+            while ((character = streamReader.read()) != -1) {
+                stringBuilder.append((char) character);
+            }
+            String reply = stringBuilder.toString();
+            if (Owo.DEBUG) {
+                FzmmClient.LOGGER.info("[DEBUG] [HeadUtils] HTTP Code: {}, Delay: {}, Received response: {}", this.httpResponseCode, this.delayForNextInMillis, reply);
+            }
+
+            JsonObject json = (JsonObject) JsonParser.parseString(reply);
+
+            if (isSuccess) {
+                FzmmClient.LOGGER.info("[HeadUtils] '{}' head generated using mineskin", skinName);
+                this.useSuccessResponse(json);
+            } else {
+                this.logErrorResponse(json, skinName);
+            }
+        } catch (NullPointerException e) {
+            FzmmClient.LOGGER.error("[HeadUtils] Failed to get head values from mineskin api", e);
+        }
+    }
+
+    private void useSuccessResponse(JsonObject json) {
         //https://rest.wiki/?https://api.mineskin.org/openapi.yml
-        JsonObject json = (JsonObject) JsonParser.parseString(reply);
         JsonObject texture = json.getAsJsonObject("data").getAsJsonObject("texture");
         this.skinValue = texture.get("value").getAsString();
         this.signature = texture.get("signature").getAsString();
         this.url = texture.get("url").getAsString();
         this.skinGenerated = true;
         this.delayForNextInMillis = json.getAsJsonObject("delayInfo").get("millis").getAsInt();
-        if (Owo.DEBUG) {
-            FzmmClient.LOGGER.info("[DEBUG] [HeadUtils] HTTP Code: {}, Delay: {}, Received response: {}", this.httpResponseCode, this.delayForNextInMillis, reply);
-        }
+    }
+
+    private void logErrorResponse(JsonObject json, String skinName) {
+        //https://rest.wiki/?https://api.mineskin.org/openapi.yml
+        String code = json.get("errorCode").getAsString();
+        String error = json.get("error").getAsString();
+
+        FzmmClient.LOGGER.error("[HeadUtils] HTTP error {}, generating skin '{}', Code: '{}', Error: '{}'", this.httpResponseCode, skinName, code, error);
     }
 
     public static Optional<BufferedImage> getSkin(ItemStack stack) throws IOException {
