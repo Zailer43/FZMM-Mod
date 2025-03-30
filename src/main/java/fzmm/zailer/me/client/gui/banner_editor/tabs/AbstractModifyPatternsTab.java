@@ -9,10 +9,11 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.component.type.BannerPatternsComponent;
+import net.minecraft.item.Item;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
 
     protected abstract String getGridId();
 
-    public abstract boolean shouldAddBaseColor();
+    public abstract boolean shouldAddBase();
 
     @Override
     public void update(BannerEditorScreen parent, BannerBuilder currentBanner, DyeColor color) {
@@ -38,36 +39,40 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
         BannerBuilder builder = currentBanner.copy().clearPatterns();
 
         List<BannerPatternsComponent.Layer> layers = currentBanner.layers();
-        if (this.shouldAddBaseColor()) {
-            layers = currentBanner.copy()
-                    .clearPatterns()
-                    .addLayer(currentBanner.baseBannerColor(), BannerPatterns.BASE)
-                    .addLayers(layers)
-                    .layers();
+        if (this.shouldAddBase()) {
+            this.addPreview(parent, currentBanner, color, null, builder, bannerList);
         }
 
         for (var layer : layers) {
             builder.addLayer(layer);
-
-            ItemComponent itemComponent = Components.item(builder.copy().get());
-            itemComponent.sizing(Sizing.fixed(32), Sizing.fixed(32));
-
-            this.onItemComponentCreated(parent, itemComponent, layer, currentBanner, color);
-            itemComponent.cursorStyle(CursorStyle.HAND);
-
-            Text tooltip = this.getTooltip(layer);
-            itemComponent.tooltip(tooltip);
-
-            bannerList.add(itemComponent);
+            this.addPreview(parent, currentBanner, color, layer, builder, bannerList);
         }
         this.patternsLayout.children(bannerList);
     }
 
+    private void addPreview(BannerEditorScreen parent, BannerBuilder currentBanner, DyeColor color,
+                            @Nullable BannerPatternsComponent.Layer layer, BannerBuilder builder, List<Component> bannerList) {
+        ItemComponent itemComponent = Components.item(builder.copy().get());
+        itemComponent.sizing(Sizing.fixed(32), Sizing.fixed(32));
+
+        this.onItemComponentCreated(parent, itemComponent, layer, currentBanner, color);
+        itemComponent.cursorStyle(CursorStyle.HAND);
+
+        Text tooltip = this.getTooltip(layer, itemComponent.stack().getItem());
+        itemComponent.tooltip(tooltip);
+
+        bannerList.add(itemComponent);
+    }
+
     protected abstract void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent,
-                                                   BannerPatternsComponent.Layer componentLayer,
+                                                   @Nullable BannerPatternsComponent.Layer componentLayer,
                                                    BannerBuilder currentBanner, DyeColor selectedColor);
 
-    protected Text getTooltip(BannerPatternsComponent.Layer layer) {
-        return BannerBuilder.tooltipOf(layer);
+    protected Text getTooltip(@Nullable BannerPatternsComponent.Layer layer, Item item) {
+        if (layer == null) {
+            return Text.translatable("block.minecraft.banner.base." + BannerBuilder.baseBannerColor(item).getName());
+        } else {
+            return BannerBuilder.tooltipOf(layer);
+        }
     }
 }
