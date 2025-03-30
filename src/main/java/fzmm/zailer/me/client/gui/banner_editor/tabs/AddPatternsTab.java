@@ -4,8 +4,8 @@ import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.banner_editor.BannerEditorScreen;
+import fzmm.zailer.me.client.gui.components.style.StyledComponents;
 import fzmm.zailer.me.utils.FzmmUtils;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.CursorStyle;
@@ -62,7 +62,7 @@ public class AddPatternsTab implements IBannerEditorTab {
                     .addLayer(color, pattern)
                     .get();
 
-                Component itemComponent = Components.item(banner)
+                Component itemComponent = StyledComponents.item(banner)
                         .sizing(Sizing.fixed(32), Sizing.fixed(32))
                         .tooltip(BannerBuilder.tooltipOf(new BannerPatternsComponent.Layer(pattern, color)));
 

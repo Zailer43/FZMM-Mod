@@ -3,7 +3,7 @@ package fzmm.zailer.me.client.gui.banner_editor.tabs;
 import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.banner_editor.BannerEditorScreen;
-import io.wispforest.owo.ui.component.Components;
+import fzmm.zailer.me.client.gui.components.style.StyledComponents;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -52,7 +52,7 @@ public abstract class AbstractModifyPatternsTab implements IBannerEditorTab {
 
     private void addPreview(BannerEditorScreen parent, BannerBuilder currentBanner, DyeColor color,
                             @Nullable BannerPatternsComponent.Layer layer, BannerBuilder builder, List<Component> bannerList) {
-        ItemComponent itemComponent = Components.item(builder.copy().get());
+        ItemComponent itemComponent = StyledComponents.item(builder.copy().get());
         itemComponent.sizing(Sizing.fixed(32), Sizing.fixed(32));
 
         this.onItemComponentCreated(parent, itemComponent, layer, currentBanner, color);
