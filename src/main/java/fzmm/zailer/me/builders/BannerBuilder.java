@@ -4,7 +4,6 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.block.AbstractBannerBlock;
 import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.block.entity.BannerPatterns;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BannerPatternsComponent;
@@ -64,15 +63,9 @@ public class BannerBuilder {
             stack.apply(DataComponentTypes.BASE_COLOR, null, component -> this.baseBannerColor());
         }
 
-        stack.apply(DataComponentTypes.BANNER_PATTERNS, BannerPatternsComponent.DEFAULT, component -> {
-            List<BannerPatternsComponent.Layer> layers = new ArrayList<>(this.layers);
-
-            if (!layers.isEmpty() && layers.get(0).pattern() == BannerPatterns.BASE) {
-                layers.remove(0);
-            }
-
-            return new BannerPatternsComponent(layers);
-        });
+        stack.apply(DataComponentTypes.BANNER_PATTERNS, BannerPatternsComponent.DEFAULT, component ->
+                new BannerPatternsComponent(new ArrayList<>(this.layers))
+        );
 
         return stack;
     }
@@ -145,6 +138,10 @@ public class BannerBuilder {
             }
         }
         return -1;
+    }
+
+    public boolean contains(BannerPatternsComponent.Layer layer) {
+        return this.indexOf(layer) != -1;
     }
 
     public void replaceColors(DyeColor colorToReplace, DyeColor newColor) {

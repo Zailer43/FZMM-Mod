@@ -103,7 +103,7 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
             }
 
             currentBanner.replaceColors(componentColor, selectedColor);
-        } else if (isBaseBannerColor) {
+        } else if (isBaseBannerColor && !currentBanner.contains(componentLayer)) {
             currentBanner.baseBannerColor(selectedColor);
         } else {
             currentBanner.replaceColor(componentLayer, selectedColor);
