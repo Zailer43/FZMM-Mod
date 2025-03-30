@@ -5,10 +5,11 @@ import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntity;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.GiveItemComponent;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
+import fzmm.zailer.me.client.gui.components.style.StyledComponents;
+import fzmm.zailer.me.client.gui.components.style.component.StyledItemComponent;
 import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
@@ -324,7 +325,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         this.currentPageLabel.text(Text.translatable("fzmm.gui.headGallery.label.page", page, lastPage));
 
         int lastElementIndex = Math.min((page) * maxHeadsPerPage, this.categoryHeadsWithFilter.size());
-        List<GiveItemComponent> currentPageHeads = this.getPageItems(firstElementIndex, lastElementIndex);
+        List<StyledItemComponent> currentPageHeads = this.getPageItems(firstElementIndex, lastElementIndex);
 
         assert this.client != null;
 
@@ -342,8 +343,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         });
     }
 
-    public List<GiveItemComponent> getPageItems(int startIndex, int endIndex) {
-        List<GiveItemComponent> pageItems = new ArrayList<>();
+    public List<StyledItemComponent> getPageItems(int startIndex, int endIndex) {
+        List<StyledItemComponent> pageItems = new ArrayList<>();
         FzmmConfig config = FzmmClient.CONFIG;
         int nameColor = config.colors.headGalleryName().rgb();
         int tagsColor = config.colors.headGalleryTags().rgb();
@@ -371,7 +372,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
             head = builder.get();
 
-            pageItems.add(new GiveItemComponent(head));
+            pageItems.add(StyledComponents.itemGive(head));
         }
 
         return pageItems;

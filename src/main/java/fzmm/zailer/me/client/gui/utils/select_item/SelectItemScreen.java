@@ -4,12 +4,12 @@ import com.google.common.collect.ImmutableList;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
+import fzmm.zailer.me.client.gui.components.style.StyledComponents;
 import fzmm.zailer.me.client.logic.FzmmHistory;
 import fzmm.zailer.me.mixin.combined_inventory_getter.PlayerInventoryAccessor;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -59,7 +59,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
         this.itemComponentList = new ArrayList<>();
 
         for (var requestedItem : requestedItems) {
-            this.requestedItems.put(requestedItem, Components.item(ItemStack.EMPTY));
+            this.requestedItems.put(requestedItem, StyledComponents.item(ItemStack.EMPTY));
         }
 
         this.selectedRequestedItem = requestedItems.get(0);
@@ -172,7 +172,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
 
         ItemStack processedStack = ItemUtils.process(stack);
 
-        ItemComponent itemComponent = (ItemComponent) Components.item(processedStack)
+        ItemComponent itemComponent = (ItemComponent) StyledComponents.item(processedStack)
                 .tooltip(processedStack.getTooltip(
                         Item.TooltipContext.DEFAULT,
                         this.client.player,

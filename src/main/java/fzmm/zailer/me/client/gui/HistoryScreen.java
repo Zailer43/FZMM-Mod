@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui;
 
-import fzmm.zailer.me.client.gui.components.GiveItemComponent;
 import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.style.StyledComponents;
 import fzmm.zailer.me.client.logic.FzmmHistory;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
@@ -62,7 +62,7 @@ public class HistoryScreen extends BaseFzmmScreen {
 
     private void addItems(List<ItemStack> stackList) {
         this.contentLayout.clearChildren();
-        this.contentLayout.children(stackList.stream().map(itemStack -> (Component) new GiveItemComponent(itemStack)).toList());
+        this.contentLayout.children(stackList.stream().map(itemStack -> (Component) StyledComponents.itemGive(itemStack)).toList());
         this.labelError.text(stackList.isEmpty() ? GENERATED_ITEMS_EMPTY_TEXT : Text.empty());
     }
 
