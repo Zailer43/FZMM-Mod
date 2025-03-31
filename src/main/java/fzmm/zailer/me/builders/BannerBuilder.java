@@ -1,19 +1,17 @@
 package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.block.AbstractBannerBlock;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BannerPatternsComponent;
 import net.minecraft.item.*;
-import net.minecraft.registry.*;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,26 +82,6 @@ public class BannerBuilder {
         return this.isShield;
     }
 
-    public BannerBuilder addLayer(DyeColor color, RegistryKey<BannerPattern> patternRegistry) {
-        DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
-        Optional<Registry<BannerPattern>> bannerPatternRegistry = registryManager.getOptional(RegistryKeys.BANNER_PATTERN);
-
-        if (bannerPatternRegistry.isEmpty()) {
-            FzmmClient.LOGGER.error("[Banner builder] No banner registry found");
-            return this;
-        }
-
-        Identifier patternId = patternRegistry.getValue();
-        Optional<RegistryEntry.Reference<BannerPattern>> pattern = bannerPatternRegistry.get().getEntry(patternId);
-
-        if (pattern.isEmpty()) {
-            FzmmClient.LOGGER.error("[Banner builder] No banner pattern found '{}'", patternId);
-            return this;
-        }
-
-        return this.addLayer(color, pattern.get());
-    }
-
     public BannerBuilder addLayer(DyeColor color, RegistryEntry<BannerPattern> pattern) {
         this.addLayer(new BannerPatternsComponent.Layer(pattern, color));
         return this;
@@ -131,17 +109,13 @@ public class BannerBuilder {
         }
     }
 
-    private int indexOf(BannerPatternsComponent.Layer layer) {
+    public int indexOf(BannerPatternsComponent.Layer layer) {
         for (int i = 0; i != this.layers.size(); i++) {
             if (this.layers.get(i) == layer) {
                 return i;
             }
         }
         return -1;
-    }
-
-    public boolean contains(BannerPatternsComponent.Layer layer) {
-        return this.indexOf(layer) != -1;
     }
 
     public void replaceColors(DyeColor colorToReplace, DyeColor newColor) {
@@ -188,7 +162,11 @@ public class BannerBuilder {
     }
 
     public DyeColor baseBannerColor() {
-        if (this.item instanceof BannerItem bannerItem)
+        return baseBannerColor(this.item);
+    }
+
+    public static DyeColor baseBannerColor(Item item) {
+        if (item instanceof BannerItem bannerItem)
             return bannerItem.getColor();
 
         return DyeColor.WHITE;
