@@ -19,7 +19,7 @@ public class CustomHeadEntity extends MobEntity implements ISkinMutable {
                     .disableSummon()
                     .dimensions(0.8f, 0.8f)
                     .maxTrackingRange(32)
-                    .build()
+                    .build(null)
     );
 
     private SkinTextures textures = new SkinTextures(DefaultSkinHelper.getTexture(), null, null, null, SkinTextures.Model.WIDE, false);
