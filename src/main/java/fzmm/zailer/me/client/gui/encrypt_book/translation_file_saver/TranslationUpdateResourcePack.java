@@ -47,7 +47,7 @@ public class TranslationUpdateResourcePack implements ITranslationFileSaver{
         return new ResourcePackWriter()
                 .from(resourcePackPath)
                 .fileName(resourcePackPath.getFileName().toString())
-                .file(Path.of("assets/minecraft/lang/en_us.json"), profile.toJson(), true)
+                .file(EN_US_LANG_PATH, profile.toJson(), true)
                 .write();
     }
 }

@@ -7,6 +7,8 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ITranslationFileSaver {
 
+    String EN_US_LANG_PATH = "assets/minecraft/lang/en_us.json";
+
     Text getMessage();
 
     CompletableFuture<Boolean> save(TranslationEncryptProfile profile);

@@ -12,8 +12,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -25,8 +24,8 @@ public class ResourcePackWriter {
     private byte[] icon = null;
     private Path from = null;
     private ZipOutputStream resourcePackZip;
-    private final Map<Path, byte[]> filesToWrite = new HashMap<>();
-    private final Map<Path, byte[]> jsonsToMerge = new HashMap<>();
+    private final Map<String, byte[]> filesToWrite = new HashMap<>();
+    private final Map<String, byte[]> jsonsToMerge = new HashMap<>();
 
     public ResourcePackWriter() {
     }
@@ -68,23 +67,7 @@ public class ResourcePackWriter {
             }
 
             try {
-                Path iconPath = Path.of("pack.png");
-                if (this.icon != null && !this.filesToWrite.containsKey(iconPath)) {
-                    this.filesToWrite.put(iconPath, this.icon);
-                }
-                this.addMetadata();
-
-                if (this.from != null) {
-                    try (var zipInputStream = new ZipInputStream(new FileInputStream(this.from.toFile()))) {
-                        this.addFrom(zipInputStream);
-                    }
-                }
-                this.resourcePackZip = new ZipOutputStream(new FileOutputStream(destination));
-                for (var entry : this.filesToWrite.entrySet()) {
-                    Path path = entry.getKey();
-                    this.write(path, entry.getValue());
-                }
-
+                this.write(destination);
             } catch (IOException e) {
                 FzmmClient.LOGGER.error("[ResourcePackBuilder] Error writing resource pack");
                 throw new RuntimeException(e);
@@ -103,8 +86,38 @@ public class ResourcePackWriter {
         }, Util.getIoWorkerExecutor());
     }
 
-    private void write(Path path, byte[] data) throws IOException {
-        ZipEntry entry = new ZipEntry(path.toString());
+    private void write(File destination) throws IOException {
+        //  add icon
+        String iconPath = "pack.png";
+        if (this.icon != null && !this.filesToWrite.containsKey(iconPath)) {
+            this.filesToWrite.put(iconPath, this.icon);
+        }
+        // add pack.mcmeta
+        this.addMetadata();
+
+        // add files from resource pack if it exists
+        if (this.from != null) {
+            try (var zipInputStream = new ZipInputStream(new FileInputStream(this.from.toFile()))) {
+                this.addFrom(zipInputStream);
+            }
+        }
+
+        this.resourcePackZip = new ZipOutputStream(new FileOutputStream(destination));
+
+        // write files
+        for (var entry : this.filesToWrite.entrySet()) {
+            String path = entry.getKey();
+            this.write(path, entry.getValue());
+        }
+    }
+
+    private void write(String path, byte[] data) throws IOException {
+        ZipEntry entry = new ZipEntry(path);
+        if (entry.isDirectory()) {
+            entry.setMethod(ZipEntry.STORED);
+            entry.setSize(0);
+            entry.setCrc(0);
+        }
         this.resourcePackZip.putNextEntry(entry);
         this.resourcePackZip.write(data);
         this.resourcePackZip.closeEntry();
@@ -115,7 +128,7 @@ public class ResourcePackWriter {
     }
 
     private void addMetadata() {
-        Path metadataPath = Path.of("pack.mcmeta");
+        String metadataPath = "pack.mcmeta";
         if (this.filesToWrite.containsKey(metadataPath)) {
             return;
         }
@@ -132,7 +145,7 @@ public class ResourcePackWriter {
     private void addFrom(ZipInputStream zipInputStream) throws IOException {
         ZipEntry nextEntry = zipInputStream.getNextEntry();
         while (nextEntry != null) {
-            Path jsonPath = Path.of(nextEntry.getName());
+            String jsonPath = nextEntry.getName();
 
             if (this.jsonsToMerge.containsKey(jsonPath)) {
                 JsonObject oldJson = JsonParser.parseString(new String(zipInputStream.readAllBytes())).getAsJsonObject();
@@ -183,17 +196,17 @@ public class ResourcePackWriter {
         return baos.toByteArray();
     }
 
-    public ResourcePackWriter file(Path path, byte[] data) {
+    public ResourcePackWriter file(String path, byte[] data) {
         this.filesToWrite.put(path, data);
         return this;
     }
 
-    public ResourcePackWriter file(Path path, BufferedImage image) {
+    public ResourcePackWriter file(String path, BufferedImage image) {
         this.filesToWrite.put(path, this.toByteArray(image));
         return this;
     }
 
-    public ResourcePackWriter file(Path path, JsonObject json, boolean mergeIfExists) {
+    public ResourcePackWriter file(String path, JsonObject json, boolean mergeIfExists) {
         (mergeIfExists ? this.jsonsToMerge : this.filesToWrite).put(path, json.toString().getBytes());
         return this;
     }
