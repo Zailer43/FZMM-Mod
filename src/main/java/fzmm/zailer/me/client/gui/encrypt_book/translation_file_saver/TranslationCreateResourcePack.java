@@ -10,7 +10,7 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 
-public class TranslationCreateResourcePack implements ITranslationFileSaver{
+public class TranslationCreateResourcePack implements ITranslationFileSaver {
     @Override
     public Text getMessage() {
         return Text.translatable("fzmm.gui.resourcePackBuilder.option.newResourcePack");
@@ -39,7 +39,7 @@ public class TranslationCreateResourcePack implements ITranslationFileSaver{
         return new ResourcePackWriter()
                 .fileName(resourcePackPath.getFileName().toString())
                 .description("Decrypt to " + profile.translationKey())
-                .file(Path.of("assets/minecraft/lang/en_us.json"), profile.toJson(), false)
+                .file(EN_US_LANG_PATH, profile.toJson(), false)
                 .write();
     }
 }
