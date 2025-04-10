@@ -24,6 +24,7 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 
@@ -32,7 +33,8 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
     public static final int BODY_PREVIEW_SIZE = 12;
     protected final HeadGeneratorScreen parentScreen;
     private final NativeImageBackedTexture previewTexture;
-    private final Identifier textureId;
+    @Nullable
+    private Identifier textureId;
     protected AbstractHeadEntry entry;
     private EntityComponent<Entity> previewComponent;
     protected OverlayContainer<FlowLayout> overlayContainer;
@@ -74,6 +76,8 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
     }
 
     public void setBodyPreview(boolean isBody) {
+        if (this.textureId == null)
+            return;
         this.isBodyPreview = isBody;
         Entity previewEntity;
         int size;
@@ -116,6 +120,8 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
      * @param previewSkin Update preview with {@link BufferedImage}
      */
     public void updatePreview(BufferedImage previewSkin) {
+        if (this.textureId == null)
+            return;
         NativeImage nativeImage = ImageUtils.toNativeImage(previewSkin);
         this.previewTexture.setImage(nativeImage);
         this.previewTexture.upload();
@@ -131,14 +137,15 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
         return Components.entity(this.previewComponent.horizontalSizing().get(), this.previewComponent.entity());
     }
 
+    public void close() {
+        MinecraftClient.getInstance().getTextureManager().destroyTexture(this.textureId);
+        this.textureId = null;
+    }
+
     @Override
     public void remove() {
         super.remove();
         this.close();
-    }
-
-    public void close() {
-        MinecraftClient.getInstance().getTextureManager().destroyTexture(this.textureId);
     }
 
     public BufferedImage getPreview() {
@@ -150,7 +157,6 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
 
         return ImageUtils.getBufferedImgFromNativeImg(nativeImage);
     }
-
 
     protected void addOverlay(HeadGeneratorScreen parent) {
         EntityComponent<Entity> previewEntity = this.copyCustomHeadEntity().allowMouseRotation(true);
