@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.4/owo-ui.xsd">
     <components>
         <fzmm.styled-flow-layout direction="horizontal">
             <children>
@@ -9,6 +9,7 @@
                 </fzmm.styled-label>
 
 
+                <!-- Left options -->
                 <fzmm.styled-flow-layout direction="horizontal">
                     <children>
                         <fzmm.styled-flow-layout direction="vertical" id="options-list">
@@ -22,67 +23,117 @@
                                         </fzmm.styled-label>
                                         <text-box id="content-search">
                                             <sizing>
-                                                <horizontal method="fill">100</horizontal>
+                                                <horizontal method="expand">100</horizontal>
                                             </sizing>
                                         </text-box>
                                     </children>
 
-                                    <horizontal-alignment>left</horizontal-alignment>
+                                    <sizing>
+                                        <horizontal method="fill">100</horizontal>
+                                    </sizing>
+                                </fzmm.styled-flow-layout>
+
+                                <fzmm.styled-flow-layout direction="horizontal">
+                                    <children>
+                                        <button id="tags-button">
+                                            <sizing>
+                                                <horizontal method="fill">60</horizontal>
+                                                <vertical method="fixed">16</vertical>
+                                            </sizing>
+                                        </button>
+
+                                        <button id="clear-tags">
+                                            <text translate="true">fzmm.gui.button.clear</text>
+
+                                            <sizing>
+                                                <horizontal method="expand">100</horizontal>
+                                                <vertical method="fixed">16</vertical>
+                                            </sizing>
+                                        </button>
+                                    </children>
+
                                     <gap>4</gap>
 
                                     <sizing>
                                         <horizontal method="fill">100</horizontal>
-                                        <vertical method="fixed">36</vertical>
                                     </sizing>
-
-                                    <padding>
-                                        <right>8</right>
-                                    </padding>
                                 </fzmm.styled-flow-layout>
 
-                                <template name="left-option-list">
-                                    <id>tags-layout</id>
-                                    <labelId>tags</labelId>
-
-                                    <vertical-sizing-method>fixed</vertical-sizing-method>
-                                    <vertical-sizing-value>46</vertical-sizing-value>
-                                </template>
-
-                                <fzmm.styled-flow-layout direction="vertical">
+                                <fzmm.styled-flow-layout direction="horizontal">
                                     <children>
-                                        <template name="left-option-list">
-                                            <id>minecraft-heads-category-list</id>
-                                            <labelId>category</labelId>
+                                        <fzmm.number-slider id="item-scale">
 
-                                            <vertical-sizing-method>fill</vertical-sizing-method>
-                                            <vertical-sizing-value>100</vertical-sizing-value>
-                                        </template>
+                                            <sizing>
+                                                <horizontal method="fill">60</horizontal>
+                                            </sizing>
+                                        </fzmm.number-slider>
+
+                                        <checkbox id="style-checkbox">
+                                            <text translate="true">fzmm.gui.headGallery.option.style</text>
+                                            <tooltip-text translate="true">fzmm.gui.headGallery.option.style.tooltip</tooltip-text>
+
+                                            <sizing>
+                                                <horizontal method="expand">100</horizontal>
+                                                <vertical method="fixed">16</vertical>
+                                            </sizing>
+                                        </checkbox>
                                     </children>
-                                    <margins>
-                                        <top>80</top>
-                                    </margins>
-                                    <positioning type="relative">0,0</positioning>
+
+                                    <gap>4</gap>
 
                                     <sizing>
-                                        <vertical method="fill">100</vertical>
+                                        <horizontal method="fill">100</horizontal>
                                     </sizing>
 
+                                    <vertical-alignment>center</vertical-alignment>
                                 </fzmm.styled-flow-layout>
+
+                                <fzmm.styled-label>
+                                    <text translate="true">fzmm.gui.headGallery.label.category</text>
+                                    <tooltip-text translate="true">fzmm.gui.headGallery.label.category.tooltip</tooltip-text>
+                                    <margins>
+                                        <top>4</top>
+                                    </margins>
+                                </fzmm.styled-label>
+
+                                <fzmm.styled-scroll direction="vertical">
+                                    <fzmm.styled-flow-layout direction="vertical" id="minecraft-heads-category-list">
+                                        <children>
+
+                                        </children>
+                                        <sizing>
+                                            <horizontal method="expand">100</horizontal>
+                                        </sizing>
+                                    </fzmm.styled-flow-layout>
+
+                                    <sizing>
+                                        <vertical method="expand">100</vertical>
+                                    </sizing>
+                                </fzmm.styled-scroll>
 
                             </children>
 
-                            <gap>6</gap>
+                            <gap>2</gap>
 
                             <sizing>
-                                <horizontal method="fill">30</horizontal>
-                                <vertical method="fill">75</vertical>
+                                <horizontal method="fixed">180</horizontal>
+                                <vertical method="fill">80</vertical>
                             </sizing>
 
                         </fzmm.styled-flow-layout>
 
                     </children>
+
+                    <padding>
+                        <right>4</right>
+                    </padding>
+
+                    <margins>
+                        <left>4</left>
+                    </margins>
                 </fzmm.styled-flow-layout>
 
+                <!-- Gallery -->
                 <fzmm.styled-flow-layout direction="vertical" id="gallery-layout">
                     <children>
                         <fzmm.styled-flow-layout direction="horizontal">
@@ -90,6 +141,10 @@
                                 <button id="previous-page-button">
                                     <positioning type="relative">0,100</positioning>
                                     <text translate="true">fzmm.gui.button.arrow2.left</text>
+
+                                    <sizing>
+                                        <vertical method="fixed">16</vertical>
+                                    </sizing>
                                 </button>
                                 <fzmm.styled-label id="current-page-label">
                                     <text>0/0</text>
@@ -97,6 +152,10 @@
                                 <button id="next-page-button">
                                     <positioning type="relative">100,100</positioning>
                                     <text translate="true">fzmm.gui.button.arrow2.right</text>
+
+                                    <sizing>
+                                        <vertical method="fixed">16</vertical>
+                                    </sizing>
                                 </button>
                             </children>
 
@@ -105,7 +164,7 @@
 
                             <sizing>
                                 <horizontal method="fill">100</horizontal>
-                                <vertical method="fixed">22</vertical>
+                                <vertical method="fixed">18</vertical>
                             </sizing>
                             <margins>
                                 <all>1</all>
@@ -143,7 +202,6 @@
                                         <horizontal-alignment>left</horizontal-alignment>
                                     </fzmm.styled-flow-layout>
 
-
                                     <sizing>
                                         <vertical method="fill">100</vertical>
                                     </sizing>
@@ -152,7 +210,7 @@
                             </children>
 
                             <margins>
-                                <bottom>25</bottom>
+                                <bottom>20</bottom>
                             </margins>
 
                             <sizing>
@@ -163,8 +221,8 @@
                     </children>
 
                     <sizing>
-                        <horizontal method="fill">52</horizontal>
-                        <vertical method="fill">75</vertical>
+                        <horizontal method="expand">100</horizontal>
+                        <vertical method="fill">80</vertical>
                     </sizing>
 
                     <surface>
@@ -179,19 +237,23 @@
                     <vertical-alignment>center</vertical-alignment>
                 </fzmm.styled-flow-layout>
 
+                <!-- Right options -->
                 <fzmm.styled-flow-layout direction="vertical" id="preview-layout">
                     <children>
                     </children>
 
                     <sizing>
                         <horizontal method="fixed">48</horizontal>
-                        <vertical method="fill">75</vertical>
+                        <vertical method="fill">80</vertical>
                     </sizing>
+
+                    <margins>
+                        <right>4</right>
+                    </margins>
                 </fzmm.styled-flow-layout>
 
                 <fzmm.styled-flow-layout direction="horizontal">
                     <children>
-
                         <fzmm.styled-flow-layout direction="horizontal">
                             <children>
 
@@ -256,49 +318,6 @@
             </button>
         </option-button>
 
-        <left-option-list>
-            <fzmm.styled-flow-layout direction="vertical">
-                <children>
-                    <fzmm.styled-label>
-                        <text translate="true">fzmm.gui.headGallery.label.{{labelId}}</text>
-                        <tooltip-text translate="true">fzmm.gui.headGallery.label.{{labelId}}.tooltip</tooltip-text>
-
-                        <margins>
-                            <vertical>4</vertical>
-                        </margins>
-                    </fzmm.styled-label>
-
-                    <fzmm.styled-scroll direction="vertical">
-
-                        <fzmm.styled-flow-layout direction="vertical" id="{{id}}">
-                            <children>
-
-                            </children>
-                            <sizing>
-                                <horizontal method="fill">100</horizontal>
-                            </sizing>
-                        </fzmm.styled-flow-layout>
-
-                        <sizing>
-                            <vertical method="fill">100</vertical>
-                        </sizing>
-
-                        <margins>
-                            <bottom>18</bottom>
-                        </margins>
-
-                        <padding>
-                            <right>8</right>
-                        </padding>
-                    </fzmm.styled-scroll>
-                </children>
-
-                <sizing>
-                    <vertical method="{{vertical-sizing-method}}">{{vertical-sizing-value}}</vertical>
-                </sizing>
-            </fzmm.styled-flow-layout>
-        </left-option-list>
-
         <select-tag>
             <fzmm.styled-flow-layout direction="vertical">
                 <children>
@@ -308,18 +327,26 @@
                         </margins>
                     </fzmm.styled-label>
 
-                    <fzmm.text-box-row>
-                        <id>tag-search</id>
-                        <removeHorizontalMargins>true</removeHorizontalMargins>
-                    </fzmm.text-box-row>
+                    <fzmm.styled-flow-layout direction="horizontal">
+                        <children>
+                            <text-box id="tag-search">
+                                <sizing>
+                                    <horizontal method="fill">70</horizontal>
+                                </sizing>
+                            </text-box>
 
-                    <button id="clear-selected-tags">
-                        <text translate="true">fzmm.gui.headGallery.button.clearSelectedTags</text>
+                            <button id="clear-tags-overlay">
+                                <text translate="true">fzmm.gui.button.clear</text>
 
-                        <sizing>
-                            <horizontal method="fill">100</horizontal>
-                        </sizing>
-                    </button>
+                                <sizing>
+                                    <horizontal method="expand">100</horizontal>
+                                </sizing>
+                            </button>
+                        </children>
+                        <vertical-alignment>center</vertical-alignment>
+
+                        <gap>2</gap>
+                    </fzmm.styled-flow-layout>
 
                     <fzmm.styled-scroll direction="vertical" id="tag-scroll">
                         <fzmm.styled-flow-layout direction="ltr-text-flow" id="minecraft-heads-tags-ltr">
@@ -339,7 +366,7 @@
 
                         <sizing>
                             <horizontal method="fill">100</horizontal>
-                            <vertical method="fill">60</vertical>
+                            <vertical method="expand">100</vertical>
                         </sizing>
                     </fzmm.styled-scroll>
                 </children>
@@ -349,6 +376,7 @@
 
                 <sizing>
                     <horizontal method="fill">80</horizontal>
+                    <vertical method="fill">80</vertical>
                 </sizing>
 
                 <gap>5</gap>
@@ -359,7 +387,7 @@
                     <panel dark="true"/>
                 </surface>
 
-                <z-index>500</z-index>
+                <z-index>300</z-index>
             </fzmm.styled-flow-layout>
         </select-tag>
     </templates>

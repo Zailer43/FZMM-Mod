@@ -144,9 +144,11 @@ public class FzmmConfigModel {
     public static class HeadGalleryNest {
         @RestartRequired
         public boolean cacheCategories = true;
-        public boolean stylingHeads = true;
+        public boolean setStyleToHeads = true;
         @RangeConstraint(min = 1, max = 2500)
         public int maxHeadsPerPage = 300;
+        @RangeConstraint(min = 1, max = 3, decimalPlaces = 1)
+        public double itemScale = 1.5d;
     }
 
     public static class HeadGeneratorNest {

@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.4/owo-ui.xsd">
     <components>
         <fzmm.styled-flow-layout direction="horizontal">
             <children>
@@ -51,7 +51,6 @@
                                                 <children>
                                                     <button id="undo">
                                                         <text translate="true">fzmm.gui.button.arrow2.left</text>
-                                                        <tooltip-text translate="true">fzmm.gui.bannerEditor.option.undo.tooltip</tooltip-text>
 
                                                         <sizing>
                                                             <vertical method="fixed">16</vertical>
@@ -67,7 +66,6 @@
 
                                                     <button id="redo">
                                                         <text translate="true">fzmm.gui.button.arrow2.right</text>
-                                                        <tooltip-text translate="true">fzmm.gui.bannerEditor.option.redo.tooltip</tooltip-text>
 
                                                         <sizing>
                                                             <vertical method="fixed">16</vertical>
