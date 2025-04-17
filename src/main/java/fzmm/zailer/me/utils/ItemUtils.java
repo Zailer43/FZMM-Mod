@@ -11,10 +11,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.wispforest.owo.config.ui.ConfigScreen;
 import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -61,9 +61,6 @@ public class ItemUtils {
      * @return {@code true} if the item was successfully given
      */
     public static boolean give(ItemStack stack) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        assert client.player != null;
-
         Optional<ISnackBarComponent> snackBar = canGive(stack);
         if (snackBar.isPresent()) {
             MinecraftClient.getInstance().execute(() ->
@@ -73,13 +70,25 @@ public class ItemUtils {
         }
 
 
+        return uncheckedGive(stack);
+    }
+
+    private static boolean uncheckedGive(ItemStack stack) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        assert client.player != null;
+
         if (FzmmClient.CONFIG.general.giveClientSide()) {
-            client.player.equipStack(EquipmentSlot.MAINHAND, stack);
+            updateHandClientSide(stack);
         } else {
-            assert client.interactionManager != null;
             PlayerInventory playerInventory = client.player.getInventory();
 
-            playerInventory.addPickBlock(stack);
+            int slot = playerInventory.getSlotWithStack(stack);
+            if (PlayerInventory.isValidHotbarIndex(slot)) {
+                playerInventory.selectedSlot = slot;
+            } else {
+                playerInventory.addPickBlock(stack);
+            }
+
             updateHand(stack);
         }
 
@@ -107,7 +116,7 @@ public class ItemUtils {
             long stackSize = getLengthInBytes(stack);
             long inventorySize = InventoryUtils.getInventorySizeInBytes();
             if ((stackSize + inventorySize) > 8000000) {
-                FzmmClient.LOGGER.warn("[FzmmUtils] An attempt was made to give an item with size of {} bytes (with {} bytes already in inventory)",
+                FzmmClient.LOGGER.warn("[ItemUtils] An attempt was made to give an item with size of {} bytes (with {} bytes already in inventory)",
                         stackSize, inventorySize);
 
                 return Optional.of(builder.details(Text.translatable("fzmm.giveItem.exceedLimit",
@@ -126,14 +135,20 @@ public class ItemUtils {
         FzmmHistory.add(stack);
 
         if (FzmmClient.CONFIG.general.checkValidCodec() && !isCodecValid(stack)) {
-            FzmmClient.LOGGER.warn("[FzmmUtils] An item with an invalid codec was found: {}", stack.getComponents().toString());
+            FzmmClient.LOGGER.warn("[ItemUtils] An item with an invalid codec was found: {}", stack.getComponents().toString());
             return Optional.of(builder.details(Text.translatable("fzmm.giveItem.codecError"))
                     .backgroundColor(FzmmStyles.ALERT_WARNING_COLOR)
                     .button(snackBar -> Components.button(Text.translatable("fzmm.gui.title.configs.icon"),
                             buttonComponent -> {
                                 client.setScreen(ConfigScreen.create(FzmmClient.CONFIG, client.currentScreen));
                                 snackBar.close();
-                            }))
+                            })
+                    ).button(snackBar -> Components.button(Text.translatable("fzmm.giveItem.codecError.ignore"),
+                            buttonComponent -> {
+                                uncheckedGive(stack);
+                                snackBar.close();
+                            })
+                    ).sizing(Sizing.fixed(250), Sizing.content())
                     .build()
             );
         }
@@ -231,7 +246,16 @@ public class ItemUtils {
         assert client.player != null;
 
         PlayerInventory playerInventory = client.player.getInventory();
+        updateHandClientSide(stack); // required since 1.21.2
+
+        // server-side sync
         client.interactionManager.clickCreativeStack(stack, PlayerInventory.MAIN_SIZE + playerInventory.selectedSlot);
+    }
+
+    private static void updateHandClientSide(ItemStack stack) {
+        assert MinecraftClient.getInstance().player != null;
+        PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
+        inventory.setStack(inventory.selectedSlot, stack);
     }
 
     public static String getLengthInKB(long length) {
