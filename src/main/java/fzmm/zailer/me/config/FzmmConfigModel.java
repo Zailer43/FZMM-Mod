@@ -51,7 +51,6 @@ public class FzmmConfigModel {
         public boolean giveClientSide = false;
         public boolean showSymbolButton = true;
         public boolean showItemSize = true;
-        public boolean checkValidCodec = true;
         public boolean giveItemSizeLimit = true;
         public boolean removeViaVersionTags = true;
     }

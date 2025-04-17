@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -33,6 +34,14 @@ public class FzmmHistory {
 
     public static void addGeneratedHeads(ItemStack stack) {
         add(stack, GENERATED_HEADS, FzmmClient.CONFIG.history.maxHeadHistory());
+    }
+
+    public static void add(ItemStack stack) {
+        if (stack.isOf(Items.PLAYER_HEAD)) {
+            addGeneratedHeads(stack);
+        } else {
+            addGeneratedItems(stack);
+        }
     }
 
     public static void add(ItemStack stack, ArrayDeque<ItemStack> stacks, int max) {
