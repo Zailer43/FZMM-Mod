@@ -304,8 +304,7 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
                 }
             }
 
-            // owo-lib 1.21 workaround of Color.ofDye
-            dyeColorsComponents.add(new Pair<>(Color.ofRgb(dyeColor.getEntityColor()), Components.item(dyeItem.getDefaultStack())));
+            dyeColorsComponents.add(new Pair<>(Color.ofDye(dyeColor), Components.item(dyeItem.getDefaultStack())));
         }
 
         List<Component> dyeComponents = this.getColorsComponentsWithIcon(picker, dyeColorsComponents);
