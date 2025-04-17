@@ -1,5 +1,6 @@
 package fzmm.zailer.me.utils;
 
+import com.mojang.authlib.GameProfile;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.HistoryScreen;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
@@ -14,8 +15,10 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.PlayerHeadItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
@@ -59,7 +62,6 @@ public class ItemUtils {
             );
             return false;
         }
-
 
         return uncheckedGive(stack);
     }
@@ -147,19 +149,28 @@ public class ItemUtils {
      */
     public static ItemStack process(ItemStack stack) {
         ItemStack stackCopy = stack.copy();
-        if (!FzmmClient.CONFIG.general.removeViaVersionTags()) {
-            return stackCopy;
-        }
-
         NbtCompound customTag = stackCopy.getOrCreateNbt();
 
-        // This affects multiplayer when the server is on a lower version and ViaVersion is used.
-        //
-        // When removing ViaVersion tags, the cached version for ViaVersion is deleted.
-        // These cached versions are used for players on older versions, but these tags
-        // are more important than those for the higher version. Consequently, if you
-        // modify an item with these tags, it will later revert to the cached version, losing the changes.
-        recursiveRemoveTags(customTag, s -> s.startsWith("VV|Protocol"));
+        if (FzmmClient.CONFIG.general.removeViaVersionTags()) {
+
+            // This affects multiplayer when the server is on a lower version and ViaVersion is used.
+            //
+            // When removing ViaVersion tags, the cached version for ViaVersion is deleted.
+            // These cached versions are used for players on older versions, but these tags
+            // are more important than those for the higher version. Consequently, if you
+            // modify an item with these tags, it will later revert to the cached version, losing the changes.
+            recursiveRemoveTags(customTag, s -> s.startsWith("VV|Protocol"));
+        }
+
+
+        if (FzmmClient.CONFIG.general.minimizeHeadTexturesTag() && customTag.contains(PlayerHeadItem.SKULL_OWNER_KEY, NbtElement.COMPOUND_TYPE)) {
+            GameProfile profile = NbtHelper.toGameProfile(customTag.getCompound(PlayerHeadItem.SKULL_OWNER_KEY));
+            if (profile != null) {
+                profile = HeadUtils.minimizeTextures(profile);
+                NbtCompound skullOwner = NbtHelper.writeGameProfile(new NbtCompound(), profile);
+                customTag.put(PlayerHeadItem.SKULL_OWNER_KEY, skullOwner);
+            }
+        }
 
         return stackCopy;
     }

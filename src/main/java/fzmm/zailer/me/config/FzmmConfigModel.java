@@ -52,6 +52,7 @@ public class FzmmConfigModel {
         public boolean showSymbolButton = true;
         public boolean showItemSize = true;
         public boolean giveItemSizeLimit = true;
+        public boolean minimizeHeadTexturesTag = true;
         public boolean removeViaVersionTags = true;
     }
 

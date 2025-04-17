@@ -170,11 +170,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
 
         ItemStack processedStack = ItemUtils.process(stack);
 
-        ItemComponent itemComponent = (ItemComponent) StyledComponents.item(processedStack)
-                .tooltip(processedStack.getTooltip(
-                        this.client.player,
-                        this.client.options.advancedItemTooltips ? TooltipContext.Default.ADVANCED : TooltipContext.Default.BASIC
-                ));
+        ItemComponent itemComponent = StyledComponents.item(processedStack).setTooltipFromStack(true);
 
         itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
             this.selectedRequestedItem.setStack(processedStack);

@@ -1,14 +1,13 @@
 package fzmm.zailer.me.builders;
 
 import com.mojang.authlib.GameProfile;
-import fzmm.zailer.me.client.gui.converters.tabs.ConverterUuidToArrayTab;
 import fzmm.zailer.me.client.logic.FzmmHistory;
+import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.PlayerHeadItem;
 import net.minecraft.nbt.*;
-import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -20,21 +19,14 @@ public class HeadBuilder {
     private String headName;
     @Nullable
     private String signature;
-    private NbtIntArray id;
+    private UUID uuid;
     private boolean addToHeadHistory;
 
     private HeadBuilder() {
         this.skinValue = "";
         this.headName = null;
         this.addToHeadHistory = true;
-
-        Random random = Random.create();
-        this.id = new NbtIntArray(new int[]{
-                random.nextInt(Integer.MAX_VALUE),
-                random.nextInt(Integer.MAX_VALUE),
-                random.nextInt(Integer.MAX_VALUE),
-                random.nextInt(Integer.MAX_VALUE)}
-        );
+        this.uuid = UUID.randomUUID();
     }
 
     public static HeadBuilder builder() {
@@ -53,16 +45,17 @@ public class HeadBuilder {
         properties.put(TagsConstant.HEAD_PROPERTIES_TEXTURES, textures);
 
         skullOwner.put(TagsConstant.HEAD_PROPERTIES, properties);
-        skullOwner.put("Id", this.id);
+        skullOwner.putUuid("Id", this.uuid);
 
         if (this.headName != null)
             skullOwner.putString("Name", this.headName);
-
 
         tag.put(PlayerHeadItem.SKULL_OWNER_KEY, skullOwner);
 
         ItemStack stack = Items.PLAYER_HEAD.getDefaultStack();
         stack.setNbt(tag);
+        stack = ItemUtils.process(stack);
+
         if (this.addToHeadHistory)
             FzmmHistory.addGeneratedHeads(stack);
         return stack;
@@ -84,7 +77,7 @@ public class HeadBuilder {
     }
 
     public HeadBuilder id(UUID id) {
-        this.id = new NbtIntArray(ConverterUuidToArrayTab.UUIDtoArray(id));
+        this.uuid = id;
         return this;
     }
 
@@ -96,6 +89,7 @@ public class HeadBuilder {
     public static ItemStack of(String username) {
         ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
         head.setSubNbt(PlayerHeadItem.SKULL_OWNER_KEY, NbtString.of(username));
+        head = ItemUtils.process(head);
 
         FzmmHistory.addGeneratedHeads(head);
         return head;
@@ -107,6 +101,7 @@ public class HeadBuilder {
 
         NbtHelper.writeGameProfile(skullOwner, profile);
         head.setSubNbt(PlayerHeadItem.SKULL_OWNER_KEY, skullOwner);
+        head = ItemUtils.process(head);
 
         FzmmHistory.addGeneratedHeads(head);
         return head;

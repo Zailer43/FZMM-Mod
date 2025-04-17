@@ -620,6 +620,8 @@
   "text.config.fzmm.option.general.giveClientSide.tooltip": "Makes it so items obtained using the mod are given client-side.\n\nNote: if you open the inventory in creative the item is obtained server-side.",
   "text.config.fzmm.option.general.giveItemSizeLimit": "Prevents exceeding the item size limit (8MB)",
   "text.config.fzmm.option.general.giveItemSizeLimit.tooltip": "Limit the size of NBT data for items to prevent hitting the\nserver limit (8MB).\n\nNote: If the total size of your inventory reaches 8MB or more,\nyou may be kicked every time you try to join that server.\n\u00a7cDisable at your own risk.",
+  "text.config.fzmm.option.general.minimizeHeadTexturesTag": "Minimize head tag 'textures'",
+  "text.config.fzmm.option.general.minimizeHeadTexturesTag.tooltip": "Minimizes the size of the tag 'textures' when getting a head,\nthis can solve that item to be removed by some aggressive anticheats\nor simply reduce the size of the item nbt.",
   "text.config.fzmm.option.general.removeViaVersionTags": "Improves item modification compatibility with older version servers",
   "text.config.fzmm.option.general.removeViaVersionTags.tooltip": "By removing the ViaVersion tags from the item when it's modified,\nit ensures that the modification isn't removed on a lower version server.\n\nThis is because ViaVersion has higher priority due to its tags,\nwhich are added when the item is synced, preventing proper modification\nand reverting the item to the first synchronized version.",
   "text.config.fzmm.option.general.showItemSize": "Show item size",

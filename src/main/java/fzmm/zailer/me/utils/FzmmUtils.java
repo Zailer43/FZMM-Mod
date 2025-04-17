@@ -22,6 +22,7 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClients;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -222,5 +223,23 @@ public class FzmmUtils {
                 .findFirst();
 
         return onlineUsername.map(networkHandler::getPlayerListEntry).orElse(null);
+    }
+
+    public static Optional<String> decodeBase64(String encoded) {
+        try {
+            byte[] decodedValue = Base64.getDecoder().decode(encoded);
+            return Optional.of(new String(decodedValue, StandardCharsets.UTF_8));
+        } catch (Exception ignored) {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<String> encodeBase64(String message) {
+        try {
+            byte[] messageByte = message.getBytes(StandardCharsets.UTF_8);
+            return Optional.of(Base64.getEncoder().encodeToString(messageByte));
+        } catch (Exception ignored) {
+            return Optional.empty();
+        }
     }
 }
