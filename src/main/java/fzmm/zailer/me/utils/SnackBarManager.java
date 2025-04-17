@@ -21,6 +21,7 @@ public class SnackBarManager {
     public static final String CLIPBOARD_ID = "clipboard";
     public static final String ENCRYPTOR_SAVE_ID = "encryptor_save";
     public static final String GIVE_ID = "give";
+    public static final String HEAD_GALLERY_ID = "head_gallery";
     public static final String HEAD_GENERATOR_ID = "head_generator";
     public static final String HEAD_GENERATOR_SAVE_ID = "head_generator_save";
     public static final String IMAGE_ID = "load_image";
