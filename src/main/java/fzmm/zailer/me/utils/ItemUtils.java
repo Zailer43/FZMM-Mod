@@ -32,9 +32,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class ItemUtils {
@@ -175,26 +173,36 @@ public class ItemUtils {
      */
     public static ItemStack process(ItemStack stack) {
         ItemStack stackCopy = stack.copy();
-        if (!FzmmClient.CONFIG.general.removeViaVersionTags()) {
-            return stackCopy;
+
+        if (FzmmClient.CONFIG.general.removeViaVersionTags()) {
+            stackCopy.apply(DataComponentTypes.CUSTOM_DATA, null, nbtComponent -> {
+                if (nbtComponent == null) {
+                    return null;
+                }
+
+                NbtCompound customTag = nbtComponent.copyNbt();
+
+                // This affects multiplayer when the server is on a lower version and ViaVersion is used.
+                //
+                // When removing ViaVersion tags, the cached version for ViaVersion is deleted.
+                // These cached versions are used for players on older versions, but these tags
+                // are more important than those for the higher version. Consequently, if you
+                // modify an item with these tags, it will later revert to the cached version, losing the changes.
+                recursiveRemoveTags(customTag, s -> s.startsWith("VV|Protocol"));
+
+                return customTag.getKeys().isEmpty() ? null : NbtComponent.of(customTag);
+            });
         }
-        stackCopy.apply(DataComponentTypes.CUSTOM_DATA, null, nbtComponent -> {
-            if (nbtComponent == null) {
-                return null;
-            }
 
-            NbtCompound customTag = nbtComponent.copyNbt();
+        if (FzmmClient.CONFIG.general.minimizeHeadTexturesTag()) {
+            stackCopy.apply(DataComponentTypes.PROFILE, null, profileComponent -> {
+                if (profileComponent == null) {
+                    return null;
+                }
 
-            // This affects multiplayer when the server is on a lower version and ViaVersion is used.
-            //
-            // When removing ViaVersion tags, the cached version for ViaVersion is deleted.
-            // These cached versions are used for players on older versions, but these tags
-            // are more important than those for the higher version. Consequently, if you
-            // modify an item with these tags, it will later revert to the cached version, losing the changes.
-            recursiveRemoveTags(customTag, s -> s.startsWith("VV|Protocol"));
-
-            return customTag.getKeys().isEmpty() ? null : NbtComponent.of(customTag);
-        });
+                return HeadUtils.minimizeTextures(profileComponent.gameProfile());
+            });
+        }
 
         return stackCopy;
     }

@@ -2,6 +2,10 @@ package fzmm.zailer.me.utils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import com.mojang.authlib.properties.PropertyMap;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
@@ -20,8 +24,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -213,5 +216,75 @@ public class HeadUtils {
         }
 
         return Optional.ofNullable(stack);
+    }
+
+    public static ProfileComponent minimizeTextures(GameProfile profile) {
+        ProfileComponent profileComponent = new ProfileComponent(profile);
+        Optional<String> unwrappedUrl = unwrapUrl(profileComponent);
+        if (unwrappedUrl.isEmpty()) {
+            return profileComponent;
+        }
+
+        Optional<String> wrappedUrl = wrapUrl(unwrappedUrl.get());
+        if (wrappedUrl.isEmpty()) {
+            return profileComponent;
+        }
+
+        PropertyMap propertiesMap = new PropertyMap();
+        propertiesMap.put("textures", new Property("textures", wrappedUrl.get()));
+
+        return new ProfileComponent(Optional.of(profile.getName()), Optional.of(profile.getId()), propertiesMap);
+    }
+
+    public static Optional<String> unwrapUrl(ProfileComponent profileComponent) {
+        List<Property> texturesProperties = profileComponent.properties().get("textures").stream().toList();
+
+        if (texturesProperties.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Optional<String> textureValueOptional = FzmmUtils.decodeBase64(texturesProperties.get(0).value());
+        if (textureValueOptional.isEmpty()) {
+            return Optional.empty();
+        }
+
+        try {
+            JsonObject json = JsonParser.parseString(textureValueOptional.get()).getAsJsonObject();
+            if (!json.has("textures") || !json.get("textures").isJsonObject()) {
+                return Optional.empty();
+            }
+
+            JsonObject textures = json.getAsJsonObject("textures");
+            if (!textures.has("SKIN") || !textures.get("SKIN").isJsonObject()) {
+                return Optional.empty();
+            }
+
+            json = textures.get("SKIN").getAsJsonObject();
+            if (!json.has("url") || !json.get("url").isJsonPrimitive()) {
+                return Optional.empty();
+            }
+
+            JsonPrimitive jsonUrl = json.getAsJsonPrimitive("url");
+            if (!jsonUrl.isString()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(jsonUrl.getAsString());
+        } catch (Exception ignored) {
+            return Optional.empty();
+        }
+    }
+
+    public static Optional<String> wrapUrl(String url) {
+        JsonObject skin = new JsonObject();
+        skin.addProperty("url", url);
+
+        JsonObject textures = new JsonObject();
+        textures.add("SKIN", skin);
+
+        JsonObject json = new JsonObject();
+        json.add("textures", textures);
+
+        return FzmmUtils.encodeBase64(json.toString());
     }
 }
