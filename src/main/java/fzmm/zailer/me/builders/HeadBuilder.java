@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import fzmm.zailer.me.client.logic.FzmmHistory;
+import fzmm.zailer.me.utils.ItemUtils;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.ItemStack;
@@ -48,6 +49,7 @@ public class HeadBuilder {
                     propertiesMap
             );
         });
+        stack = ItemUtils.process(stack);
 
         if (this.addToHeadHistory)
             FzmmHistory.addGeneratedHeads(stack);
@@ -98,6 +100,7 @@ public class HeadBuilder {
 
         head.apply(DataComponentTypes.PROFILE, null, component ->
                 new ProfileComponent(safeHeadName(username), Optional.empty(), new PropertyMap()));
+        head = ItemUtils.process(head);
 
         FzmmHistory.addGeneratedHeads(head);
         return head;
@@ -107,6 +110,7 @@ public class HeadBuilder {
         ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
 
         head.apply(DataComponentTypes.PROFILE, null, component -> new ProfileComponent(profile));
+        head = ItemUtils.process(head);
 
         FzmmHistory.addGeneratedHeads(head);
         return head;
