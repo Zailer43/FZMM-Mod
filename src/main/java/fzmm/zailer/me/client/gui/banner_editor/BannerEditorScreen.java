@@ -78,11 +78,24 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         this.undoButton = rootComponent.childById(ButtonComponent.class, UNDO_BUTTON_ID);
         checkNull(this.undoButton, "button", UNDO_BUTTON_ID);
         this.undoButton.onPress(buttonComponent -> this.undo());
+        this.undoButton.tooltip(List.of(
+                Text.translatable("fzmm.gui.bannerEditor.option.undo.tooltip"),
+                Text.empty(),
+                Text.translatable("fzmm.gui.hotkey.single"),
+                Text.translatable("fzmm.gui.hotkey.ctrl").append(" + Z") // this doesn't need to be translatable, right?
+        ));
 
         this.redoArray = new ArrayDeque<>();
         this.redoButton = rootComponent.childById(ButtonComponent.class, REDO_BUTTON_ID);
         checkNull(this.redoButton, "button", REDO_BUTTON_ID);
         this.redoButton.onPress(buttonComponent -> this.redo());
+        this.redoButton.tooltip(List.of(
+                Text.translatable("fzmm.gui.bannerEditor.option.redo.tooltip"),
+                Text.empty(),
+                Text.translatable("fzmm.gui.hotkey.plural"),
+                Text.translatable("fzmm.gui.hotkey.ctrl").append(" + Y"),
+                Text.translatable("fzmm.gui.hotkey.ctrl").append(" + ").append(Text.translatable("fzmm.gui.hotkey.shift")).append(" + Z")
+        ));
 
         this.clearUndo();
 
