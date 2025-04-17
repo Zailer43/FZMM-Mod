@@ -29,7 +29,6 @@ import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.FocusHandler;
-import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -83,15 +82,6 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<StyledFlowLayout>
 
         if (this.getRoot().focusHandler() != null) {
             this.initFocus(this.getRoot().focusHandler());
-        }
-
-        // FIXME: https://github.com/wisp-forest/owo-lib/issues/340
-        if (!this.invalid && this.uiAdapter != null) {
-            ScreenEvents.afterRender(this).register((screen, drawContext, mouseX, mouseY, tickDelta) -> {
-                if (this.uiAdapter != null) {
-                    this.uiAdapter.drawTooltip(drawContext, mouseX, mouseY, tickDelta);
-                }
-            });
         }
     }
 
