@@ -2,16 +2,15 @@ package fzmm.zailer.me.client.gui.imagetext.tabs;
 
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.LoreOption;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
-import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
@@ -23,7 +22,6 @@ import net.minecraft.util.Hand;
 import java.util.List;
 
 public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip {
-    private static final String LORE_MODE_ID = "loreMode";
     private ContextMenuButton loreModeButton;
     private LoreOption loreMode;
 
@@ -49,9 +47,8 @@ public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.loreModeButton = rootComponent.childById(ContextMenuButton.class, LORE_MODE_ID);
-        BaseFzmmScreen.checkNull(this.loreModeButton, "context-menu-button", LORE_MODE_ID);
+    public void setupComponents(EFlowLayout rootComponent) {
+        this.loreModeButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "loreMode");
         this.loreModeButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : LoreOption.values()) {
                 dropdownComponent.button(Text.translatable(option.getTranslationKey()), dropdownButton -> {
@@ -77,7 +74,7 @@ public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip {
 
         MutableText currentLore = Text.literal(String.valueOf(loreSize));
         if (loreSize > LoreComponent.MAX_LORES) {
-           currentLore.setStyle(currentLore.getStyle().withColor(FzmmStyles.TEXT_ERROR_COLOR.rgb()));
+           currentLore.setStyle(currentLore.getStyle().withColor(EStyles.TEXT_ERROR_COLOR.rgb()));
         }
 
         return Text.translatable("fzmm.gui.imagetext.tab.lore.tooltip", currentLore, LoreComponent.MAX_LORES);

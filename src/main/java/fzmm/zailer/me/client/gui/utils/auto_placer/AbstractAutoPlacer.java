@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.utils.auto_placer;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.player_statue.PlayerStatuePlacerScreen;
 import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
@@ -22,12 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
     private static final int DELAY_IN_MILLISECONDS = 500;
-    private static final String MAIN_LAYOUT_ID = "main-layout";
-    private static final String EXECUTE_ID = "execute";
-    private static final String CANCEL_ID = "cancel";
-    private static final String LOADING_BAR_ID = "loading-bar";
-    private static final String LOADING_LABEL_ID = "loading-label";
-    private static final String INFO_LABELS_ID = "info-labels";
     protected FlowLayout loadingBarLayout;
     protected LabelComponent loadingLabel;
     protected ButtonComponent cancelButton;
@@ -37,29 +32,21 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
     }
 
     @Override
-    protected void setup(FlowLayout rootComponent) {
+    protected void setup(EFlowLayout rootComponent) {
         assert this.client != null;
         assert this.client.player != null;
 
-        FlowLayout mainLayout = rootComponent.childById(FlowLayout.class, MAIN_LAYOUT_ID);
-        checkNull(mainLayout, "flow-layout", MAIN_LAYOUT_ID);
+        rootComponent.childByIdOrThrow(FlowLayout.class, "main-layout");
 
-        ButtonComponent executeButton = rootComponent.childById(ButtonComponent.class, EXECUTE_ID);
-        checkNull(executeButton, "button", EXECUTE_ID);
+        ButtonComponent executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "execute");
         executeButton.setMessage(Text.translatable(BaseFzmmScreen.getOptionBaseTranslationKey(this.baseScreenTranslationKey) + "execute"));
 
-        this.cancelButton = rootComponent.childById(ButtonComponent.class, CANCEL_ID);
-        checkNull(this.cancelButton, "button", CANCEL_ID);
+        this.cancelButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "cancel");
         this.cancelButton.onPress(buttonComponent -> this.close());
 
-        this.loadingBarLayout = rootComponent.childById(FlowLayout.class, LOADING_BAR_ID);
-        checkNull(this.loadingBarLayout, "flow-layout", LOADING_BAR_ID);
-
-        this.loadingLabel = rootComponent.childById(LabelComponent.class, LOADING_LABEL_ID);
-        checkNull(this.loadingLabel, "label", LOADING_LABEL_ID);
-
-        FlowLayout infoLabels = rootComponent.childById(FlowLayout.class, INFO_LABELS_ID);
-        checkNull(infoLabels, "flow-layout", INFO_LABELS_ID);
+        this.loadingBarLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "loading-bar");
+        this.loadingLabel = rootComponent.childByIdOrThrow(LabelComponent.class, "loading-label");
+        FlowLayout infoLabels = rootComponent.childByIdOrThrow(FlowLayout.class, "info-labels");
 
         infoLabels.children(this.getInfoLabels());
 

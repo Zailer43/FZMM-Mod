@@ -2,10 +2,10 @@ package fzmm.zailer.me.utils;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.HistoryScreen;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.SnackBarBuilder;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
 import fzmm.zailer.me.client.logic.FzmmHistory;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -32,7 +32,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class ItemUtils {
@@ -102,7 +104,7 @@ public class ItemUtils {
 
         SnackBarBuilder builder = BaseSnackBarComponent.builder(SnackBarManager.GIVE_ID)
                 .title(GIVE_ITEM_ERROR)
-                .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                 .keepOnLimit()
                 .highTimer()
                 .startTimer()
@@ -135,7 +137,7 @@ public class ItemUtils {
         if (FzmmClient.CONFIG.general.checkValidCodec() && !isCodecValid(stack)) {
             FzmmClient.LOGGER.warn("[ItemUtils] An item with an invalid codec was found: {}", stack.getComponents().toString());
             return Optional.of(builder.details(Text.translatable("fzmm.giveItem.codecError"))
-                    .backgroundColor(FzmmStyles.ALERT_WARNING_COLOR)
+                    .backgroundColor(EStyles.ALERT_WARNING_COLOR)
                     .button(snackBar -> Components.button(Text.translatable("fzmm.gui.title.configs.icon"),
                             buttonComponent -> {
                                 client.setScreen(ConfigScreen.create(FzmmClient.CONFIG, client.currentScreen));
@@ -153,7 +155,7 @@ public class ItemUtils {
 
         if (isNotAllowedToGive()) {
             return Optional.of(builder.details(Text.translatable("fzmm.giveItem.notAllowed"))
-                    .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                    .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                     .button(snackBar -> Components.button(Text.translatable("fzmm.gui.title.history"),
                             buttonComponent -> {
                                 FzmmUtils.setScreen(new HistoryScreen(client.currentScreen));

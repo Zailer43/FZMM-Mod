@@ -2,7 +2,7 @@ package fzmm.zailer.me.compat.symbol_chat;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.compat.CompatMods;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
@@ -42,7 +42,7 @@ public class SymbolChatComponentHandler<T extends VanillaWidgetComponent> {
         if (CompatMods.SYMBOL_CHAT_PRESENT) {
             result.tooltip(this.buttonTooltip);
         } else {
-            result = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content())
+            result = EContainers.horizontalFlow(Sizing.content(), Sizing.content())
                     .child(result)
                     .tooltip(this.notAvailableTooltip);
         }

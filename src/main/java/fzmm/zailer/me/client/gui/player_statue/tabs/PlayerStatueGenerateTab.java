@@ -1,8 +1,9 @@
 package fzmm.zailer.me.client.gui.player_statue.tabs;
 
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.ImageMode;
-import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.image.ImageStatus;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
@@ -11,11 +12,9 @@ import fzmm.zailer.me.client.gui.utils.InvisibleEntityWarning;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.head_generator.model.InternalModels;
 import fzmm.zailer.me.client.logic.player_statue.PlayerStatue;
-import fzmm.zailer.me.client.gui.components.image.ImageStatus;
 import fzmm.zailer.me.client.logic.player_statue.StatuePart;
 import fzmm.zailer.me.utils.ImageUtils;
 import fzmm.zailer.me.utils.ItemUtils;
-import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -27,8 +26,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     private static final ImageStatus INVALID_SKIN_SIZE = new ImageStatus("error.title", "error.details.playerStatue.invalidSkinSize", true);
-    private static final String SKIN_ID = "skin";
-    private static final String SKIN_SOURCE_ID = "skin-source";
     private static CompletableFuture<Void> CREATE_COMPLETABLE_FUTURE = null;
     private ImageRowsElements skinElements;
     private ButtonWidget executeButton;
@@ -39,9 +36,9 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.skinElements = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_ID, ImageMode.NAME);
-        this.executeButton = rootComponent.childById(ButtonWidget.class, ButtonRow.getButtonId(PlayerStatueScreen.EXECUTE_ID));
+    public void setupComponents(EFlowLayout rootComponent) {
+        this.skinElements = ImageRows.setup(rootComponent, "skin", "skin-source", ImageMode.NAME);
+        this.executeButton = rootComponent.childById(ButtonWidget.class, PlayerStatueScreen.EXECUTE_ID);
 
         ImageButtonComponent skinButton = this.skinElements.imageButton();
         skinButton.setImageLoadedEvent(this::skinCallback);

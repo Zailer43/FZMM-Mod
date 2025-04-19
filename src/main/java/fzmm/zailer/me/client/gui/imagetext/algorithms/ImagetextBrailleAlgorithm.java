@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.imagetext.algorithms;
 
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
@@ -9,7 +9,6 @@ import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
-import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.MutableText;
@@ -22,9 +21,6 @@ import java.util.List;
 
 public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
     private static final String[] BRAILLE_CHARACTERS;
-    private static final String EDGE_THRESHOLD_ID = "edgeThreshold";
-    private static final String EDGE_DISTANCE_ID = "edgeDistance";
-    private static final String INVERT_ID = "invert";
     private static final byte BRAILLE_CHARACTER_WIDTH = 2;
     private static final byte BRAILLE_CHARACTER_HEIGHT = 4;
     private SliderWidget edgeThresholdSlider;
@@ -71,16 +67,15 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.edgeThresholdSlider = SliderRow.setup(rootComponent, EDGE_THRESHOLD_ID, 30, 1, 255, Integer.class, 0, 5, null);
+    public void setupComponents(EFlowLayout rootComponent) {
+        this.edgeThresholdSlider = SliderRow.setup(rootComponent, "edgeThreshold", 30, 1, 255, Integer.class, 0, 5, null);
         this.edgeThresholdSlider.message(s -> {
             double percentage = this.edgeThresholdSlider.discreteValue() / 255f * 100;
             return Text.literal(new DecimalFormat("#,##0.0").format(percentage) + "%");
         });
 
-        this.edgeDistanceSlider = SliderRow.setup(rootComponent, EDGE_DISTANCE_ID, 2, 1, 5, Integer.class, 0, 1, null);
-        this.invertBooleanButton = rootComponent.childById(SmallCheckboxComponent.class, INVERT_ID + "-checkbox");
-        BaseFzmmScreen.checkNull(this.invertBooleanButton, "checkbox", INVERT_ID + "-checkbox");
+        this.edgeDistanceSlider = SliderRow.setup(rootComponent, "edgeDistance", 2, 1, 5, Integer.class, 0, 1, null);
+        this.invertBooleanButton = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "invert-checkbox");
         this.invertBooleanButton.checked(false);
     }
 

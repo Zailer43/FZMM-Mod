@@ -1,10 +1,10 @@
 package fzmm.zailer.me.client.gui.encrypt_book.components;
 
-import fzmm.zailer.me.client.gui.components.BooleanButton;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.encrypt_book.EncryptBookScreen;
 import fzmm.zailer.me.client.logic.enycrpt_book.TranslationEncryptProfile;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-public class AddEncryptProfileOverlay extends OverlayContainer<StyledFlowLayout> {
+public class AddEncryptProfileOverlay extends OverlayContainer<EFlowLayout> {
     private static final int WIDTH = 350;
 
     public AddEncryptProfileOverlay(Consumer<TranslationEncryptProfile> onAdd) {
-        super(StyledContainers.verticalFlow(Sizing.fixed(WIDTH), Sizing.content()));
+        super(EContainers.verticalFlow(Sizing.fixed(WIDTH), Sizing.content()));
 
         this.addComponents(onAdd);
         this.child.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
@@ -38,19 +38,19 @@ public class AddEncryptProfileOverlay extends OverlayContainer<StyledFlowLayout>
     @SuppressWarnings("UnstableApiUsage")
     protected void addComponents(Consumer<TranslationEncryptProfile> onAdd) {
         //title
-        LabelComponent label = StyledComponents.label(Text.translatable("fzmm.gui.encryptbook.addProfile.title"));
+        LabelComponent label = EComponents.label(Text.translatable("fzmm.gui.encryptbook.addProfile.title"));
         label.horizontalSizing(Sizing.expand(100));
 
         // options
-        FlowLayout optionsLayout = StyledContainers.verticalFlow(Sizing.expand(100), Sizing.content());
+        FlowLayout optionsLayout = EContainers.verticalFlow(Sizing.expand(100), Sizing.content());
 
         ConfigTextBox seedComponent = new ConfigTextBox();
         ConfigTextBox keyComponent = new ConfigTextBox();
         ConfigTextBox lengthComponent = new ConfigTextBox();
         ConfigTextBox asymmetricComponent = new ConfigTextBox();
-        BooleanButton oldAlgorithmComponent = new BooleanButton();
+        EBooleanButton oldAlgorithmComponent = new EBooleanButton();
 
-        LabelComponent duplicatedKeyLabel = StyledComponents.label(Text.empty());
+        LabelComponent duplicatedKeyLabel = EComponents.label(Text.empty());
         Text duplicateKeyText = Text.translatable("fzmm.gui.encryptbook.addProfile.key.duplicated");
 
         ButtonComponent randomAsymmetric = Components.button(Text.translatable("fzmm.gui.button.random"), buttonComponent -> {
@@ -116,7 +116,7 @@ public class AddEncryptProfileOverlay extends OverlayContainer<StyledFlowLayout>
         optionsLayout.child(this.getRow(baseKey + "oldAlgorithm", oldAlgorithmComponent));
 
         // bottom buttons
-        FlowLayout buttonLayout = StyledContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(20));
+        FlowLayout buttonLayout = EContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(20));
 
         buttonLayout.child(Components.button(Text.translatable("fzmm.gui.encryptbook.addProfile.done"), buttonComponent -> {
                     TranslationEncryptProfile profile = new TranslationEncryptProfile(
@@ -144,14 +144,14 @@ public class AddEncryptProfileOverlay extends OverlayContainer<StyledFlowLayout>
     private Component getRow(String translationKey, Component... components) {
         components[0].horizontalSizing(Sizing.fixed(100));
         List<Component> componentList = new ArrayList<>();
-        componentList.add(StyledComponents.label(Text.translatable(translationKey))
+        componentList.add(EComponents.label(Text.translatable(translationKey))
                 .horizontalSizing(Sizing.fixed(100))
                 .tooltip(Text.translatable(translationKey + ".tooltip"))
         );
         componentList.addAll(List.of(components));
 
-        return StyledContainers.horizontalFlow(Sizing.content(), Sizing.content())
-                .hoveredSurface(FzmmStyles.DEFAULT_HOVERED)
+        return EContainers.horizontalFlow(Sizing.content(), Sizing.content())
+                .hoveredSurface(EStyles.DEFAULT_HOVERED)
                 .children(componentList)
                 .gap(4)
                 .verticalAlignment(VerticalAlignment.CENTER)

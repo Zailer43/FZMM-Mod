@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.components.snack_bar;
 
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class BaseSnackBarComponent extends StyledFlowLayout implements ISnackBarComponent {
+public class BaseSnackBarComponent extends EFlowLayout implements ISnackBarComponent {
     protected boolean timerEnabled;
     protected long timerMillis = -1;
     protected long startTimeMillis = 0;
@@ -30,9 +30,9 @@ public class BaseSnackBarComponent extends StyledFlowLayout implements ISnackBar
     @Override
     public ISnackBarComponent startTimer() {
         if (!this.timerEnabled) {
-            FlowLayout timerLayout = StyledContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(2));
+            FlowLayout timerLayout = EContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(2));
             timerLayout.positioning(Positioning.relative(0, 100));
-            this.timerComponent = StyledContainers.horizontalFlow(Sizing.fixed(0), Sizing.expand(100));
+            this.timerComponent = EContainers.horizontalFlow(Sizing.fixed(0), Sizing.expand(100));
             this.timerComponent.surface(Surface.flat(Color.WHITE.argb()));
             timerLayout.child(this.timerComponent);
             this.child(timerLayout);

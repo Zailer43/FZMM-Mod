@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
 import org.jetbrains.annotations.Nullable;
@@ -36,21 +36,19 @@ public class ConfigTextBoxRow extends AbstractRow {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static ConfigTextBox setup(FlowLayout rootComponent, String id, String defaultValue) {
+    public static ConfigTextBox setup(EFlowLayout rootComponent, String id, String defaultValue) {
         return setup(rootComponent, getConfigTextBoxId(id), id, defaultValue, null);
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static ConfigTextBox setup(FlowLayout rootComponent, String textBoxId, String id, String defaultValue, @Nullable Consumer<String> changedListener) {
+    public static ConfigTextBox setup(EFlowLayout rootComponent, String textBoxId, String id, String defaultValue, @Nullable Consumer<String> changedListener) {
         return setup(rootComponent, textBoxId, id, defaultValue, changedListener, defaultValue::equals);
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static ConfigTextBox setup(FlowLayout rootComponent, String textBoxId, String id, String defaultValue, @Nullable Consumer<String> changedListener, Predicate<String> defaultPredicate) {
-        ConfigTextBox textBox = rootComponent.childById(ConfigTextBox.class, textBoxId);
+    public static ConfigTextBox setup(EFlowLayout rootComponent, String textBoxId, String id, String defaultValue, @Nullable Consumer<String> changedListener, Predicate<String> defaultPredicate) {
+        ConfigTextBox textBox = rootComponent.childByIdOrThrow(ConfigTextBox.class, textBoxId);
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
-
-        BaseFzmmScreen.checkNull(textBox, "text-option", textBoxId);
         
         textBox.text(defaultValue);
         textBox.onChanged().subscribe(s -> {

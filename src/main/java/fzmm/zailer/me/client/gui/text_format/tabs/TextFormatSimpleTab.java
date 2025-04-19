@@ -1,11 +1,11 @@
 package fzmm.zailer.me.client.gui.text_format.tabs;
 
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import fzmm.zailer.me.client.gui.text_format.TextFormatScreen;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Color;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
@@ -15,8 +15,6 @@ import java.util.function.Consumer;
 
 @SuppressWarnings("UnstableApiUsage")
 public class TextFormatSimpleTab implements ITextFormatTab {
-    private static final String COLOR_ID = "color";
-
     private ConfigTextBox color;
     private Consumer<Object> callback;
 
@@ -35,8 +33,8 @@ public class TextFormatSimpleTab implements ITextFormatTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.color = ColorRow.setup(rootComponent, COLOR_ID, Color.ofRgb(Integer.parseInt("FFFFFF", 16)), false, 0, s -> this.callback.accept(""));
+    public void setupComponents(EFlowLayout rootComponent) {
+        this.color = ColorRow.setup(rootComponent, "color", Color.WHITE, false, 0, s -> this.callback.accept(""));
     }
 
     @Override

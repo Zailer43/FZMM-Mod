@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.gui.components.tabs;
 
 
-import io.wispforest.owo.ui.container.FlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 
 public interface IScreenTab extends IScreenTabIdentifier {
 
-    void setupComponents(FlowLayout rootComponent);
+    void setupComponents(EFlowLayout rootComponent);
 }

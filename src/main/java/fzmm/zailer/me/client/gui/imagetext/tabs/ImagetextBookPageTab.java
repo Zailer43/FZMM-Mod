@@ -1,16 +1,15 @@
 package fzmm.zailer.me.client.gui.imagetext.tabs;
 
 import fzmm.zailer.me.builders.BookBuilder;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
-import fzmm.zailer.me.client.gui.options.BookOption;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
+import fzmm.zailer.me.client.gui.options.BookOption;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
-import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.ingame.BookScreen;
@@ -18,7 +17,6 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 public class ImagetextBookPageTab implements IImagetextTab {
-    private static final String BOOK_PAGE_MODE_ID = "bookPageMode";
     private ContextMenuButton bookPageButton;
     private BookOption bookMode;
 
@@ -43,9 +41,8 @@ public class ImagetextBookPageTab implements IImagetextTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.bookPageButton = rootComponent.childById(ContextMenuButton.class, BOOK_PAGE_MODE_ID);
-        BaseFzmmScreen.checkNull(this.bookPageButton, "context-menu-button", BOOK_PAGE_MODE_ID);
+    public void setupComponents(EFlowLayout rootComponent) {
+        this.bookPageButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "bookPageMode");
         this.bookPageButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : BookOption.values()) {
                 dropdownComponent.button(Text.translatable(option.getTranslationKey()), dropdownButton -> {

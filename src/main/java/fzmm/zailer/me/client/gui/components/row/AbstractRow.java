@@ -1,10 +1,10 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
@@ -17,7 +17,7 @@ import org.w3c.dom.Element;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractRow extends StyledFlowLayout {
+public abstract class AbstractRow extends EFlowLayout {
     protected static final int NORMAL_WIDTH = 200;
     protected static final int TEXT_FIELD_WIDTH = NORMAL_WIDTH - 1;
     public static final int ROW_HEIGHT = 22;
@@ -31,7 +31,7 @@ public abstract class AbstractRow extends StyledFlowLayout {
         super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT), Algorithm.HORIZONTAL);
         this.baseTranslationKey = baseTranslationKey;
         this.translate = true;
-        this.hoveredSurface(FzmmStyles.DEFAULT_HOVERED);
+        this.hoveredSurface(EStyles.DEFAULT_HOVERED);
     }
 
     public AbstractRow(String baseTranslationKey, String id, String tooltipId, boolean hasResetButton) {
@@ -43,10 +43,10 @@ public abstract class AbstractRow extends StyledFlowLayout {
         this.baseTranslationKey = baseTranslationKey;
         this.id = id;
         this.translate = translate;
-        this.hoveredSurface(FzmmStyles.DEFAULT_HOVERED);
+        this.hoveredSurface(EStyles.DEFAULT_HOVERED);
         Component[] components = this.getComponents(id, tooltipId);
 
-        FlowLayout rowLayout = (FlowLayout) StyledContainers
+        FlowLayout rowLayout = (FlowLayout) EContainers
                 .horizontalFlow(Sizing.fill(100), Sizing.fixed(ROW_HEIGHT))
                 .child(this.getLabel(id, tooltipId, components.length != 0))
                 .gap(BaseFzmmScreen.COMPONENT_DISTANCE)
@@ -54,7 +54,7 @@ public abstract class AbstractRow extends StyledFlowLayout {
                 .margins(Insets.vertical(VERTICAL_MARGIN))
                 .id(getRowContainerId(id));
 
-        FlowLayout rightComponentsLayout = (FlowLayout) StyledContainers
+        FlowLayout rightComponentsLayout = (FlowLayout) EContainers
                 .horizontalFlow(Sizing.content(), Sizing.fill(100))
                 .gap(BaseFzmmScreen.COMPONENT_DISTANCE)
                 .verticalAlignment(VerticalAlignment.CENTER)
@@ -90,7 +90,7 @@ public abstract class AbstractRow extends StyledFlowLayout {
     }
 
     public static Component getLabel(String id, String tooltipId, String baseTranslationKey, boolean translate) {
-        LabelComponent label = (LabelComponent) StyledComponents.label(translate ? Text.translatable(baseTranslationKey + id) : Text.literal(id))
+        LabelComponent label = (LabelComponent) EComponents.label(translate ? Text.translatable(baseTranslationKey + id) : Text.literal(id))
                 .margins(Insets.left(20))
                 .id(getLabelId(id));
 

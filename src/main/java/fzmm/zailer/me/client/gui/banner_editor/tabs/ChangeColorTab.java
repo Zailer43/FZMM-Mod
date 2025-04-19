@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.banner_editor.tabs;
 
 import fzmm.zailer.me.builders.BannerBuilder;
-import fzmm.zailer.me.client.gui.banner_editor.BannerEditorScreen;
+import fzmm.zailer.me.utils.history.HistoryClipboard;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,18 +17,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChangeColorTab extends AbstractModifyPatternsTab {
-
-    private static final String PATTERNS_LAYOUT = "change-color-layout";
+public class ChangeColorTab extends AbstractModifyPatternTab {
 
     @Override
-    public String getId() {
-        return "changeColor";
-    }
-
-    @Override
-    protected String getGridId() {
-        return PATTERNS_LAYOUT;
+    public String buttonId() {
+        return "change-color";
     }
 
     @Override
@@ -37,14 +30,14 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
     }
 
     @Override
-    protected void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent,
+    protected void onItemComponentCreated(HistoryClipboard clipboard, ItemComponent itemComponent,
                                           @Nullable BannerPatternsComponent.Layer componentLayer, BannerBuilder currentBanner,
                                           DyeColor componentColor) {
         ItemStack itemComponentStack = itemComponent.stack();
         boolean isBaseBanner = componentLayer == null;
 
         itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            this.componentExecute(parent, currentBanner, componentColor, componentLayer);
+            this.componentExecute(clipboard, currentBanner, componentColor, componentLayer);
             return true;
         });
 
@@ -81,11 +74,11 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
         itemComponent.mouseLeave().subscribe(() -> itemComponent.stack(itemComponentStack));
     }
 
-    private void componentExecute(BannerEditorScreen parent, BannerBuilder currentBanner, DyeColor selectedColor,
+    private void componentExecute(HistoryClipboard clipboard, BannerBuilder currentBanner, DyeColor selectedColor,
                                   @Nullable BannerPatternsComponent.Layer componentLayer) {
         UISounds.playButtonSound();
 
-        parent.addUndo(currentBanner);
+        clipboard.addUndo(currentBanner);
 
         DyeColor componentColor = componentLayer == null ? currentBanner.baseBannerColor() : componentLayer.color();
         boolean isBaseBannerColor = currentBanner.baseBannerColor() == componentColor;
@@ -102,7 +95,7 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
             currentBanner.replaceColor(componentLayer, selectedColor);
         }
 
-        parent.updatePreview(currentBanner);
+        clipboard.change(currentBanner);
     }
 
     @Override

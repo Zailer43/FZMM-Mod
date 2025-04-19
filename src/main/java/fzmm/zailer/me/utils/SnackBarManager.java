@@ -2,10 +2,10 @@ package fzmm.zailer.me.utils;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.SnackBarLayout;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.hud.Hud;
 import net.minecraft.client.MinecraftClient;
@@ -134,7 +134,7 @@ public class SnackBarManager {
         MinecraftClient.getInstance().keyboard.setClipboard(text);
 
         getInstance().add(BaseSnackBarComponent.builder(CLIPBOARD_ID)
-                .backgroundColor(FzmmStyles.ALERT_SUCCESS_COLOR)
+                .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
                 .title(Text.translatable("fzmm.snack_bar.clipboard.title"))
                 .lowTimer()
                 .startTimer()

@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.util.NumberReflection;
@@ -34,12 +34,12 @@ public class NumberRow extends AbstractRow {
 
 
     @SuppressWarnings("UnstableApiUsage")
-    public static ConfigTextBox setup(FlowLayout rootComponent, String id, double defaultValue, Class<? extends Number> numberType) {
+    public static ConfigTextBox setup(EFlowLayout rootComponent, String id, double defaultValue, Class<? extends Number> numberType) {
         return setup(rootComponent, id, defaultValue, numberType, null);
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static ConfigTextBox setup(FlowLayout rootComponent, String id, double defaultValue, Class<? extends Number> numberType, @Nullable Consumer<String> changedListener) {
+    public static ConfigTextBox setup(EFlowLayout rootComponent, String id, double defaultValue, Class<? extends Number> numberType, @Nullable Consumer<String> changedListener) {
         String defaultValueString = NumberReflection.isFloatingPointType(numberType) ? String.valueOf(defaultValue) : String.valueOf((int) defaultValue);
         ConfigTextBox numberBox = ConfigTextBoxRow.setup(rootComponent, getNumberFieldId(id), id, defaultValueString, changedListener, s -> {
             try {

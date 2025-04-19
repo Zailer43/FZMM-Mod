@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledScrollContainer;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.container.EScrollContainer;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTabIdentifier;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -66,12 +66,12 @@ public class ScreenTabRow extends AbstractRow {
             componentList.add(button);
         }
 
-        this.tabsLayout = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content())
+        this.tabsLayout = EContainers.horizontalFlow(Sizing.content(), Sizing.content())
                 .children(componentList)
                 .gap(this.gap());
-        this.scrollContainer = (ScrollContainer<?>) StyledContainers.horizontalScroll(Sizing.fill(100), Sizing.fill(100), this.tabsLayout)
+        this.scrollContainer = (ScrollContainer<?>) EContainers.horizontalScroll(Sizing.fill(100), Sizing.fill(100), this.tabsLayout)
                 .alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
-                .padding(Insets.vertical(StyledScrollContainer.SCROLLBAR_THICCNESS))
+                .padding(Insets.vertical(EScrollContainer.SCROLLBAR_THICCNESS))
                 .margins(Insets.horizontal(20));
 
         this.child(this.scrollContainer);

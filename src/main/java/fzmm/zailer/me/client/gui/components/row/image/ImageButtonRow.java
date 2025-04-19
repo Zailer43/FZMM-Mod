@@ -2,12 +2,12 @@ package fzmm.zailer.me.client.gui.components.row.image;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SuggestionTextBox;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
 import fzmm.zailer.me.client.gui.components.image.source.IImageSuggestion;
 import fzmm.zailer.me.client.gui.components.row.AbstractRow;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
@@ -64,13 +64,10 @@ public class ImageButtonRow extends AbstractRow {
         return id + "-value-field";
     }
 
-    public static void setup(FlowLayout rootComponent, String id, IImageGetter defaultMode) {
+    public static void setup(EFlowLayout rootComponent, String id, IImageGetter defaultMode) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        ImageButtonComponent imageButtonComponent = rootComponent.childById(ImageButtonComponent.class, getImageButtonId(id));
-        SuggestionTextBox suggestionTextBox = rootComponent.childById(SuggestionTextBox.class, getImageValueFieldId(id));
-
-        BaseFzmmScreen.checkNull(imageButtonComponent, "image-option", getImageButtonId(id));
-        BaseFzmmScreen.checkNull(suggestionTextBox, "suggestion-text-option", getImageValueFieldId(id));
+        ImageButtonComponent imageButtonComponent = rootComponent.childByIdOrThrow(ImageButtonComponent.class, getImageButtonId(id));
+        SuggestionTextBox suggestionTextBox = rootComponent.childByIdOrThrow(SuggestionTextBox.class, getImageValueFieldId(id));
 
         imageButtonComponent.onPress(button -> imageButtonComponent.loadImage(suggestionTextBox.getText()));
         imageButtonComponent.setSourceType(defaultMode);

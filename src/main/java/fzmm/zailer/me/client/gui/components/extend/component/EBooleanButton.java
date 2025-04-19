@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui.components;
+package fzmm.zailer.me.client.gui.components.extend.component;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -14,13 +14,13 @@ import org.w3c.dom.Element;
 import java.util.List;
 import java.util.Map;
 
-public class BooleanButton extends ButtonComponent {
+public class EBooleanButton extends ButtonComponent {
 
     protected boolean enabled = false;
     protected final Text enabledText;
     protected final Text disabledText;
 
-    public BooleanButton(Text text, Color enabledColor) {
+    public EBooleanButton(Text text, Color enabledColor) {
         super(Text.empty(), button -> {});
         this.verticalSizing(Sizing.fixed(20));
         this.enabledText = text.copy().setStyle(Style.EMPTY.withColor(enabledColor.rgb()).withItalic(true));
@@ -28,7 +28,7 @@ public class BooleanButton extends ButtonComponent {
         this.updateMessage();
     }
 
-    public BooleanButton(Text enabledText, Text disabledText) {
+    public EBooleanButton(Text enabledText, Text disabledText) {
         super(Text.empty(), button -> {});
         this.verticalSizing(Sizing.fixed(20));
         this.enabledText = enabledText;
@@ -37,7 +37,7 @@ public class BooleanButton extends ButtonComponent {
     }
 
     @SuppressWarnings("NoTranslation")
-    public BooleanButton() {
+    public EBooleanButton() {
         this(Text.translatable("text.owo.config.boolean_toggle.enabled"), Text.translatable("text.owo.config.boolean_toggle.disabled"));
     }
 
@@ -71,17 +71,17 @@ public class BooleanButton extends ButtonComponent {
         this.horizontalSizing(Sizing.fixed(maxWidth));
     }
 
-    public static BooleanButton parse(Element element) {
+    public static EBooleanButton parse(Element element) {
         Map<String, Element> children = UIParsing.childElements(element);
 
         if (children.containsKey("text")) {
             Text text = UIParsing.parseText(children.get("text"));
             Color enabledColor = Color.parse(children.get("enabled-color"));
-            return new BooleanButton(text, enabledColor);
+            return new EBooleanButton(text, enabledColor);
         }
         Text enabledText = UIParsing.parseText(children.get("enabled-text"));
         Text disabledText = UIParsing.parseText(children.get("disabled-text"));
-        return new BooleanButton(enabledText, disabledText);
+        return new EBooleanButton(enabledText, disabledText);
     }
     @Override
     public void parseProperties(UIModel model, Element element, Map<String, Element> children) {

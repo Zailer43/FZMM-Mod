@@ -1,8 +1,9 @@
 package fzmm.zailer.me.client.gui.player_statue.tabs;
 
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
+import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.utils.InvisibleEntityWarning;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.select_item.RequestedItem;
@@ -12,7 +13,6 @@ import fzmm.zailer.me.client.logic.player_statue.StatuePart;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.SnackBarManager;
-import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -27,7 +27,7 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
+    public void setupComponents(EFlowLayout rootComponent) {
     }
 
     @Override
@@ -43,7 +43,7 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
                         ItemUtils.give(statue);
 
                         SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
-                                .backgroundColor(FzmmStyles.ALERT_SUCCESS_COLOR)
+                                .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
                                 .title(Text.translatable("fzmm.snack_bar.playerStatue.updated.title"))
                                 .lowTimer()
                                 .startTimer()

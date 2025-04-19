@@ -1,7 +1,7 @@
-package fzmm.zailer.me.client.gui.components.style.container;
+package fzmm.zailer.me.client.gui.components.extend.container;
 
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIModel;
@@ -13,12 +13,12 @@ import org.w3c.dom.Element;
 
 import java.util.Map;
 
-public class StyledScrollContainer<C extends Component> extends ScrollContainer<C> {
+public class EScrollContainer<C extends Component> extends ScrollContainer<C> {
     public static final int SCROLLBAR_THICCNESS = 5;
     protected boolean preventShiftScroll = false;
     protected boolean flipScroll = false;
 
-    public StyledScrollContainer(ScrollDirection direction, Sizing horizontalSizing, Sizing verticalSizing, C child, boolean flipScroll) {
+    public EScrollContainer(ScrollDirection direction, Sizing horizontalSizing, Sizing verticalSizing, C child, boolean flipScroll) {
         super(direction, horizontalSizing, verticalSizing, child);
 
         this.flipScroll(flipScroll);
@@ -89,13 +89,13 @@ public class StyledScrollContainer<C extends Component> extends ScrollContainer<
         UIParsing.apply(children, "prevent-shift-scroll", UIParsing::parseBool, this::preventShiftScroll);
     }
 
-    public static StyledScrollContainer<?> parse(Element element) {
+    public static EScrollContainer<?> parse(Element element) {
         boolean flipScroll = element.hasAttribute("flip-scroll") &&
                 element.getAttribute("flip-scroll").equals("true");
 
         return element.getAttribute("direction").equals("vertical")
-                ? StyledContainers.verticalScroll(Sizing.content(), Sizing.content(), null, flipScroll)
-                : StyledContainers.horizontalScroll(Sizing.content(), Sizing.content(), null, flipScroll);
+                ? EContainers.verticalScroll(Sizing.content(), Sizing.content(), null, flipScroll)
+                : EContainers.horizontalScroll(Sizing.content(), Sizing.content(), null, flipScroll);
     }
 
     /**

@@ -1,16 +1,16 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.5/owo-ui.xsd">
     <components>
-        <fzmm.styled-flow-layout direction="vertical">
+        <fzmm.flow-layout direction="vertical">
             <children>
-                <fzmm.styled-label id="title">
+                <fzmm.label id="title">
                     <positioning type="absolute">3,3</positioning>
                     <text translate="true">fzmm.gui.title.playerStatue</text>
-                </fzmm.styled-label>
+                </fzmm.label>
 
-                <fzmm.styled-scroll direction="vertical">
+                <fzmm.scroll direction="vertical">
 
-                    <fzmm.styled-flow-layout direction="vertical" id="options-list">
+                    <fzmm.flow-layout direction="vertical" id="options-list">
                         <children>
                             <fzmm.context-menu-button-row>
                                 <id>horizontal-direction</id>
@@ -51,7 +51,7 @@
                                 </children>
                             </fzmm.screen-tab>
                         </children>
-                    </fzmm.styled-flow-layout>
+                    </fzmm.flow-layout>
 
                     <sizing>
                         <vertical method="fill">90</vertical>
@@ -60,9 +60,9 @@
                     <margins>
                         <vertical>10</vertical>
                     </margins>
-                </fzmm.styled-scroll>
+                </fzmm.scroll>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
                         <button id="execute-button">
                             <text translate="true">gui.done</text>
@@ -95,9 +95,9 @@
                         <horizontal>3</horizontal>
                         <bottom>3</bottom>
                     </padding>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
                         <button id="difficult-to-remove-entity-button">
                             <text translate="true">fzmm.snack_bar.entityDifficultToRemove.title</text>
@@ -124,7 +124,7 @@
                         <right>3</right>
                         <top>3</top>
                     </padding>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
             </children>
 
 
@@ -134,6 +134,6 @@
             <surface>
                 <vanilla-translucent/>
             </surface>
-        </fzmm.styled-flow-layout>
+        </fzmm.flow-layout>
     </components>
 </owo-ui>

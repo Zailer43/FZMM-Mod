@@ -4,14 +4,16 @@ import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageMode;
-import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
+import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
+import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
+import fzmm.zailer.me.client.gui.components.snack_bar.SnackBarBuilder;
 import fzmm.zailer.me.client.gui.head_generator.category.IHeadCategory;
 import fzmm.zailer.me.client.gui.head_generator.components.AbstractHeadComponentEntry;
 import fzmm.zailer.me.client.gui.head_generator.components.HeadComponentEntry;
@@ -19,9 +21,6 @@ import fzmm.zailer.me.client.gui.head_generator.components.HeadComponentOverlay;
 import fzmm.zailer.me.client.gui.head_generator.components.HeadCompoundComponentEntry;
 import fzmm.zailer.me.client.gui.head_generator.options.ISkinPreEdit;
 import fzmm.zailer.me.client.gui.head_generator.options.SkinPreEditOption;
-import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
-import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
-import fzmm.zailer.me.client.gui.components.snack_bar.SnackBarBuilder;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
@@ -31,7 +30,9 @@ import fzmm.zailer.me.client.logic.head_generator.model.InternalModels;
 import fzmm.zailer.me.utils.*;
 import fzmm.zailer.me.utils.list.ListUtils;
 import io.wispforest.owo.config.ui.ConfigScreen;
-import io.wispforest.owo.ui.component.*;
+import io.wispforest.owo.ui.component.ButtonComponent;
+import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.core.Component;
@@ -40,7 +41,6 @@ import io.wispforest.owo.ui.util.FocusHandler;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -64,16 +64,6 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     private static final int COMPOUND_HEAD_LAYOUT_WIDTH = 60;
     private static final int HEAD_PREVIEW_SCHEDULE_DELAY_MILLIS = 1;
     public static final Path SKIN_SAVE_FOLDER_PATH = Path.of(FabricLoader.getInstance().getGameDir().toString(), FzmmClient.MOD_ID, "skins");
-    private static final String SKIN_ID = "skin";
-    private static final String SKIN_SOURCE_TYPE_ID = "skinSourceType";
-    private static final String HEAD_NAME_ID = "headName";
-    private static final String SEARCH_ID = "search";
-    private static final String CONTENT_ID = "content";
-    private static final String COMPOUND_HEADS_LAYOUT_ID = "compound-heads-layout";
-    private static final String OPEN_SKIN_FOLDER_ID = "open-folder";
-    private static final String TOGGLE_FAVORITE_LIST_ID = "toggle-favorite-list";
-    private static final String HEAD_CATEGORY_ID = "head-category-button";
-    private static final String WIKI_BUTTON_ID = "wiki-button";
     private static HeadGeneratorMemento memento = null;
     private final Set<String> favoritesHeadsOnOpenScreen;
     private ImageRowsElements skinElements;
@@ -84,8 +74,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     private List<HeadComponentEntry> headComponentEntries;
     private List<HeadCompoundComponentEntry> compoundEntries;
     private FlowLayout contentLayout;
-    private StyledFlowLayout compoundHeadsLayout;
-    private ButtonWidget toggleFavoriteList;
+    private EFlowLayout compoundHeadsLayout;
+    private ButtonComponent toggleFavoriteList;
     private boolean showFavorites;
     private BufferedImage baseSkin;
     private boolean hasUnusedPixels;
@@ -103,21 +93,19 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    protected void setup(FlowLayout rootComponent) {
+    protected void setup(EFlowLayout rootComponent) {
         this.headComponentEntries = new ArrayList<>();
         this.compoundEntries = new ArrayList<>();
         this.baseSkin = new BufferedImage(SkinPart.MAX_WIDTH, SkinPart.MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         //general
-        this.skinElements = ImageRows.setup(rootComponent, SKIN_ID, SKIN_SOURCE_TYPE_ID, ImageMode.NAME);
+        this.skinElements = ImageRows.setup(rootComponent, "skin", "skinSourceType", ImageMode.NAME);
         this.skinElements.imageButton().setButtonCallback(skinOptional -> skinOptional.ifPresent(this::skinCallback));
         this.previousSkinName = "";
         // ProfileComponent.PACKET_CODEC max size is 16
-        this.headNameField = TextBoxRow.setup(rootComponent, HEAD_NAME_ID, "", 16);
+        this.headNameField = TextBoxRow.setup(rootComponent, "headName", "", 16);
         this.skinElements.valueField().onChanged().subscribe(this::onChangeSkinField);
-        this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
-        checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
-        this.compoundHeadsLayout = rootComponent.childById(StyledFlowLayout.class, COMPOUND_HEADS_LAYOUT_ID);
-        checkNull(this.compoundHeadsLayout, "flow-layout", COMPOUND_HEADS_LAYOUT_ID);
+        this.contentLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "content");
+        this.compoundHeadsLayout = rootComponent.childByIdOrThrow(EFlowLayout.class, "compound-heads-layout");
 
         int animationDuration = 800;
         Animation<Insets> headsLayoutMarginAnimation = this.compoundHeadsLayout.margins()
@@ -129,15 +117,15 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         this.compoundExpandAnimation = Animation.compose(compoundHeadsLayoutAnimation, headsLayoutMarginAnimation, compoundHeadsLayoutPaddingAnimation);
 
         //bottom buttons
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(OPEN_SKIN_FOLDER_ID), true, button -> Util.getOperatingSystem().open(SKIN_SAVE_FOLDER_PATH.toFile()));
+        ButtonComponent openSkinFolderButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "open-folder-button");
+        openSkinFolderButton.onPress(button -> Util.getOperatingSystem().open(SKIN_SAVE_FOLDER_PATH.toFile()));
 
         // nav var
-        this.searchField = TextBoxRow.setup(rootComponent, SEARCH_ID, "", 128, s -> this.applyFilters());
+        this.searchField = TextBoxRow.setup(rootComponent, "search", "", 128, s -> this.applyFilters());
 
         this.skinPreEditButtons = new HashMap<>();
         for (SkinPreEditOption preEditOption : SkinPreEditOption.values()) {
-            FlowLayout skinPreEditButtonLayout = rootComponent.childById(FlowLayout.class, preEditOption.getId());
-            checkNull(skinPreEditButtonLayout, "flow-layout", preEditOption.getId());
+            FlowLayout skinPreEditButtonLayout = rootComponent.childByIdOrThrow(FlowLayout.class, preEditOption.getId());
             this.setupPreEditButton(skinPreEditButtonLayout, preEditOption, this.skinPreEditButtons, skinPreEditOption -> {
                 this.selectedSkinPreEdit = skinPreEditOption;
 
@@ -148,8 +136,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         }
         this.skinPreEditButtons.get(SkinPreEditOption.OVERLAP).onPress();
 
-        this.headCategoryButton = rootComponent.childById(ContextMenuButton.class, HEAD_CATEGORY_ID);
-        checkNull(this.headCategoryButton, "label", HEAD_CATEGORY_ID);
+        this.headCategoryButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "head-category-button");
 
         this.selectedCategory = IHeadCategory.NATURAL_CATEGORIES[0];
         this.updateCategoryTitle(this.selectedCategory);
@@ -163,14 +150,15 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
             }
         });
 
-        this.toggleFavoriteList = ButtonRow.setup(rootComponent, TOGGLE_FAVORITE_LIST_ID, true, buttonComponent -> this.toggleFavoriteListExecute());
-        checkNull(this.toggleFavoriteList, "button", TOGGLE_FAVORITE_LIST_ID);
+        this.toggleFavoriteList = rootComponent.childByIdOrThrow(ButtonComponent.class, "toggle-favorite-list");
+        this.toggleFavoriteList.onPress(buttonComponent -> this.toggleFavoriteListExecute());
         this.showFavorites = false;
         int toggleFavoriteListWidth = FzmmUtils.getMaxWidth(List.of(HeadComponentEntry.FAVORITE_DISABLED_TEXT, HeadComponentEntry.FAVORITE_ENABLED_TEXT)) + BUTTON_TEXT_PADDING;
         this.toggleFavoriteList.horizontalSizing(Sizing.fixed(Math.max(20, toggleFavoriteListWidth)));
         this.updateToggleFavoriteText();
 
-        ButtonRow.setup(rootComponent, WIKI_BUTTON_ID, true, buttonComponent -> this.wikiExecute());
+        ButtonComponent wikiButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "wiki-button");
+        wikiButton.onPress(buttonComponent -> this.wikiExecute());
 
         this.tryLoadHeadEntries(rootComponent);
         this.updateContentPreviews();
@@ -224,7 +212,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         this.updateContentPreviews();
     }
 
-    private void tryLoadHeadEntries(FlowLayout rootComponent) {
+    private void tryLoadHeadEntries(EFlowLayout rootComponent) {
         if (!this.contentLayout.children().isEmpty()) {
             return;
         }
@@ -242,15 +230,14 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         this.applyFilters();
     }
 
-    private void addNoResultsMessage(FlowLayout parent) {
+    private void addNoResultsMessage(EFlowLayout parent) {
         FzmmClient.LOGGER.warn("[HeadGeneratorScreen] No head entries found");
-        Component label = StyledComponents.label(Text.translatable("fzmm.gui.headGenerator.label.noResults")
-                        .setStyle(Style.EMPTY.withColor(FzmmStyles.TEXT_ERROR_COLOR.rgb())))
+        Component label = EComponents.label(Text.translatable("fzmm.gui.headGenerator.label.noResults")
+                        .setStyle(Style.EMPTY.withColor(EStyles.TEXT_ERROR_COLOR.rgb())))
                 .horizontalTextAlignment(HorizontalAlignment.CENTER)
                 .sizing(Sizing.expand(100), Sizing.content())
                 .margins(Insets.top(4));
-        FlowLayout layout = parent.childById(FlowLayout.class, "no-results-label-layout");
-        checkNull(layout, "flow-layout", "no-results-label-layout");
+        FlowLayout layout = parent.childByIdOrThrow(FlowLayout.class, "no-results-label-layout");
         layout.child(label);
     }
 
@@ -464,7 +451,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
             ISnackBarComponent snackBar = BaseSnackBarComponent.builder(SnackBarManager.HEAD_GENERATOR_ID)
                     .title(Text.translatable("fzmm.gui.headGenerator.snack_bar.loading"))
-                    .backgroundColor(FzmmStyles.ALERT_LOADING_COLOR)
+                    .backgroundColor(EStyles.ALERT_LOADING_COLOR)
                     .keepOnLimit()
                     .build();
             this.addSnackBar(snackBar);
@@ -493,12 +480,12 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
         if (headUtils.isSkinGenerated()) {
             snackBar.title(Text.translatable("fzmm.gui.headGenerator.snack_bar.success"))
                     .lowTimer()
-                    .backgroundColor(FzmmStyles.ALERT_SUCCESS_COLOR)
+                    .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
                     .startTimer();
         } else if (headUtils.getHttpResponseCode() == 403) {
             snackBar.title(Text.translatable("fzmm.snack_bar.mineskin.error.invalidApiKey"))
                     .details(Text.translatable("fzmm.snack_bar.mineskin.error.invalidApiKey.description"))
-                    .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                    .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                     .keepOnLimit()
                     .button(iSnackBarComponent -> Components.button(Text.translatable("fzmm.gui.title.configs.icon"),
                             buttonComponent -> this.setScreen(ConfigScreen.create(FzmmClient.CONFIG, this))))
@@ -509,7 +496,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
 
             snackBar.title(Text.translatable("fzmm.gui.headGenerator.snack_bar.error." + translationKey))
                     .details(Text.translatable("fzmm.gui.headGenerator.snack_bar.error." + translationKey + ".description", headUtils.getHttpResponseCode()))
-                    .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                    .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                     .keepOnLimit()
                     .button(iSnackBarComponent -> Components.button(Text.translatable("fzmm.gui.headGenerator.snack_bar.error.button.retry"), buttonComponent -> {
                         this.giveHead(image, textureName);

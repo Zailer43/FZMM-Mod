@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.player_statue;
 
 import fzmm.zailer.me.builders.DisplayBuilder;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.utils.auto_placer.AbstractAutoPlacer;
 import fzmm.zailer.me.client.gui.utils.auto_placer.AutoPlacerHud;
 import fzmm.zailer.me.client.logic.player_statue.PlayerStatue;
@@ -51,10 +51,10 @@ public class PlayerStatuePlacerScreen extends AbstractAutoPlacer {
     protected List<Component> getInfoLabels() {
         List<Component> labelList = new ArrayList<>();
 
-        labelList.add(StyledComponents.label(this.playerStatueStack.getName()));
+        labelList.add(EComponents.label(this.playerStatueStack.getName()));
 
         for (var text : DisplayBuilder.of(this.playerStatueStack).getLoreText()) {
-            labelList.add(StyledComponents.label(text));
+            labelList.add(EComponents.label(text));
         }
 
         return labelList;

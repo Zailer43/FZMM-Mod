@@ -2,20 +2,21 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.*;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.container.EScrollContainer;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.ScreenshotZoneComponent;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
-import fzmm.zailer.me.client.gui.components.style.component.StyledLabelComponent;
-import fzmm.zailer.me.client.gui.components.style.container.StyledScrollContainer;
+import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTabIdentifier;
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 import fzmm.zailer.me.client.gui.components.tabs.ScreenTabContainer;
 import fzmm.zailer.me.client.gui.main.components.MainButtonComponent;
 import fzmm.zailer.me.client.gui.text_format.components.ColorListContainer;
-import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
 import fzmm.zailer.me.client.gui.utils.memento.IMemento;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
@@ -25,24 +26,27 @@ import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.FocusHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.w3c.dom.Element;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Optional;
 
 @SuppressWarnings("UnstableApiUsage")
-public abstract class BaseFzmmScreen extends BaseUIModelScreen<StyledFlowLayout> implements ISnackBarScreen {
+public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> implements ISnackBarScreen {
     @Nullable
     protected Screen parent;
     protected final String baseScreenTranslationKey;
@@ -53,7 +57,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<StyledFlowLayout>
     protected final FlowLayout snackBarLayout;
 
     public BaseFzmmScreen(String screenPath, String baseScreenTranslationKey, @Nullable Screen parent) {
-        super(StyledFlowLayout.class, DataSource.asset(Identifier.of(FzmmClient.MOD_ID, screenPath)));
+        super(EFlowLayout.class, DataSource.asset(Identifier.of(FzmmClient.MOD_ID, screenPath)));
         this.baseScreenTranslationKey = baseScreenTranslationKey;
         this.parent = parent;
         this.tabs = new HashMap<>();
@@ -62,7 +66,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<StyledFlowLayout>
     }
 
     @Override
-    protected void build(StyledFlowLayout rootComponent) {
+    protected void build(EFlowLayout rootComponent) {
         assert this.client != null;
         ButtonComponent backButton = rootComponent.childById(ButtonComponent.class, "back-button");
         if (backButton != null) {
@@ -76,12 +80,17 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<StyledFlowLayout>
     @Override
     protected void init() {
         super.init();
+        Optional<EFlowLayout> root = this.getRoot();
+        if (root.isEmpty()) {
+            return;
+        }
+
         if (FzmmClient.CONFIG.history.automaticallyRecoverScreens() && this instanceof IMementoScreen mementoScreen) {
             mementoScreen.getMemento().ifPresent(mementoScreen::restoreMemento);
         }
 
-        if (this.getRoot().focusHandler() != null) {
-            this.initFocus(this.getRoot().focusHandler());
+        if (root.get().focusHandler() != null) {
+            this.initFocus(root.get().focusHandler());
         }
     }
 
@@ -89,7 +98,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<StyledFlowLayout>
 
     }
 
-    protected abstract void setup(FlowLayout rootComponent);
+    protected abstract void setup(EFlowLayout rootComponent);
 
     @Override
     public void removed() {
@@ -259,7 +268,6 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<StyledFlowLayout>
     static {
         // rows
         //TODO: replace rows with better UI components
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "boolean-row"), BooleanRow::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "button-row"), ButtonRow::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "color-row"), ColorRow::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "predicate-text-box-row"), ConfigTextBoxRow::parse);
@@ -270,14 +278,16 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<StyledFlowLayout>
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "slider-row"), SliderRow::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "text-box-row"), TextBoxRow::parse);
 
-        // styled components
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "styled-label"), element -> new StyledLabelComponent(Text.empty()));
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "styled-flow-layout"), StyledFlowLayout::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "styled-scroll"), StyledScrollContainer::parse);
+        // extended components
+        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "boolean-button"), EBooleanButton::parse);
+        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "button"), element -> EComponents.button(Text.empty()));
+        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "item"), element -> EComponents.item(ItemStack.EMPTY));
+        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "label"), element -> EComponents.label(Text.empty()));
+        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "flow-layout"), EFlowLayout::parse);
+        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "scroll"), EScrollContainer::parse);
 
         // these are necessary in case you want to create the fields manually with XML
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "book"), element -> new BookComponent());
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "boolean-button"), BooleanButton::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "context-menu-button"), element -> new ContextMenuButton(Text.empty()));
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "number-slider"), element -> new SliderWidget());
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "text-option"), element -> new ConfigTextBox());
@@ -291,16 +301,14 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<StyledFlowLayout>
 
     }
 
-    @Contract(value = "null, _, _ -> fail;", pure = true)
-    public static void checkNull(Component component, String componentTagName, String id) {
-        Objects.requireNonNull(component, String.format("No '%s' found with component titleId '%s'", componentTagName, id));
-    }
-
     public UIModel getModel() {
         return this.model;
     }
 
-    public FlowLayout getRoot() {
-        return this.uiAdapter.rootComponent;
+    public Optional<EFlowLayout> getRoot() {
+        if (this.uiAdapter == null) {
+            return Optional.empty();
+        }
+        return Optional.of(this.uiAdapter.rootComponent);
     }
 }
