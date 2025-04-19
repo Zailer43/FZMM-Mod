@@ -1,10 +1,10 @@
 package fzmm.zailer.me.client.gui.text_format.components;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.client.gui.components.row.AbstractRow;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
 import fzmm.zailer.me.utils.list.IListEntry;
 import fzmm.zailer.me.utils.list.ListUtils;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -37,11 +37,11 @@ public class ColorListContainer extends FlowLayout {
         this.id(id);
         this.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
 
-        FlowLayout topLayout = StyledContainers.horizontalFlow(Sizing.fill(100), Sizing.fixed(AbstractRow.TOTAL_HEIGHT));
+        FlowLayout topLayout = EContainers.horizontalFlow(Sizing.fill(100), Sizing.fixed(AbstractRow.TOTAL_HEIGHT));
         topLayout.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
         Component labelComponent = AbstractRow.getLabel(id, tooltipId, BaseFzmmScreen.getOptionBaseTranslationKey(baseTranslationKey), true);
-        this.colorsLayout = StyledContainers.verticalFlow(Sizing.fill(100), Sizing.content());
-        this.colorAmountLabel = StyledComponents.label(Text.translatable(COLOR_AMOUNT_TRANSLATION_KEY, this.colorsLayout.children().size()));
+        this.colorsLayout = EContainers.verticalFlow(Sizing.fill(100), Sizing.content());
+        this.colorAmountLabel = EComponents.label(Text.translatable(COLOR_AMOUNT_TRANSLATION_KEY, this.colorsLayout.children().size()));
 
         ButtonComponent addButton = Components.button(ADD_COLOR_TEXT, buttonComponent -> this.addEntry());
 

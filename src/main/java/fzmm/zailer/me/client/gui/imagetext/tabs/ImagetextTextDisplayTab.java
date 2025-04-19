@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.gui.imagetext.tabs;
 
 import fzmm.zailer.me.builders.SpawnEggBuilder;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
@@ -16,7 +16,6 @@ import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Color;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
@@ -33,13 +32,6 @@ import net.minecraft.util.math.MathHelper;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ImagetextTextDisplayTab implements IImagetextTab {
-    private static final String TEXT_OPACITY_ID = "textDisplayTextOpacity";
-    private static final String BACKGROUND_COLOR_ID = "textDisplayBackgroundColor";
-    private static final String TEXT_SHADOW_ID = "textDisplayTextShadow";
-    private static final String TEXT_SEE_THROUGH_ID = "textDisplayTextSeeThrough";
-    private static final String TEXT_ALIGNMENT_ID = "textDisplayTextAlignment";
-    private static final String BILLBOARD_ID = "textDisplayBillboard";
-    private static final String ROTATION_ID = "textDisplayRotation";
     private static final String TEXT_DISPLAY_TAG = "ImagetextTextDisplay";
     private SliderWidget textOpacity;
     private ConfigTextBox backgroundColor;
@@ -93,19 +85,16 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
+    public void setupComponents(EFlowLayout rootComponent) {
         assert MinecraftClient.getInstance().player != null;
 
-        this.textOpacity = SliderRow.setup(rootComponent, TEXT_OPACITY_ID, 255, 0, 255, Integer.class, 0, 10, null);
-        this.backgroundColor = ColorRow.setup(rootComponent, BACKGROUND_COLOR_ID, Color.ofArgb(DisplayEntity.TextDisplayEntity.INITIAL_BACKGROUND), true, 0, null);
-        this.textShadow = rootComponent.childById(SmallCheckboxComponent.class, TEXT_SHADOW_ID + "-checkbox");
-        BaseFzmmScreen.checkNull(this.textShadow, "small-checkbox", TEXT_SHADOW_ID + "-checkbox");
+        this.textOpacity = SliderRow.setup(rootComponent, "textDisplayTextOpacity", 255, 0, 255, Integer.class, 0, 10, null);
+        this.backgroundColor = ColorRow.setup(rootComponent, "textDisplayBackgroundColor", Color.ofArgb(DisplayEntity.TextDisplayEntity.INITIAL_BACKGROUND), true, 0, null);
+        this.textShadow = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "textDisplayTextShadow-checkbox");
         this.textShadow.checked(false);
-        this.textSeeThrough = rootComponent.childById(SmallCheckboxComponent.class, TEXT_SEE_THROUGH_ID + "-checkbox");
-        BaseFzmmScreen.checkNull(this.textSeeThrough, "small-checkbox", TEXT_SEE_THROUGH_ID + "-checkbox");
+        this.textSeeThrough = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "textDisplayTextSeeThrough-checkbox");
         this.textSeeThrough.checked(false);
-        this.textAlignmentButton = rootComponent.childById(ContextMenuButton.class, TEXT_ALIGNMENT_ID);
-        BaseFzmmScreen.checkNull(this.textAlignmentButton, "context-menu-button", TEXT_ALIGNMENT_ID);
+        this.textAlignmentButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "textDisplayTextAlignment");
         this.textAlignmentButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : DisplayEntity.TextDisplayEntity.TextAlignment.values()) {
                 dropdownComponent.button(this.getTextAlignmentMessage(option), dropdownButton -> {
@@ -115,8 +104,7 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
             }
         });
         this.updateTextAlignment(DisplayEntity.TextDisplayEntity.TextAlignment.LEFT);
-        this.billboardButton = rootComponent.childById(ContextMenuButton.class, BILLBOARD_ID);
-        BaseFzmmScreen.checkNull(this.billboardButton, "context-menu-button", BILLBOARD_ID);
+        this.billboardButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "textDisplayBillboard");
         this.billboardButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : DisplayEntity.BillboardMode.values()) {
                 dropdownComponent.button(this.getBillboardMessage(option), dropdownButton -> {
@@ -126,7 +114,7 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
             }
         });
         this.updateBillboard(DisplayEntity.BillboardMode.FIXED);
-        this.rotation = SliderRow.setup(rootComponent, ROTATION_ID, MathHelper.wrapDegrees(MinecraftClient.getInstance().player.getYaw()), -180, 180, Float.class, 1, 30, null);
+        this.rotation = SliderRow.setup(rootComponent, "textDisplayRotation", MathHelper.wrapDegrees(MinecraftClient.getInstance().player.getYaw()), -180, 180, Float.class, 1, 30, null);
     }
 
     private void updateTextAlignment(DisplayEntity.TextDisplayEntity.TextAlignment value) {

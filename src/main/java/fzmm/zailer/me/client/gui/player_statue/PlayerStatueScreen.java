@@ -3,7 +3,10 @@ package fzmm.zailer.me.client.gui.player_statue;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
-import fzmm.zailer.me.client.gui.components.row.*;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
+import fzmm.zailer.me.client.gui.components.row.NumberRow;
+import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
+import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.player_statue.tabs.IPlayerStatueTab;
@@ -14,8 +17,8 @@ import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.player_statue.StatuePart;
 import fzmm.zailer.me.utils.FzmmWikiConstants;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
+import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.TextBoxComponent;
-import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -29,12 +32,7 @@ import java.util.Optional;
 
 @SuppressWarnings("UnstableApiUsage")
 public class PlayerStatueScreen extends BaseFzmmScreen implements IMementoScreen {
-    private static final String HORIZONTAL_DIRECTION_ID = "horizontal-direction";
-    private static final String POS_X_ID = "posX";
-    private static final String POS_Y_ID = "posY";
-    private static final String POS_Z_ID = "posZ";
-    private static final String NAME_ID = "name";
-    public static final String EXECUTE_ID = "execute";
+    public static final String EXECUTE_ID = "execute-button";
     private static PlayerStatueTabs selectedTab = PlayerStatueTabs.CREATE;
     private static PlayerStatueMemento memento = null;
     private HorizontalDirectionOption direction;
@@ -51,12 +49,11 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMementoScreen
     }
 
     @Override
-    protected void setup(FlowLayout rootComponent) {
+    protected void setup(EFlowLayout rootComponent) {
         PlayerEntity player = MinecraftClient.getInstance().player;
         assert player != null;
         //general
-        ContextMenuButton directionButton = rootComponent.childById(ContextMenuButton.class, ContextMenuButtonRow.getButtonId(HORIZONTAL_DIRECTION_ID));
-        BaseFzmmScreen.checkNull(directionButton, "context-menu-button", ContextMenuButtonRow.getButtonId(HORIZONTAL_DIRECTION_ID));
+        ContextMenuButton directionButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "horizontal-direction-context-menu-option");
         directionButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : HorizontalDirectionOption.values()) {
                 dropdownComponent.button(Text.translatable(option.getTranslationKey()), dropdownButton -> {
@@ -68,28 +65,30 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMementoScreen
         });
         this.direction = HorizontalDirectionOption.getPlayerHorizontalDirection();
         directionButton.setMessage(Text.translatable(this.direction.getTranslationKey()));
-        this.posX = NumberRow.setup(rootComponent, POS_X_ID, player.getBlockX(), Float.class);
-        this.posY = NumberRow.setup(rootComponent, POS_Y_ID, player.getY(), Float.class);
-        this.posZ = NumberRow.setup(rootComponent, POS_Z_ID, player.getBlockZ(), Float.class);
-        this.nameField = TextBoxRow.setup(rootComponent, NAME_ID, "", 0xFFFF);
+        this.posX = NumberRow.setup(rootComponent, "posX", player.getBlockX(), Float.class);
+        this.posY = NumberRow.setup(rootComponent, "posY", player.getY(), Float.class);
+        this.posZ = NumberRow.setup(rootComponent, "posZ", player.getBlockZ(), Float.class);
+        this.nameField = TextBoxRow.setup(rootComponent, "name", "", 0xFFFF);
         //tabs
         this.setTabs(selectedTab);
         ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
         for (var playerStatueTab : PlayerStatueTabs.values()) {
             IScreenTab tab = this.getTab(playerStatueTab, IPlayerStatueTab.class);
             tab.setupComponents(rootComponent);
-            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button -> {
+            ButtonComponent button = rootComponent.childByIdOrThrow(ButtonComponent.class, ScreenTabRow.getScreenTabButtonId(tab));
+            button.active(!tab.getId().equals(selectedTab.getId()));
+            button.onPress(buttonComponent -> {
                 selectedTab = this.selectScreenTab(rootComponent, tab, selectedTab);
                 this.executeButton.active = this.getTab(selectedTab, IPlayerStatueTab.class).canExecute();
             });
         }
         this.selectScreenTab(rootComponent, selectedTab, selectedTab);
         //buttons
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId("faq"), true, this::faqExecute);
-        this.executeButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(EXECUTE_ID), true, this::execute);
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "faq-button").onPress(this::faqExecute);
+        this.executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, EXECUTE_ID).onPress(this::execute);
         this.executeButton.active = this.getTab(selectedTab, IPlayerStatueTab.class).canExecute();
 
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId("difficult-to-remove-entity"), true, buttonComponent ->
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "difficult-to-remove-entity-button").onPress(buttonComponent ->
                 InvisibleEntityWarning.addOverlay(true, true, Text.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG)
         );
     }

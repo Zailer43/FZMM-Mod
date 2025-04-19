@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.gui.components.style.component;
+package fzmm.zailer.me.client.gui.components.extend.component;
 
 import io.wispforest.owo.ui.component.ItemComponent;
 import net.minecraft.item.ItemStack;
@@ -6,11 +6,11 @@ import net.minecraft.item.ItemStack;
 /**
  * Add lazy-loading of tooltips, because generate a grid of items with tooltip is expensive
  **/
-public class StyledItemComponent extends ItemComponent {
+public class EItemComponent extends ItemComponent {
     private boolean lazyTooltip = false;
     private boolean lazyTooltipNeedsUpdate = true;
 
-    public StyledItemComponent(ItemStack stack) {
+    public EItemComponent(ItemStack stack) {
         super(stack);
 
         this.mouseEnter().subscribe(this::ladyLoadTooltip);

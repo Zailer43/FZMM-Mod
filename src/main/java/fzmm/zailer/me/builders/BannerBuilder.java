@@ -1,6 +1,7 @@
 package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.utils.history.IClipboardState;
 import net.minecraft.block.AbstractBannerBlock;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.component.ComponentMap;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BannerBuilder {
+public class BannerBuilder implements IClipboardState {
 
     private final List<BannerPatternsComponent.Layer> layers;
     private Item item;
@@ -136,6 +137,7 @@ public class BannerBuilder {
         return this;
     }
 
+    @Override
     public BannerBuilder copy() {
         BannerBuilder copy = builder()
                 .item(this.item)

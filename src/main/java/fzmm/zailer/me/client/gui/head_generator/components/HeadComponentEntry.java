@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.head_generator.components;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.head_generator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.head_generator.category.IHeadCategory;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
@@ -117,7 +118,7 @@ public class HeadComponentEntry extends AbstractHeadComponentEntry {
     }
 
     @Override
-    protected void addTopRightButtons(FlowLayout panel, FlowLayout layout) {
+    protected void addTopRightButtons(EFlowLayout panel, FlowLayout layout) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         ButtonComponent overlayFavoriteButton = Components.button(Text.empty(), buttonComponent -> {});

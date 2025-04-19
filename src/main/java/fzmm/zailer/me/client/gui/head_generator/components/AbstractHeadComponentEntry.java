@@ -5,8 +5,8 @@ import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntity;
 import fzmm.zailer.me.client.entity.custom_skin.CustomPlayerSkinEntity;
 import fzmm.zailer.me.client.entity.custom_skin.ISkinMutable;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.head_generator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
 import fzmm.zailer.me.utils.ImageUtils;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 
-public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implements IListEntry<AbstractHeadEntry> {
+public abstract class AbstractHeadComponentEntry extends EFlowLayout implements IListEntry<AbstractHeadEntry> {
     public static final int HEAD_PREVIEW_SIZE = 24;
     public static final int BODY_PREVIEW_SIZE = 12;
     protected final HeadGeneratorScreen parentScreen;
@@ -64,7 +64,7 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
             return true;
         });
 
-        this.hoveredSurface(FzmmStyles.DEFAULT_HOVERED);
+        this.hoveredSurface(EStyles.DEFAULT_HOVERED);
 
         BufferedImage defaultPreview = entry.getHeadSkin(new BufferedImage(SkinPart.MAX_WIDTH, SkinPart.MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB), false);
         this.previewTexture = new NativeImageBackedTexture(ImageUtils.toNativeImage(defaultPreview));
@@ -177,7 +177,7 @@ public abstract class AbstractHeadComponentEntry extends StyledFlowLayout implem
 
     }
 
-    protected abstract void addTopRightButtons(FlowLayout panel, FlowLayout layout);
+    protected abstract void addTopRightButtons(EFlowLayout panel, FlowLayout layout);
 
 
     protected abstract Identifier getTextureId();

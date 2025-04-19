@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui.imagetext.algorithms;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SuggestionTextBox;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
@@ -88,7 +89,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
+    public void setupComponents(EFlowLayout rootComponent) {
         this.charactersTextField = (SuggestionTextBox) TextBoxRow.setup(rootComponent, CHARACTERS_ID, ImagetextLine.DEFAULT_TEXT, FzmmClient.CONFIG.imagetext.maxResolution());
         this.charactersTextField.setCursorToStart(false);
         this.charactersTextField.setSuggestionProvider((nul, builder) -> {
@@ -106,8 +107,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
         });
         this.charactersTextField.enableFontProcess(true);
 
-        FlowLayout parentLayout = rootComponent.childById(FlowLayout.class, TextBoxRow.getTextBoxId(CHARACTERS_ID) + "-parent");
-        BaseFzmmScreen.checkNull(parentLayout, "flow-layout", TextBoxRow.getTextBoxId(CHARACTERS_ID) + "-parent");
+        FlowLayout parentLayout = rootComponent.childByIdOrThrow(FlowLayout.class, TextBoxRow.getTextBoxId(CHARACTERS_ID) + "-parent");
         if (MinecraftClient.getInstance().currentScreen instanceof BaseFzmmScreen baseScreen) {
             parentLayout.removeChild(this.charactersTextField);
 

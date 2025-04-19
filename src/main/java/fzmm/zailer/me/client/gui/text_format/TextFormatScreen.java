@@ -3,11 +3,11 @@ package fzmm.zailer.me.client.gui.text_format;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.BooleanButton;
-import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
 import fzmm.zailer.me.client.gui.text_format.tabs.ITextFormatTab;
 import fzmm.zailer.me.client.gui.text_format.tabs.TextFormatTabs;
 import fzmm.zailer.me.client.gui.utils.CopyTextScreen;
@@ -35,28 +35,16 @@ import java.util.List;
 import java.util.Optional;
 
 public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
-    public static final Text EMPTY_COLOR_TEXT = Text.translatable("fzmm.gui.textFormat.error.emptyColor").setStyle(Style.EMPTY.withColor(FzmmStyles.TEXT_ERROR_COLOR.rgb()));
-    private static final String MESSAGE_PREVIEW_ID = "message-preview";
-    private static final String MESSAGE_ID = "message";
-    private static final String BOLD_ID = "bold";
-    private static final String ITALIC_ID = "italic";
-    private static final String OBFUSCATED_ID = "obfuscated";
-    private static final String STRIKETHROUGH_ID = "strikethrough";
-    private static final String UNDERLINE_ID = "underline";
-    private static final String STYLES_LAYOUT_ID = "styles-layout";
-    private static final String ADD_LORE_ID = "add-lore";
-    private static final String SET_NAME_ID = "set-name";
-    private static final String COPY_ID = "copy";
-    private static final String RANDOM_ID = "random";
+    public static final Text EMPTY_COLOR_TEXT = Text.translatable("fzmm.gui.textFormat.error.emptyColor").setStyle(Style.EMPTY.withColor(EStyles.TEXT_ERROR_COLOR.rgb()));
     private static TextFormatMemento memento = null;
     private static TextFormatTabs selectedTab = TextFormatTabs.SIMPLE;
     private LabelComponent messagePreviewLabel;
     private TextBoxComponent messageTextField;
-    private BooleanButton boldToggle;
-    private BooleanButton italicToggle;
-    private BooleanButton obfuscatedToggle;
-    private BooleanButton strikethroughToggle;
-    private BooleanButton underlineToggle;
+    private EBooleanButton boldToggle;
+    private EBooleanButton italicToggle;
+    private EBooleanButton obfuscatedToggle;
+    private EBooleanButton strikethroughToggle;
+    private EBooleanButton underlineToggle;
     private FlowLayout stylesLayout;
     private List<ButtonWidget> executeButtons;
     private boolean initialized;
@@ -67,21 +55,18 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
     }
 
     @Override
-    protected void setup(FlowLayout rootComponent) {
-        this.messagePreviewLabel = rootComponent.childById(LabelComponent.class, MESSAGE_PREVIEW_ID);
-        BaseFzmmScreen.checkNull(this.messagePreviewLabel, "label", MESSAGE_PREVIEW_ID);
-
-        this.messageTextField = TextBoxRow.setup(rootComponent, MESSAGE_ID, "Hello world", 4096, s -> this.updateMessagePreview());
+    protected void setup(EFlowLayout rootComponent) {
+        this.messagePreviewLabel = rootComponent.childByIdOrThrow(LabelComponent.class, "message-preview");
+        this.messageTextField = TextBoxRow.setup(rootComponent, "message", "Hello world", 4096, s -> this.updateMessagePreview());
 
         //styles
-        this.stylesLayout = rootComponent.childById(FlowLayout.class, STYLES_LAYOUT_ID);
-        checkNull(this.stylesLayout, "flow-layout", STYLES_LAYOUT_ID);
+        this.stylesLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "styles-layout");
 
-        this.boldToggle = this.setupStyleButton(rootComponent, BOLD_ID);
-        this.italicToggle = this.setupStyleButton(rootComponent, ITALIC_ID);
-        this.obfuscatedToggle = this.setupStyleButton(rootComponent, OBFUSCATED_ID);
-        this.strikethroughToggle = this.setupStyleButton(rootComponent, STRIKETHROUGH_ID);
-        this.underlineToggle = this.setupStyleButton(rootComponent, UNDERLINE_ID);
+        this.boldToggle = this.setupStyleButton(rootComponent, "bold");
+        this.italicToggle = this.setupStyleButton(rootComponent, "italic");
+        this.obfuscatedToggle = this.setupStyleButton(rootComponent, "obfuscated");
+        this.strikethroughToggle = this.setupStyleButton(rootComponent, "strikethrough");
+        this.underlineToggle = this.setupStyleButton(rootComponent, "underline");
         //tabs
         this.setTabs(selectedTab);
         for (var tab : TextFormatTabs.values())
@@ -91,7 +76,9 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
         for (var textFormatTab : TextFormatTabs.values()) {
             ITextFormatTab tab = this.getTab(textFormatTab, ITextFormatTab.class);
             tab.setupComponents(rootComponent);
-            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button -> {
+            ButtonComponent button = rootComponent.childByIdOrThrow(ButtonComponent.class, ScreenTabRow.getScreenTabButtonId(tab));
+            button.active(!tab.getId().equals(selectedTab.getId()));
+            button.onPress(buttonComponent -> {
                 selectedTab = this.selectScreenTab(rootComponent, tab, selectedTab);
                 this.tabCallback(tab);
             });
@@ -118,13 +105,15 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
         }
     }
 
-    private void setupBottomButtons(FlowLayout rootComponent) {
+    private void setupBottomButtons(EFlowLayout rootComponent) {
         assert this.client != null;
         assert client.player != null;
         FzmmConfig.TextFormat config = FzmmClient.CONFIG.textFormat;
 
         boolean executeButtonsActive = this.messageTextField.getText().length() > 1;
-        ButtonWidget addLoreButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(ADD_LORE_ID), executeButtonsActive, button -> {
+        ButtonComponent addLoreButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "add-lore-button");
+        addLoreButton.active(executeButtonsActive);
+        addLoreButton.onPress(button -> {
             ItemStack handItem = ItemUtils.from(Hand.MAIN_HAND);
             Text text = this.messagePreviewLabel.text();
 
@@ -134,7 +123,9 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
 
             ItemUtils.give(builder.get());
         });
-        ButtonWidget setNameButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(SET_NAME_ID), executeButtonsActive, button -> {
+        ButtonComponent setNameButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "set-name-button");
+        setNameButton.active(executeButtonsActive);
+        setNameButton.onPress(button -> {
             ItemStack handItem = ItemUtils.from(Hand.MAIN_HAND);
             Text text = this.messagePreviewLabel.text();
 
@@ -144,11 +135,13 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
 
             ItemUtils.give(builder.get());
         });
-        ButtonWidget randomButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(RANDOM_ID), executeButtonsActive,
-                button -> this.getTab(selectedTab, ITextFormatTab.class).setRandomValues());
+        ButtonComponent randomButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "random-button");
+        randomButton.active(executeButtonsActive);
+        randomButton.onPress(button -> this.getTab(selectedTab, ITextFormatTab.class).setRandomValues());
 
-        ButtonWidget copyButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_ID), executeButtonsActive,
-                button -> this.setScreen(new CopyTextScreen(this, this.messagePreviewLabel.text())));
+        ButtonComponent copyButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "copy-button");
+        copyButton.active(executeButtonsActive);
+        copyButton.onPress(button -> this.setScreen(new CopyTextScreen(this, this.messagePreviewLabel.text())));
         this.executeButtons = List.of(addLoreButton, setNameButton, randomButton, copyButton);
 
     }
@@ -180,9 +173,8 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
             button.active = value;
     }
 
-    private BooleanButton setupStyleButton(FlowLayout rootComponent, String id) {
-        BooleanButton booleanButton = rootComponent.childById(BooleanButton.class, id);
-        checkNull(booleanButton, "boolean-button", id);
+    private EBooleanButton setupStyleButton(EFlowLayout rootComponent, String id) {
+        EBooleanButton booleanButton = rootComponent.childByIdOrThrow(EBooleanButton.class, id);
         booleanButton.onPress(buttonComponent -> this.updateMessagePreview());
         booleanButton.enabled(false);
         return booleanButton;

@@ -2,8 +2,8 @@ package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
 import org.jetbrains.annotations.Nullable;
@@ -32,12 +32,10 @@ public class SliderRow extends AbstractRow {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static SliderWidget setup(FlowLayout rootComponent, String id, double defaultValue, double min,
+    public static SliderWidget setup(EFlowLayout rootComponent, String id, double defaultValue, double min,
                                      double max, Class<? extends Number> numberType, int decimalPlaces, double scrollStep, @Nullable Consumer<Double> callback) {
-        SliderWidget numberSlider = rootComponent.childById(SliderWidget.class, getSliderId(id));
+        SliderWidget numberSlider = rootComponent.childByIdOrThrow(SliderWidget.class, getSliderId(id));
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
-
-        BaseFzmmScreen.checkNull(numberSlider, "number-slider", getSliderId(id));
 
         numberSlider.decimalPlaces(decimalPlaces);
         numberSlider.valueType(numberType);

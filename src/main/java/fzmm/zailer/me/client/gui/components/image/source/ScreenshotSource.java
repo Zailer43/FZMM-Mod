@@ -2,10 +2,10 @@ package fzmm.zailer.me.client.gui.components.image.source;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.image.ScreenshotZoneComponent;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -79,19 +79,19 @@ public class ScreenshotSource implements IInteractiveImageLoader {
     }
 
     private FlowLayout getHud() {
-        FlowLayout hudLayout = (FlowLayout) StyledContainers.verticalFlow(Sizing.fill(100), Sizing.fill(100))
+        FlowLayout hudLayout = (FlowLayout) EContainers.verticalFlow(Sizing.fill(100), Sizing.fill(100))
                 .positioning(Positioning.absolute(0, 0));
 
         ScreenshotZoneComponent screenshotZoneComponent = new ScreenshotZoneComponent();
         screenshotZoneComponent.sizing(Sizing.fill(100), Sizing.fill(100))
                 .positioning(Positioning.absolute(0, 0));
 
-        FlowLayout labelLayout = (FlowLayout) StyledContainers.verticalFlow(Sizing.fill(100), Sizing.fixed(ScreenshotZoneComponent.PADDING))
+        FlowLayout labelLayout = (FlowLayout) EContainers.verticalFlow(Sizing.fill(100), Sizing.fixed(ScreenshotZoneComponent.PADDING))
                 .alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
                 .positioning(Positioning.absolute(0, 0));
 
         Text keyTranslation = FzmmClient.OPEN_MAIN_GUI_KEYBINDING.getBoundKeyLocalizedText();
-        LabelComponent labelComponent = StyledComponents.label(Text.translatable("fzmm.gui.option.image.screenshot.message", keyTranslation.getString()));
+        LabelComponent labelComponent = EComponents.label(Text.translatable("fzmm.gui.option.image.screenshot.message", keyTranslation.getString()));
 
         labelLayout.child(labelComponent);
         hudLayout.child(screenshotZoneComponent);
@@ -147,7 +147,7 @@ public class ScreenshotSource implements IInteractiveImageLoader {
                 snackBar = BaseSnackBarComponent.builder(SnackBarManager.IMAGE_ID)
                         .title(Text.translatable("fzmm.snack_bar.image.error.title"))
                         .details(Text.translatable("fzmm.snack_bar.image.error.details.unexpectedError"))
-                        .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                        .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                         .closeButton()
                         .build();
 

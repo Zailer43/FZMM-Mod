@@ -2,10 +2,11 @@ package fzmm.zailer.me.client.gui.main;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.encrypt_book.EncryptBookScreen;
 import fzmm.zailer.me.client.gui.HistoryScreen;
 import fzmm.zailer.me.client.gui.banner_editor.BannerEditorScreen;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.converters.ConvertersScreen;
+import fzmm.zailer.me.client.gui.encrypt_book.EncryptBookScreen;
 import fzmm.zailer.me.client.gui.head_gallery.HeadGalleryScreen;
 import fzmm.zailer.me.client.gui.head_generator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
@@ -14,7 +15,6 @@ import fzmm.zailer.me.client.gui.player_statue.PlayerStatueScreen;
 import fzmm.zailer.me.client.gui.text_format.TextFormatScreen;
 import io.wispforest.owo.config.ui.ConfigScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.gui.screen.Screen;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,8 +29,8 @@ public class MainScreen extends BaseFzmmScreen {
 
     @Override
     @SuppressWarnings("ConstantConditions")
-    protected void setup(FlowLayout rootComponent) {
-        rootComponent.childById(ButtonComponent.class, "config-button")
+    protected void setup(EFlowLayout rootComponent) {
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "config-button")
                 .onPress(button -> this.client.setScreen(ConfigScreen.create(FzmmClient.CONFIG, this)));
 
         Map<String, ButtonData> openScreenButtons = Map.of(

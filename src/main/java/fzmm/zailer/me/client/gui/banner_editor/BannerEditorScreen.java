@@ -3,18 +3,20 @@ package fzmm.zailer.me.client.gui.banner_editor;
 import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.banner_editor.tabs.BannerEditorTabs;
-import fzmm.zailer.me.client.gui.banner_editor.tabs.IBannerEditorTab;
-import fzmm.zailer.me.client.gui.components.BooleanButton;
-import fzmm.zailer.me.client.gui.components.row.BooleanRow;
-import fzmm.zailer.me.client.gui.components.row.ButtonRow;
-import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
+import fzmm.zailer.me.client.gui.banner_editor.tabs.AddPatternTab;
+import fzmm.zailer.me.client.gui.banner_editor.tabs.ChangeColorTab;
+import fzmm.zailer.me.client.gui.banner_editor.tabs.IBannerTab;
+import fzmm.zailer.me.client.gui.banner_editor.tabs.RemovePatternTab;
+import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.utils.select_item.RequestedItem;
 import fzmm.zailer.me.client.gui.utils.select_item.SelectItemScreen;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
+import fzmm.zailer.me.utils.history.HistoryClipboard;
+import fzmm.zailer.me.utils.history.IClipboardState;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
@@ -29,82 +31,42 @@ import net.minecraft.item.ShieldItem;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BannerEditorScreen extends BaseFzmmScreen {
-    private static final String BANNER_PREVIEW_ID = "banner-preview";
-    private static final String COLOR_LAYOUT_ID = "color-layout";
-    private static final String GIVE_BUTTON_ID = "give-button";
-    private static final String SELECT_BANNER_BUTTON_ID = "select-banner-button";
-    private static final String IS_SHIELD_ID = "isShield";
-    private static final String CONTENT_ID = "content";
-    private static final String UNDO_BUTTON_ID = "undo";
-    private static final String REDO_BUTTON_ID = "redo";
-    private static BannerEditorTabs selectedTab = BannerEditorTabs.ADD_PATTERNS;
+    private static IBannerTab selectedTab = new AddPatternTab();
     private ItemComponent bannerPreview;
-    private BooleanButton isShieldButton;
+    private EBooleanButton isShieldButton;
+    private EFlowLayout contentLayout;
     private BannerBuilder bannerBuilder;
     private DyeColor selectedColor;
-    private ButtonComponent undoButton;
-    private ButtonComponent redoButton;
-    private ArrayDeque<BannerBuilder> undoArray;
-    private ArrayDeque<BannerBuilder> redoArray;
+    private HistoryClipboard clipboard;
 
     public BannerEditorScreen(@Nullable Screen parent) {
         super("banner_editor", "bannerEditor", parent);
     }
 
     @Override
-    protected void setup(FlowLayout rootComponent) {
+    protected void setup(EFlowLayout rootComponent) {
         //preview
-        this.bannerPreview = rootComponent.childById(ItemComponent.class, BANNER_PREVIEW_ID);
-        checkNull(this.bannerPreview, "flow-layout", BANNER_PREVIEW_ID);
+        this.bannerPreview = rootComponent.childByIdOrThrow(ItemComponent.class, "banner-preview");
         this.bannerBuilder = BannerBuilder.of(Items.WHITE_BANNER.getDefaultStack());
 
-        //preview buttons
-        ButtonComponent giveButton = rootComponent.childById(ButtonComponent.class, GIVE_BUTTON_ID);
-        checkNull(giveButton, "button", GIVE_BUTTON_ID);
-        giveButton.onPress(buttonComponent -> ItemUtils.give(this.bannerBuilder.get()));
+        //left buttons
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "give-button").onPress(button -> ItemUtils.give(this.bannerBuilder.get()));
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "select-banner-button").onPress(button -> this.selectBanner());
 
-        ButtonComponent selectBannerButton = rootComponent.childById(ButtonComponent.class, SELECT_BANNER_BUTTON_ID);
-        checkNull(selectBannerButton, "button", SELECT_BANNER_BUTTON_ID);
-        selectBannerButton.onPress(buttonComponent -> this.selectBanner());
+        EButtonComponent undoButton = rootComponent.childByIdOrThrow(EButtonComponent.class, "undo-button");
+        EButtonComponent redoButton = rootComponent.childByIdOrThrow(EButtonComponent.class, "redo-button");
+        this.clipboard = new HistoryClipboard(this.bannerBuilder, undoButton, redoButton, FzmmClient.CONFIG.itemEditorBanner.maxUndo());
+        this.clipboard.onChange(this::updatePreview);
 
-        this.undoArray = new ArrayDeque<>();
-        this.undoButton = rootComponent.childById(ButtonComponent.class, UNDO_BUTTON_ID);
-        checkNull(this.undoButton, "button", UNDO_BUTTON_ID);
-        this.undoButton.onPress(buttonComponent -> this.undo());
-        this.undoButton.tooltip(List.of(
-                Text.translatable("fzmm.gui.bannerEditor.option.undo.tooltip"),
-                Text.empty(),
-                Text.translatable("fzmm.gui.hotkey.single"),
-                Text.translatable("fzmm.gui.hotkey.ctrl").append(" + Z") // this doesn't need to be translatable, right?
-        ));
-
-        this.redoArray = new ArrayDeque<>();
-        this.redoButton = rootComponent.childById(ButtonComponent.class, REDO_BUTTON_ID);
-        checkNull(this.redoButton, "button", REDO_BUTTON_ID);
-        this.redoButton.onPress(buttonComponent -> this.redo());
-        this.redoButton.tooltip(List.of(
-                Text.translatable("fzmm.gui.bannerEditor.option.redo.tooltip"),
-                Text.empty(),
-                Text.translatable("fzmm.gui.hotkey.plural"),
-                Text.translatable("fzmm.gui.hotkey.ctrl").append(" + Y"),
-                Text.translatable("fzmm.gui.hotkey.ctrl").append(" + ").append(Text.translatable("fzmm.gui.hotkey.shift")).append(" + Z")
-        ));
-
-        this.clearUndo();
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "clear-button").onPress(button -> this.clearBanner());
 
         //content
-        FlowLayout contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
-        checkNull(contentLayout, "flow-layout", CONTENT_ID);
-
-        FlowLayout colorLayout = rootComponent.childById(FlowLayout.class, COLOR_LAYOUT_ID);
-        checkNull(colorLayout, "flow-layout", COLOR_LAYOUT_ID);
+        FlowLayout colorLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "color-layout");
         List<Component> colorList = new ArrayList<>();
         DyeColor[] dyeColorsInOrder = FzmmUtils.getDyeColorsInOrder();
         for (var dyeColor : dyeColorsInOrder) {
@@ -114,13 +76,13 @@ public class BannerEditorScreen extends BaseFzmmScreen {
             colorBox.fill(true);
             colorBox.cursorStyle(CursorStyle.HAND);
 
-            FlowLayout colorSelectedLayout = StyledContainers.horizontalFlow(Sizing.fixed(18), Sizing.fixed(18));
+            FlowLayout colorSelectedLayout = EContainers.horizontalFlow(Sizing.fixed(18), Sizing.fixed(18));
             colorSelectedLayout.padding(Insets.of(1));
             colorSelectedLayout.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
 
             colorBox.mouseDown().subscribe((mouseX, mouseY, button) -> {
                 this.selectedColor = dyeColor;
-                this.updatePreview(this.bannerBuilder, false);
+                this.updatePreview(this.bannerBuilder);
 
                 for (var component : colorList) {
                     if (component instanceof FlowLayout layout)
@@ -139,24 +101,33 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         this.selectedColor = dyeColorsInOrder[0];
         colorLayout.children(colorList);
 
+        this.contentLayout = rootComponent.childByIdOrThrow(EFlowLayout.class, "content");
+
         //tabs
-        this.setTabs(selectedTab);
-        ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
-        for (var bannerEditorTab : BannerEditorTabs.values()) {
-            IScreenTab tab = this.getTab(bannerEditorTab, IBannerEditorTab.class);
-            tab.setupComponents(rootComponent);
-            ButtonRow.setup(rootComponent, ScreenTabRow.getScreenTabButtonId(tab), !tab.getId().equals(selectedTab.getId()), button -> {
-                selectedTab = this.selectScreenTab(rootComponent, tab, selectedTab);
+        List<IBannerTab> tabs = List.of(new AddPatternTab(), new ChangeColorTab(), new RemovePatternTab());
+        List<ButtonComponent> tabButtons = new ArrayList<>();
+
+        for (var tab : tabs) {
+            ButtonComponent button = rootComponent.childByIdOrThrow(ButtonComponent.class, tab.buttonId());
+            button.active(!tab.buttonId().equals(selectedTab.buttonId()));
+            tabButtons.add(button);
+
+            button.onPress(buttonComponent -> {
+                for (var tabButton : tabButtons) {
+                    tabButton.active(true);
+                }
+                button.active(false);
+                selectedTab = tab;
                 this.updatePreview(this.bannerBuilder);
             });
         }
-        this.selectScreenTab(rootComponent, selectedTab, selectedTab);
 
         //other
-        this.isShieldButton = BooleanRow.setup(rootComponent, IS_SHIELD_ID, false,
-                button -> this.isShieldButtonExecute(this.isShieldButton.enabled(), true));
+        this.isShieldButton = rootComponent.childByIdOrThrow(EBooleanButton.class, "is-shield");
+        this.isShieldButton.enabled(false);
+        this.isShieldButton.onPress(button -> this.isShieldButtonExecute(this.isShieldButton.enabled()));
 
-        this.clearUndo();
+        this.clipboard.clearUndo();
         this.updatePreview(this.bannerBuilder);
     }
 
@@ -180,6 +151,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
                         this.isShieldButton.onPress();
                     }
 
+                    this.clipboard.addUndo(this.bannerBuilder);
                     this.bannerBuilder = BannerBuilder.of(itemStack);
                     this.updatePreview(this.bannerBuilder);
                 },
@@ -193,97 +165,38 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         this.setScreen(new SelectItemScreen(this, requestedItem));
     }
 
-    public void updatePreview(BannerBuilder builder) {
-        this.updatePreview(builder, true);
+    public void updatePreview(IClipboardState state) {
+        BannerBuilder builder = (BannerBuilder) state;
+        this.isShieldButton.enabledIgnoreCallback(builder.isShield());
+        this.updatePreview(builder);
     }
 
-    private void updatePreview(BannerBuilder builder, boolean canClearRedo) {
-        if (canClearRedo && !this.redoArray.isEmpty())
-            this.clearRedo();
-
+    private void updatePreview(BannerBuilder builder) {
+        this.bannerBuilder = builder;
         this.bannerPreview.stack(builder.get());
-        this.getTab(selectedTab, IBannerEditorTab.class).update(this, builder, this.selectedColor);
+        List<Component> banners = selectedTab.update(this.clipboard, builder, this.selectedColor);
+        this.contentLayout.<EFlowLayout>configure(layout -> {
+            layout.clearChildren();
+            layout.children(banners);
+        });
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_Z && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0 && (modifiers & GLFW.GLFW_MOD_SHIFT) == 0) {
-            this.undo();
-            return true;
-        }
-
-        if ((keyCode == GLFW.GLFW_KEY_Z && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0  && (modifiers & GLFW.GLFW_MOD_SHIFT) != 0 )
-                || (keyCode == GLFW.GLFW_KEY_Y && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0)) {
-
-            this.redo();
+        if (this.clipboard.keyPressed(keyCode, modifiers)) {
             return true;
         }
 
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    private void isShieldButtonExecute(boolean value, boolean canClearRedo) {
+    private void isShieldButtonExecute(boolean value) {
         this.isShieldButton.enabledIgnoreCallback(value);
-        this.updatePreview(this.bannerBuilder.isShield(value), canClearRedo);
+        this.updatePreview(this.bannerBuilder.isShield(value));
     }
 
-    private void undo() {
-        BannerBuilder currentBanner = this.bannerBuilder.copy();
-
-        if (this.undoArray.isEmpty()) {
-            if (!this.bannerBuilder.layers().isEmpty()) {
-                this.bannerBuilder.layers().clear();
-                this.updatePreview(this.bannerBuilder);
-                this.redoArray.addFirst(currentBanner);
-            }
-            return;
-        }
-
-        BannerBuilder bannerBuilder = this.undoArray.removeFirst();
-        this.bannerBuilder = bannerBuilder;
-        this.isShieldButtonExecute(bannerBuilder.isShield(), false);
-        this.redoArray.addFirst(currentBanner);
-
-        this.redoButton.active = true;
-        if (this.undoArray.isEmpty() && bannerBuilder.layers().isEmpty())
-            this.undoButton.active = false;
-    }
-
-    private void redo() {
-        if (this.redoArray.isEmpty())
-            return;
-
-        BannerBuilder bannerBuilder = this.redoArray.removeFirst();
-        BannerBuilder currentBanner = this.bannerBuilder.copy();
-        this.bannerBuilder = bannerBuilder;
-        this.isShieldButtonExecute(bannerBuilder.isShield(), false);
-        this.undoArray.addFirst(currentBanner);
-
-        this.undoButton.active = true;
-        if (this.redoArray.isEmpty())
-            this.redoButton.active = false;
-    }
-
-    public void addUndo(BannerBuilder bannerBuilder) {
-        this.undoArray.addFirst(bannerBuilder.copy());
-        if (this.undoArray.size() > FzmmClient.CONFIG.itemEditorBanner.maxUndo())
-            this.undoArray.removeLast();
-
-        this.redoArray.clear();
-
-        this.redoButton.active = false;
-        this.undoButton.active = true;
-    }
-
-    public void clearUndo() {
-        this.undoArray.clear();
-        this.undoButton.active = false;
-
-        this.clearRedo();
-    }
-
-    public void clearRedo() {
-        this.redoArray.clear();
-        this.redoButton.active = false;
+    private void clearBanner() {
+        this.clipboard.addUndo(this.bannerBuilder);
+        this.updatePreview(this.bannerBuilder.clearPatterns());
     }
 }

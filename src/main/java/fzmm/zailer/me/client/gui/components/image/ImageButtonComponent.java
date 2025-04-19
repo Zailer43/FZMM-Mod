@@ -1,11 +1,11 @@
 package fzmm.zailer.me.client.gui.components.image;
 
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
 import fzmm.zailer.me.client.gui.components.image.source.IInteractiveImageLoader;
 import fzmm.zailer.me.client.gui.components.image.source.ImagePlayerNameSource;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.SnackBarBuilder;
@@ -62,7 +62,7 @@ public class ImageButtonComponent extends ButtonComponent {
         this.active = false;
         ISnackBarComponent loadingSnackBar = BaseSnackBarComponent.builder(SnackBarManager.IMAGE_ID)
                 .title(Text.translatable("fzmm.snack_bar.image.loading.title"))
-                .backgroundColor(FzmmStyles.ALERT_LOADING_COLOR)
+                .backgroundColor(EStyles.ALERT_LOADING_COLOR)
                 .keepOnLimit()
                 .build();
 

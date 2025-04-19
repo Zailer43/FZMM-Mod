@@ -1,12 +1,12 @@
-package fzmm.zailer.me.client.gui.components.style.component;
+package fzmm.zailer.me.client.gui.components.extend.component;
 
 import fzmm.zailer.me.client.FzmmClient;
 import io.wispforest.owo.ui.component.LabelComponent;
 import net.minecraft.text.Text;
 
-public class StyledLabelComponent extends LabelComponent {
+public class ELabelComponent extends LabelComponent {
 
-    public StyledLabelComponent(Text text) {
+    public ELabelComponent(Text text) {
         super(text);
 
         // improves text readability with translucent background

@@ -5,11 +5,10 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SuggestionTextBox;
 import fzmm.zailer.me.client.gui.components.containers.ConfirmOverlay;
-import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.component.ELabelComponent;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.component.StyledLabelComponent;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
 import fzmm.zailer.me.client.gui.encrypt_book.components.AddEncryptProfileOverlay;
 import fzmm.zailer.me.client.gui.encrypt_book.components.DecryptorSaverOverlay;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
@@ -58,14 +57,13 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen 
     }
 
     @Override
-    protected void setup(FlowLayout rootComponent) {
+    protected void setup(EFlowLayout rootComponent) {
         assert this.client != null;
         assert this.client.player != null;
 
         FzmmConfig.Encryptbook config = FzmmClient.CONFIG.encryptbook;
         // message
-        this.messageTextArea = rootComponent.childById(TextAreaComponent.class, "message-text-area");
-        BaseFzmmScreen.checkNull(this.messageTextArea, "text-area", "message-text-area");
+        this.messageTextArea = rootComponent.childByIdOrThrow(TextAreaComponent.class, "message-text-area");
         this.messageTextArea.text(config.defaultBookMessage());
 
         // book options
@@ -75,7 +73,7 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen 
         // encryptbook options
         String configPadding = config.padding();
         this.paddingCharactersField = TextBoxRow.setup(rootComponent, "paddingCharacters", configPadding, 512);
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId("add-profile"), true, this::addProfileOverlay);
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "add-profile-button").onPress(this::addProfileOverlay);
         if (this.paddingCharactersField instanceof SuggestionTextBox suggestionTextBox) {
             suggestionTextBox.setSuggestionProvider((context, builder) -> {
                 String defaultValue = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.";
@@ -87,21 +85,19 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen 
             });
         }
 
-        this.decryptorStatus = rootComponent.childById(StyledLabelComponent.class, "profile-status");
-        BaseFzmmScreen.checkNull(this.decryptorStatus, "fzmm.styled-label", "profile-status");
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId("get-decryptor"), true, buttonComponent -> this.decryptorSaverOverlay(this.selectedProfile));
+        this.decryptorStatus = rootComponent.childByIdOrThrow(ELabelComponent.class, "profile-status");
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "get-decryptor-button").onPress(buttonComponent -> this.decryptorSaverOverlay(this.selectedProfile));
 
-        this.decryptorProfileLayout = rootComponent.childById(StyledFlowLayout.class, "profile-list");
-        BaseFzmmScreen.checkNull(this.decryptorProfileLayout, "fzmm.styled-flow-layout", "profile-list");
+        this.decryptorProfileLayout = rootComponent.childByIdOrThrow(EFlowLayout.class, "profile-list");
         this.updateDecryptorProfileList();
         this.selectProfile(0);
 
         // bottom buttons
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId("give"), true, buttonComponent -> this.giveBook(false));
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId("add-page"), true, buttonComponent -> this.giveBook(true));
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "give-button").onPress(buttonComponent -> this.giveBook(false));
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "add-page-button").onPress(buttonComponent -> this.giveBook(true));
 
         // other
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId("faq"), true, this::faqExecute);
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "faq-button").onPress(this::faqExecute);
     }
 
     @Override
@@ -116,9 +112,8 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen 
         for (int i = 0; i < decryptorProfiles.size(); i++) {
             TranslationEncryptProfile profile = decryptorProfiles.get(i);
             int finalI = i;
-            StyledFlowLayout component = this.getModel().expandTemplate(StyledFlowLayout.class, "profile-option", Map.of()).configure(layout -> {
-                StyledLabelComponent label = layout.childById(StyledLabelComponent.class, "label");
-                BaseFzmmScreen.checkNull(label, "fzmm.styled-label", "label");
+            EFlowLayout component = this.getModel().expandTemplate(EFlowLayout.class, "profile-option", Map.of()).configure(layout -> {
+                ELabelComponent label = layout.childByIdOrThrow(ELabelComponent.class, "label");
 
                 label.text(Text.translatable("fzmm.gui.encryptbook.label.profile",
                         profile.translationKey(),
@@ -129,8 +124,7 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen 
 
                 layout.mouseDown().subscribe((mouseX, mouseY, button) -> this.profileSelect(layout, profile, finalI));
 
-                ButtonComponent removeButton = layout.childById(ButtonComponent.class, "remove-button");
-                BaseFzmmScreen.checkNull(removeButton, "button", "remove-button");
+                ButtonComponent removeButton = layout.childByIdOrThrow(ButtonComponent.class, "remove-button");
 
                 //noinspection CodeBlock2Expr
                 removeButton.onPress(button -> {
@@ -162,7 +156,7 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen 
                 continue;
             }
 
-            Surface surface = Surface.flat(childLayout == profileLayout ? FzmmStyles.SELECTED_COLOR : FzmmStyles.UNSELECTED_COLOR);
+            Surface surface = Surface.flat(childLayout == profileLayout ? EStyles.SELECTED_COLOR : EStyles.UNSELECTED_COLOR);
             childLayout.surface(surface);
         }
 
@@ -213,7 +207,7 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen 
         }
 
         result = result.copy().setStyle(Style.EMPTY
-                .withColor((isValid ? FzmmStyles.TEXT_SUCCESS_COLOR : FzmmStyles.TEXT_ERROR_COLOR).rgb()));
+                .withColor((isValid ? EStyles.TEXT_SUCCESS_COLOR : EStyles.TEXT_ERROR_COLOR).rgb()));
 
         this.decryptorStatus.text(result);
     }

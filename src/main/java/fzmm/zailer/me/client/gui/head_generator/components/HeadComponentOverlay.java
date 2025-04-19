@@ -4,6 +4,10 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.FzmmIcons;
 import fzmm.zailer.me.client.entity.custom_skin.ISkinMutable;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
@@ -12,10 +16,6 @@ import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.SnackBarBuilder;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
 import fzmm.zailer.me.client.gui.head_generator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.head_generator.category.IHeadCategory;
 import fzmm.zailer.me.client.gui.head_generator.options.SkinPreEditOption;
@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class HeadComponentOverlay extends StyledFlowLayout {
+public class HeadComponentOverlay extends EFlowLayout {
     private static final int OVERLAY_WIDGETS_WIDTH = 75;
     public static final Text GIVE_BUTTON_TEXT = Text.translatable("fzmm.gui.button.giveHead");
     public static final Text GIVE_WAITING_UNDEFINED_TEXT = Text.translatable("fzmm.gui.headGenerator.wait");
@@ -74,15 +74,14 @@ public class HeadComponentOverlay extends StyledFlowLayout {
 
         Map<String, String> parameters = Map.of("name", entry.getDisplayName().getString());
 
-        FlowLayout headOverlay = this.parentScreen.getModel().expandTemplate(FlowLayout.class, "head-overlay", parameters).configure(panel -> {
+        FlowLayout headOverlay = this.parentScreen.getModel().expandTemplate(EFlowLayout.class, "head-overlay", parameters).<EFlowLayout>configure(panel -> {
             panel.mouseDown().subscribe((mouseX1, mouseY1, button1) -> true);
             int giveButtonWidth = FzmmUtils.getMaxWidth(List.of(GIVE_BUTTON_TEXT,
                     GIVE_WAITING_UNDEFINED_TEXT,
                     Text.translatable(GIVE_WAITING_SECONDS_KEY, 1))
             ) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
 
-            FlowLayout previewLayout = panel.childById(FlowLayout.class, "preview");
-            BaseFzmmScreen.checkNull(previewLayout, "flow-layout", "preview");
+            FlowLayout previewLayout = panel.childByIdOrThrow(FlowLayout.class, "preview");
             previewLayout.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
 
             this.previewEntity.cursorStyle(CursorStyle.MOVE);
@@ -93,18 +92,15 @@ public class HeadComponentOverlay extends StyledFlowLayout {
             }
             previewLayout.child(this.previewEntity);
 
-            LabelComponent categoryLabel = panel.childById(LabelComponent.class, "category-label");
-            BaseFzmmScreen.checkNull(categoryLabel, "label", "category-label");
+            LabelComponent categoryLabel = panel.childByIdOrThrow(LabelComponent.class, "category-label");
             categoryLabel.text(IHeadCategory.getCategory(entry, headComponentEntry.getCategoryId()).getText());
 
-            ButtonComponent giveButton = panel.childById(ButtonComponent.class, "give-button");
-            BaseFzmmScreen.checkNull(giveButton, "button", "give-button");
+            ButtonComponent giveButton = panel.childByIdOrThrow(ButtonComponent.class, "give-button");
             giveButton.onPress((button) -> this.giveButtonExecute(headComponentEntry));
             giveButton.horizontalSizing(Sizing.fixed(giveButtonWidth));
             parentScreen.setCurrentGiveButton(giveButton);
 
-            ButtonComponent saveButton = panel.childById(ButtonComponent.class, "save-button");
-            BaseFzmmScreen.checkNull(saveButton, "button", "save-button");
+            ButtonComponent saveButton = panel.childByIdOrThrow(ButtonComponent.class, "save-button");
             saveButton.onPress(buttonComponent -> SnackBarManager.getInstance()
                     .add(this.saveSkinExecute(headComponentEntry.getPreview())));
 
@@ -113,8 +109,7 @@ public class HeadComponentOverlay extends StyledFlowLayout {
                 this.addParameters(panel, parentScreen, parametersEntry, headComponentEntry);
             }
 
-            FlowLayout topRightButtonsLayout = panel.childById(FlowLayout.class, "top-right-buttons");
-            BaseFzmmScreen.checkNull(topRightButtonsLayout, "flow-layout", "top-right-buttons");
+            FlowLayout topRightButtonsLayout = panel.childByIdOrThrow(FlowLayout.class, "top-right-buttons");
             headComponentEntry.addTopRightButtons(panel, topRightButtonsLayout);
         });
 
@@ -140,7 +135,7 @@ public class HeadComponentOverlay extends StyledFlowLayout {
                 .closeButton();
         if (skin == null) {
             return builder
-                    .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                    .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                     .title(Text.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.thereIsNoSkin"))
                     .keepOnLimit()
                     .build();
@@ -149,7 +144,7 @@ public class HeadComponentOverlay extends StyledFlowLayout {
         try {
             ImageIO.write(skin, "png", file);
             FzmmClient.LOGGER.info("[HeadComponentOverlay] Saved skin to file: {}", file.toPath());
-            builder.backgroundColor(FzmmStyles.ALERT_SUCCESS_COLOR)
+            builder.backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
                     .title(Text.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.saved"))
                     .button(iSnackBarComponent -> Components.button(Text.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.button.openFolder"), buttonComponent ->
                             Util.getOperatingSystem().open(HeadGeneratorScreen.SKIN_SAVE_FOLDER_PATH.toFile())))
@@ -159,18 +154,17 @@ public class HeadComponentOverlay extends StyledFlowLayout {
                     .mediumTimer();
         } catch (IOException e) {
             FzmmClient.LOGGER.error("[HeadComponentOverlay] Unexpected error saving the skin", e);
-            builder.backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+            builder.backgroundColor(EStyles.ALERT_ERROR_COLOR)
                     .title(Text.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.saveError"))
                     .keepOnLimit();
         }
         return builder.startTimer().build();
     }
 
-    private void addParameters(FlowLayout panel, BaseFzmmScreen parent, INestedParameters parametersEntry, AbstractHeadComponentEntry headComponentEntry) {
-        FlowLayout parametersLayout = panel.childById(FlowLayout.class, "parameters");
-        BaseFzmmScreen.checkNull(parametersLayout, "flow-layout", "parameters");
+    private void addParameters(EFlowLayout panel, BaseFzmmScreen parent, INestedParameters parametersEntry, AbstractHeadComponentEntry headComponentEntry) {
+        EFlowLayout parametersLayout = panel.childByIdOrThrow(EFlowLayout.class, "parameters");
         if (parametersEntry.hasRequestedParameters()) {
-            LabelComponent parametersLabel = StyledComponents.label(Text.translatable("fzmm.gui.headGenerator.label.parameters"));
+            LabelComponent parametersLabel = EComponents.label(Text.translatable("fzmm.gui.headGenerator.label.parameters"));
             parametersLayout.child(parametersLabel);
 
             String baseTranslation = parent.getBaseScreenTranslationKey();
@@ -180,7 +174,7 @@ public class HeadComponentOverlay extends StyledFlowLayout {
         }
     }
 
-    private void addTextureParameters(FlowLayout parametersLayout, INestedParameters parametersEntry, String baseTranslation,
+    private void addTextureParameters(EFlowLayout parametersLayout, INestedParameters parametersEntry, String baseTranslation,
                                       AbstractHeadComponentEntry headComponentEntry) {
         ParameterList<BufferedImage> textureParameters = parametersEntry.getNestedTextureParameters();
         for (var texture : textureParameters.parameterList()) {
@@ -202,7 +196,7 @@ public class HeadComponentOverlay extends StyledFlowLayout {
         }
     }
 
-    private void addColorParameters(FlowLayout parametersLayout, INestedParameters parametersEntry, String baseTranslation,
+    private void addColorParameters(EFlowLayout parametersLayout, INestedParameters parametersEntry, String baseTranslation,
                                     AbstractHeadComponentEntry headComponentEntry) {
         ParameterList<ColorParameter> colorParameters = parametersEntry.getNestedColorParameters();
         for (var colorParameter : colorParameters.parameterList()) {
@@ -224,7 +218,7 @@ public class HeadComponentOverlay extends StyledFlowLayout {
         }
     }
 
-    private void addOffsetsParameters(FlowLayout parametersLayout, INestedParameters parametersEntry, String baseTranslation,
+    private void addOffsetsParameters(EFlowLayout parametersLayout, INestedParameters parametersEntry, String baseTranslation,
                                       AbstractHeadComponentEntry headComponentEntry) {
         ParameterList<OffsetParameter> offsetParameters = parametersEntry.getNestedOffsetParameters();
         for (var offset : offsetParameters.parameterList()) {
@@ -245,9 +239,8 @@ public class HeadComponentOverlay extends StyledFlowLayout {
         }
     }
 
-    private void addDefaultOptions(FlowLayout panel, AbstractHeadComponentEntry headComponentEntry) {
-        FlowLayout defaultOptionsLayout = panel.childById(FlowLayout.class, "default-options");
-        BaseFzmmScreen.checkNull(defaultOptionsLayout, "flow-layout", "default-options");
+    private void addDefaultOptions(EFlowLayout panel, AbstractHeadComponentEntry headComponentEntry) {
+        FlowLayout defaultOptionsLayout = panel.childByIdOrThrow(FlowLayout.class, "default-options");
 
         defaultOptionsLayout.child(this.getRotateOptions(headComponentEntry));
         defaultOptionsLayout.child(this.getPreEditOptions(headComponentEntry));
@@ -281,10 +274,10 @@ public class HeadComponentOverlay extends StyledFlowLayout {
     }
 
     private FlowLayout getOptionLayout(String id) {
-        FlowLayout result = StyledContainers.verticalFlow(Sizing.content(), Sizing.content());
+        FlowLayout result = EContainers.verticalFlow(Sizing.content(), Sizing.content());
         result.horizontalAlignment(HorizontalAlignment.CENTER);
         result.gap(4);
-        LabelComponent label = StyledComponents.label(Text.translatable("fzmm.gui.headGenerator.option.overlayDefault." + id));
+        LabelComponent label = EComponents.label(Text.translatable("fzmm.gui.headGenerator.option.overlayDefault." + id));
 
         result.child(label);
 
@@ -293,9 +286,9 @@ public class HeadComponentOverlay extends StyledFlowLayout {
 
     private FlowLayout getRotateOptions(AbstractHeadComponentEntry headComponentEntry) {
         FlowLayout rotateLayout = this.getOptionLayout("rotate");
-        FlowLayout rotateFirstRow = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content());
+        FlowLayout rotateFirstRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
         rotateFirstRow.gap(4);
-        FlowLayout rotateSecondRow = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content());
+        FlowLayout rotateSecondRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
         rotateSecondRow.gap(4);
 
         int iconV = 0;
@@ -318,12 +311,12 @@ public class HeadComponentOverlay extends StyledFlowLayout {
 
     private FlowLayout getPreEditOptions(AbstractHeadComponentEntry headComponentEntry) {
         FlowLayout preEditLayout = this.getOptionLayout("preEdit");
-        FlowLayout preEditRow = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content());
+        FlowLayout preEditRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
         preEditRow.gap(4);
 
         HashMap<SkinPreEditOption, ButtonComponent> preEditHashMap = new HashMap<>();
         for (var preEdit : SkinPreEditOption.values()) {
-            FlowLayout layout = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content());
+            FlowLayout layout = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
             this.parentScreen.setupPreEditButton(layout, preEdit, preEditHashMap, skinPreEditOption -> {
                 this.selectedSkinPreEdit = skinPreEditOption;
                 BufferedImage baseSkin = this.updatePreview(headComponentEntry);
@@ -357,7 +350,7 @@ public class HeadComponentOverlay extends StyledFlowLayout {
 
     private FlowLayout getSkinFormatOptions(AbstractHeadComponentEntry headComponentEntry) {
         FlowLayout skinFormatLayout = this.getOptionLayout("skinFormat");
-        FlowLayout skinFormatRow = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content());
+        FlowLayout skinFormatRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
         skinFormatRow.gap(4);
 
         List<ButtonComponent> buttons = new ArrayList<>();
@@ -368,11 +361,11 @@ public class HeadComponentOverlay extends StyledFlowLayout {
         ButtonComponent wide = this.getModelButton(headComponentEntry, InternalModels.SLIM_TO_WIDE, 1, 112,
                 modelButton -> this.skinFormatCallback(buttons, modelButton, false));
 
-        optionsList.add(StyledContainers.horizontalFlow(Sizing.content(), Sizing.content())
+        optionsList.add(EContainers.horizontalFlow(Sizing.content(), Sizing.content())
                 .child(wide)
                 .tooltip(Text.translatable("fzmm.gui.headGenerator.option.overlayDefault.skinFormat.wide"))
         );
-        optionsList.add(StyledContainers.horizontalFlow(Sizing.content(), Sizing.content())
+        optionsList.add(EContainers.horizontalFlow(Sizing.content(), Sizing.content())
                 .child(slim)
                 .tooltip(Text.translatable("fzmm.gui.headGenerator.option.overlayDefault.skinFormat.slim"))
         );

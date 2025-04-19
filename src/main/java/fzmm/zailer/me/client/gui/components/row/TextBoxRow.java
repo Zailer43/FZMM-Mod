@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.compat.symbol_chat.components.FontTextBoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.TextBoxComponent;
@@ -43,15 +44,13 @@ public class TextBoxRow extends AbstractRow {
     }
 
 
-    public static TextBoxComponent setup(FlowLayout rootComponent, String id, String defaultValue, int maxLength) {
+    public static TextBoxComponent setup(EFlowLayout rootComponent, String id, String defaultValue, int maxLength) {
         return setup(rootComponent, id, defaultValue, maxLength, null);
     }
 
-    public static TextBoxComponent setup(FlowLayout rootComponent, String id, String defaultValue, int maxLength, @Nullable Consumer<String> changedListener) {
-        TextBoxComponent textBox = rootComponent.childById(TextBoxComponent.class, getTextBoxId(id));
+    public static TextBoxComponent setup(EFlowLayout rootComponent, String id, String defaultValue, int maxLength, @Nullable Consumer<String> changedListener) {
+        TextBoxComponent textBox = rootComponent.childByIdOrThrow(TextBoxComponent.class, getTextBoxId(id));
         ButtonComponent resetButton = rootComponent.childById(ButtonComponent.class, getResetButtonId(id));
-
-        BaseFzmmScreen.checkNull(textBox, "text-box", getTextBoxId(id));
 
         textBox.onChanged().subscribe(text -> {
             if (resetButton != null)

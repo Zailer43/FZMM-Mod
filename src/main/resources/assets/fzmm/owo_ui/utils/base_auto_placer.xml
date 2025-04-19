@@ -1,11 +1,11 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.5/owo-ui.xsd">
     <components>
-        <fzmm.styled-flow-layout direction="vertical">
+        <fzmm.flow-layout direction="vertical">
             <children>
-                <fzmm.styled-flow-layout direction="vertical" id="main-layout">
+                <fzmm.flow-layout direction="vertical" id="main-layout">
                     <children>
-                        <fzmm.styled-flow-layout direction="horizontal">
+                        <fzmm.flow-layout direction="horizontal">
                             <children>
                                 <button id="execute">
                                     <text translate="true">fzmm.gui.playerStatuePlacer.option.place-player-statue</text>
@@ -22,11 +22,11 @@
                                 <vertical method="fixed">30</vertical>
                                 <horizontal method="fill">100</horizontal>
                             </sizing>
-                        </fzmm.styled-flow-layout>
+                        </fzmm.flow-layout>
 
-                        <fzmm.styled-flow-layout direction="horizontal">
+                        <fzmm.flow-layout direction="horizontal">
                             <children>
-                                <fzmm.styled-flow-layout direction="vertical" id="loading-bar">
+                                <fzmm.flow-layout direction="vertical" id="loading-bar">
                                     <children>
                                     </children>
 
@@ -44,11 +44,11 @@
                                     </margins>
 
                                     <positioning type="relative">0,0</positioning>
-                                </fzmm.styled-flow-layout>
+                                </fzmm.flow-layout>
 
-                                <fzmm.styled-label id="loading-label">
+                                <fzmm.label id="loading-label">
                                     <text>0%</text>
-                                </fzmm.styled-label>
+                                </fzmm.label>
                             </children>
 
                             <sizing>
@@ -62,14 +62,14 @@
                             <surface>
                                 <outline>#FFFFFF</outline>
                             </surface>
-                        </fzmm.styled-flow-layout>
+                        </fzmm.flow-layout>
 
-                        <fzmm.styled-flow-layout direction="vertical" id="info-labels">
+                        <fzmm.flow-layout direction="vertical" id="info-labels">
                             <children>
                             </children>
 
                             <gap>4</gap>
-                        </fzmm.styled-flow-layout>
+                        </fzmm.flow-layout>
                     </children>
 
                     <sizing>
@@ -78,7 +78,7 @@
                     </sizing>
 
                     <gap>4</gap>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
             </children>
 
 
@@ -88,6 +88,6 @@
             <surface>
                 <vanilla-translucent/>
             </surface>
-        </fzmm.styled-flow-layout>
+        </fzmm.flow-layout>
     </components>
 </owo-ui>

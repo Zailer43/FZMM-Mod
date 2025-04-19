@@ -5,7 +5,7 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.compat.CompatMods;
 import fzmm.zailer.me.compat.symbol_chat.components.FontComponentAdapter;
 import fzmm.zailer.me.compat.symbol_chat.components.SymbolComponentAdapter;
-import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;

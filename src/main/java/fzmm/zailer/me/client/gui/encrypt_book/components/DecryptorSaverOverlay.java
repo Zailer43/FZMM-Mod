@@ -1,11 +1,11 @@
 package fzmm.zailer.me.client.gui.encrypt_book.components;
 
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
 import fzmm.zailer.me.client.gui.encrypt_book.translation_file_saver.ITranslationFileSaver;
 import fzmm.zailer.me.client.gui.encrypt_book.translation_file_saver.TranslationCreateResourcePack;
 import fzmm.zailer.me.client.gui.encrypt_book.translation_file_saver.TranslationUpdateResourcePack;
@@ -23,12 +23,12 @@ import net.minecraft.text.Text;
 
 import java.util.List;
 
-public class DecryptorSaverOverlay extends OverlayContainer<StyledFlowLayout> {
+public class DecryptorSaverOverlay extends OverlayContainer<EFlowLayout> {
     private static final int WIDTH = 350;
     private ITranslationFileSaver selectedSaver;
 
     public DecryptorSaverOverlay(TranslationEncryptProfile selectedProfile) {
-        super(StyledContainers.verticalFlow(Sizing.fixed(WIDTH), Sizing.content()));
+        super(EContainers.verticalFlow(Sizing.fixed(WIDTH), Sizing.content()));
 
         this.addComponents(selectedProfile);
         this.child.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
@@ -42,11 +42,11 @@ public class DecryptorSaverOverlay extends OverlayContainer<StyledFlowLayout> {
     //TODO: get all config profiles checkbox
     protected void addComponents(TranslationEncryptProfile selectedProfile) {
         //title
-        LabelComponent label = StyledComponents.label(Text.translatable("fzmm.gui.encryptbook.getDecryptor.title"));
+        LabelComponent label = EComponents.label(Text.translatable("fzmm.gui.encryptbook.getDecryptor.title"));
         label.horizontalSizing(Sizing.expand(100));
 
         // options
-        FlowLayout optionsLayout = StyledContainers.verticalFlow(Sizing.expand(100), Sizing.content());
+        FlowLayout optionsLayout = EContainers.verticalFlow(Sizing.expand(100), Sizing.content());
 
         List<ITranslationFileSaver> options = List.of(
                 new TranslationCreateResourcePack(),
@@ -62,7 +62,7 @@ public class DecryptorSaverOverlay extends OverlayContainer<StyledFlowLayout> {
                             }
                         }
                         this.selectedSaver = option;
-                    }).renderer(FzmmStyles.DEFAULT_FLAT_BUTTON).horizontalSizing(Sizing.expand(100))
+                    }).renderer(EStyles.DEFAULT_FLAT_BUTTON).horizontalSizing(Sizing.expand(100))
             );
         }
 
@@ -70,7 +70,7 @@ public class DecryptorSaverOverlay extends OverlayContainer<StyledFlowLayout> {
         ((ButtonComponent) optionsLayout.children().get(0)).onPress();
 
         // bottom buttons
-        FlowLayout buttonLayout = StyledContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(20));
+        FlowLayout buttonLayout = EContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(20));
 
         buttonLayout.child(Components.button(Text.translatable("gui.done"), buttonComponent -> {
                     this.execute(selectedSaver, selectedProfile);
@@ -96,7 +96,7 @@ public class DecryptorSaverOverlay extends OverlayContainer<StyledFlowLayout> {
 
                         SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.ENCRYPTOR_SAVE_ID)
                                 .keepOnLimit()
-                                .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                                .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                                 .mediumTimer()
                                 .title(Text.translatable("fzmm.gui.encryptbook.getDecryptor.snack_bar.error"))
                                 .startTimer()
@@ -110,7 +110,7 @@ public class DecryptorSaverOverlay extends OverlayContainer<StyledFlowLayout> {
                         return;
                     }
                     SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.ENCRYPTOR_SAVE_ID)
-                            .backgroundColor(FzmmStyles.ALERT_SUCCESS_COLOR)
+                            .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
                             .mediumTimer()
                             .title(Text.translatable("fzmm.gui.encryptbook.getDecryptor.snack_bar.success"))
                             .startTimer()

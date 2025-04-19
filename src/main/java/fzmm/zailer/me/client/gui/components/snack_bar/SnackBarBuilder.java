@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.gui.components.snack_bar;
 
-import fzmm.zailer.me.client.gui.components.BooleanButton;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
+import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
@@ -19,7 +19,7 @@ import java.util.function.Function;
 
 public class SnackBarBuilder {
     private final ISnackBarComponent snackBar;
-    private Color backgroundColor = FzmmStyles.ALERT_SUCCESS_COLOR;
+    private Color backgroundColor = EStyles.ALERT_SUCCESS_COLOR;
     private final LabelComponent title;
     private LabelComponent details;
     private final List<ButtonComponent> buttons = new ArrayList<>();
@@ -39,7 +39,7 @@ public class SnackBarBuilder {
     }
 
     public static SnackBarBuilder builder(ISnackBarComponent snackBar, String id) {
-        return builder(snackBar, StyledComponents.label(Text.empty()), null, id);
+        return builder(snackBar, EComponents.label(Text.empty()), null, id);
     }
 
     public static SnackBarBuilder builder(ISnackBarComponent snackBar, LabelComponent title, LabelComponent details, String id) {
@@ -58,7 +58,7 @@ public class SnackBarBuilder {
 
     public SnackBarBuilder details(Text details) {
         if (this.details == null) {
-            this.details = StyledComponents.label(Text.empty());
+            this.details = EComponents.label(Text.empty());
         }
 
         this.details.text(details);
@@ -148,19 +148,19 @@ public class SnackBarBuilder {
 
         result.surface(Surface.flat(this.backgroundColor.argb()));
 
-        FlowLayout layout = (FlowLayout) StyledContainers.verticalFlow(Sizing.content(), Sizing.content())
+        FlowLayout layout = (FlowLayout) EContainers.verticalFlow(Sizing.content(), Sizing.content())
                 .gap(1)
                 .padding(Insets.of(3))
                 .horizontalAlignment(HorizontalAlignment.LEFT);
 
         // first row (expand?, title, close?)
-        FlowLayout firstRow = StyledContainers.ltrTextFlow(Sizing.expand(100), Sizing.content());
+        FlowLayout firstRow = EContainers.ltrTextFlow(Sizing.expand(100), Sizing.content());
         firstRow.gap(2);
         firstRow.verticalAlignment(VerticalAlignment.CENTER);
         layout.child(firstRow);
         // second row (buttons?)
         if (!this.buttons.isEmpty()) {
-            FlowLayout secondRow = StyledContainers.ltrTextFlow(Sizing.expand(100), Sizing.content());
+            FlowLayout secondRow = EContainers.ltrTextFlow(Sizing.expand(100), Sizing.content());
             secondRow.children(this.buttons);
             secondRow.gap(4);
             layout.child(secondRow);
@@ -168,10 +168,10 @@ public class SnackBarBuilder {
 
         // first row expand button and third row with details
         if (this.details != null && !this.details.text().toString().isEmpty()) {
-            FlowLayout detailsLayout = StyledContainers.verticalFlow(Sizing.content(), Sizing.content());
+            FlowLayout detailsLayout = EContainers.verticalFlow(Sizing.content(), Sizing.content());
             layout.child(detailsLayout);
 
-            BooleanButton detailsButton = this.getDetailsButton(detailsLayout);
+            EBooleanButton detailsButton = this.getDetailsButton(detailsLayout);
             buttons.add(detailsButton);
             firstRow.child(detailsButton);
         }
@@ -181,7 +181,7 @@ public class SnackBarBuilder {
             ButtonComponent button = Components.button(Text.translatable("fzmm.snack_bar.close"), buttonComponent -> result.close());
             button.sizing(Sizing.fixed(14));
             button.positioning(Positioning.relative(100, 0));
-            button.renderer(ButtonComponent.Renderer.flat(0x00000000, FzmmStyles.UNSELECTED_COLOR, 0x00000000));
+            button.renderer(ButtonComponent.Renderer.flat(0x00000000, EStyles.UNSELECTED_COLOR, 0x00000000));
             buttons.add(button);
 
             firstRow.horizontalSizing(Sizing.expand(100));
@@ -217,13 +217,13 @@ public class SnackBarBuilder {
         return result;
     }
 
-    private BooleanButton getDetailsButton(FlowLayout detailsLayout) {
+    private EBooleanButton getDetailsButton(FlowLayout detailsLayout) {
         //TODO: animate collapsing button
-        BooleanButton button = new BooleanButton(
+        EBooleanButton button = new EBooleanButton(
                 Text.translatable("fzmm.snack_bar.expand.expanded"),
                 Text.translatable("fzmm.snack_bar.expand.collapsed")
         );
-        button.renderer(ButtonComponent.Renderer.flat(0x00000000, FzmmStyles.UNSELECTED_COLOR, 0x00000000));
+        button.renderer(ButtonComponent.Renderer.flat(0x00000000, EStyles.UNSELECTED_COLOR, 0x00000000));
         button.sizing(Sizing.fixed(14));
         this.details.horizontalSizing(Sizing.expand(100));
         button.onPress(buttonComponent -> {

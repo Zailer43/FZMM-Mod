@@ -1,18 +1,15 @@
 package fzmm.zailer.me.client.gui.converters.tabs;
 
-import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.ConfigTextBoxRow;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
-import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.component.ButtonComponent;
 
 import java.util.UUID;
 
 public class ConverterUuidToArrayTab implements IScreenTab {
-    private static final String UUID_FIELD_ID = "uuidField";
-    private static final String RANDOM_ID = "uuidToArray.random";
-    private static final String COPY_ID = "uuidToArray.copy";
 
     @Override
     public String getId() {
@@ -21,8 +18,8 @@ public class ConverterUuidToArrayTab implements IScreenTab {
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        ConfigTextBox uuidField = ConfigTextBoxRow.setup(rootComponent, UUID_FIELD_ID, "");
+    public void setupComponents(EFlowLayout rootComponent) {
+        ConfigTextBox uuidField = ConfigTextBoxRow.setup(rootComponent, "uuidField", "");
         uuidField.applyPredicate(s -> {
             try {
                 UUID ignored = UUID.fromString(s);
@@ -32,9 +29,9 @@ public class ConverterUuidToArrayTab implements IScreenTab {
             }
         });
 
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(RANDOM_ID), true,
-                button -> uuidField.text(UUID.randomUUID().toString()));
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(COPY_ID), true, button -> {
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "uuidToArray.random-button")
+                .onPress(button -> uuidField.text(UUID.randomUUID().toString()));
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "uuidToArray.copy-button").onPress(button -> {
             if (!uuidField.isValid())
                 return;
 

@@ -4,9 +4,9 @@ import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.compat.symbol_chat.components.FontTextBoxComponent;
 import io.wispforest.owo.ui.component.DropdownComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
@@ -67,7 +67,7 @@ public class SuggestionTextBox extends FontTextBoxComponent {
         this.suggestionsContextMenu = DropdownComponent.openContextMenu(screen, rootLayout, FlowLayout::child, this.x(), this.y(), suggestionDropdown -> {
             suggestionDropdown.clearChildren();
 
-            this.suggestionsLayout = new StyledFlowLayout(Sizing.fill(100), Sizing.content(), FlowLayout.Algorithm.VERTICAL) {
+            this.suggestionsLayout = new EFlowLayout(Sizing.fill(100), Sizing.content(), FlowLayout.Algorithm.VERTICAL) {
                 // when some components, like snack bars, are removed, the position of
                 // the context menu changes to Y 0 for some reason if suggestion is in an overlay
                 @Override
@@ -82,7 +82,7 @@ public class SuggestionTextBox extends FontTextBoxComponent {
                     SuggestionTextBox.this.updateSuggestionsPos();
                 }
             };
-            this.suggestionsContainer = StyledContainers.verticalScroll(Sizing.fixed(this.width()),
+            this.suggestionsContainer = EContainers.verticalScroll(Sizing.fixed(this.width()),
                     Sizing.expand(100), this.suggestionsLayout);
 
 
@@ -181,7 +181,7 @@ public class SuggestionTextBox extends FontTextBoxComponent {
             FzmmClient.LOGGER.error("[SuggestionTextBox] Failed to get suggestions", e);
             assert this.suggestionsLayout != null;
 
-            this.suggestionsLayout.child(StyledComponents.label(Text.literal("Failed to get suggestions")));
+            this.suggestionsLayout.child(EComponents.label(Text.literal("Failed to get suggestions")));
         }
 
         return new ArrayList<>();
@@ -215,8 +215,8 @@ public class SuggestionTextBox extends FontTextBoxComponent {
     }
 
     private Component getSuggestionComponent(String suggestion, Text suggestionText) {
-        LabelComponent labelComponent = StyledComponents.label(suggestionText);
-        StyledFlowLayout layout = StyledContainers.verticalFlow(Sizing.fill(100), Sizing.fixed(SUGGESTION_HEIGHT));
+        LabelComponent labelComponent = EComponents.label(suggestionText);
+        EFlowLayout layout = EContainers.verticalFlow(Sizing.fill(100), Sizing.fixed(SUGGESTION_HEIGHT));
 
         Surface selectedSurface = Surface.flat(0xE0000000).and(Surface.outline(0xA0FFFFFF));
         Surface unselectedSurface = Surface.flat(0xA0000000);

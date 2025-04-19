@@ -1,20 +1,22 @@
 package fzmm.zailer.me.client.gui.components.containers;
 
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
-import io.wispforest.owo.ui.component.*;
-import io.wispforest.owo.ui.container.*;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
+import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.LabelComponent;
+import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 
-public class ConfirmOverlay extends OverlayContainer<StyledFlowLayout> {
+public class ConfirmOverlay extends OverlayContainer<EFlowLayout> {
     private static final int WIDTH = 250;
 
     public ConfirmOverlay(Text question, Consumer<Boolean> onConfirm) {
-        super(StyledContainers.verticalFlow(Sizing.fixed(WIDTH), Sizing.content()));
+        super(EContainers.verticalFlow(Sizing.fixed(WIDTH), Sizing.content()));
 
         this.addComponents(question, onConfirm);
         this.child.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
@@ -25,10 +27,10 @@ public class ConfirmOverlay extends OverlayContainer<StyledFlowLayout> {
     }
 
     protected void addComponents(Text question, Consumer<Boolean> onConfirm) {
-        LabelComponent label = StyledComponents.label(question);
+        LabelComponent label = EComponents.label(question);
         label.horizontalSizing(Sizing.expand(100));
 
-        FlowLayout buttonLayout = StyledContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(20));
+        FlowLayout buttonLayout = EContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(20));
 
         buttonLayout.child(Components.button(Text.translatable("fzmm.gui.confirmDialog.confirm"), buttonComponent -> {
                     onConfirm.accept(true);

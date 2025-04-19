@@ -1,18 +1,18 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.5/owo-ui.xsd">
     <components>
-        <fzmm.styled-flow-layout direction="vertical">
+        <fzmm.flow-layout direction="vertical">
             <children>
                 <label id="title">
                     <positioning type="absolute">3,3</positioning>
                     <text translate="true">fzmm.gui.title.selectItem</text>
                 </label>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
-                        <fzmm.styled-scroll direction="vertical">
+                        <fzmm.scroll direction="vertical">
 
-                            <fzmm.styled-flow-layout direction="vertical" id="requested-items-list">
+                            <fzmm.flow-layout direction="vertical" id="requested-items-list">
                                 <children>
 
                                 </children>
@@ -24,16 +24,16 @@
                                 <surface>
                                     <flat>#40000000</flat>
                                 </surface>
-                            </fzmm.styled-flow-layout>
+                            </fzmm.flow-layout>
 
                             <sizing>
                                 <vertical method="fill">70</vertical>
                             </sizing>
-                        </fzmm.styled-scroll>
+                        </fzmm.scroll>
 
-                        <fzmm.styled-flow-layout direction="vertical">
+                        <fzmm.flow-layout direction="vertical">
                             <children>
-                                <fzmm.styled-flow-layout direction="vertical" id="source-buttons">
+                                <fzmm.flow-layout direction="vertical" id="source-buttons">
                                     <children>
                                         <template name="source-buttons">
                                             <left-button>inventory</left-button>
@@ -46,10 +46,10 @@
                                     </children>
 
                                     <gap>4</gap>
-                                </fzmm.styled-flow-layout>
+                                </fzmm.flow-layout>
 
-                                <fzmm.styled-scroll direction="vertical">
-                                    <fzmm.styled-flow-layout direction="ltr-text-flow" id="item-layout">
+                                <fzmm.scroll direction="vertical">
+                                    <fzmm.flow-layout direction="ltr-text-flow" id="item-layout">
                                         <children>
 
                                         </children>
@@ -58,7 +58,7 @@
                                             <horizontal method="fill">100</horizontal>
                                         </sizing>
 
-                                    </fzmm.styled-flow-layout>
+                                    </fzmm.flow-layout>
 
                                     <sizing>
                                         <vertical method="fill">55</vertical>
@@ -68,7 +68,7 @@
                                         <vertical>8</vertical>
                                     </margins>
 
-                                </fzmm.styled-scroll>
+                                </fzmm.scroll>
 
                                 <fzmm.text-box-row>
                                     <id>item-search</id>
@@ -86,14 +86,14 @@
                                 <bottom>5</bottom>
                             </margins>
 
-                        </fzmm.styled-flow-layout>
+                        </fzmm.flow-layout>
 
                     </children>
 
                     <gap>8</gap>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
 
                         <button id="execute-button">
@@ -128,7 +128,7 @@
                     </padding>
 
                     <positioning type="relative">0,100</positioning>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
             </children>
 
             <vertical-alignment>center</vertical-alignment>
@@ -137,12 +137,12 @@
             <surface>
                 <vanilla-translucent/>
             </surface>
-        </fzmm.styled-flow-layout>
+        </fzmm.flow-layout>
     </components>
 
     <templates>
         <source-buttons>
-            <fzmm.styled-flow-layout direction="horizontal">
+            <fzmm.flow-layout direction="horizontal">
                 <children>
                     <button id="{{left-button}}-button">
                         <text translate="true">fzmm.gui.selectItem.button.source.{{left-button}}</text>
@@ -161,17 +161,17 @@
                 </children>
 
                 <gap>4</gap>
-            </fzmm.styled-flow-layout>
+            </fzmm.flow-layout>
         </source-buttons>
 
         <requested-item>
-            <fzmm.styled-flow-layout direction="horizontal">
+            <fzmm.flow-layout direction="horizontal">
                 <children>
                     <item id="{{id}}-requested-item-item">
                     </item>
 
-                    <fzmm.styled-label id="{{id}}-requested-item-label">
-                    </fzmm.styled-label>
+                    <fzmm.label id="{{id}}-requested-item-label">
+                    </fzmm.label>
                 </children>
 
                 <gap>8</gap>
@@ -181,7 +181,7 @@
                 </margins>
 
                 <vertical-alignment>center</vertical-alignment>
-            </fzmm.styled-flow-layout>
+            </fzmm.flow-layout>
         </requested-item>
     </templates>
 </owo-ui>

@@ -2,8 +2,9 @@ package fzmm.zailer.me.client.gui.head_generator.components;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.head_generator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.head_generator.category.IHeadCategory;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
@@ -11,7 +12,10 @@ import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.core.HorizontalAlignment;
+import io.wispforest.owo.ui.core.Positioning;
+import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
@@ -27,19 +31,19 @@ public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
         super(entry, Sizing.fixed(50), Sizing.fixed(45), parentScreen);
         this.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
 
-        FlowLayout moveButtons = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content());
+        FlowLayout moveButtons = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
         moveButtons.positioning(Positioning.relative(50, 100));
         moveButtons.gap(15);
 
         ButtonComponent moveUpButton = Components.button(Text.translatable("fzmm.gui.button.arrow.up"),
                 buttonComponent -> parentScreen.upCompoundEntry(this));
         moveUpButton.verticalSizing(Sizing.fixed(14));
-        moveUpButton.renderer(FzmmStyles.DEFAULT_FLAT_BUTTON);
+        moveUpButton.renderer(EStyles.DEFAULT_FLAT_BUTTON);
         
         ButtonComponent moveDownButton = Components.button(Text.translatable("fzmm.gui.button.arrow.down"),
                 buttonComponent -> parentScreen.downCompoundEntry(this));
         moveDownButton.verticalSizing(Sizing.fixed(14));
-        moveDownButton.renderer(FzmmStyles.DEFAULT_FLAT_BUTTON);
+        moveDownButton.renderer(EStyles.DEFAULT_FLAT_BUTTON);
 
         moveButtons.child(moveUpButton);
         moveButtons.child(moveDownButton);
@@ -66,7 +70,7 @@ public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
     }
 
     @Override
-    protected void addTopRightButtons(FlowLayout panel, FlowLayout layout) {
+    protected void addTopRightButtons(EFlowLayout panel, FlowLayout layout) {
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
         int addLayerButtonWidth = textRenderer.getWidth(REMOVE_LAYER_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
@@ -75,8 +79,7 @@ public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
 
         layout.child(removeButton);
 
-        LabelComponent categoryLabel = panel.childById(LabelComponent.class, "category-label");
-        BaseFzmmScreen.checkNull(categoryLabel, "label", "category-label");
+        LabelComponent categoryLabel = panel.childByIdOrThrow(LabelComponent.class, "category-label");
         categoryLabel.text(Text.translatable(IHeadCategory.COMPOUND_CATEGORY.getTranslationKey() + ".label", categoryLabel.text(), IHeadCategory.COMPOUND_CATEGORY.getText()));
     }
 

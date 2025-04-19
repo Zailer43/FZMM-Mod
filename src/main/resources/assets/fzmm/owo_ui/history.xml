@@ -1,25 +1,25 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.5/owo-ui.xsd">
     <components>
-        <fzmm.styled-flow-layout direction="horizontal">
+        <fzmm.flow-layout direction="horizontal">
             <children>
-                <fzmm.styled-label id="title">
+                <fzmm.label id="title">
                     <positioning type="absolute">3,3</positioning>
                     <text translate="true">fzmm.gui.title.history</text>
-                </fzmm.styled-label>
+                </fzmm.label>
 
-                <fzmm.styled-scroll direction="vertical">
+                <fzmm.scroll direction="vertical">
 
-                    <fzmm.styled-flow-layout direction="horizontal">
+                    <fzmm.flow-layout direction="horizontal">
                         <children>
-                            <fzmm.styled-flow-layout direction="vertical" id="options-list">
+                            <fzmm.flow-layout direction="vertical" id="options-list">
                                 <children>
-                                    <fzmm.styled-flow-layout direction="vertical" id="generated-with-fzmm-list">
+                                    <fzmm.flow-layout direction="vertical" id="generated-with-fzmm-list">
                                         <children>
-                                            <fzmm.styled-label>
+                                            <fzmm.label>
                                                 <text translate="true">fzmm.gui.history.label.generatedWithFzmm</text>
                                                 <tooltip-text translate="true">fzmm.gui.history.label.generatedWithFzmm.tooltip</tooltip-text>
-                                            </fzmm.styled-label>
+                                            </fzmm.label>
                                             <template name="option-button">
                                                 <id>itemGeneratedWithFzmm</id>
                                                 <translation>generatedWithFzmm.item</translation>
@@ -31,7 +31,7 @@
                                         </children>
 
                                         <gap>8</gap>
-                                    </fzmm.styled-flow-layout>
+                                    </fzmm.flow-layout>
 
                                 </children>
 
@@ -39,24 +39,24 @@
                                     <horizontal method="fixed">150</horizontal>
                                 </sizing>
 
-                            </fzmm.styled-flow-layout>
+                            </fzmm.flow-layout>
 
                         </children>
-                    </fzmm.styled-flow-layout>
+                    </fzmm.flow-layout>
 
                     <sizing>
                         <vertical method="fill">80</vertical>
                     </sizing>
-                </fzmm.styled-scroll>
+                </fzmm.scroll>
 
-                <fzmm.styled-scroll direction="vertical">
-                    <fzmm.styled-flow-layout direction="vertical">
+                <fzmm.scroll direction="vertical">
+                    <fzmm.flow-layout direction="vertical">
                         <children>
-                            <fzmm.styled-label id="error-label">
+                            <fzmm.label id="error-label">
                                 <positioning type="relative">0,0</positioning>
-                            </fzmm.styled-label>
+                            </fzmm.label>
 
-                            <fzmm.styled-flow-layout direction="ltr-text-flow" id="content">
+                            <fzmm.flow-layout direction="ltr-text-flow" id="content">
                                 <children>
 
                                 </children>
@@ -67,7 +67,7 @@
 
                                 <vertical-alignment>top</vertical-alignment>
                                 <horizontal-alignment>left</horizontal-alignment>
-                            </fzmm.styled-flow-layout>
+                            </fzmm.flow-layout>
                         </children>
 
                         <horizontal-alignment>center</horizontal-alignment>
@@ -75,14 +75,14 @@
                         <sizing>
                             <horizontal method="fill">60</horizontal>
                         </sizing>
-                    </fzmm.styled-flow-layout>
+                    </fzmm.flow-layout>
 
                     <sizing>
                         <vertical method="fill">80</vertical>
                     </sizing>
-                </fzmm.styled-scroll>
+                </fzmm.scroll>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
 
                         <button id="back-button">
@@ -105,7 +105,7 @@
 
                     <vertical-alignment>bottom</vertical-alignment>
                     <horizontal-alignment>right</horizontal-alignment>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
             </children>
 
 
@@ -115,7 +115,7 @@
             <surface>
                 <vanilla-translucent/>
             </surface>
-        </fzmm.styled-flow-layout>
+        </fzmm.flow-layout>
     </components>
 
     <templates>

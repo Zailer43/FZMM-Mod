@@ -2,17 +2,20 @@ package fzmm.zailer.me.client.gui.utils;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
 import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
-import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.core.Color;
+import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.Insets;
+import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -22,7 +25,7 @@ public class InvisibleEntityWarning {
     public static void add(boolean isArmorStand, boolean isInvisible, Text customEntity, String tag) {
         MinecraftClient.getInstance().execute(() ->
                 SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.INVISIBLE_ENTITY_ID)
-                        .backgroundColor(FzmmStyles.ALERT_WARNING_COLOR)
+                        .backgroundColor(EStyles.ALERT_WARNING_COLOR)
                         .title(Text.translatable("fzmm.snack_bar.entityDifficultToRemove.title"))
                         .button(iSnackBarComponent -> Components.button(Text.translatable("fzmm.snack_bar.entityDifficultToRemove.button"), buttonComponent -> {
                             addOverlay(isArmorStand, isInvisible, customEntity, tag);
@@ -40,9 +43,9 @@ public class InvisibleEntityWarning {
             FzmmClient.LOGGER.warn("[InvisibleEntityWarning] Failed to add overlay, root is not a FlowLayout");
             return;
         }
-        StyledFlowLayout overlayLayout = StyledContainers.verticalFlow(Sizing.fill(80), Sizing.fill(80));
-        FlowLayout overlayTextLayout = StyledContainers.verticalFlow(Sizing.fill(100), Sizing.content());
-        FlowLayout overlayButtonLayout = StyledContainers.verticalFlow(Sizing.fill(100), Sizing.content());
+        EFlowLayout overlayLayout = EContainers.verticalFlow(Sizing.fill(80), Sizing.fill(80));
+        FlowLayout overlayTextLayout = EContainers.verticalFlow(Sizing.fill(100), Sizing.content());
+        FlowLayout overlayButtonLayout = EContainers.verticalFlow(Sizing.fill(100), Sizing.content());
         OverlayContainer<FlowLayout> overlayContainer = Containers.overlay(overlayLayout);
         overlayContainer.zIndex(250);
 
@@ -51,7 +54,7 @@ public class InvisibleEntityWarning {
         overlayTextLayout.margins(Insets.bottom(32));
         overlayTextLayout.padding(Insets.horizontal(2));
 
-        overlayTextLayout.child(StyledComponents.label(Text.translatable("fzmm.snack_bar.entityDifficultToRemove.introduction")).horizontalSizing(Sizing.expand(100)));
+        overlayTextLayout.child(EComponents.label(Text.translatable("fzmm.snack_bar.entityDifficultToRemove.introduction")).horizontalSizing(Sizing.expand(100)));
 
         overlayTextLayout.child(getLine());
         overlayTextLayout.child(getTitle(Text.translatable("fzmm.snack_bar.entityDifficultToRemove.operator.title")));
@@ -82,7 +85,7 @@ public class InvisibleEntityWarning {
         overlayButtonLayout.child(Components.button(Text.translatable("fzmm.snack_bar.entityDifficultToRemove.done"), buttonComponent ->
                 overlayContainer.remove()));
 
-        overlayLayout.child(StyledContainers.verticalScroll(Sizing.expand(100), Sizing.expand(100), overlayTextLayout))
+        overlayLayout.child(EContainers.verticalScroll(Sizing.expand(100), Sizing.expand(100), overlayTextLayout))
                 .child(overlayButtonLayout);
 
         overlayLayout.surface(overlayLayout.styledPanel());
@@ -91,12 +94,12 @@ public class InvisibleEntityWarning {
     }
 
     private static Component getCopyButton(String text, Text translation) {
-        return StyledContainers.horizontalFlow(Sizing.content(), Sizing.content())
+        return EContainers.horizontalFlow(Sizing.content(), Sizing.content())
                 .child(Components.button(Text.translatable("commands.fzmm.nbt.click"), buttonComponent ->
                                 SnackBarManager.copyToClipboard(text))
                         .margins(Insets.vertical(3))
                         .tooltip(Text.literal(text))
-                ).child(StyledComponents.label(translation)
+                ).child(EComponents.label(translation)
                         .horizontalSizing(Sizing.expand(100))
                         .margins(Insets.top(3))
                 ).gap(8)
@@ -104,12 +107,12 @@ public class InvisibleEntityWarning {
     }
 
     private static Component getTitle(Text text) {
-        return StyledComponents.label(text.copy().setStyle(Style.EMPTY.withBold(true)))
+        return EComponents.label(text.copy().setStyle(Style.EMPTY.withBold(true)))
                 .horizontalSizing(Sizing.expand(100));
     }
 
     private static Component getLabel(Text text) {
-        return StyledComponents.label(text);
+        return EComponents.label(text);
     }
 
     private static Component getLine() {

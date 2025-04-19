@@ -4,11 +4,11 @@ import fzmm.zailer.me.builders.ArmorStandBuilder;
 import fzmm.zailer.me.builders.ContainerBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.components.snack_bar.UpdatableSnackBarComponent;
+import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.logic.player_statue.statue_head_skin.*;
 import fzmm.zailer.me.utils.*;
 import io.wispforest.owo.ui.core.Sizing;
@@ -105,7 +105,7 @@ public class PlayerStatue {
         this.isSecondTry = false;
         MinecraftClient.getInstance().execute(() -> {
             this.snackBar = (UpdatableSnackBarComponent) UpdatableSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
-                    .backgroundColor(FzmmStyles.ALERT_LOADING_COLOR)
+                    .backgroundColor(EStyles.ALERT_LOADING_COLOR)
                     .keepOnLimit()
                     .title(Text.translatable("fzmm.snack_bar.playerStatue.loading.title"))
                     .details(Text.translatable("fzmm.snack_bar.playerStatue.loading.details",
@@ -126,7 +126,7 @@ public class PlayerStatue {
 
             boolean success = this.currentErrors == 0;
             ISnackBarComponent finalStatus = BaseSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
-                    .backgroundColor(success ? FzmmStyles.ALERT_SUCCESS_COLOR : FzmmStyles.ALERT_ERROR_COLOR)
+                    .backgroundColor(success ? EStyles.ALERT_SUCCESS_COLOR : EStyles.ALERT_ERROR_COLOR)
                     .keepOnLimit()
                     .title(success ? Text.translatable("fzmm.snack_bar.playerStatue.successful.title") :
                             Text.translatable("fzmm.snack_bar.playerStatue.error.title", this.currentErrors))

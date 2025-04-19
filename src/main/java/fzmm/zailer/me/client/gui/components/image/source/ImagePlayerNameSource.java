@@ -5,8 +5,8 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.image.ImageStatus;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ImageUtils;
-import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
 import fzmm.zailer.me.utils.skin.CacheSkinGetter;
+import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
 import fzmm.zailer.me.utils.skin.VanillaSkinGetter;
 
 import java.awt.image.BufferedImage;

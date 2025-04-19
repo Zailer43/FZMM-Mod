@@ -1,45 +1,45 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.2/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.5/owo-ui.xsd">
     <components>
-        <fzmm.styled-flow-layout direction="vertical">
+        <fzmm.flow-layout direction="vertical">
             <children>
-                <fzmm.styled-label id="title">
+                <fzmm.label id="title">
                     <positioning type="absolute">3,3</positioning>
                     <text translate="true">fzmm.gui.title.imagetext</text>
-                </fzmm.styled-label>
+                </fzmm.label>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
-                        <fzmm.styled-scroll direction="vertical" id="left-options-scroll">
+                        <fzmm.scroll direction="vertical" id="left-options-scroll">
                             <!-- options left to preview -->
-                            <fzmm.styled-flow-layout direction="ltr-text-flow">
+                            <fzmm.flow-layout direction="ltr-text-flow">
                                 <children>
                                     <!-- image options -->
-                                    <fzmm.styled-flow-layout direction="vertical" id="image-options-layout">
+                                    <fzmm.flow-layout direction="vertical" id="image-options-layout">
                                         <children>
-                                            <fzmm.styled-flow-layout direction="vertical">
+                                            <fzmm.flow-layout direction="vertical">
                                                 <children>
-                                                    <fzmm.styled-flow-layout direction="horizontal" id="image-textbox">
+                                                    <fzmm.flow-layout direction="horizontal" id="image-textbox">
                                                         <children>
                                                         </children>
-                                                    </fzmm.styled-flow-layout>
+                                                    </fzmm.flow-layout>
 
-                                                    <fzmm.styled-flow-layout direction="horizontal" id="image-buttons">
+                                                    <fzmm.flow-layout direction="horizontal" id="image-buttons">
                                                         <children>
                                                         </children>
 
                                                         <gap>2</gap>
-                                                    </fzmm.styled-flow-layout>
+                                                    </fzmm.flow-layout>
                                                 </children>
                                                 <gap>2</gap>
-                                            </fzmm.styled-flow-layout>
+                                            </fzmm.flow-layout>
 
                                             <!-- 'width', 'height' and 'preserveImageAspectRatio' options -->
-                                            <fzmm.styled-flow-layout direction="horizontal">
+                                            <fzmm.flow-layout direction="horizontal">
                                                 <children>
-                                                    <fzmm.styled-flow-layout direction="vertical">
+                                                    <fzmm.flow-layout direction="vertical">
                                                         <children>
-                                                            <fzmm.styled-flow-layout direction="vertical">
+                                                            <fzmm.flow-layout direction="vertical">
                                                                 <children>
                                                                     <label>
                                                                         <text translate="true">fzmm.gui.imagetext.option.width</text>
@@ -49,8 +49,8 @@
                                                                     <vertical method="fixed">16</vertical>
                                                                 </sizing>
                                                                 <vertical-alignment>center</vertical-alignment>
-                                                            </fzmm.styled-flow-layout>
-                                                            <fzmm.styled-flow-layout direction="vertical">
+                                                            </fzmm.flow-layout>
+                                                            <fzmm.flow-layout direction="vertical">
                                                                 <children>
                                                                     <label>
                                                                         <text translate="true">fzmm.gui.imagetext.option.height</text>
@@ -60,13 +60,13 @@
                                                                     <vertical method="fixed">16</vertical>
                                                                 </sizing>
                                                                 <vertical-alignment>center</vertical-alignment>
-                                                            </fzmm.styled-flow-layout>
+                                                            </fzmm.flow-layout>
                                                         </children>
 
                                                         <gap>6</gap>
-                                                    </fzmm.styled-flow-layout>
+                                                    </fzmm.flow-layout>
 
-                                                    <fzmm.styled-flow-layout direction="vertical">
+                                                    <fzmm.flow-layout direction="vertical">
                                                         <children>
                                                             <template name="slider-option-type">
                                                                 <id>width-slider</id>
@@ -80,7 +80,7 @@
                                                         </sizing>
 
                                                         <gap>6</gap>
-                                                    </fzmm.styled-flow-layout>
+                                                    </fzmm.flow-layout>
 
                                                     <fzmm.boolean-button id="preserveImageAspectRatio">
                                                         <enabled-text translate="true">fzmm.gui.imagetext.option.preserveImageAspectRatio.enabled</enabled-text>
@@ -97,7 +97,7 @@
 
                                                 <gap>2</gap>
                                                 <vertical-alignment>center</vertical-alignment>
-                                            </fzmm.styled-flow-layout>
+                                            </fzmm.flow-layout>
 
                                             <template name="small-option">
                                                 <translation-id>percentageOfSimilarityToCompress</translation-id>
@@ -137,10 +137,10 @@
                                             <horizontal method="fill">49</horizontal>
                                             <vertical method="fixed">170</vertical>
                                         </sizing>
-                                    </fzmm.styled-flow-layout>
+                                    </fzmm.flow-layout>
 
                                     <!-- algorithm options -->
-                                    <fzmm.styled-flow-layout direction="vertical" id="algorithm-options-layout">
+                                    <fzmm.flow-layout direction="vertical" id="algorithm-options-layout">
                                         <children>
                                             <fzmm.context-menu-button id="algorithm-button">
                                                 <text translate="true">fzmm.gui.imagetext.tab.algorithm</text>
@@ -209,10 +209,10 @@
                                             <horizontal method="fill">50</horizontal>
                                             <vertical method="fixed">170</vertical>
                                         </sizing>
-                                    </fzmm.styled-flow-layout>
+                                    </fzmm.flow-layout>
 
                                     <!-- image mode -->
-                                    <fzmm.styled-flow-layout direction="vertical" id="image-mode-layout">
+                                    <fzmm.flow-layout direction="vertical" id="image-mode-layout">
                                         <children>
                                             <fzmm.context-menu-button id="mode-button">
                                                 <text translate="true">fzmm.gui.imagetext.tab.mode</text>
@@ -357,21 +357,21 @@
                                         <sizing>
                                             <horizontal method="expand">99</horizontal>
                                         </sizing>
-                                    </fzmm.styled-flow-layout>
+                                    </fzmm.flow-layout>
                                 </children>
 
                                 <sizing>
                                     <horizontal method="expand">60</horizontal>
                                 </sizing>
-                            </fzmm.styled-flow-layout>
+                            </fzmm.flow-layout>
 
                             <sizing>
                                 <vertical method="fill">100</vertical>
                             </sizing>
-                        </fzmm.styled-scroll>
+                        </fzmm.scroll>
 
                         <!-- preview -->
-                        <fzmm.styled-flow-layout direction="vertical">
+                        <fzmm.flow-layout direction="vertical">
                             <children>
                                 <button id="expand-preview-button">
                                     <text translate="true">fzmm.gui.button.arrow2.left</text>
@@ -386,22 +386,22 @@
                                     </margins>
                                 </button>
 
-                                <fzmm.styled-scroll direction="horizontal">
-                                    <fzmm.styled-scroll direction="vertical" flip-scroll="true">
-                                        <fzmm.styled-label id="preview-label">
-                                        </fzmm.styled-label>
+                                <fzmm.scroll direction="horizontal">
+                                    <fzmm.scroll direction="vertical" flip-scroll="true">
+                                        <fzmm.label id="preview-label">
+                                        </fzmm.label>
 
                                         <sizing>
                                             <vertical method="expand">100</vertical>
                                         </sizing>
 
                                         <prevent-shift-scroll>true</prevent-shift-scroll>
-                                    </fzmm.styled-scroll>
+                                    </fzmm.scroll>
 
                                     <sizing>
                                         <horizontal method="expand">100</horizontal>
                                     </sizing>
-                                </fzmm.styled-scroll>
+                                </fzmm.scroll>
 
                             </children>
 
@@ -418,7 +418,7 @@
                                 <vertical method="expand">100</vertical>
                             </sizing>
 
-                        </fzmm.styled-flow-layout>
+                        </fzmm.flow-layout>
 
                     </children>
 
@@ -426,9 +426,9 @@
                         <vertical>20</vertical>
                         <horizontal>3</horizontal>
                     </padding>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
                         <button id="execute-button">
                             <text translate="true">gui.done</text>
@@ -463,7 +463,7 @@
                         <horizontal>3</horizontal>
                         <bottom>3</bottom>
                     </padding>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
             </children>
 
             <vertical-alignment>center</vertical-alignment>
@@ -472,11 +472,11 @@
             <surface>
                 <vanilla-translucent/>
             </surface>
-        </fzmm.styled-flow-layout>
+        </fzmm.flow-layout>
     </components>
     <templates>
         <small-option>
-            <fzmm.styled-flow-layout direction="horizontal" id="{{id}}-parent">
+            <fzmm.flow-layout direction="horizontal" id="{{id}}-parent">
                 <children>
                     <label>
                         <text translate="true">fzmm.gui.imagetext.option.{{translation-id}}</text>
@@ -496,11 +496,11 @@
                 <gap>2</gap>
                 <vertical-alignment>top</vertical-alignment>
 
-            </fzmm.styled-flow-layout>
+            </fzmm.flow-layout>
         </small-option>
 
         <checkbox-option-type>
-            <fzmm.styled-flow-layout direction="vertical">
+            <fzmm.flow-layout direction="vertical">
                 <children>
                     <small-checkbox id="{{id}}">
 
@@ -508,7 +508,7 @@
                 </children>
 
                 <vertical-alignment>center</vertical-alignment>
-            </fzmm.styled-flow-layout>
+            </fzmm.flow-layout>
         </checkbox-option-type>
 
         <slider-option-type>
@@ -539,7 +539,7 @@
         </suggest-text-option-type>
 
         <pos-option-type>
-            <fzmm.styled-flow-layout direction="horizontal">
+            <fzmm.flow-layout direction="horizontal">
                 <children>
                     <fzmm.suggest-text-option id="{{id}}X-number-field">
                         <sizing>
@@ -564,7 +564,7 @@
                 <sizing>
                     <horizontal method="expand">100</horizontal>
                 </sizing>
-            </fzmm.styled-flow-layout>
+            </fzmm.flow-layout>
         </pos-option-type>
 
         <text-area-option-type>
@@ -589,7 +589,7 @@
         </context-menu-option-type>
 
         <color-option-type>
-            <fzmm.styled-flow-layout direction="horizontal">
+            <fzmm.flow-layout direction="horizontal">
                 <children>
                     <box id="{{id}}-color-preview">
                         <sizing>
@@ -615,7 +615,7 @@
                 </sizing>
 
                 <vertical-alignment>center</vertical-alignment>
-            </fzmm.styled-flow-layout>
+            </fzmm.flow-layout>
         </color-option-type>
     </templates>
 </owo-ui>
