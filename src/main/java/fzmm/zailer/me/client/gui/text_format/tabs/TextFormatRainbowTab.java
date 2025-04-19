@@ -2,11 +2,11 @@ package fzmm.zailer.me.client.gui.text_format.tabs;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.config.FzmmConfig;
-import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.text.Text;
 
 import java.util.Date;
@@ -14,11 +14,6 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 public class TextFormatRainbowTab implements ITextFormatTab {
-    private static final String HUE_ID = "hue";
-    private static final String BRIGHTNESS_ID = "brightness";
-    private static final String SATURATION_ID = "saturation";
-    private static final String HUE_STEP_ID = "hueStep";
-
     private SliderWidget hue;
     private SliderWidget brightness;
     private SliderWidget saturation;
@@ -42,12 +37,12 @@ public class TextFormatRainbowTab implements ITextFormatTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
+    public void setupComponents(EFlowLayout rootComponent) {
         FzmmConfig.TextFormat config = FzmmClient.CONFIG.textFormat;
-        this.hue = SliderRow.setup(rootComponent, HUE_ID, 1d, 0d, 1d, Float.class, 3, 0.025d, d -> this.callback.accept(""));
-        this.brightness = SliderRow.setup(rootComponent, BRIGHTNESS_ID, 0.8d, 0d, 1d, Float.class, 3, 0.025d, d -> this.callback.accept(""));
-        this.saturation = SliderRow.setup(rootComponent, SATURATION_ID, 1d, 0d, 1d, Float.class, 3, 0.025d, d -> this.callback.accept(""));
-        this.hueStep = SliderRow.setup(rootComponent, HUE_STEP_ID, 0.05d, config.minRainbowHueStep(), config.maxRainbowHueStep(), Float.class, 3, 0.005d, d -> this.callback.accept(""));
+        this.hue = SliderRow.setup(rootComponent, "hue", 1d, 0d, 1d, Float.class, 3, 0.025d, d -> this.callback.accept(""));
+        this.brightness = SliderRow.setup(rootComponent, "brightness", 0.8d, 0d, 1d, Float.class, 3, 0.025d, d -> this.callback.accept(""));
+        this.saturation = SliderRow.setup(rootComponent, "saturation", 1d, 0d, 1d, Float.class, 3, 0.025d, d -> this.callback.accept(""));
+        this.hueStep = SliderRow.setup(rootComponent, "hueStep", 0.05d, config.minRainbowHueStep(), config.maxRainbowHueStep(), Float.class, 3, 0.005d, d -> this.callback.accept(""));
     }
 
     @Override

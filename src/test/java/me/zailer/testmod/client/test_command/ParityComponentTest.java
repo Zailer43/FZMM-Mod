@@ -3,7 +3,7 @@ package me.zailer.testmod.client.test_command;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.BookComponent;
-import io.wispforest.owo.ui.container.FlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.BookEditScreen;
 import net.minecraft.item.Items;
@@ -99,7 +99,7 @@ public class ParityComponentTest {
         var screen = new BaseFzmmScreen("main", "main", null) {
 
             @Override
-            protected void setup(FlowLayout rootComponent) {
+            protected void setup(EFlowLayout rootComponent) {
                 rootComponent.child(component);
                 component.setFocused(true);
             }

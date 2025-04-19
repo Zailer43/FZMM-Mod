@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.gui.components.containers;
 
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.component.*;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
+public class ColorOverlay extends OverlayContainer<EFlowLayout> {
     private final List<FlowLayout> colorsLayouts;
     @Nullable
     private Color selectedColor;
@@ -34,7 +34,7 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
     private static final int COLOR_SIZE = 16;
 
     public ColorOverlay(Color color, boolean withAlpha, Consumer<ColorPickerComponent> onConfirm, BoxComponent colorPreview) {
-        super(StyledContainers.verticalFlow(Sizing.content(), Sizing.content()));
+        super(EContainers.verticalFlow(Sizing.content(), Sizing.content()));
         this.colorsLayouts = new ArrayList<>();
         this.selectedColor = null;
 
@@ -46,7 +46,7 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
 
     protected void addComponents(Color color, boolean withAlpha, Consumer<ColorPickerComponent> onConfirm, BoxComponent colorPreview) {
         FlowLayout colorPickerLayout = this.getColorPickerComponent(color, withAlpha, onConfirm, colorPreview);
-        FlowLayout firstRow = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content());
+        FlowLayout firstRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
         firstRow.gap(4);
 
         ColorPickerComponent picker = colorPickerLayout.childById(ColorPickerComponent.class, "color-picker");
@@ -68,25 +68,25 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
     public FlowLayout getFavoriteColorsLayout(ColorPickerComponent picker) {
         FzmmConfig.Colors config = FzmmClient.CONFIG.colors;
 
-        StyledFlowLayout layout = StyledContainers.verticalFlow(Sizing.fixed(WIDTH), Sizing.fixed(HEIGHT));
+        EFlowLayout layout = EContainers.verticalFlow(Sizing.fixed(WIDTH), Sizing.fixed(HEIGHT));
         layout.gap(5);
         layout.padding(Insets.of(5));
         layout.surface(layout.styledPanel());
         layout.horizontalAlignment(HorizontalAlignment.CENTER);
         layout.mouseDown().subscribe((mouseX, mouseY, button) -> true);
 
-        Component labelComponent = StyledComponents.label(Text.translatable("fzmm.gui.colorPicker.title.favorite"))
+        Component labelComponent = EComponents.label(Text.translatable("fzmm.gui.colorPicker.title.favorite"))
                 .shadow(true)
                 .margins(Insets.top(3));
 
-        FlowLayout favoriteColorsComponent = StyledContainers.ltrTextFlow(Sizing.fill(100), Sizing.content());
+        FlowLayout favoriteColorsComponent = EContainers.ltrTextFlow(Sizing.fill(100), Sizing.content());
         favoriteColorsComponent.children(config.favoriteColors().stream()
                 .map(color -> (FlowLayout) this.newColorBox(picker, color))
                 .collect(Collectors.toList())
         );
         favoriteColorsComponent.horizontalAlignment(HorizontalAlignment.CENTER);
 
-        ScrollContainer<FlowLayout> favoriteColorsScroll = StyledContainers.verticalScroll(Sizing.content(), Sizing.fill(75), favoriteColorsComponent);
+        ScrollContainer<FlowLayout> favoriteColorsScroll = EContainers.verticalScroll(Sizing.content(), Sizing.fill(75), favoriteColorsComponent);
 
         ButtonComponent removeColorButton = Components.button(Text.translatable("fzmm.gui.button.remove"),
                 this.removeFavoriteExecute(favoriteColorsComponent, config));
@@ -174,7 +174,7 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
                 .margins(Insets.of(1))
                 .cursorStyle(CursorStyle.HAND);
 
-        FlowLayout colorLayout = StyledContainers.horizontalFlow(Sizing.fixed(COLOR_SIZE + 2), Sizing.fixed(COLOR_SIZE + 2));
+        FlowLayout colorLayout = EContainers.horizontalFlow(Sizing.fixed(COLOR_SIZE + 2), Sizing.fixed(COLOR_SIZE + 2));
         colorLayout.padding(Insets.of(1));
         colorLayout.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
         colorLayout.child(boxComponent);
@@ -209,14 +209,14 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
     }
 
     public FlowLayout getColorPickerComponent(Color color, boolean withAlpha, Consumer<ColorPickerComponent> onConfirm, BoxComponent colorPreview) {
-        StyledFlowLayout layout = StyledContainers.verticalFlow(Sizing.fixed(WIDTH), Sizing.fixed(HEIGHT));
+        EFlowLayout layout = EContainers.verticalFlow(Sizing.fixed(WIDTH), Sizing.fixed(HEIGHT));
         layout.gap(5)
                 .padding(Insets.of(5))
                 .surface(layout.styledPanel())
                 .horizontalAlignment(HorizontalAlignment.CENTER)
                 .mouseDown().subscribe((mouseX, mouseY, button) -> true);
 
-        Component labelComponent = StyledComponents.label(Text.translatable("fzmm.gui.colorPicker.title.picker"));
+        Component labelComponent = EComponents.label(Text.translatable("fzmm.gui.colorPicker.title.picker"));
 
         ColorPickerComponent picker = (ColorPickerComponent) new ColorPickerComponent()
                 .selectedColor(color)
@@ -229,7 +229,7 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
                 .color(color)
                 .id("current-color");
 
-        FlowLayout colorsLayout = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content()).child(
+        FlowLayout colorsLayout = EContainers.horizontalFlow(Sizing.content(), Sizing.content()).child(
                 Components.box(Sizing.fixed(80), Sizing.fixed(15))
                         .fill(true)
                         .color(color)
@@ -262,7 +262,7 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
     }
 
     private FlowLayout getButtonsLayout(Component... components) {
-        return (FlowLayout) StyledContainers.horizontalFlow(Sizing.fill(100), Sizing.content())
+        return (FlowLayout) EContainers.horizontalFlow(Sizing.fill(100), Sizing.content())
                 .children(Arrays.asList(components))
                 .gap(10)
                 .horizontalAlignment(HorizontalAlignment.CENTER)
@@ -270,7 +270,7 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
     }
 
     private FlowLayout getDefaultColorsLayout(ColorPickerComponent picker) {
-        FlowLayout result = StyledContainers.verticalFlow(Sizing.content(), Sizing.content());
+        FlowLayout result = EContainers.verticalFlow(Sizing.content(), Sizing.content());
         result.gap(4);
 
         int width = WIDTH * 2 + 4;
@@ -278,7 +278,7 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
         result.child(this.getFormattingLayout(picker, width));
 
         for (var child : result.children()) {
-            if (child instanceof StyledFlowLayout flowLayout) {
+            if (child instanceof EFlowLayout flowLayout) {
                 flowLayout.padding(Insets.of(5))
                         .surface(flowLayout.styledPanel())
                         .horizontalAlignment(HorizontalAlignment.CENTER);
@@ -306,7 +306,7 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
 
         List<Component> dyeComponents = this.getColorsComponentsWithIcon(picker, dyeColorsComponents);
 
-        FlowLayout dyeLayout = StyledContainers.ltrTextFlow(Sizing.fixed(width), Sizing.content());
+        FlowLayout dyeLayout = EContainers.ltrTextFlow(Sizing.fixed(width), Sizing.content());
         dyeLayout.children(dyeComponents);
 
         return dyeLayout;
@@ -328,7 +328,7 @@ public class ColorOverlay extends OverlayContainer<StyledFlowLayout> {
             formattingComponents.add(colorLayout);
         }
 
-        FlowLayout formattingLayout = StyledContainers.ltrTextFlow(Sizing.fixed(width), Sizing.content());
+        FlowLayout formattingLayout = EContainers.ltrTextFlow(Sizing.fixed(width), Sizing.content());
         formattingLayout.children(formattingComponents);
 
         return formattingLayout;

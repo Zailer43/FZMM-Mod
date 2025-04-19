@@ -1,12 +1,14 @@
-package fzmm.zailer.me.client.gui.components.style.container;
+package fzmm.zailer.me.client.gui.components.extend.container;
 
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -15,12 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class StyledFlowLayout extends FlowLayout {
+public class EFlowLayout extends FlowLayout {
     @Nullable
     private Surface hoveredSurface = null;
     private boolean isFocused = false;
 
-    public StyledFlowLayout(Sizing horizontalSizing, Sizing verticalSizing, Algorithm algorithm) {
+    public EFlowLayout(Sizing horizontalSizing, Sizing verticalSizing, Algorithm algorithm) {
         super(horizontalSizing, verticalSizing, algorithm);
     }
 
@@ -62,9 +64,18 @@ public class StyledFlowLayout extends FlowLayout {
         return modified ? Optional.of(result) : Optional.empty();
     }
 
-    public StyledFlowLayout hoveredSurface(@Nullable Surface hoveredSurface) {
+    public EFlowLayout hoveredSurface(@Nullable Surface hoveredSurface) {
         this.hoveredSurface = hoveredSurface;
         return this;
+    }
+
+    public <T extends Component> T childByIdOrThrow(@NotNull Class<T> expectedClass, @NotNull String id) {
+        T result = this.childById(expectedClass, id);
+        if (result == null) {
+            throw new NullPointerException(String.format("No '%s' found with component id '%s'", expectedClass.getSimpleName(), id));
+        }
+
+        return result;
     }
 
     @Override
@@ -100,9 +111,9 @@ public class StyledFlowLayout extends FlowLayout {
         UIParsing.expectAttributes(element, "direction");
 
         return switch (element.getAttribute("direction")) {
-            case "horizontal" -> StyledContainers.horizontalFlow(Sizing.content(), Sizing.content());
-            case "ltr-text-flow" -> StyledContainers.ltrTextFlow(Sizing.content(), Sizing.content());
-            default -> StyledContainers.verticalFlow(Sizing.content(), Sizing.content());
+            case "horizontal" -> EContainers.horizontalFlow(Sizing.content(), Sizing.content());
+            case "ltr-text-flow" -> EContainers.ltrTextFlow(Sizing.content(), Sizing.content());
+            default -> EContainers.verticalFlow(Sizing.content(), Sizing.content());
         };
     }
 

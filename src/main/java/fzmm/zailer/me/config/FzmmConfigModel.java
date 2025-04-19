@@ -130,12 +130,12 @@ public class FzmmConfigModel {
     }
 
     public static class ColorsNest {
-        public Color imagetextHologram = Color.ofRgb(Integer.parseInt("F1C232", 16));
-        public Color imagetextMessages = Color.ofRgb(Integer.parseInt("71C29F", 16));
-        public Color playerStatue = Color.ofRgb(Integer.parseInt("CB347D", 16));
-        public Color usefulBlockStates = Color.ofRgb(Integer.parseInt("66F5B7", 16));
-        public Color headGalleryName = Color.ofRgb(Integer.parseInt("50AF70", 16));
-        public Color headGalleryTags = Color.ofRgb(Integer.parseInt("74D02F", 16));
+        public Color imagetextHologram = Color.ofRgb(0xF1C232);
+        public Color imagetextMessages = Color.ofRgb(0x71C29F);
+        public Color playerStatue = Color.ofRgb(0xCB347D);
+        public Color usefulBlockStates = Color.ofRgb(0x66F5B7);
+        public Color headGalleryName = Color.ofRgb(0x50AF70);
+        public Color headGalleryTags = Color.ofRgb(0x74D02F);
         @ExcludeFromScreen // owo-lib won't let me make Color lists
         public List<Color> favoriteColors = new ArrayList<>();
     }

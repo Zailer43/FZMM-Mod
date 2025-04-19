@@ -1,15 +1,15 @@
 package fzmm.zailer.me.client.gui.utils;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.row.ButtonRow;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.logic.copy_text_algorithm.CopyText;
+import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 public class CopyTextScreen extends BaseFzmmScreen {
-    private static final String COPY_BUTTONS_LIST_ID = "copy-buttons-list";
     private final Text textToCopy;
 
     public CopyTextScreen(@Nullable Screen parent, Text textToCopy) {
@@ -18,13 +18,15 @@ public class CopyTextScreen extends BaseFzmmScreen {
     }
 
     @Override
-    protected void setup(FlowLayout rootComponent) {
-        FlowLayout flowLayout = rootComponent.childById(FlowLayout.class, COPY_BUTTONS_LIST_ID);
-        if (flowLayout == null)
+    protected void setup(EFlowLayout rootComponent) {
+        FlowLayout flowLayout = rootComponent.childById(FlowLayout.class, "copy-buttons-list");
+        if (flowLayout == null) {
             return;
+        }
 
         for (var algorithm : CopyText.getAlgorithms()) {
-            ButtonRow.setup(rootComponent, ButtonRow.getButtonId(algorithm.getId()), true, buttonComponent -> algorithm.copy(this.textToCopy));
+            rootComponent.childByIdOrThrow(ButtonComponent.class, algorithm.getId() + "-button")
+                    .onPress(buttonComponent -> algorithm.copy(this.textToCopy));
         }
     }
 }

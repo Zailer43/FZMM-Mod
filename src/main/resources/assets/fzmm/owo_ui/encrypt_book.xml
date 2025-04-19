@@ -1,18 +1,18 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.5/owo-ui.xsd">
     <components>
-        <fzmm.styled-flow-layout direction="vertical">
+        <fzmm.flow-layout direction="vertical">
             <children>
-                <fzmm.styled-label id="title">
+                <fzmm.label id="title">
                     <positioning type="absolute">3,3</positioning>
                     <text translate="true">fzmm.gui.title.encryptbook</text>
-                </fzmm.styled-label>
+                </fzmm.label>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
-                        <fzmm.styled-flow-layout direction="vertical">
+                        <fzmm.flow-layout direction="vertical">
                             <children>
-                                <fzmm.styled-flow-layout direction="vertical">
+                                <fzmm.flow-layout direction="vertical">
                                     <children>
                                         <fzmm.book id="message-text-area">
                                             <max-length>512</max-length>
@@ -26,11 +26,11 @@
                                         <!-- BookScreen.HEIGHT -->
                                         <vertical method="fixed">192</vertical>
                                     </sizing>
-                                </fzmm.styled-flow-layout>
+                                </fzmm.flow-layout>
                             </children>
-                        </fzmm.styled-flow-layout>
+                        </fzmm.flow-layout>
 
-                        <fzmm.styled-flow-layout direction="vertical">
+                        <fzmm.flow-layout direction="vertical">
                             <children>
                                 <template name="text-option">
                                     <translation-id>author</translation-id>
@@ -45,10 +45,10 @@
                                     <id>paddingCharacters-text-box</id>
                                 </template>
 
-                                <fzmm.styled-scroll direction="vertical">
-                                    <fzmm.styled-flow-layout direction="vertical">
+                                <fzmm.scroll direction="vertical">
+                                    <fzmm.flow-layout direction="vertical">
                                         <children>
-                                            <fzmm.styled-flow-layout direction="ltr-text-flow">
+                                            <fzmm.flow-layout direction="ltr-text-flow">
                                                 <children>
                                                     <button id="add-profile-button">
                                                         <text translate="true">fzmm.gui.button.add</text>
@@ -67,13 +67,13 @@
                                                         </sizing>
                                                     </button>
 
-                                                    <fzmm.styled-label id="profile-status">
+                                                    <fzmm.label id="profile-status">
                                                         <text translate="true">fzmm.gui.encryptbook.label.profile.notFound</text>
 
                                                         <margins>
                                                             <vertical>3</vertical>
                                                         </margins>
-                                                    </fzmm.styled-label>
+                                                    </fzmm.label>
                                                 </children>
 
                                                 <sizing>
@@ -81,15 +81,15 @@
                                                 </sizing>
 
                                                 <gap>4</gap>
-                                            </fzmm.styled-flow-layout>
+                                            </fzmm.flow-layout>
 
-                                            <fzmm.styled-flow-layout direction="vertical" id="profile-list">
+                                            <fzmm.flow-layout direction="vertical" id="profile-list">
                                                 <children>
 
                                                 </children>
 
                                                 <gap>2</gap>
-                                            </fzmm.styled-flow-layout>
+                                            </fzmm.flow-layout>
                                         </children>
                                         <gap>2</gap>
 
@@ -104,28 +104,28 @@
                                         <surface>
                                             <panel dark="true"/>
                                         </surface>
-                                    </fzmm.styled-flow-layout>
+                                    </fzmm.flow-layout>
 
                                     <sizing>
                                         <vertical method="expand">100</vertical>
                                     </sizing>
-                                </fzmm.styled-scroll>
+                                </fzmm.scroll>
                             </children>
                             <gap>2</gap>
 
                             <sizing>
                                 <horizontal method="expand">100</horizontal>
                             </sizing>
-                        </fzmm.styled-flow-layout>
+                        </fzmm.flow-layout>
                     </children>
 
                     <padding>
                         <vertical>20</vertical>
                         <horizontal>3</horizontal>
                     </padding>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
                         <button id="give-button">
                             <text translate="true">fzmm.gui.encryptbook.button.give</text>
@@ -169,9 +169,9 @@
                     </padding>
 
                     <gap>4</gap>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
 
                         <button id="faq-button">
@@ -190,7 +190,7 @@
                     </children>
 
                     <positioning type="relative">100,0</positioning>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
             </children>
 
 
@@ -200,13 +200,13 @@
             <surface>
                 <vanilla-translucent/>
             </surface>
-        </fzmm.styled-flow-layout>
+        </fzmm.flow-layout>
     </components>
     <templates>
         <text-option>
-            <fzmm.styled-flow-layout direction="horizontal">
+            <fzmm.flow-layout direction="horizontal">
                 <children>
-                    <fzmm.styled-flow-layout direction="vertical">
+                    <fzmm.flow-layout direction="vertical">
                         <children>
                             <label>
                                 <text translate="true">fzmm.gui.encryptbook.option.{{translation-id}}</text>
@@ -224,19 +224,19 @@
                         <padding>
                             <right>1</right>
                         </padding>
-                    </fzmm.styled-flow-layout>
+                    </fzmm.flow-layout>
 
                 </children>
 
                 <gap>4</gap>
                 <vertical-alignment>top</vertical-alignment>
-            </fzmm.styled-flow-layout>
+            </fzmm.flow-layout>
         </text-option>
 
         <profile-option>
-            <fzmm.styled-flow-layout direction="horizontal">
+            <fzmm.flow-layout direction="horizontal">
                 <children>
-                    <fzmm.styled-label id="label">
+                    <fzmm.label id="label">
                         <sizing>
                             <horizontal method="expand">100</horizontal>
                         </sizing>
@@ -248,7 +248,7 @@
                         </margins>
 
                         <cursor-style>hand</cursor-style>
-                    </fzmm.styled-label>
+                    </fzmm.label>
 
                     <button id="remove-button">
                         <text translate="true">fzmm.gui.button.remove</text>
@@ -272,7 +272,7 @@
                 <cursor-style>hand</cursor-style>
 
                 <vertical-alignment>center</vertical-alignment>
-            </fzmm.styled-flow-layout>
+            </fzmm.flow-layout>
         </profile-option>
     </templates>
 </owo-ui>

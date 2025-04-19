@@ -2,7 +2,7 @@ package me.zailer.testmod.client.test_command;
 
 
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.core.Sizing;
@@ -49,7 +49,7 @@ public class SnackBarTest {
                 .mediumTimer()
                 .startTimer()
                 .closeButton()
-                .backgroundColor(FzmmStyles.ALERT_SUCCESS_COLOR)
+                .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
                 .title(Text.literal("success"))
                 .build()
         );
@@ -58,7 +58,7 @@ public class SnackBarTest {
                 .mediumTimer()
                 .startTimer()
                 .closeButton()
-                .backgroundColor(FzmmStyles.ALERT_WARNING_COLOR)
+                .backgroundColor(EStyles.ALERT_WARNING_COLOR)
                 .title(Text.literal("warning"))
                 .build()
         );
@@ -67,7 +67,7 @@ public class SnackBarTest {
                 .mediumTimer()
                 .startTimer()
                 .closeButton()
-                .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                 .title(Text.literal("error"))
                 .build()
         );
@@ -76,7 +76,7 @@ public class SnackBarTest {
                 .mediumTimer()
                 .startTimer()
                 .closeButton()
-                .backgroundColor(FzmmStyles.ALERT_TIP_COLOR)
+                .backgroundColor(EStyles.ALERT_TIP_COLOR)
                 .title(Text.literal("tip"))
                 .build()
         );
@@ -85,7 +85,7 @@ public class SnackBarTest {
                 .mediumTimer()
                 .startTimer()
                 .closeButton()
-                .backgroundColor(FzmmStyles.ALERT_LOADING_COLOR)
+                .backgroundColor(EStyles.ALERT_LOADING_COLOR)
                 .title(Text.literal("loading"))
                 .build()
         );
@@ -93,7 +93,7 @@ public class SnackBarTest {
 
     public static void showButton() {
         SnackBarManager.getInstance().add(BaseSnackBarComponent.builder("1")
-                .backgroundColor(FzmmStyles.ALERT_SUCCESS_COLOR)
+                .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
                 .title(Text.literal("buttons"))
                 .sizing(Sizing.fixed(150), Sizing.content())
                 .details(Text.literal("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id vulputate purus. Cras fringilla urna sed nulla porttitor accumsan. Quisque id ex lorem. Donec cursus, leo vitae sollicitudin bibendum, mauris urna ullamcorper ipsum, eget pharetra felis arcu vitae tellus. Cras posuere, velit vitae congue malesuada, quam eros hendrerit mauris, sed aliquam purus justo et ipsum."))

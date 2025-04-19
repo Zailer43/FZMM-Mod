@@ -1,10 +1,10 @@
 package fzmm.zailer.me.client.gui.text_format.tabs;
 
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.text_format.TextFormatScreen;
 import fzmm.zailer.me.client.gui.text_format.components.ColorListContainer;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Color;
 import net.minecraft.text.Text;
 
@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class TextFormatGradientTab implements ITextFormatTab {
-    private static final String COLOR_LIST_ID = "gradientColorList";
-
     private ColorListContainer colorListContainer;
     private Consumer<Object> callback;
 
@@ -31,9 +29,8 @@ public class TextFormatGradientTab implements ITextFormatTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.colorListContainer = rootComponent.childById(ColorListContainer.class, COLOR_LIST_ID);
-        assert this.colorListContainer != null;
+    public void setupComponents(EFlowLayout rootComponent) {
+        this.colorListContainer = rootComponent.childByIdOrThrow(ColorListContainer.class, "gradientColorList");
         this.colorListContainer.setCallback(this.callback::accept);
     }
 

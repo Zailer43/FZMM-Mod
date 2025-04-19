@@ -1,16 +1,16 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.5/owo-ui.xsd">
     <components>
-        <fzmm.styled-flow-layout direction="vertical">
+        <fzmm.flow-layout direction="vertical">
             <children>
-                <fzmm.styled-label id="title">
+                <fzmm.label id="title">
                     <positioning type="absolute">3,3</positioning>
                     <text translate="true">fzmm.gui.title.copyText</text>
-                </fzmm.styled-label>
+                </fzmm.label>
 
-                <fzmm.styled-scroll direction="vertical">
+                <fzmm.scroll direction="vertical">
 
-                    <fzmm.styled-flow-layout direction="vertical" id="copy-buttons-list">
+                    <fzmm.flow-layout direction="vertical" id="copy-buttons-list">
                         <children>
                             <fzmm.button-row>
                                 <id>json</id>
@@ -37,7 +37,7 @@
                                 <id>string</id>
                             </fzmm.button-row>
                         </children>
-                    </fzmm.styled-flow-layout>
+                    </fzmm.flow-layout>
 
                     <sizing>
                         <vertical method="fill">90</vertical>
@@ -46,9 +46,9 @@
                     <margins>
                         <vertical>10</vertical>
                     </margins>
-                </fzmm.styled-scroll>
+                </fzmm.scroll>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
 
                         <button id="back-button">
@@ -71,7 +71,7 @@
 
                     <vertical-alignment>bottom</vertical-alignment>
                     <horizontal-alignment>right</horizontal-alignment>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
             </children>
 
 
@@ -81,6 +81,6 @@
             <surface>
                 <vanilla-translucent/>
             </surface>
-        </fzmm.styled-flow-layout>
+        </fzmm.flow-layout>
     </components>
 </owo-ui>

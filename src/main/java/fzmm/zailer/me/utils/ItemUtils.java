@@ -3,10 +3,10 @@ package fzmm.zailer.me.utils;
 import com.mojang.authlib.GameProfile;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.HistoryScreen;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.SnackBarBuilder;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
 import fzmm.zailer.me.client.logic.FzmmHistory;
 import io.wispforest.owo.config.ui.ConfigScreen;
 import io.wispforest.owo.ui.component.Components;
@@ -97,7 +97,7 @@ public class ItemUtils {
 
         SnackBarBuilder builder = BaseSnackBarComponent.builder(SnackBarManager.GIVE_ID)
                 .title(GIVE_ITEM_ERROR)
-                .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                 .keepOnLimit()
                 .highTimer()
                 .startTimer()
@@ -129,7 +129,7 @@ public class ItemUtils {
 
         if (isNotAllowedToGive()) {
             return Optional.of(builder.details(Text.translatable("fzmm.giveItem.notAllowed"))
-                    .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                    .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                     .button(snackBar -> Components.button(Text.translatable("fzmm.gui.title.history"),
                             buttonComponent -> {
                                 FzmmUtils.setScreen(new HistoryScreen(client.currentScreen));

@@ -1,14 +1,14 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.5/owo-ui.xsd">
     <components>
-        <fzmm.styled-flow-layout direction="vertical">
+        <fzmm.flow-layout direction="vertical">
             <children>
-                <fzmm.styled-label id="title">
+                <fzmm.label id="title">
                     <positioning type="absolute">3,3</positioning>
                     <text translate="true">fzmm.gui.title.headGenerator</text>
-                </fzmm.styled-label>
+                </fzmm.label>
 
-                <fzmm.styled-flow-layout direction="vertical" id="head-option-list">
+                <fzmm.flow-layout direction="vertical" id="head-option-list">
                     <children>
 
                         <fzmm.image-rows>
@@ -24,13 +24,13 @@
                     <margins>
                         <top>20</top>
                     </margins>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
                         <!-- compound heads -->
-                        <fzmm.styled-scroll direction="vertical">
-                            <fzmm.styled-flow-layout direction="vertical" id="compound-heads-layout">
+                        <fzmm.scroll direction="vertical">
+                            <fzmm.flow-layout direction="vertical" id="compound-heads-layout">
                                 <children>
                                 </children>
 
@@ -38,20 +38,20 @@
                                     <horizontal method="fixed">0</horizontal>
                                 </sizing>
                                 <horizontal-alignment>center</horizontal-alignment>
-                            </fzmm.styled-flow-layout>
+                            </fzmm.flow-layout>
 
                             <sizing>
                                 <vertical method="fill">100</vertical>
                             </sizing>
-                        </fzmm.styled-scroll>
+                        </fzmm.scroll>
 
-                        <fzmm.styled-flow-layout direction="vertical">
+                        <fzmm.flow-layout direction="vertical">
                             <children>
                                 <!-- nav var -->
-                                <fzmm.styled-flow-layout direction="horizontal">
+                                <fzmm.flow-layout direction="horizontal">
                                     <children>
 
-                                        <fzmm.styled-flow-layout direction="horizontal" id="head-list-nav">
+                                        <fzmm.flow-layout direction="horizontal" id="head-list-nav">
                                             <children>
                                                 <text-box id="search-text-box">
                                                     <sizing>
@@ -66,29 +66,29 @@
                                                 <button id="toggle-favorite-list">
                                                 </button>
 
-                                                <fzmm.styled-flow-layout direction="horizontal" id="skin-pre-edit-layout">
+                                                <fzmm.flow-layout direction="horizontal" id="skin-pre-edit-layout">
                                                     <children>
-                                                        <fzmm.styled-flow-layout direction="vertical" id="skin-pre-edit-none">
+                                                        <fzmm.flow-layout direction="vertical" id="skin-pre-edit-none">
                                                             <children>
                                                             </children>
-                                                        </fzmm.styled-flow-layout>
+                                                        </fzmm.flow-layout>
 
-                                                        <fzmm.styled-flow-layout direction="vertical" id="skin-pre-edit-overlap">
+                                                        <fzmm.flow-layout direction="vertical" id="skin-pre-edit-overlap">
                                                             <children>
                                                             </children>
-                                                        </fzmm.styled-flow-layout>
+                                                        </fzmm.flow-layout>
 
-                                                        <fzmm.styled-flow-layout direction="vertical" id="skin-pre-edit-remove">
+                                                        <fzmm.flow-layout direction="vertical" id="skin-pre-edit-remove">
                                                             <children>
                                                             </children>
-                                                        </fzmm.styled-flow-layout>
+                                                        </fzmm.flow-layout>
                                                     </children>
                                                     <gap>4</gap>
 
                                                     <margins>
                                                         <left>6</left>
                                                     </margins>
-                                                </fzmm.styled-flow-layout>
+                                                </fzmm.flow-layout>
                                             </children>
 
                                             <horizontal-alignment>left</horizontal-alignment>
@@ -98,20 +98,20 @@
                                             </sizing>
 
                                             <gap>4</gap>
-                                        </fzmm.styled-flow-layout>
+                                        </fzmm.flow-layout>
 
                                     </children>
-                                </fzmm.styled-flow-layout>
+                                </fzmm.flow-layout>
 
                                 <!-- errors layout -->
-                                <fzmm.styled-flow-layout direction="horizontal" id="no-results-label-layout">
+                                <fzmm.flow-layout direction="horizontal" id="no-results-label-layout">
                                     <children>
                                     </children>
-                                </fzmm.styled-flow-layout>
+                                </fzmm.flow-layout>
 
                                 <!-- heads content -->
-                                <fzmm.styled-scroll direction="vertical">
-                                    <fzmm.styled-flow-layout direction="ltr-text-flow" id="content">
+                                <fzmm.scroll direction="vertical">
+                                    <fzmm.flow-layout direction="ltr-text-flow" id="content">
                                         <children>
 
                                         </children>
@@ -121,7 +121,7 @@
                                         </sizing>
 
                                         <horizontal-alignment>left</horizontal-alignment>
-                                    </fzmm.styled-flow-layout>
+                                    </fzmm.flow-layout>
 
                                     <sizing>
                                         <vertical method="fill">100</vertical>
@@ -132,7 +132,7 @@
                                         <top>4</top>
                                         <bottom>20</bottom>
                                     </margins>
-                                </fzmm.styled-scroll>
+                                </fzmm.scroll>
                             </children>
 
                             <sizing>
@@ -150,7 +150,7 @@
                                 <all>6</all>
                             </padding>
 
-                        </fzmm.styled-flow-layout>
+                        </fzmm.flow-layout>
                     </children>
 
                     <horizontal-alignment>center</horizontal-alignment>
@@ -163,9 +163,9 @@
                     <margins>
                         <horizontal>20</horizontal>
                     </margins>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
 
                         <button id="wiki-button">
@@ -184,9 +184,9 @@
                     </children>
 
                     <positioning type="relative">100,0</positioning>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
 
-                <fzmm.styled-flow-layout direction="horizontal">
+                <fzmm.flow-layout direction="horizontal">
                     <children>
                         <button id="open-folder-button">
                             <text translate="true">fzmm.gui.headGenerator.button.openFolder</text>
@@ -218,7 +218,7 @@
                         <bottom>3</bottom>
                         <top>5</top>
                     </padding>
-                </fzmm.styled-flow-layout>
+                </fzmm.flow-layout>
             </children>
 
             <vertical-alignment>top</vertical-alignment>
@@ -227,39 +227,39 @@
             <surface>
                 <vanilla-translucent/>
             </surface>
-        </fzmm.styled-flow-layout>
+        </fzmm.flow-layout>
     </components>
     <templates>
         <head-overlay>
-            <fzmm.styled-flow-layout direction="vertical" id="panel">
+            <fzmm.flow-layout direction="vertical" id="panel">
                 <children>
-                    <fzmm.styled-flow-layout direction="horizontal">
+                    <fzmm.flow-layout direction="horizontal">
                         <children>
-                            <fzmm.styled-flow-layout direction="horizontal" id="preview">
+                            <fzmm.flow-layout direction="horizontal" id="preview">
                                 <children>
                                 </children>
-                            </fzmm.styled-flow-layout>
+                            </fzmm.flow-layout>
 
-                            <fzmm.styled-flow-layout direction="vertical">
+                            <fzmm.flow-layout direction="vertical">
                                 <children>
-                                    <fzmm.styled-label>
+                                    <fzmm.label>
                                         <text>{{name}}</text>
-                                    </fzmm.styled-label>
+                                    </fzmm.label>
 
-                                    <fzmm.styled-label id="category-label">
-                                    </fzmm.styled-label>
+                                    <fzmm.label id="category-label">
+                                    </fzmm.label>
                                 </children>
 
                                 <gap>8</gap>
 
-                            </fzmm.styled-flow-layout>
+                            </fzmm.flow-layout>
                         </children>
 
                         <gap>8</gap>
-                    </fzmm.styled-flow-layout>
+                    </fzmm.flow-layout>
 
 
-                    <fzmm.styled-flow-layout direction="horizontal" id="top-right-buttons">
+                    <fzmm.flow-layout direction="horizontal" id="top-right-buttons">
                         <children>
                         </children>
 
@@ -268,27 +268,27 @@
                         <positioning type="relative">100,0</positioning>
 
                         <vertical-alignment>center</vertical-alignment>
-                    </fzmm.styled-flow-layout>
+                    </fzmm.flow-layout>
 
-                    <fzmm.styled-scroll direction="vertical">
-                        <fzmm.styled-flow-layout direction="vertical">
+                    <fzmm.scroll direction="vertical">
+                        <fzmm.flow-layout direction="vertical">
                             <children>
 
-                                <fzmm.styled-flow-layout direction="horizontal" id="default-options">
+                                <fzmm.flow-layout direction="horizontal" id="default-options">
                                     <children>
                                     </children>
 
                                     <gap>10</gap>
-                                </fzmm.styled-flow-layout>
+                                </fzmm.flow-layout>
 
-                                <fzmm.styled-flow-layout direction="vertical" id="parameters">
+                                <fzmm.flow-layout direction="vertical" id="parameters">
                                     <children>
                                     </children>
-                                </fzmm.styled-flow-layout>
+                                </fzmm.flow-layout>
                             </children>
 
                             <gap>4</gap>
-                        </fzmm.styled-flow-layout>
+                        </fzmm.flow-layout>
 
                         <sizing>
                             <vertical method="expand">100</vertical>
@@ -298,9 +298,9 @@
                         <margins>
                             <vertical>8</vertical>
                         </margins>
-                    </fzmm.styled-scroll>
+                    </fzmm.scroll>
 
-                    <fzmm.styled-flow-layout direction="horizontal">
+                    <fzmm.flow-layout direction="horizontal">
                         <children>
                             <button id="save-button">
                                 <text translate="true">fzmm.gui.headGenerator.button.saveSkin</text>
@@ -318,7 +318,7 @@
                             </button>
 
                         </children>
-                    </fzmm.styled-flow-layout>
+                    </fzmm.flow-layout>
 
                 </children>
 
@@ -335,7 +335,7 @@
                     <all>6</all>
                 </padding>
 
-            </fzmm.styled-flow-layout>
+            </fzmm.flow-layout>
         </head-overlay>
     </templates>
 </owo-ui>

@@ -2,10 +2,8 @@ package fzmm.zailer.me.client.gui.banner_editor.tabs;
 
 import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.banner_editor.BannerEditorScreen;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import io.wispforest.owo.ui.container.FlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.utils.history.HistoryClipboard;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Sizing;
@@ -19,56 +17,49 @@ import net.minecraft.util.DyeColor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddPatternsTab implements IBannerEditorTab {
-    private static final String PATTERNS_LAYOUT = "add-patterns-layout";
-    private FlowLayout patternsLayout;
+public class AddPatternTab implements IBannerTab {
 
     @Override
-    public String getId() {
-        return "addPatterns";
+    public String buttonId() {
+        return "add-pattern";
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.patternsLayout = rootComponent.childById(FlowLayout.class, PATTERNS_LAYOUT);
-        BaseFzmmScreen.checkNull(patternsLayout, "flow-layout", PATTERNS_LAYOUT);
-    }
-
-    @Override
-    public void update(BannerEditorScreen parent, BannerBuilder currentBanner, DyeColor color) {
-        this.patternsLayout.clearChildren();
+    public List<Component>  update(HistoryClipboard clipboard, BannerBuilder currentBanner, DyeColor color) {
         List<Component> bannerList = new ArrayList<>();
         BannerPattern basePattern = Registries.BANNER_PATTERN.get(BannerPatterns.BASE);
         if (basePattern == null) {
             FzmmClient.LOGGER.error("[Banner editor: add pattern] base pattern is null");
-            return;
+            return bannerList;
         }
 
         for (var pattern : Registries.BANNER_PATTERN.stream().toList()) {
-            if (basePattern == pattern)
+            if (basePattern == pattern) {
                 continue;
+            }
 
             ItemStack banner = currentBanner.copy()
                     .addPattern(color, pattern)
                     .get();
 
-                Component itemComponent = StyledComponents.item(banner)
-                        .sizing(Sizing.fixed(32), Sizing.fixed(32))
-                        .tooltip(BannerBuilder.tooltipOf(color, Registries.BANNER_PATTERN.getEntry(pattern)));
+            Component itemComponent = EComponents.item(banner)
+                    .sizing(Sizing.fixed(32), Sizing.fixed(32))
+                    .tooltip(BannerBuilder.tooltipOf(color, Registries.BANNER_PATTERN.getEntry(pattern)));
 
             itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
                 UISounds.playButtonSound();
-                parent.addUndo(currentBanner);
+                clipboard.addUndo(currentBanner);
 
                 currentBanner.addPattern(color, pattern);
 
-                parent.updatePreview(currentBanner);
+                clipboard.change(currentBanner);
                 return true;
             });
             itemComponent.cursorStyle(CursorStyle.HAND);
 
             bannerList.add(itemComponent);
         }
-        this.patternsLayout.children(bannerList);
+
+        return bannerList;
     }
 }

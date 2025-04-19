@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.text_format.tabs;
 
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.compat.CompatMods;
@@ -22,7 +22,6 @@ import java.util.function.Consumer;
 public class TextFormatPlaceholderApiTab implements ITextFormatTab {
 
     private static final String PLACEHOLDER_WIKI = "https://placeholders.pb4.eu/user/text-format";
-    private static final String INFO_ID = "placeholder-info";
     private FlowLayout infoLayout;
 
     @Override
@@ -37,9 +36,8 @@ public class TextFormatPlaceholderApiTab implements ITextFormatTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.infoLayout = rootComponent.childById(FlowLayout.class, INFO_ID);
-        BaseFzmmScreen.checkNull(this.infoLayout, "flow-layout", INFO_ID);
+    public void setupComponents(EFlowLayout rootComponent) {
+        this.infoLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "placeholder-info");
 
         Component wikiInfo = Components.button(Text.translatable("fzmm.gui.textFormat.button.placeholderApiWiki"), buttonComponent -> {
             MinecraftClient client = MinecraftClient.getInstance();
@@ -67,10 +65,10 @@ public class TextFormatPlaceholderApiTab implements ITextFormatTab {
         examples.add("<rb:0.8:0.7:0>parameters of rainbow are: frequency, saturation, offset</rb>");
         examples.add("<red><b><underline>Hello<r> world");
 
-        componentList.add(StyledComponents.label(Text.translatable("fzmm.gui.textFormat.label.placeholderApi.examples")));
+        componentList.add(EComponents.label(Text.translatable("fzmm.gui.textFormat.label.placeholderApi.examples")));
 
         for (var example : examples) {
-            componentList.add(StyledComponents.label(PlaceholderApiCompat.parse(example)).tooltip(Text.literal(example)));
+            componentList.add(EComponents.label(PlaceholderApiCompat.parse(example)).tooltip(Text.literal(example)));
         }
 
         componentList.get(componentList.size() - 1).margins(Insets.bottom(6));

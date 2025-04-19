@@ -2,15 +2,14 @@ package fzmm.zailer.me.client.gui.imagetext.tabs;
 
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.LoreOption;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
-import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -19,7 +18,6 @@ import net.minecraft.util.Hand;
 import java.util.List;
 
 public class ImagetextLoreTab implements IImagetextTab {
-    private static final String LORE_MODE_ID = "loreMode";
     private ContextMenuButton loreModeButton;
     private LoreOption loreMode;
 
@@ -45,9 +43,8 @@ public class ImagetextLoreTab implements IImagetextTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.loreModeButton = rootComponent.childById(ContextMenuButton.class, LORE_MODE_ID);
-        BaseFzmmScreen.checkNull(this.loreModeButton, "context-menu-button", LORE_MODE_ID);
+    public void setupComponents(EFlowLayout rootComponent) {
+        this.loreModeButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "loreMode");
         this.loreModeButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : LoreOption.values()) {
                 dropdownComponent.button(Text.translatable(option.getTranslationKey()), dropdownButton -> {

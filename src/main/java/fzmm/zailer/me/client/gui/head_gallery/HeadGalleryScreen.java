@@ -5,11 +5,10 @@ import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
-import fzmm.zailer.me.client.gui.components.row.ButtonRow;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
-import fzmm.zailer.me.client.gui.components.style.component.StyledItemComponent;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.component.EItemComponent;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.head_gallery.HeadGalleryResources;
@@ -46,23 +45,6 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     private static final int SELECTED_TAG_COLOR = 0x43BCB2;
     private static final String TAG_BUTTON_TEXT = "fzmm.gui.headGallery.button.tags";
     private static final String TAG_LABEL_TEXT = "fzmm.gui.headGallery.label.tags-overlay";
-    private static final String CATEGORY_LAYOUT_ID = "minecraft-heads-category-list";
-    private static final String TAGS_BUTTON_ID = "tags-button";
-    private static final String TAGS_LIST_LTR_ID = "minecraft-heads-tags-ltr";
-    private static final String TAGS_OVERLAY_LABEL_ID = "tags-overlay-label";
-    private static final String TAG_SEARCH_ID = "tag-search";
-    private static final String CLEAR_TAGS_ID = "clear-tags";
-    private static final String CLEAR_TAGS_OVERLAY_ID = "clear-tags-overlay";
-    private static final String ITEM_SCALE_ID = "item-scale";
-    private static final String STYLE_CHECKBOX_ID = "style-checkbox";
-    private static final String CONTENT_SCROLL = "content-scroll";
-    private static final String CONTENT_ID = "content";
-    private static final String PAGE_PREVIOUS_BUTTON_ID = "previous-page-button";
-    private static final String CURRENT_PAGE_LABEL_ID = "current-page-label";
-    private static final String NEXT_PAGE_BUTTON_ID = "next-page-button";
-    private static final String CONTENT_SEARCH_ID = "content-search";
-    private static final String MINECRAFT_HEADS_BUTTON_ID = "minecraft-heads";
-    private static final String ERROR_MESSAGE_ID = "error-message";
     private static HeadGalleryMemento memento = null;
     private int page;
     private double itemScale;
@@ -92,45 +74,36 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     }
 
     @Override
-    protected void setup(FlowLayout rootComponent) {
+    protected void setup(EFlowLayout rootComponent) {
         this.page = 1;
         this.selectedTags = new HashSet<>();
         this.availableTags = new HashSet<>();
         assert this.client != null;
 
         // content
-        this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
-        checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
-
-        this.contentScroll = rootComponent.childById(ScrollContainer.class, CONTENT_SCROLL);
-        checkNull(this.contentScroll, "flow-layout", CONTENT_SCROLL);
-
-        this.errorLabel = rootComponent.childById(LabelComponent.class, ERROR_MESSAGE_ID);
-        checkNull(this.errorLabel, "label", ERROR_MESSAGE_ID);
+        this.contentLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "content");
+        this.contentScroll = rootComponent.childByIdOrThrow(ScrollContainer.class, "content-scroll");
+        this.errorLabel = rootComponent.childByIdOrThrow(LabelComponent.class, "error-message");
 
         // content pages
-        this.currentPageLabel = rootComponent.childById(LabelComponent.class, CURRENT_PAGE_LABEL_ID);
-        checkNull(this.currentPageLabel, "label", CURRENT_PAGE_LABEL_ID);
+        this.currentPageLabel = rootComponent.childByIdOrThrow(LabelComponent.class, "current-page-label");
 
-        ButtonComponent previousPageButton = rootComponent.childById(ButtonComponent.class, PAGE_PREVIOUS_BUTTON_ID);
-        checkNull(previousPageButton, "button", PAGE_PREVIOUS_BUTTON_ID);
+        ButtonComponent previousPageButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "previous-page-button");
         previousPageButton.onPress(buttonComponent -> this.setPage(this.page - 1));
         previousPageButton.tooltip(List.of(Text.translatable("fzmm.gui.hotkey.single"), Text.translatable("key.keyboard.left")));
 
-        ButtonComponent nextPageButton = rootComponent.childById(ButtonComponent.class, NEXT_PAGE_BUTTON_ID);
-        checkNull(nextPageButton, "button", NEXT_PAGE_BUTTON_ID);
+        ButtonComponent nextPageButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "next-page-button");
         nextPageButton.onPress(buttonComponent -> this.setPage(this.page + 1));
         nextPageButton.tooltip(List.of(Text.translatable("fzmm.gui.hotkey.single"), Text.translatable("key.keyboard.right")));
 
         // categories - left options bottom
-        StyledFlowLayout categoryList = rootComponent.childById(StyledFlowLayout.class, CATEGORY_LAYOUT_ID);
-        checkNull(categoryList, "flow-layout", CATEGORY_LAYOUT_ID);
+        EFlowLayout categoryList = rootComponent.childByIdOrThrow(EFlowLayout.class, "minecraft-heads-category-list");
 
 
         this.categoryButtonList = HeadGalleryResources.CATEGORY_LIST.stream()
                 .map(category -> Components.button(Text.translatable("fzmm.gui.headGallery.button.category." + category),
                                 buttonComponent -> this.categoryButtonExecute(buttonComponent, category, null))
-                        .renderer(FzmmStyles.DEFAULT_FLAT_BUTTON)
+                        .renderer(EStyles.DEFAULT_FLAT_BUTTON)
                         .sizing(Sizing.fill(100), Sizing.fixed(16))
                         .id(category)
                 ).collect(Collectors.toList());
@@ -141,26 +114,22 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
 
         // left options first row
-        this.contentSearchField = rootComponent.childById(TextBoxComponent.class, CONTENT_SEARCH_ID);
-        checkNull(this.contentSearchField, "text-box", CONTENT_SEARCH_ID);
+        this.contentSearchField = rootComponent.childByIdOrThrow(TextBoxComponent.class, "content-search");
         this.contentSearchField.onChanged().subscribe(s -> {
             this.applyFilters();
             this.setPage(this.page);
         });
 
         // left options second row
-        this.tagButton = rootComponent.childById(ButtonComponent.class, TAGS_BUTTON_ID);
-        checkNull(this.tagButton, "button", TAGS_BUTTON_ID);
+        this.tagButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "tags-button");
         this.tagButton.setMessage(this.getTagButtonText());
         this.tagButton.onPress(this::openTagsExecute);
 
-        this.clearTagsButton = rootComponent.childById(ButtonComponent.class, CLEAR_TAGS_ID);
-        checkNull(this.clearTagsButton, "button", CLEAR_TAGS_ID);
+        this.clearTagsButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "clear-tags");
         this.clearTagsButton.onPress(this::clearTagsExecute);
 
         // left options third row
-        SliderWidget scaleSlider = rootComponent.childById(SliderWidget.class, ITEM_SCALE_ID);
-        checkNull(scaleSlider, "number-slider", ITEM_SCALE_ID);
+        SliderWidget scaleSlider = rootComponent.childByIdOrThrow(SliderWidget.class, "item-scale");
         //noinspection UnstableApiUsage
         scaleSlider.min(1).max(3).decimalPlaces(1).setFromDiscreteValue(this.itemScale)
                 .scrollStep(1.0 / (scaleSlider.max() + scaleSlider.min())); // 0.5 step
@@ -170,19 +139,17 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
             this.setPage(this.page);
         });
 
-        CheckboxComponent styleCheckbox = rootComponent.childById(CheckboxComponent.class, STYLE_CHECKBOX_ID);
-        checkNull(styleCheckbox, "checkbox", STYLE_CHECKBOX_ID);
+        CheckboxComponent styleCheckbox = rootComponent.childByIdOrThrow(CheckboxComponent.class, "style-checkbox");
         styleCheckbox.checked(this.setStyle).onChanged(value -> {
             this.setStyle = value;
             this.setPage(this.page);
         });
 
         // bottom right
-        ButtonRow.setup(rootComponent, ButtonRow.getButtonId(MINECRAFT_HEADS_BUTTON_ID), true, this::minecraftHeadsExecute);
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "minecraft-heads-button").onPress(this::minecraftHeadsExecute);
 
         // right preview
-        FlowLayout previewLayout = rootComponent.childById(FlowLayout.class, "preview-layout");
-        checkNull(previewLayout, "flow-layout", "preview-layout");
+        FlowLayout previewLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "preview-layout");
         this.frontEntityPreview = new CustomHeadEntity(this.client.world);
         this.backEntityPreview = new CustomHeadEntity(this.client.world);
 
@@ -263,7 +230,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
             this.setPage(1);
 
             this.errorLabel.text(Text.translatable("fzmm.gui.headGallery.label.error", category)
-                    .setStyle(Style.EMPTY.withColor(FzmmStyles.TEXT_ERROR_COLOR.rgb())));
+                    .setStyle(Style.EMPTY.withColor(EStyles.TEXT_ERROR_COLOR.rgb())));
             FzmmClient.LOGGER.error("[HeadGalleryScreen] Error while fetching category '{}'", category, throwable);
 
             for (var component : this.categoryButtonList) {
@@ -287,16 +254,12 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     }
 
     private void openTagsExecute(ButtonComponent tagButton) {
-        FlowLayout tagSelectPanel = this.getModel().expandTemplate(FlowLayout.class, "select-tag", Map.of());
-        tagSelectPanel.<FlowLayout>configure(layout -> {
-            FlowLayout tagListLayout = layout.childById(FlowLayout.class, TAGS_LIST_LTR_ID);
-            checkNull(tagListLayout, "flow-layout", TAGS_LIST_LTR_ID);
+        EFlowLayout tagSelectPanel = this.getModel().expandTemplate(EFlowLayout.class, "select-tag", Map.of());
+        tagSelectPanel.<EFlowLayout>configure(layout -> {
+            FlowLayout tagListLayout = layout.childByIdOrThrow(FlowLayout.class, "minecraft-heads-tags-ltr");
 
-            LabelComponent tagsOverlayLabel = layout.childById(LabelComponent.class, TAGS_OVERLAY_LABEL_ID);
-            checkNull(tagsOverlayLabel, "label", TAGS_OVERLAY_LABEL_ID);
-
-            ButtonComponent clearSelectedTags = layout.childById(ButtonComponent.class, CLEAR_TAGS_OVERLAY_ID);
-            checkNull(clearSelectedTags, "button", CLEAR_TAGS_OVERLAY_ID);
+            LabelComponent tagsOverlayLabel = layout.childByIdOrThrow(LabelComponent.class, "tags-overlay-label");
+            ButtonComponent clearSelectedTags = layout.childByIdOrThrow(ButtonComponent.class, "clear-tags-overlay");
 
             tagsOverlayLabel.text(this.getTagLabelText());
 
@@ -321,8 +284,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
                 this.tagOverlayUpdateLabels(tagsOverlayLabel);
             });
 
-            TextBoxComponent tagSearchBox = layout.childById(TextBoxComponent.class, TAG_SEARCH_ID);
-            checkNull(tagSearchBox, "text-box", TAG_SEARCH_ID);
+            TextBoxComponent tagSearchBox = layout.childByIdOrThrow(TextBoxComponent.class, "tag-search");
 
             tagSearchBox.onChanged().subscribe(value -> {
                 List<Component> buttonListCopy = new ArrayList<>(buttonList);
@@ -395,7 +357,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         this.currentPageLabel.text(Text.translatable("fzmm.gui.headGallery.label.page", page, lastPage));
 
         int lastElementIndex = Math.min((page) * maxHeadsPerPage, this.categoryHeadsWithFilter.size());
-        List<StyledItemComponent> currentPageHeads = this.getPageItems(firstElementIndex, lastElementIndex);
+        List<EItemComponent> currentPageHeads = this.getPageItems(firstElementIndex, lastElementIndex);
 
         assert this.client != null;
 
@@ -413,8 +375,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         }));
     }
 
-    public List<StyledItemComponent> getPageItems(int startIndex, int endIndex) {
-        List<StyledItemComponent> pageItems = new ArrayList<>();
+    public List<EItemComponent> getPageItems(int startIndex, int endIndex) {
+        List<EItemComponent> pageItems = new ArrayList<>();
         FzmmConfig config = FzmmClient.CONFIG;
         int nameColor = config.colors.headGalleryName().rgb();
         int tagsColor = config.colors.headGalleryTags().rgb();
@@ -428,7 +390,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
                     .get();
 
 
-            StyledItemComponent itemComponent;
+            EItemComponent itemComponent;
             if (this.setStyle) {
                 DisplayBuilder builder = DisplayBuilder.of(head);
                 builder.setName(Text.translatable("fzmm.item.headGallery.heads.name", minecraftHeadsData.name()).getString(), nameColor)
@@ -438,9 +400,9 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
                     builder.addLore(Text.translatable("fzmm.item.headGallery.heads.tags.tag", tag).getString(), tagsColor);
                 }
 
-                itemComponent = StyledComponents.itemGive(builder.get());
+                itemComponent = EComponents.itemGive(builder.get());
             } else {
-                itemComponent = StyledComponents.itemGive(head);
+                itemComponent = EComponents.itemGive(head);
                 itemComponent.setTooltipFromStack(false);
                 itemComponent.tooltip(Text.literal(minecraftHeadsData.name()));
             }

@@ -1,10 +1,10 @@
-package fzmm.zailer.me.client.gui.components.style;
+package fzmm.zailer.me.client.gui.components.extend;
 
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Surface;
 
-public class FzmmStyles {
+public class EStyles {
 
     public static final Color TEXT_ERROR_COLOR = Color.ofRgb(0xD83F27);
     public static final Color TEXT_SUCCESS_COLOR = Color.ofRgb(0x4CD827);

@@ -2,14 +2,14 @@ package fzmm.zailer.me.client.gui.imagetext.tabs;
 
 import fzmm.zailer.me.builders.BookBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.options.BookOption;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
+import fzmm.zailer.me.client.gui.options.BookOption;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
@@ -28,9 +28,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class ImagetextBookTooltipTab implements IImagetextTab {
-    private static final String BOOK_TOOLTIP_MODE_ID = "bookTooltipMode";
-    private static final String BOOK_TOOLTIP_AUTHOR_ID = "bookTooltipAuthor";
-    private static final String BOOK_TOOLTIP_MESSAGE_ID = "bookTooltipMessage";
     private ContextMenuButton bookTooltipButton;
     private BookOption bookMode;
     private TextBoxComponent bookTooltipAuthor;
@@ -63,7 +60,7 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
                 ISnackBarComponent snackBar = BaseSnackBarComponent.builder(SnackBarManager.IMAGETEXT_ID)
                         .title(Text.translatable("fzmm.snack_bar.bookTooltip.overflow.title", bookLength, BookNbtOverflow.MAX_BOOK_NBT_SIZE))
                         .details(Text.translatable("fzmm.snack_bar.bookTooltip.overflow.details"))
-                        .backgroundColor(FzmmStyles.ALERT_ERROR_COLOR)
+                        .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                         .keepOnLimit()
                         .highTimer()
                         .startTimer()
@@ -77,10 +74,9 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
+    public void setupComponents(EFlowLayout rootComponent) {
         assert MinecraftClient.getInstance().player != null;
-        this.bookTooltipButton = rootComponent.childById(ContextMenuButton.class, BOOK_TOOLTIP_MODE_ID);
-        BaseFzmmScreen.checkNull(this.bookTooltipButton, "context-menu-button", BOOK_TOOLTIP_MODE_ID);
+        this.bookTooltipButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "bookTooltipMode");
         this.bookTooltipButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : BookOption.values()) {
                 dropdownComponent.button(Text.translatable(option.getTranslationKey()), dropdownButton -> {
@@ -90,15 +86,13 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
             }
         });
         this.updateBookTooltip(BookOption.ADD_PAGE);
-        this.bookTooltipAuthor = TextBoxRow.setup(rootComponent, BOOK_TOOLTIP_AUTHOR_ID, MinecraftClient.getInstance().player.getName().getString(), 512);
-        this.bookTooltipMessage = rootComponent.childById(TextAreaComponent.class, BOOK_TOOLTIP_MESSAGE_ID + "-text-area");
-        BaseFzmmScreen.checkNull(this.bookTooltipMessage, "text-area", BOOK_TOOLTIP_MESSAGE_ID + "-text-area");
+        this.bookTooltipAuthor = TextBoxRow.setup(rootComponent, "bookTooltipAuthor", MinecraftClient.getInstance().player.getName().getString(), 512);
+        this.bookTooltipMessage = rootComponent.childByIdOrThrow(TextAreaComponent.class, "bookTooltipMessage-text-area");
         this.bookTooltipMessage.maxLines(14);
         this.bookTooltipMessage.setMaxLength(4096);
         this.bookTooltipMessage.text(FzmmClient.CONFIG.imagetext.defaultBookMessage());
 
-        FlowLayout layout = rootComponent.childById(FlowLayout.class, BOOK_TOOLTIP_MESSAGE_ID + "-text-area-parent");
-        BaseFzmmScreen.checkNull(this.bookTooltipMessage, "text-area", BOOK_TOOLTIP_MESSAGE_ID + "-text-area-parent");
+        FlowLayout layout = rootComponent.childByIdOrThrow(FlowLayout.class, "bookTooltipMessage-text-area-parent");
         layout.verticalSizing(Sizing.content());
     }
 

@@ -2,13 +2,13 @@ package fzmm.zailer.me.client.gui.components.row.image;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SuggestionTextBox;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.row.AbstractRow;
-import fzmm.zailer.me.client.gui.components.style.FzmmStyles;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
-import fzmm.zailer.me.client.gui.components.style.container.StyledFlowLayout;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ImageRows extends StyledFlowLayout {
+public class ImageRows extends EFlowLayout {
     public static int TOTAL_HEIGHT = AbstractRow.TOTAL_HEIGHT * 2;
 
     public ImageRows(String baseTranslationKey, String buttonId, String imageModeId, boolean translate) {
@@ -32,7 +32,7 @@ public class ImageRows extends StyledFlowLayout {
     public ImageRows(String baseTranslationKey, String buttonId, String buttonTooltipId, String imageModeId, String imageTooltipId, boolean translate) {
         super(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT), Algorithm.HORIZONTAL);
 
-        FlowLayout rowsLayout = StyledContainers.verticalFlow(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
+        FlowLayout rowsLayout = EContainers.verticalFlow(Sizing.fill(100), Sizing.fixed(TOTAL_HEIGHT));
 
         rowsLayout.children(List.of(
                 new ImageButtonRow(baseTranslationKey, buttonId, buttonTooltipId, translate).hoveredSurface(null),
@@ -40,11 +40,11 @@ public class ImageRows extends StyledFlowLayout {
 
                     @Override
                     public Component[] getComponents(String id, String tooltipId) {
-                        return new Component[]{StyledContainers.horizontalFlow(Sizing.content(), Sizing.content()).id(imageModeId + "-layout")};
+                        return new Component[]{EContainers.horizontalFlow(Sizing.content(), Sizing.content()).id(imageModeId + "-layout")};
                     }
                 }.hoveredSurface(null)
         ));
-        this.hoveredSurface(FzmmStyles.DEFAULT_HOVERED);
+        this.hoveredSurface(EStyles.DEFAULT_HOVERED);
 
         this.child(rowsLayout);
     }
@@ -58,13 +58,12 @@ public class ImageRows extends StyledFlowLayout {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static ImageRowsElements setup(FlowLayout rootComponent, String buttonId, String imageModeId, ImageMode defaultValue) {
+    public static ImageRowsElements setup(EFlowLayout rootComponent, String buttonId, String imageModeId, ImageMode defaultValue) {
         ImageButtonRow.setup(rootComponent, buttonId, defaultValue.getImageGetter());
         ImageButtonComponent imageWidget = rootComponent.childById(ImageButtonComponent.class, ImageButtonRow.getImageButtonId(buttonId));
         SuggestionTextBox suggestionTextBox = rootComponent.childById(SuggestionTextBox.class, ImageButtonRow.getImageValueFieldId(buttonId));
 
-        FlowLayout imageModeLayout = rootComponent.childById(FlowLayout.class, imageModeId + "-layout");
-        BaseFzmmScreen.checkNull(imageModeLayout, "flow-layout", imageModeId + "-layout");
+        FlowLayout imageModeLayout = rootComponent.childByIdOrThrow(FlowLayout.class, imageModeId + "-layout");
         imageModeLayout.gap(4);
         AtomicReference<ImageMode> selectedMode = new AtomicReference<>(defaultValue);
         HashMap<ImageMode, ButtonComponent> imageModeButtons = new HashMap<>();
@@ -85,7 +84,7 @@ public class ImageRows extends StyledFlowLayout {
 
                 ImageButtonRow.setupSuggestionTextBox(suggestionTextBox, imageGetter);
             });
-            FlowLayout modeButtonLayout = StyledContainers.verticalFlow(Sizing.content(), Sizing.content());
+            FlowLayout modeButtonLayout = EContainers.verticalFlow(Sizing.content(), Sizing.content());
             modeButtonLayout.tooltip(Text.translatable(modeOption.getTranslationKey() + ".tooltip"));
             modeButton.horizontalSizing(Sizing.fixed(20));
             modeButtonLayout.child(modeButton);

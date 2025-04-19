@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui;
 
-import fzmm.zailer.me.client.gui.components.row.ButtonRow;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.logic.FzmmHistory;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
@@ -17,10 +17,6 @@ import java.util.List;
 public class HistoryScreen extends BaseFzmmScreen {
 
     private static final Text GENERATED_ITEMS_EMPTY_TEXT = Text.translatable("fzmm.gui.history.label.generatedWithFzmm.empty");
-    private static final String CONTENT_ID = "content";
-    private static final String ITEM_GENERATED_ID = "itemGeneratedWithFzmm";
-    private static final String HEAD_GENERATED_ID = "headGeneratedWithFzmm";
-    private static final String ERROR_LABEL_ID = "error-label";
     private ButtonComponent itemGenerated;
     private ButtonComponent headGenerated;
     private FlowLayout contentLayout;
@@ -32,15 +28,13 @@ public class HistoryScreen extends BaseFzmmScreen {
     }
 
     @Override
-    protected void setup(FlowLayout rootComponent) {
-        this.contentLayout = rootComponent.childById(FlowLayout.class, CONTENT_ID);
-        checkNull(this.contentLayout, "flow-layout", CONTENT_ID);
+    protected void setup(EFlowLayout rootComponent) {
+        this.contentLayout = rootComponent.childById(FlowLayout.class, "content");
 
-        this.itemGenerated = ButtonRow.setup(rootComponent, ITEM_GENERATED_ID, true, this::itemGeneratedExecute);
-        this.headGenerated = ButtonRow.setup(rootComponent, HEAD_GENERATED_ID, true, this::headGeneratedExecute);
+        this.itemGenerated = rootComponent.childByIdOrThrow(ButtonComponent.class, "itemGeneratedWithFzmm").onPress(this::itemGeneratedExecute);
+        this.headGenerated = rootComponent.childByIdOrThrow(ButtonComponent.class, "headGeneratedWithFzmm").onPress(this::headGeneratedExecute);
 
-        this.labelError = rootComponent.childById(LabelComponent.class, ERROR_LABEL_ID);
-        checkNull(this.labelError, "label", ERROR_LABEL_ID);
+        this.labelError = rootComponent.childByIdOrThrow(LabelComponent.class, "error-label");
 
         this.itemGenerated.onPress();
     }
@@ -62,7 +56,7 @@ public class HistoryScreen extends BaseFzmmScreen {
 
     private void addItems(List<ItemStack> stackList) {
         this.contentLayout.clearChildren();
-        this.contentLayout.children(stackList.stream().map(itemStack -> (Component) StyledComponents.itemGive(itemStack)).toList());
+        this.contentLayout.children(stackList.stream().map(itemStack -> (Component) EComponents.itemGive(itemStack)).toList());
         this.labelError.text(stackList.isEmpty() ? GENERATED_ITEMS_EMPTY_TEXT : Text.empty());
     }
 

@@ -1,12 +1,12 @@
 package fzmm.zailer.me.client.gui.text_format.tabs;
 
 import fzmm.zailer.me.client.gui.components.SliderWidget;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.text_format.TextFormatScreen;
 import fzmm.zailer.me.client.gui.text_format.components.ColorListContainer;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Color;
 import net.minecraft.text.Text;
 
@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class TextFormatInterleavedColorsTab implements ITextFormatTab {
-    private static final String COLOR_LIST_ID = "interleavedColorList";
-    private static final String DISTANCE_ID = "interleavedDistance";
     private ColorListContainer colorListContainer;
     private SliderWidget distanceField;
     private Consumer<Object> callback;
@@ -36,10 +34,9 @@ public class TextFormatInterleavedColorsTab implements ITextFormatTab {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.distanceField = SliderRow.setup(rootComponent, DISTANCE_ID, 1, 1, 25, Integer.class, 0, 1, this.callback::accept);
-        this.colorListContainer = rootComponent.childById(ColorListContainer.class, COLOR_LIST_ID);
-        assert this.colorListContainer != null;
+    public void setupComponents(EFlowLayout rootComponent) {
+        this.distanceField = SliderRow.setup(rootComponent, "interleavedDistance", 1, 1, 25, Integer.class, 0, 1, this.callback::accept);
+        this.colorListContainer = rootComponent.childByIdOrThrow(ColorListContainer.class, "interleavedColorList");
         this.colorListContainer.setCallback(this.callback::accept);
     }
 

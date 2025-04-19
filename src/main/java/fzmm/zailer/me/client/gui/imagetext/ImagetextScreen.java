@@ -3,16 +3,16 @@ package fzmm.zailer.me.client.gui.imagetext;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.BooleanButton;
+import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
+import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.ImageMode;
-import fzmm.zailer.me.client.gui.components.row.ButtonRow;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
-import fzmm.zailer.me.client.gui.components.style.StyledContainers;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
@@ -26,7 +26,10 @@ import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.ItemUtils;
-import io.wispforest.owo.ui.component.*;
+import io.wispforest.owo.ui.component.ButtonComponent;
+import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.LabelComponent;
+import io.wispforest.owo.ui.component.SmallCheckboxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
@@ -42,7 +45,10 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -58,7 +64,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     private final ImagetextLogic imagetextLogic;
     private final HashMap<String, IScreenTab> algorithmsTabs;
     private ImageRowsElements imageElements;
-    private BooleanButton preserveImageAspectRatioToggle;
+    private EBooleanButton preserveImageAspectRatioToggle;
     private SmallCheckboxComponent showResolutionCheckbox;
     private SmallCheckboxComponent smoothImageCheckbox;
     private SliderWidget widthSlider;
@@ -76,23 +82,21 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     }
 
     @Override
-    protected void setup(FlowLayout rootComponent) {
+    protected void setup(EFlowLayout rootComponent) {
         FzmmConfig.Imagetext config = FzmmClient.CONFIG.imagetext;
 
         // image options
         ImageRows imageRows = new ImageRows(this.getBaseScreenTranslationKey(), "image", "imageSourceType", true);
         this.imageElements = ImageRows.setup(imageRows, "image", "imageSourceType", ImageMode.URL);
 
-        FlowLayout imageTextBoxLayout = rootComponent.childById(FlowLayout.class, "image-textbox");
-        BaseFzmmScreen.checkNull(imageTextBoxLayout, "flow-layout", "image-textbox");
+        FlowLayout imageTextBoxLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "image-textbox");
         imageTextBoxLayout.child(this.imageElements.valueField().sizing(Sizing.expand(100), Sizing.fixed(16)));
 
-        FlowLayout imageButtonLayout = rootComponent.childById(FlowLayout.class, "image-buttons");
-        BaseFzmmScreen.checkNull(imageButtonLayout, "flow-layout", "image-buttons");
+        FlowLayout imageButtonLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "image-buttons");
         List<Component> imageButtonList = new ArrayList<>();
 
         for (var value : ImageMode.values()) {
-            FlowLayout buttonLayout = StyledContainers.horizontalFlow(Sizing.content(), Sizing.content());
+            FlowLayout buttonLayout = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
             buttonLayout.tooltip(Text.translatable(value.getTranslationKey() + ".tooltip"));
             ButtonComponent button = this.imageElements.imageModeButtons().get(value);
             button.sizing(Sizing.fixed(16));
@@ -105,14 +109,11 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
 
         ImageButtonComponent imageButton = this.imageElements.imageButton();
 
-        this.preserveImageAspectRatioToggle = rootComponent.childById(BooleanButton.class, "preserveImageAspectRatio");
-        BaseFzmmScreen.checkNull(this.preserveImageAspectRatioToggle, "boolean-button", "preserveImageAspectRatio");
+        this.preserveImageAspectRatioToggle = rootComponent.childByIdOrThrow(EBooleanButton.class, "preserveImageAspectRatio");
         this.preserveImageAspectRatioToggle.enabled(config.defaultPreserveImageAspectRatio());
-        this.showResolutionCheckbox = rootComponent.childById(SmallCheckboxComponent.class, "showResolution");
-        BaseFzmmScreen.checkNull(this.showResolutionCheckbox, "small-checkbox", "showResolution");
+        this.showResolutionCheckbox = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "showResolution");
         this.showResolutionCheckbox.checked(false);
-        this.smoothImageCheckbox = rootComponent.childById(SmallCheckboxComponent.class, "smoothImage");
-        BaseFzmmScreen.checkNull(this.smoothImageCheckbox, "small-checkbox", "smoothImage");
+        this.smoothImageCheckbox = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "smoothImage");
         this.smoothImageCheckbox.checked(true);
 
         this.widthSlider = SliderRow.setup(rootComponent, "width", DEFAULT_SIZE_VALUE, 2, config.maxResolution(), Integer.class, 0, 3,
@@ -130,8 +131,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         imageButtonLayout.children(imageButtonList);
 
         // algorithm options
-        ContextMenuButton algorithmButton = rootComponent.childById(ContextMenuButton.class, "algorithm-button");
-        BaseFzmmScreen.checkNull(algorithmButton, "button", "algorithm-button");
+        ContextMenuButton algorithmButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "algorithm-button");
         algorithmButton.setContextMenuOptions(contextMenu -> {
             for (var algorithm : ImagetextAlgorithms.values()) {
                 contextMenu.button(algorithm.getText(this.getBaseScreenTranslationKey()), dropdown -> {
@@ -150,8 +150,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         this.setTabs(rootComponent, selectedAlgorithm, ImagetextAlgorithms.values(), this.algorithmsTabs);
 
         // image mode
-        ContextMenuButton modeButton = rootComponent.childById(ContextMenuButton.class, "mode-button");
-        BaseFzmmScreen.checkNull(modeButton, "button", "mode-button");
+        ContextMenuButton modeButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "mode-button");
         modeButton.setContextMenuOptions(contextMenu -> {
             for (var mode : ImagetextMode.values()) {
                 contextMenu.button(mode.getText(this.getBaseScreenTranslationKey()), dropdown -> {
@@ -169,8 +168,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         this.setTabs(rootComponent, selectedMode, ImagetextMode.values(), this.tabs);
 
         // preview
-        this.previewLabel = rootComponent.childById(LabelComponent.class, "preview-label");
-        BaseFzmmScreen.checkNull(this.previewLabel, "label", "preview-label");
+        this.previewLabel = rootComponent.childByIdOrThrow(LabelComponent.class, "preview-label");
 
         this.widthSlider.onChanged().subscribe(value -> this.scheduleUpdatePreview());
         this.heightSlider.onChanged().subscribe(value -> this.scheduleUpdatePreview());
@@ -187,7 +185,9 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         }
 
         //bottom buttons
-        ButtonComponent executeButton = ButtonRow.setup(rootComponent, ButtonRow.getButtonId("execute"), false, button -> this.execute());
+        ButtonComponent executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "execute-button");
+        executeButton.active(false);
+        executeButton.onPress(button -> this.execute());
         imageButton.setButtonCallback(image -> {
             executeButton.active = image.isPresent();
             if (image.isPresent()) {
@@ -198,14 +198,9 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         });
 
         // animation of small gui
-        FlowLayout imageOptionsLayout = rootComponent.childById(FlowLayout.class, "image-options-layout");
-        BaseFzmmScreen.checkNull(imageOptionsLayout, "flow-layout", "image-options-layout");
-
-        FlowLayout algorithmOptionsLayout = rootComponent.childById(FlowLayout.class, "algorithm-options-layout");
-        BaseFzmmScreen.checkNull(algorithmOptionsLayout, "flow-layout", "algorithm-options-layout");
-
-        FlowLayout imageModeLayout = rootComponent.childById(FlowLayout.class, "image-mode-layout");
-        BaseFzmmScreen.checkNull(imageModeLayout, "flow-layout", "image-mode-layout");
+        FlowLayout imageOptionsLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "image-options-layout");
+        FlowLayout algorithmOptionsLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "algorithm-options-layout");
+        FlowLayout imageModeLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "image-mode-layout");
 
         Animation<Sizing> imageLayoutAnimation = imageOptionsLayout.horizontalSizing().animate(100, Easing.LINEAR, Sizing.expand(100));
         Animation<Sizing> algorithmLayoutAnimationHorizontal = algorithmOptionsLayout.horizontalSizing().animate(100, Easing.LINEAR, Sizing.expand(100));
@@ -215,11 +210,8 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         this.smallGuiAnimation = Animation.compose(imageLayoutAnimation, algorithmLayoutAnimationHorizontal, algorithmLayoutAnimationVertical, imageModeFixAnimation);
 
         // animation of expand preview
-        ScrollContainer<?> leftOptionsScroll =  rootComponent.childById(ScrollContainer.class, "left-options-scroll");
-        BaseFzmmScreen.checkNull(leftOptionsScroll, "scroll", "left-options-scroll");
-
-        ButtonComponent expandPreviewButton = rootComponent.childById(ButtonComponent.class, "expand-preview-button");
-        BaseFzmmScreen.checkNull(expandPreviewButton, "button", "expand-preview-button");
+        ScrollContainer<?> leftOptionsScroll =  rootComponent.childByIdOrThrow(ScrollContainer.class, "left-options-scroll");
+        ButtonComponent expandPreviewButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "expand-preview-button");
 
         Animation<Sizing> leftOptionsAnimation = leftOptionsScroll.horizontalSizing().animate(100, Easing.CUBIC, Sizing.expand(0));
         AtomicBoolean isExpanded = new AtomicBoolean(false);
@@ -242,7 +234,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     }
 
     @SuppressWarnings("unchecked")
-    private void setTabs(FlowLayout rootComponent, ITabsEnum selectedTab, ITabsEnum[] enumValues, HashMap<String, IScreenTab> tabsHashMap) {
+    private void setTabs(EFlowLayout rootComponent, ITabsEnum selectedTab, ITabsEnum[] enumValues, HashMap<String, IScreenTab> tabsHashMap) {
         Enum<? extends ITabsEnum> selectedTabEnum = (Enum<? extends ITabsEnum>) selectedTab;
         this.setTabs(tabsHashMap, selectedTabEnum);
         for (var imagetextTab : enumValues) {

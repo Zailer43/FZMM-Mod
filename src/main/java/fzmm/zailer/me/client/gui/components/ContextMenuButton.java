@@ -37,8 +37,8 @@ public class ContextMenuButton extends ButtonComponent {
             return;
         }
 
-        if (this.contextMenu == null || !this.contextMenu.hasParent()) {
-            DropdownComponent.openContextMenu(baseScreen, baseScreen.getRoot(), FlowLayout::child,
+        if ((this.contextMenu == null || !this.contextMenu.hasParent()) && baseScreen.getRoot().isPresent()) {
+            DropdownComponent.openContextMenu(baseScreen, baseScreen.getRoot().get(), FlowLayout::child,
                     this.x(), this.y(), contextMenu -> {
                         this.contextMenu = contextMenu;
                         this.contextMenuOptionsConsumer.accept(contextMenu);
@@ -61,7 +61,7 @@ public class ContextMenuButton extends ButtonComponent {
                         contextMenu.zIndex(this.zIndex() + this.additionalZIndex);
                         contextMenu.mouseDown().subscribe((mouseX1, mouseY1, button1) -> {
                             if (mouseY1 < contextMenuY) {
-                                baseScreen.getRoot().removeChild(contextMenu);
+                                baseScreen.getRoot().get().removeChild(contextMenu);
                                 UISounds.playButtonSound();
                             }
 

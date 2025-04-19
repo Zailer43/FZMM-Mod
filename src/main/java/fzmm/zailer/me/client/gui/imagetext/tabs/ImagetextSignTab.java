@@ -4,15 +4,14 @@ import fzmm.zailer.me.builders.ContainerBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.builders.SignBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
-import io.wispforest.owo.ui.container.FlowLayout;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HangingSignBlock;
 import net.minecraft.block.SignBlock;
@@ -34,9 +33,6 @@ import java.util.List;
 
 public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
     private static final String BASE_ITEMS_TRANSLATION_KEY = "fzmm.item.imagetext.sign.";
-
-    private static final String SIGN_TYPE_ID = "signType";
-    private static final String IS_HANGING_ID = "isHangingSign";
     private ContextMenuButton signTypeButton;
     private SmallCheckboxComponent isHangingSignButton;
     private String characters;
@@ -88,9 +84,8 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
     }
 
     @Override
-    public void setupComponents(FlowLayout rootComponent) {
-        this.signTypeButton = rootComponent.childById(ContextMenuButton.class, SIGN_TYPE_ID);
-        BaseFzmmScreen.checkNull(this.signTypeButton, "context-menu-button", SIGN_TYPE_ID);
+    public void setupComponents(EFlowLayout rootComponent) {
+        this.signTypeButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "signType");
         this.signTypeButton.setContextMenuOptions(dropdownComponent -> {
             List<WoodType> optionList = WoodType.stream()
                     .sorted(Comparator.comparing(woodType1 -> this.getSignText(woodType1).getString()))
@@ -103,8 +98,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
             }
         });
         this.updateSignType(WoodType.OAK);
-        this.isHangingSignButton = rootComponent.childById(SmallCheckboxComponent.class, IS_HANGING_ID + "-checkbox");
-        BaseFzmmScreen.checkNull(this.isHangingSignButton, "small-checkbox", IS_HANGING_ID + "-checkbox");
+        this.isHangingSignButton = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "isHangingSign-checkbox");
         this.isHangingSignButton.checked(false);
     }
 

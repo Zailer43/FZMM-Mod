@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.gui.banner_editor.tabs;
 
 import fzmm.zailer.me.builders.BannerBuilder;
-import fzmm.zailer.me.client.gui.banner_editor.BannerEditorScreen;
 import fzmm.zailer.me.utils.TagsConstant;
+import fzmm.zailer.me.utils.history.HistoryClipboard;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.gui.screen.Screen;
@@ -15,29 +15,23 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
-public class ChangeColorTab extends AbstractModifyPatternsTab {
-
-    private static final String PATTERNS_LAYOUT = "change-color-layout";
+public class ChangeColorTab extends AbstractModifyPatternTab {
     @Override
-    public String getId() {
-        return "changeColor";
+    public String buttonId() {
+        return "change-color";
     }
 
     @Override
-    protected String getGridId() {
-        return PATTERNS_LAYOUT;
-    }
-
-    @Override
-    public boolean shouldAddBaseColor() {
+    public boolean shouldAddBase() {
         return true;
     }
 
     @Override
-    protected void onItemComponentCreated(BannerEditorScreen parent, ItemComponent itemComponent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color) {
+    protected void onItemComponentCreated(HistoryClipboard clipboard, ItemComponent itemComponent,
+                                          @Nullable NbtElement pattern, BannerBuilder currentBanner,
+                                          DyeColor componentColor) {
         ItemStack itemComponentStack = itemComponent.stack();
 
         NbtList patterns = currentBanner.patterns();
@@ -54,7 +48,7 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
         boolean isBannerColor = index == -1;
 
         itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            this.componentExecute(parent, currentBanner, color, pattern, isBannerColor, patterns);
+            this.componentExecute(clipboard, currentBanner, componentColor, pattern);
             return true;
         });
 
@@ -65,10 +59,10 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
             if (currentBanner.isShield()) {
                 modifiedItem = itemComponentStack.getItem();
                 if (modifiedNbt != null && modifiedNbt.contains(TagsConstant.BLOCK_ENTITY, NbtElement.COMPOUND_TYPE)) {
-                    modifiedNbt.getCompound(TagsConstant.BLOCK_ENTITY).putInt(ShieldItem.BASE_KEY, color.getId());
+                    modifiedNbt.getCompound(TagsConstant.BLOCK_ENTITY).putInt(ShieldItem.BASE_KEY, componentColor.getId());
                 }
             } else {
-                modifiedItem = BannerBuilder.getBannerByDye(color);
+                modifiedItem = BannerBuilder.getBannerByDye(componentColor);
             }
             modifiedStack = modifiedItem.getDefaultStack();
             modifiedStack.setNbt(modifiedNbt);
@@ -81,56 +75,41 @@ public class ChangeColorTab extends AbstractModifyPatternsTab {
             if (modifiedPatterns == null)
                 return;
             NbtCompound modifiedPattern = (NbtCompound) modifiedPatterns.get(index);
-            modifiedPattern.putInt(TagsConstant.BANNER_PATTERN_COLOR, color.getId());
+            modifiedPattern.putInt(TagsConstant.BANNER_PATTERN_COLOR, componentColor.getId());
         }
 
         itemComponent.mouseEnter().subscribe(() -> itemComponent.stack(modifiedStack));
         itemComponent.mouseLeave().subscribe(() -> itemComponent.stack(itemComponentStack));
     }
 
-    private void componentExecute(BannerEditorScreen parent, BannerBuilder currentBanner, DyeColor color,
-                                     NbtElement pattern, boolean isBannerColor, NbtList patterns) {
+    private void componentExecute(HistoryClipboard clipboard, BannerBuilder currentBanner, DyeColor selectedColor,
+                                  @Nullable NbtElement pattern) {
         UISounds.playButtonSound();
 
-        parent.addUndo(currentBanner);
+        clipboard.addUndo(currentBanner);
 
-        if (!(pattern instanceof NbtCompound selectedPatternCompound))
-            return;
+        DyeColor colorCompound = pattern instanceof NbtCompound patternCompound ?
+                DyeColor.byId(patternCompound.getInt(TagsConstant.BANNER_PATTERN_COLOR)) : currentBanner.bannerColor();
 
         if (Screen.hasShiftDown()) {
-            int selectedColorId = selectedPatternCompound.getInt(TagsConstant.BANNER_PATTERN_COLOR);
-
-            if (currentBanner.bannerColor().getId() == selectedColorId)
-                currentBanner.bannerColor(color);
-
-            for (var patternElement : patterns) {
-                if (patternElement instanceof NbtCompound bannerPatternCompound &&
-                        bannerPatternCompound.getInt(TagsConstant.BANNER_PATTERN_COLOR) == selectedColorId) {
-
-                    bannerPatternCompound.putInt(TagsConstant.BANNER_PATTERN_COLOR, color.getId());
-                }
-            }
-        } else if (isBannerColor) {
-            currentBanner.bannerColor(color);
-        } else {
-            selectedPatternCompound.putInt(TagsConstant.BANNER_PATTERN_COLOR, color.getId());
+            currentBanner.replaceColors(selectedColor, colorCompound);
+        } else if (pattern == null) {
+            currentBanner.bannerColor(selectedColor);
+        } else if (pattern instanceof NbtCompound patternCompound) {
+            currentBanner.replaceColor(patternCompound, selectedColor);
         }
 
-        parent.updatePreview(currentBanner);
+        clipboard.change(currentBanner);
     }
 
     @Override
-    protected Optional<Text> getTooltip(BannerEditorScreen parent, NbtElement pattern, BannerBuilder currentBanner, DyeColor color) {
-        Optional<Text> defaultTooltip = super.getTooltip(parent, pattern, currentBanner, color);
-        if (defaultTooltip.isPresent()) {
-            MutableText result  = defaultTooltip.get().copy();
+    protected Text getTooltip(@Nullable NbtElement patternElement, BannerBuilder currentBanner, DyeColor selectedColor) {
+        Text defaultTooltip = super.getTooltip(patternElement, currentBanner, selectedColor);
+        MutableText result = defaultTooltip.copy();
 
-            result.append("\n\n")
+        result.append("\n\n")
                 .append(Text.translatable("fzmm.gui.bannerEditor.tab.changeColor.shiftHotkey"));
 
-            return Optional.of(result);
-        }
-
-        return Optional.empty();
+        return result;
     }
 }

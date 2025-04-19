@@ -1,100 +1,179 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.4/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.5/owo-ui.xsd">
     <components>
-        <fzmm.styled-flow-layout direction="horizontal">
+        <fzmm.flow-layout direction="horizontal">
             <children>
-                <fzmm.styled-label id="title">
-                    <positioning type="absolute">3,3</positioning>
-                    <text translate="true">fzmm.gui.title.bannerEditor</text>
-                </fzmm.styled-label>
+                <fzmm.flow-layout direction="vertical">
+                    <children>
+                        <fzmm.label id="title">
+                            <positioning type="absolute">3,3</positioning>
+                            <text translate="true">fzmm.gui.title.bannerEditor</text>
+                        </fzmm.label>
 
+                        <fzmm.flow-layout direction="horizontal">
+                            <children>
+                                <fzmm.flow-layout direction="vertical">
+                                    <children>
+                                        <fzmm.boolean-button id="is-shield">
+                                            <enabled-text translate="true">fzmm.gui.bannerEditor.option.isShield.enabled</enabled-text>
+                                            <disabled-text translate="true">fzmm.gui.bannerEditor.option.isShield.disabled</disabled-text>
 
-                <fzmm.styled-scroll direction="vertical">
-                    <fzmm.styled-flow-layout direction="vertical">
-                        <children>
-                            <fzmm.boolean-row>
-                                <id>isShield</id>
-                            </fzmm.boolean-row>
+                                            <sizing>
+                                                <horizontal method="expand">100</horizontal>
+                                                <vertical method="fixed">16</vertical>
+                                            </sizing>
+                                        </fzmm.boolean-button>
 
-                            <fzmm.screen-tab-row>
-                                <id>tabs</id>
-                            </fzmm.screen-tab-row>
+                                        <item id="banner-preview">
+                                            <sizing>
+                                                <horizontal method="fixed">100</horizontal>
+                                                <vertical method="fixed">100</vertical>
+                                            </sizing>
+                                        </item>
 
-                            <fzmm.styled-flow-layout direction="horizontal">
-                                <children>
-                                    <fzmm.styled-flow-layout direction="vertical">
-                                        <children>
-                                            <item id="banner-preview">
-                                                <sizing>
-                                                    <vertical method="fixed">100</vertical>
-                                                    <horizontal method="fixed">100</horizontal>
-                                                </sizing>
-                                            </item>
+                                        <button id="give-button">-->
+                                            <text translate="true">fzmm.gui.bannerEditor.button.give</text>
 
-                                            <button id="give-button">
-                                                <text translate="true">fzmm.gui.bannerEditor.button.give</text>
+                                            <sizing>
+                                                <horizontal method="expand">100</horizontal>
+                                                <vertical method="fixed">16</vertical>
+                                            </sizing>
+                                        </button>
 
-                                                <sizing>
-                                                    <horizontal method="fixed">95</horizontal>
-                                                </sizing>
-                                            </button>
+                                        <button id="select-banner-button">-->
+                                            <text translate="true">fzmm.gui.bannerEditor.button.select</text>
 
-                                            <button id="select-banner-button">
-                                                <text translate="true">fzmm.gui.bannerEditor.button.select</text>
+                                            <sizing>
+                                                <horizontal method="expand">100</horizontal>
+                                                <vertical method="fixed">16</vertical>
+                                            </sizing>
+                                        </button>
 
-                                                <sizing>
-                                                    <horizontal method="fixed">95</horizontal>
-                                                </sizing>
-                                            </button>
+                                        <fzmm.flow-layout direction="horizontal">
+                                            <children>
+                                                <fzmm.button id="undo-button">
+                                                    <text translate="true">fzmm.gui.button.arrow2.left</text>
+                                                    <tooltip-text translate="true">fzmm.gui.editor.banner.option.undo.tooltip</tooltip-text>
 
-                                            <fzmm.styled-flow-layout direction="horizontal">
-                                                <children>
-                                                    <button id="undo">
-                                                        <text translate="true">fzmm.gui.button.arrow2.left</text>
+                                                    <sizing>
+                                                        <horizontal method="fixed">16</horizontal>
+                                                        <vertical method="fixed">16</vertical>
+                                                    </sizing>
+                                                </fzmm.button>
 
-                                                        <sizing>
-                                                            <vertical method="fixed">16</vertical>
-                                                        </sizing>
-                                                    </button>
+                                                <spacer>
+                                                    <sizing>
+                                                        <vertical method="fixed">1</vertical>
+                                                    </sizing>
+                                                </spacer>
 
-                                                    <spacer>
-                                                        <sizing>
-                                                            <horizontal method="expand">100</horizontal>
-                                                            <vertical method="fixed">1</vertical>
-                                                        </sizing>
-                                                    </spacer>
+                                                <fzmm.button id="redo-button">
+                                                    <text translate="true">fzmm.gui.button.arrow2.right</text>
+                                                    <tooltip-text translate="true">fzmm.gui.editor.banner.option.redo.tooltip</tooltip-text>
 
-                                                    <button id="redo">
-                                                        <text translate="true">fzmm.gui.button.arrow2.right</text>
+                                                    <sizing>
+                                                        <horizontal method="fixed">16</horizontal>
+                                                        <vertical method="fixed">16</vertical>
+                                                    </sizing>
+                                                </fzmm.button>
+                                            </children>
 
-                                                        <sizing>
-                                                            <vertical method="fixed">16</vertical>
-                                                        </sizing>
-                                                    </button>
-                                                </children>
+                                            <sizing>
+                                                <horizontal method="expand">100</horizontal>
+                                                <vertical method="fixed">16 </vertical>
+                                            </sizing>
+                                        </fzmm.flow-layout>
 
-                                                <sizing>
-                                                    <horizontal method="fixed">95</horizontal>
-                                                </sizing>
+                                        <fzmm.button id="clear-button">
+                                            <text translate="true">fzmm.gui.button.clear</text>
 
-                                                <margins>
-                                                    <all>1</all>
-                                                </margins>
-                                            </fzmm.styled-flow-layout>
-                                        </children>
-                                        <gap>4</gap>
+                                            <positioning type="relative">0,100</positioning>
 
-                                        <sizing>
-                                            <vertical method="fixed">200</vertical>
-                                        </sizing>
+                                            <sizing>
+                                                <horizontal method="expand">100</horizontal>
+                                                <vertical method="fixed">16</vertical>
+                                            </sizing>
+                                        </fzmm.button>
+                                    </children>
 
-                                        <vertical-alignment>center</vertical-alignment>
-                                        <horizontal-alignment>center</horizontal-alignment>
-                                    </fzmm.styled-flow-layout>
+                                    <sizing>
+                                        <horizontal method="fixed">100</horizontal>
+                                        <vertical method="expand">100</vertical>
+                                    </sizing>
 
-                                    <fzmm.styled-flow-layout direction="vertical" id="content">
-                                        <children>
-                                            <fzmm.styled-flow-layout direction="ltr-text-flow" id="color-layout">
+                                    <gap>2</gap>
+
+                                    <vertical-alignment>top</vertical-alignment>
+                                    <horizontal-alignment>center</horizontal-alignment>
+                                </fzmm.flow-layout>
+
+                                <fzmm.flow-layout direction="vertical">
+                                    <children>
+                                        <fzmm.flow-layout direction="vertical">
+                                            <children>
+                                                <fzmm.flow-layout direction="ltr-text-flow" id="color-layout">
+                                                    <children>
+
+                                                    </children>
+
+                                                    <sizing>
+                                                        <horizontal method="fill">100</horizontal>
+                                                    </sizing>
+
+                                                    <vertical-alignment>top</vertical-alignment>
+                                                    <horizontal-alignment>center</horizontal-alignment>
+                                                </fzmm.flow-layout>
+
+                                                <fzmm.flow-layout direction="horizontal">
+                                                    <children>
+                                                        <button id="add-pattern">
+                                                            <text translate="true">fzmm.gui.bannerEditor.tab.addPatterns</text>
+                                                            <tooltip-text translate="true">fzmm.gui.bannerEditor.tab.addPatterns.tooltip</tooltip-text>
+
+                                                            <sizing>
+                                                                <horizontal method="fill">33</horizontal>
+                                                                <vertical method="fixed">16</vertical>
+                                                            </sizing>
+                                                        </button>
+
+                                                        <button id="change-color">
+                                                            <text translate="true">fzmm.gui.bannerEditor.tab.changeColor</text>
+                                                            <tooltip-text translate="true">fzmm.gui.bannerEditor.tab.changeColor.tooltip</tooltip-text>
+
+                                                            <sizing>
+                                                                <horizontal method="expand">100</horizontal>
+                                                                <vertical method="fixed">16</vertical>
+                                                            </sizing>
+                                                        </button>
+
+                                                        <button id="remove-pattern">
+                                                            <text translate="true">fzmm.gui.bannerEditor.tab.removePatterns</text>
+                                                            <tooltip-text translate="true">fzmm.gui.bannerEditor.tab.removePatterns.tooltip</tooltip-text>
+
+                                                            <sizing>
+                                                                <horizontal method="fill">33</horizontal>
+                                                                <vertical method="fixed">16</vertical>
+                                                            </sizing>
+                                                        </button>
+                                                    </children>
+
+                                                    <sizing>
+                                                        <horizontal method="expand">100</horizontal>
+                                                    </sizing>
+
+                                                    <margins>
+                                                        <vertical>2</vertical>
+                                                    </margins>
+
+                                                    <horizontal-alignment>center</horizontal-alignment>
+
+                                                    <gap>2</gap>
+                                                </fzmm.flow-layout>
+                                            </children>
+                                        </fzmm.flow-layout>
+
+                                        <fzmm.scroll direction="vertical">
+                                            <fzmm.flow-layout direction="ltr-text-flow" id="content">
                                                 <children>
 
                                                 </children>
@@ -105,134 +184,64 @@
 
                                                 <vertical-alignment>top</vertical-alignment>
                                                 <horizontal-alignment>center</horizontal-alignment>
+                                            </fzmm.flow-layout>
 
-                                            </fzmm.styled-flow-layout>
+                                            <sizing>
+                                                <vertical method="expand">100</vertical>
+                                            </sizing>
+                                        </fzmm.scroll>
+                                    </children>
 
-                                            <fzmm.screen-tab>
-                                                <id>addPatterns</id>
-                                                <children>
-                                                    <fzmm.styled-flow-layout direction="ltr-text-flow" id="add-patterns-layout">
-                                                        <children>
+                                    <sizing>
+                                        <horizontal method="fixed">300</horizontal>
+                                        <vertical method="expand">100</vertical>
+                                    </sizing>
 
-                                                        </children>
+                                    <surface>
+                                        <panel dark="true"/>
+                                    </surface>
 
-                                                        <sizing>
-                                                            <horizontal method="fill">100</horizontal>
-                                                        </sizing>
+                                    <padding>
+                                        <all>6</all>
+                                    </padding>
+                                </fzmm.flow-layout>
 
-                                                        <vertical-alignment>top</vertical-alignment>
-                                                        <horizontal-alignment>center</horizontal-alignment>
-
-                                                    </fzmm.styled-flow-layout>
-                                                </children>
-                                            </fzmm.screen-tab>
-
-                                            <fzmm.screen-tab>
-                                                <id>changeColor</id>
-                                                <children>
-                                                    <fzmm.styled-flow-layout direction="ltr-text-flow" id="change-color-layout">
-                                                        <children>
-
-                                                        </children>
-
-                                                        <sizing>
-                                                            <horizontal method="fill">100</horizontal>
-                                                        </sizing>
-
-                                                        <vertical-alignment>top</vertical-alignment>
-                                                        <horizontal-alignment>center</horizontal-alignment>
-
-                                                    </fzmm.styled-flow-layout>
-                                                </children>
-                                            </fzmm.screen-tab>
-
-                                            <fzmm.screen-tab>
-                                                <id>removePatterns</id>
-                                                <children>
-                                                    <fzmm.styled-flow-layout direction="ltr-text-flow" id="remove-patterns-layout">
-                                                        <children>
-
-                                                        </children>
-
-                                                        <sizing>
-                                                            <horizontal method="fill">100</horizontal>
-                                                        </sizing>
-
-                                                        <vertical-alignment>top</vertical-alignment>
-                                                        <horizontal-alignment>center</horizontal-alignment>
-
-                                                    </fzmm.styled-flow-layout>
-                                                </children>
-                                            </fzmm.screen-tab>
-                                        </children>
-
-                                        <sizing>
-                                            <horizontal method="fill">60</horizontal>
-                                        </sizing>
-
-                                        <surface>
-                                            <panel dark="true"/>
-                                        </surface>
-
-                                        <padding>
-                                            <all>6</all>
-                                        </padding>
-                                    </fzmm.styled-flow-layout>
-                                </children>
-
-                                <sizing>
-                                    <horizontal method="fill">100</horizontal>
-                                </sizing>
-
-                                <horizontal-alignment>center</horizontal-alignment>
-
-                            </fzmm.styled-flow-layout>
-                        </children>
-                    </fzmm.styled-flow-layout>
-
-                    <sizing>
-                        <vertical method="fill">90</vertical>
-                    </sizing>
-
-                    <margins>
-                        <top>10</top>
-                        <bottom>10</bottom>
-                    </margins>
-                </fzmm.styled-scroll>
-
-                <fzmm.styled-flow-layout direction="horizontal">
-                    <children>
-
-                        <button id="back-button">
-                            <text translate="true">fzmm.gui.button.back.icon</text>
-                            <tooltip-text translate="true">fzmm.gui.button.back</tooltip-text>
+                            </children>
 
                             <margins>
-                                <right>3</right>
-                                <bottom>3</bottom>
+                                <top>20</top>
                             </margins>
 
                             <sizing>
-                                <vertical method="fixed">16</vertical>
+                                <vertical method="expand">90</vertical>
+                                <horizontal method="expand">100</horizontal>
                             </sizing>
-                        </button>
 
+                            <gap>4</gap>
+                            <horizontal-alignment>center</horizontal-alignment>
+                        </fzmm.flow-layout>
                     </children>
+                </fzmm.flow-layout>
+
+                <button id="back-button">
+                    <text translate="true">fzmm.gui.button.back.icon</text>
+                    <tooltip-text translate="true">fzmm.gui.button.back</tooltip-text>
+
+                    <margins>
+                        <right>3</right>
+                        <bottom>3</bottom>
+                    </margins>
+
+                    <sizing>
+                        <vertical method="fixed">16</vertical>
+                    </sizing>
 
                     <positioning type="relative">100,100</positioning>
-
-                    <vertical-alignment>bottom</vertical-alignment>
-                    <horizontal-alignment>right</horizontal-alignment>
-                </fzmm.styled-flow-layout>
+                </button>
             </children>
 
-
-            <vertical-alignment>center</vertical-alignment>
+            <vertical-alignment>top</vertical-alignment>
             <horizontal-alignment>center</horizontal-alignment>
-
-            <surface>
-                <vanilla-translucent/>
-            </surface>
-        </fzmm.styled-flow-layout>
+        </fzmm.flow-layout>
     </components>
 </owo-ui>

@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.imagetext;
 
 import fzmm.zailer.me.builders.DisplayBuilder;
-import fzmm.zailer.me.client.gui.components.style.StyledComponents;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.imagetext.tabs.ImagetextHologramTab;
 import fzmm.zailer.me.client.gui.utils.auto_placer.AbstractAutoPlacer;
 import fzmm.zailer.me.client.gui.utils.auto_placer.AutoPlacerHud;
@@ -43,10 +43,10 @@ public class HologramPlacerScreen extends AbstractAutoPlacer {
     protected List<Component> getInfoLabels() {
         List<Component> labelList = new ArrayList<>();
 
-        labelList.add(StyledComponents.label(this.hologramStack.getName()));
+        labelList.add(EComponents.label(this.hologramStack.getName()));
 
         for (var text : DisplayBuilder.of(this.hologramStack).getLoreText()) {
-            labelList.add(StyledComponents.label(text));
+            labelList.add(EComponents.label(text));
         }
 
         return labelList;

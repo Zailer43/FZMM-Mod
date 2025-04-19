@@ -2,13 +2,13 @@ package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.containers.ColorOverlay;
+import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.utils.list.IListEntry;
 import io.wispforest.owo.config.ui.OptionComponentFactory;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ColorPickerComponent;
 import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.CursorStyle;
@@ -61,7 +61,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
      * but I don't have an Option<Color> object.
      */
     @SuppressWarnings({"ConstantConditions"})
-    public static ConfigTextBox setup(FlowLayout rootComponent, String id, Color defaultcolor, boolean withAlpha, int additionalZIndex, @Nullable Consumer<String> changedListener) {
+    public static ConfigTextBox setup(EFlowLayout rootComponent, String id, Color defaultcolor, boolean withAlpha, int additionalZIndex, @Nullable Consumer<String> changedListener) {
         ConfigTextBox colorField = ConfigTextBoxRow.setup(rootComponent, getColorFieldId(id), id, defaultcolor.asHexString(withAlpha), changedListener);
 
         colorField.inputPredicate(withAlpha ? s -> s.matches("#[a-zA-Z\\d]{0,8}") : s -> s.matches("#[a-zA-Z\\d]{0,6}"));
@@ -89,9 +89,8 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
 
 
     @SuppressWarnings("ConstantConditions")
-    public static BoxComponent setupColorPreview(String id, FlowLayout rootComponent, boolean withAlpha, int additionalZIndex, Supplier<Color> valueGetter, Consumer<ColorPickerComponent> onPress) {
-        BoxComponent colorPreview = rootComponent.childById(BoxComponent.class, getColorPreviewId(id));
-        BaseFzmmScreen.checkNull(colorPreview, "box", getColorPreviewId(id));
+    public static BoxComponent setupColorPreview(String id, EFlowLayout rootComponent, boolean withAlpha, int additionalZIndex, Supplier<Color> valueGetter, Consumer<ColorPickerComponent> onPress) {
+        BoxComponent colorPreview = rootComponent.childByIdOrThrow(BoxComponent.class, getColorPreviewId(id));
 
         colorPreview.color(valueGetter.get());
 

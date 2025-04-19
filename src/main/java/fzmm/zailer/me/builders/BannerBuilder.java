@@ -1,6 +1,7 @@
 package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.utils.history.IClipboardState;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.block.AbstractBannerBlock;
 import net.minecraft.block.entity.BannerPattern;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class BannerBuilder {
+public class BannerBuilder implements IClipboardState {
 
     private final NbtList patterns;
     private Item item;
@@ -167,6 +168,28 @@ public class BannerBuilder {
         return this;
     }
 
+    public BannerBuilder replaceColors(DyeColor newColor, DyeColor colorToReplace) {
+        if (this.bannerColor().getId() == colorToReplace.getId()) {
+            this.bannerColor(newColor);
+        }
+
+        for (var patternElement : this.patterns) {
+            if (patternElement instanceof NbtCompound patternCompound &&
+                    patternCompound.getInt(TagsConstant.BANNER_PATTERN_COLOR) == colorToReplace.getId()) {
+
+                patternCompound.putInt(TagsConstant.BANNER_PATTERN_COLOR, newColor.getId());
+            }
+        }
+
+        return this;
+    }
+
+    public BannerBuilder replaceColor(NbtCompound patternCompound, DyeColor newColor) {
+        patternCompound.putInt(TagsConstant.BANNER_PATTERN_COLOR, newColor.getId());
+        return this;
+    }
+
+    @Override
     public BannerBuilder copy() {
         BannerBuilder copy = builder()
                 .item(this.item)
