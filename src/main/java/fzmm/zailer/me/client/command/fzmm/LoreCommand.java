@@ -84,7 +84,7 @@ public class LoreCommand implements ISubCommand {
         stack.apply(DataComponentTypes.LORE, LoreComponent.DEFAULT, component -> {
             List<Text> lines = new ArrayList<>(component.lines());
 
-            if (lines.size() < lineToRemove) {
+            if (lines.size() < lineToRemove || lines.isEmpty()) {
                 return component;
             }
 
