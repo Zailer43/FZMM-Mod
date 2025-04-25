@@ -110,7 +110,8 @@ public class SignBuilder {
         this.stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.DEFAULT, component -> {
             NbtCompound result = component.copyNbt();
 
-            BlockEntity.writeIdToNbt(result, BlockEntityType.SIGN);
+            // 1.21.4+
+            BlockEntity.writeIdToNbt(result, this.isHangingSign() ? BlockEntityType.HANGING_SIGN : BlockEntityType.SIGN);
 
             this.addSignMessage(this.frontTextList, this.frontCompound, result, TagsConstant.SIGN_FRONT_TEXT);
             this.addSignMessage(this.backTextList, this.backCompound, result, TagsConstant.SIGN_BACK_TEXT);
