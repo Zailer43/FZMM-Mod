@@ -80,12 +80,14 @@ public class LoreCommand implements ISubCommand {
 
         NbtCompound display = stack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY);
 
-        if (!display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE))
+        if (!display.contains(ItemStack.LORE_KEY, NbtElement.LIST_TYPE)) {
             return;
+        }
 
         NbtList lore = display.getList(ItemStack.LORE_KEY, NbtElement.STRING_TYPE);
-        if (lore.size() < lineToRemove)
+        if (lore.size() < lineToRemove || lore.isEmpty()) {
             return;
+        }
 
         lore.remove(lineToRemove);
         display.put(ItemStack.LORE_KEY, lore);
