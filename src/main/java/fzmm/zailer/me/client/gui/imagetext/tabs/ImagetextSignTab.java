@@ -188,7 +188,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
         int textWidth = textRenderer.getWidth(characters);
         double numRepeats = this.getMaxTextWidth() / (double) textWidth;
 
-        return (int) Math.ceil(numRepeats * characters.length());
+        return (int) Math.floor(numRepeats * characters.length());
     }
 
     public int getMaxTextWidth() {

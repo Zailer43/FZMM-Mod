@@ -11,8 +11,6 @@ import net.minecraft.nbt.NbtString;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
-import java.util.List;
-
 public class SignBuilder {
 
     public static final int MAX_ROWS = 4;
@@ -118,46 +116,31 @@ public class SignBuilder {
     }
 
     public ItemStack get() {
-        NbtCompound entityTag = new NbtCompound();
+        NbtCompound blockEntityTag = new NbtCompound();
 
-        if (!this.frontTextList.isEmpty()) {
-            while (this.frontTextList.size() < 4) {
-                this.frontTextList.add(NbtString.of("\"\""));
-            }
-            this.frontCompound.put(TagsConstant.SIGN_MESSAGES, this.frontTextList);
-            entityTag.put(TagsConstant.SIGN_FRONT_TEXT, this.frontCompound);
-        }
+        this.addSignMessage(this.frontTextList, this.frontCompound, blockEntityTag, TagsConstant.SIGN_FRONT_TEXT);
+        this.addSignMessage(this.backTextList, this.backCompound, blockEntityTag, TagsConstant.SIGN_BACK_TEXT);
 
-        if (!this.backTextList.isEmpty()) {
-            while (this.backTextList.size() < 4) {
-                this.backTextList.add(NbtString.of("\"\""));
-            }
-            this.backCompound.put(TagsConstant.SIGN_MESSAGES, this.backTextList);
-            entityTag.put(TagsConstant.SIGN_BACK_TEXT, this.backCompound);
-        }
+        blockEntityTag.putBoolean(TagsConstant.SIGN_IS_WAXED, this.isWaxed);
 
-        entityTag.putBoolean(TagsConstant.SIGN_IS_WAXED, this.isWaxed);
-
-        this.stack.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, entityTag);
+        this.stack.setSubNbt(BlockItem.BLOCK_ENTITY_TAG_KEY, blockEntityTag);
         return this.stack;
     }
 
-    private void addSignMessage(List<Text> list, NbtCompound compound, NbtCompound blockEntityTag, String key) {
+    public boolean isHangingSign() {
+        return this.stack.getItem() instanceof HangingSignItem;
+    }
+
+    private void addSignMessage(NbtList list, NbtCompound compound, NbtCompound blockEntityTag, String key) {
         if (list.isEmpty()) {
             return;
         }
 
         while (list.size() < 4) {
-            list.add(Text.empty());
+            list.add(NbtString.of("\"\""));// add empty text
         }
 
-        NbtList listTag = new NbtList();
-        listTag.addAll(list.stream().map(text -> {
-            String textJson = Text.Serialization.toJsonString(text);
-            return NbtString.of(textJson);
-        }).toList());
-
-        compound.put(TagsConstant.SIGN_MESSAGES, listTag);
+        compound.put(TagsConstant.SIGN_MESSAGES, list.copy());
         blockEntityTag.put(key, compound);
     }
 }
