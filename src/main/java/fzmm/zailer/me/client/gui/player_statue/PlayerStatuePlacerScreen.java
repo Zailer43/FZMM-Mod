@@ -6,11 +6,15 @@ import fzmm.zailer.me.client.gui.utils.auto_placer.AbstractAutoPlacer;
 import fzmm.zailer.me.client.gui.utils.auto_placer.AutoPlacerHud;
 import fzmm.zailer.me.client.logic.player_statue.PlayerStatue;
 import fzmm.zailer.me.utils.InventoryUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.ui.core.Component;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
@@ -58,6 +62,26 @@ public class PlayerStatuePlacerScreen extends AbstractAutoPlacer {
         }
 
         return labelList;
+    }
+
+    @Override
+    protected ItemStack processStack(ItemStack stack) {
+        // armor stand does not need a custom name
+        stack.remove(DataComponentTypes.CUSTOM_NAME);
+
+        // since 1.21.5 custom data are transferred to the entity
+        stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, component -> {
+            if (component.isEmpty()) {
+                return null;
+            }
+
+            NbtCompound result = component.copyNbt();
+            result.remove(TagsConstant.FZMM);
+
+            return NbtComponent.of(result);
+        });
+
+        return stack;
     }
 
     @Override
