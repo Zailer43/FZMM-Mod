@@ -69,7 +69,7 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
             sneakToggled.setValue(true);
             this.client.options.sneakKey.setPressed(true);
 
-            List<ItemStack> items = new ArrayList<>(this.getItems());
+            List<ItemStack> items = new ArrayList<>(this.getItems().stream().map(this::processStack).toList());
             items.add(null);
             int containerItemsSize = items.size();
 
@@ -124,6 +124,8 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
     }
 
     protected abstract ItemStack getFinalStack();
+
+    protected abstract ItemStack processStack(ItemStack stack);
 
     protected abstract List<ItemStack> getItems();
 
