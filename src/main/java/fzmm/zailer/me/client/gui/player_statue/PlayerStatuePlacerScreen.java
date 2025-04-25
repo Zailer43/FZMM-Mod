@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.gui.utils.auto_placer.AbstractAutoPlacer;
 import fzmm.zailer.me.client.gui.utils.auto_placer.AutoPlacerHud;
 import fzmm.zailer.me.client.logic.player_statue.PlayerStatue;
 import fzmm.zailer.me.utils.InventoryUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.ui.core.Component;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.client.MinecraftClient;
@@ -58,6 +59,17 @@ public class PlayerStatuePlacerScreen extends AbstractAutoPlacer {
         }
 
         return labelList;
+    }
+
+    @Override
+    protected ItemStack processStack(ItemStack stack) {
+        // armor stand does not need a custom name
+        stack.removeSubNbt(ItemStack.DISPLAY_KEY);
+
+        // since 1.21.5 custom data are transferred to the entity (this tag is in custom data in 1.20.5+)
+        stack.removeSubNbt(TagsConstant.FZMM);
+
+        return stack;
     }
 
     @Override
