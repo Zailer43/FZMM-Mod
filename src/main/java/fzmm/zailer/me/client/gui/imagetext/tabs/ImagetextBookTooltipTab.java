@@ -47,7 +47,7 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
                 .author(author)
                 .addPage(Text.literal(Formatting.BLUE + bookMessage)
                         .setStyle(Style.EMPTY
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, logic.getText()))
+                                .withHoverEvent(new HoverEvent.ShowText(logic.getText()))
                         )
                 );
 

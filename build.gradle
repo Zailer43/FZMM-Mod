@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.8-SNAPSHOT'
+    id 'fabric-loom' version '1.10-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -16,7 +16,7 @@ repositories {
         url = "https://maven.terraformersmc.com/releases/"
     }
 
-    maven { url 'https://maven.wispforest.io' }
+    maven { url = 'https://maven.wispforest.io' }
 
     maven { url = "https://api.modrinth.com/maven" }
 
@@ -64,6 +64,7 @@ dependencies {
     // Optional dependencies
     // Symbol chat
     modImplementation "maven.modrinth:symbol-chat:${project.symbol_chat_version}"
+    modImplementation "maven.modrinth:reconfigure:${project.symbol_chat_reconfigure_version}"
 
     // Test dependencies
     testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
@@ -73,7 +74,7 @@ processResources {
     inputs.property "version", project.version
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version": inputs.properties.version
     }
 }
 
@@ -89,8 +90,10 @@ java {
 }
 
 jar {
+    inputs.property "archivesName", project.base.archivesName
+
     from("LICENSE") {
-        rename { "${it}_${project.base.archivesName.get()}"}
+        rename { "${it}_${inputs.properties.archivesName}"}
     }
 }
 
@@ -100,7 +103,8 @@ test {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        create("mavenJava", MavenPublication) {
+            artifactId = project.archives_base_name
             from components.java
         }
     }

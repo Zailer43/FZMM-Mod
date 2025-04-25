@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ItemGroup.DisplayContext.class)
 public abstract class ItemGroupDisplayContextMixin {
     @Unique
-    private String fzmm$previousLanguage = null;
+    private static String fzmm$previousLanguage = null;
 
     /**
      * As FZMM adds translations to some custom items, and if possible,
@@ -26,9 +26,9 @@ public abstract class ItemGroupDisplayContextMixin {
             at = @At("RETURN")
     )
     public boolean fzmm$updateItemGroupsOnChangeLang(boolean original) {
-        String previousLanguage = this.fzmm$previousLanguage;
+        String previousLanguage = fzmm$previousLanguage;
         String currentLanguage = MinecraftClient.getInstance().options.language;
-        this.fzmm$previousLanguage = currentLanguage;
+        fzmm$previousLanguage = currentLanguage;
 
         if (previousLanguage != null && !previousLanguage.equals(currentLanguage)) {
             return true;

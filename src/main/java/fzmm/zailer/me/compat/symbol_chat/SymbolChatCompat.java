@@ -58,7 +58,7 @@ public class SymbolChatCompat {
     }
 
     private SymbolComponentAdapter getSymbolComponent() {
-        return new SymbolComponentAdapter(new SymbolSelectionPanel(0, 0, SymbolChat.config.getSymbolPanelHeight(), s -> {
+        return new SymbolComponentAdapter(new SymbolSelectionPanel(0, 0, SymbolChat.config.symbolPanelHeight.get(), s -> {
             if (this.selectedComponent != null) {
                 this.selectedComponent.write(s);
             }
@@ -67,7 +67,7 @@ public class SymbolChatCompat {
 
     private FontComponentAdapter getFontComponent() {
         FontComponentAdapter.CustomDropDownWidget widget = new FontComponentAdapter.CustomDropDownWidget(0, 0, 180, 15,
-                SymbolChat.fontManager.getFontProcessors(), SymbolChat.selectedFont);
+                SymbolChat.fontManager.getFontProcessors(), SymbolChat.selectedFont, false);
         int expandedHeight = 150 + widget.getHeight(); // 150 is hardcoded in DropDownWidget
         widget.setHeight(expandedHeight);
         return new FontComponentAdapter(widget, expandedHeight);

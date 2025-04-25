@@ -76,7 +76,7 @@ public class HeadGeneratorTest {
             MinecraftClient.getInstance().inGameHud.getChatHud()
                     .addMessage(Text.literal(message)
                             .setStyle(Style.EMPTY.withHoverEvent(
-                                            new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(tooltip))
+                                            new HoverEvent.ShowText(Text.literal(tooltip))
                                     )
                             )
                     );

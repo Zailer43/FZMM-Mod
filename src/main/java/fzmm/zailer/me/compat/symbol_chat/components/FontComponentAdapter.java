@@ -94,8 +94,8 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
 
     public static class CustomDropDownWidget extends DropDownWidget<FontProcessor> {
 
-        public CustomDropDownWidget(int x, int y, int width, int height, List<FontProcessor> elementList, int defaultSelection) {
-            super(x, y, width, height, elementList, defaultSelection);
+        public CustomDropDownWidget(int x, int y, int width, int height, List<FontProcessor> elementList, int defaultSelection, boolean upward) {
+            super(x, y, width, height, elementList, defaultSelection, upward);
         }
 
         @Override

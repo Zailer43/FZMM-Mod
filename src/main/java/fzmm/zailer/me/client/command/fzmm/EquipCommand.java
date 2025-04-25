@@ -79,10 +79,11 @@ public class EquipCommand implements ISubCommand {
         ItemStack armorStack = player.getEquippedStack(slot);
         // I don't know why but at least with ClientPlayerInteractionManager#clickCreativeStack
         // they are placed in the reverse order
-        int armorSlotId = Math.abs(slot.getOffsetEntitySlotId(0) - 3) + 5;
 
         // 5 = crafting slot + crafting result result slot
+        int armorSlotId = Math.abs(slot.getOffsetEntitySlotId(0) - 3) + 5;
+        
         client.interactionManager.clickCreativeStack(handStack, armorSlotId);
-        client.interactionManager.clickCreativeStack(armorStack, PlayerInventory.MAIN_SIZE + inventory.selectedSlot);
+        client.interactionManager.clickCreativeStack(armorStack, PlayerInventory.MAIN_SIZE + inventory.getSelectedSlot());
     }
 }

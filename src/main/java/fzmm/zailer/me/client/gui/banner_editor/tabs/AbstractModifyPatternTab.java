@@ -57,7 +57,7 @@ public abstract class AbstractModifyPatternTab implements IBannerTab {
 
     protected Text getTooltip(@Nullable BannerPatternsComponent.Layer layer, Item item) {
         if (layer == null) {
-            return Text.translatable("block.minecraft.banner.base." + BannerBuilder.baseBannerColor(item).getName());
+            return Text.translatable("block.minecraft.banner.base." + BannerBuilder.baseBannerColor(item).getId());
         } else {
             return BannerBuilder.tooltipOf(layer);
         }

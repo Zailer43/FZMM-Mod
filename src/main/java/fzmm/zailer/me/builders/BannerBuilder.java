@@ -182,7 +182,7 @@ public class BannerBuilder implements IClipboardState {
             return Text.empty();
         }
 
-        String dyeId = layer.color().getName();
+        String dyeId = layer.color().getId();
         return Text.translatable("block.minecraft.banner." + patternKeyOptional.get() + "." + dyeId).formatted(Formatting.GRAY);
     }
 }

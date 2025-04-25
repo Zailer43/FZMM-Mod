@@ -84,7 +84,7 @@ public class ItemUtils {
 
             int slot = playerInventory.getSlotWithStack(stack);
             if (PlayerInventory.isValidHotbarIndex(slot)) {
-                playerInventory.selectedSlot = slot;
+                playerInventory.setSelectedSlot(slot);
             } else {
                 playerInventory.swapStackWithHotbar(stack);
             }
@@ -114,7 +114,7 @@ public class ItemUtils {
 
         if (FzmmClient.CONFIG.general.giveItemSizeLimit()) {
             long stackSize = getLengthInBytes(stack);
-            long inventorySize = InventoryUtils.getInventorySizeInBytes();
+            long inventorySize = InventoryUtils.getSizeInBytes(InventoryUtils.getCombinedInventory());
             if ((stackSize + inventorySize) > 8000000) {
                 FzmmClient.LOGGER.warn("[ItemUtils] An attempt was made to give an item with size of {} bytes (with {} bytes already in inventory)",
                         stackSize, inventorySize);
@@ -259,13 +259,13 @@ public class ItemUtils {
         updateHandClientSide(stack); // required since 1.21.2
 
         // server-side sync
-        client.interactionManager.clickCreativeStack(stack, PlayerInventory.MAIN_SIZE + playerInventory.selectedSlot);
+        client.interactionManager.clickCreativeStack(stack, PlayerInventory.MAIN_SIZE + playerInventory.getSelectedSlot());
     }
 
     private static void updateHandClientSide(ItemStack stack) {
         assert MinecraftClient.getInstance().player != null;
         PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
-        inventory.setStack(inventory.selectedSlot, stack);
+        inventory.setStack(inventory.getSelectedSlot(), stack);
     }
 
     public static String getLengthInKB(long length) {

@@ -11,6 +11,7 @@ import net.minecraft.registry.DynamicRegistryManager;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FzmmHistory {
     private static final ArrayDeque<NbtCompound> GENERATED_ITEMS = new ArrayDeque<>();
@@ -23,11 +24,18 @@ public class FzmmHistory {
     }
 
     public static List<ItemStack> getGeneratedItems() {
-        return GENERATED_ITEMS.stream().map(FzmmHistory::parseNbt).toList();
+        return parseNbt(GENERATED_ITEMS);
     }
 
     public static List<ItemStack> getGeneratedHeads() {
-        return GENERATED_HEADS.stream().map(FzmmHistory::parseNbt).toList();
+        return parseNbt(GENERATED_HEADS);
+    }
+
+    private static List<ItemStack> parseNbt(ArrayDeque<NbtCompound> compounds) {
+        return compounds.stream().map(FzmmHistory::parseNbt)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
     }
 
     public static void add(ItemStack stack) {
@@ -47,10 +55,14 @@ public class FzmmHistory {
     }
 
     public static void add(ItemStack stack, ArrayDeque<NbtCompound> compounds, int max) {
+        if (stack.isEmpty()) {
+            return;
+        }
+
         NbtCompound stackCompound;
         try {
             // May throw an exception if the codec is invalid
-            stackCompound = (NbtCompound) stack.toNbtAllowEmpty(FzmmUtils.getRegistryManager());
+            stackCompound = (NbtCompound) stack.toNbt(FzmmUtils.getRegistryManager());
         } catch (Exception ignored) {
             return;
         }
@@ -88,8 +100,8 @@ public class FzmmHistory {
      * and then you go to another world with a different registry,
      * it will cause a codec error
      */
-    private static ItemStack parseNbt(NbtCompound nbt) {
+    private static Optional<ItemStack> parseNbt(NbtCompound nbt) {
         DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
-        return ItemStack.fromNbtOrEmpty(registryManager, nbt);
+        return ItemStack.fromNbt(registryManager, nbt);
     }
 }

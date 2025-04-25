@@ -8,13 +8,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
@@ -126,6 +122,10 @@ public class SignBuilder {
         return this.stack;
     }
 
+    public boolean isHangingSign() {
+        return this.stack.getItem() instanceof HangingSignItem;
+    }
+
     private void addSignMessage(List<Text> list, NbtCompound compound, NbtCompound blockEntityTag, String key) {
         if (list.isEmpty()) {
             return;
@@ -135,12 +135,8 @@ public class SignBuilder {
             list.add(Text.empty());
         }
 
-        DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
         NbtList listTag = new NbtList();
-        listTag.addAll(list.stream().map(text -> {
-            String textJson = Text.Serialization.toJsonString(text, registryManager);
-            return NbtString.of(textJson);
-        }).toList());
+        listTag.addAll(list.stream().map(FzmmUtils::toNbtElement).toList());
 
         compound.put(TagsConstant.SIGN_MESSAGES, listTag);
         blockEntityTag.put(key, compound);

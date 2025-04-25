@@ -62,7 +62,7 @@ public final class RequestedItem {
             int redColor = 0xE32B1C;
             title = this.title.copy()
                     .setStyle(Style.EMPTY.withHoverEvent(
-                            new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("fzmm.gui.selectItem.label.required")
+                            new HoverEvent.ShowText(Text.translatable("fzmm.gui.selectItem.label.required")
                                     .setStyle(Style.EMPTY.withColor(redColor))))
                     ).append(Text.translatable("fzmm.gui.selectItem.label.required.icon")
                             .setStyle(Style.EMPTY.withColor(redColor))

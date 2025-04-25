@@ -79,7 +79,7 @@ public class EncryptbookLogic {
 
         builder.addPage(
                 Text.translatableWithFallback(translationKey, encryptMessage, encryptMessageSplit.toArray())
-                        .setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, encryptMessageTooltip)))
+                        .setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(encryptMessageTooltip)))
         );
 
         return builder;

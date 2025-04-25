@@ -11,7 +11,6 @@ import fzmm.zailer.me.client.gui.utils.InvisibleEntityWarning;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
-import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -25,8 +24,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtFloat;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.math.MathHelper;
 
 
@@ -54,9 +53,8 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
     @Override
     public void execute(ImagetextLogic logic) {
         NbtCompound textDisplayNbt = new NbtCompound();
-        DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
 
-        textDisplayNbt.putString(DisplayEntity.TextDisplayEntity.TEXT_NBT_KEY, Text.Serialization.toJsonString(logic.getText(), registryManager));
+        textDisplayNbt.put(DisplayEntity.TextDisplayEntity.TEXT_NBT_KEY, TextCodecs.CODEC, logic.getText());
         textDisplayNbt.putInt(TagsConstant.TEXT_DISPLAY_LINE_WIDTH, logic.getLineWidth());
 
         textDisplayNbt.putInt(TagsConstant.TEXT_DISPLAY_TEXT_OPACITY, (int) this.textOpacity.discreteValue());

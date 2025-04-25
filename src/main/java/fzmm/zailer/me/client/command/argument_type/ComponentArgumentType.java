@@ -6,6 +6,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.argument.NbtPathArgumentType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.StringNbtReader;
 
 import java.util.Arrays;
@@ -29,24 +31,25 @@ public class ComponentArgumentType implements ArgumentType<NbtCompound> {
             throw NbtPathArgumentType.TOO_DEEP_EXCEPTION.createWithContext(stringReader);
         }
 
-        StringNbtReader nbtReader = new StringNbtReader(stringReader);
+        StringNbtReader<NbtElement> nbtReader = StringNbtReader.fromOps(NbtOps.INSTANCE);
         if (stringReader.peek() == '[') {
             return this.parseComponent(stringReader, nbtReader);
         } else {
-            return nbtReader.parseCompound();
+            return StringNbtReader.readCompoundAsArgument(stringReader);
         }
     }
 
-    private NbtCompound parseComponent(StringReader stringReader, StringNbtReader nbtReader) throws CommandSyntaxException {
-        int originalCursor = stringReader.getCursor();
+    private NbtCompound parseComponent(StringReader stringReader, StringNbtReader<NbtElement> nbtReader) throws CommandSyntaxException {
         NbtCompound compound = new NbtCompound();
         StringBuilder keyBuilder = new StringBuilder();
 
         stringReader.expect('[');
         stringReader.skipWhitespace();
+        int oldCursor;
 
         while (stringReader.canRead()) {
             char c = stringReader.peek();
+            oldCursor = stringReader.getCursor();
             stringReader.skip();
             stringReader.skipWhitespace();
 
@@ -54,16 +57,14 @@ public class ComponentArgumentType implements ArgumentType<NbtCompound> {
                 String key = keyBuilder.toString();
                 keyBuilder = new StringBuilder();
 
-                compound.put(key, nbtReader.parseElement());
+                compound.put(key, nbtReader.readAsArgument(stringReader));
             } else if (c == ']') {
+                stringReader.setCursor(oldCursor);
+                stringReader.skip();
                 break;
             } else if (c != ',') {
                 keyBuilder.append(c);
             }
-        }
-
-        while (stringReader.peek(-1) != ']' && stringReader.getCursor() >= originalCursor) {
-            stringReader.setCursor(stringReader.getCursor() - 1);
         }
 
         return compound;

@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "testmod",
-  "version": "${version}",
-  "name": ":)",
-  "description": "FZMM TEST",
+  "version": "1.0.0",
+  "name": "Test",
+  "description": "FZMM test",
   "authors": [
     "Zailer43"
   ],

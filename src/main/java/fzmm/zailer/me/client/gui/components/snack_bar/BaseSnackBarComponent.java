@@ -8,6 +8,7 @@ import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.MutableText;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -39,7 +40,7 @@ public class BaseSnackBarComponent extends EFlowLayout implements ISnackBarCompo
         }
 
         this.timerEnabled = true;
-        this.startTimeMillis = System.currentTimeMillis();
+        this.startTimeMillis = Util.getMeasuringTimeMs();
 
         return this;
     }
@@ -62,7 +63,7 @@ public class BaseSnackBarComponent extends EFlowLayout implements ISnackBarCompo
         }
         super.draw(context, mouseX, mouseY, partialTicks, delta);
         if (this.timerComponent != null) {
-            this.updateTimer(System.currentTimeMillis() - this.startTimeMillis);
+            this.updateTimer(Util.getMeasuringTimeMs() - this.startTimeMillis);
         }
     }
 

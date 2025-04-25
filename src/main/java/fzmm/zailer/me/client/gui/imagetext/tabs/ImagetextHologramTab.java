@@ -21,7 +21,6 @@ import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.text.Text;
 
@@ -107,10 +106,10 @@ public class ImagetextHologramTab implements IImagetextTab {
     public static boolean isHologramPart(ItemStack stack) {
         NbtCompound entityNbt = stack.getOrDefault(DataComponentTypes.ENTITY_DATA, NbtComponent.of(new NbtCompound())).copyNbt();
 
-        NbtList tags = entityNbt.getList(TagsConstant.ENTITY_TAG_TAGS_ID, NbtElement.STRING_TYPE);
+        NbtList tags = entityNbt.getListOrEmpty(TagsConstant.ENTITY_TAG_TAGS_ID);
 
         for (int i = 0; i < tags.size(); i++) {
-            if (tags.getString(i).equals(HOLOGRAM_TAG))
+            if (tags.getString(i, "").equals(HOLOGRAM_TAG))
                 return true;
         }
 

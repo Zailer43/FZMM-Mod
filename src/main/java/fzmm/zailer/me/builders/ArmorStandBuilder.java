@@ -5,12 +5,13 @@ import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.*;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
@@ -40,10 +41,8 @@ public class ArmorStandBuilder {
     }
 
     public ArmorStandBuilder setAsHologram(Text name) {
-        String text = Text.Serialization.toJsonString(name, FzmmUtils.getRegistryManager());
-
         this.setImmutableAndInvisible();
-        this.entityTag.putString("CustomName", text);
+        this.entityTag.put("CustomName", TextCodecs.CODEC, name);
         this.entityTag.putBoolean("CustomNameVisible", true);
         return this;
     }
@@ -70,14 +69,10 @@ public class ArmorStandBuilder {
     }
 
     public ArmorStandBuilder setRightHandItem(ItemStack stack) {
-        NbtList handItem = new NbtList();
+        NbtCompound equipmentTag = new NbtCompound();
+        equipmentTag.put(EquipmentSlot.MAINHAND.getName(), stack.toNbt(FzmmUtils.getRegistryManager()));
 
-        DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
-        NbtElement itemTag = stack.toNbt(registryManager);
-
-        handItem.add(itemTag);
-
-        this.entityTag.put("HandItems", handItem);
+        this.entityTag.put("equipment", equipmentTag);
         return this;
     }
 

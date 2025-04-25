@@ -22,7 +22,7 @@ public class CustomHeadEntityModel extends EntityModel<CustomHeadEntityRenderSta
 
         ModelPartData headModelPartData = modelPartData.addChild(EntityModelPartNames.HEAD, ModelPartBuilder.create()
                 .uv(0, 0)
-                .cuboid(-4.0f, 12.0f, -4.0f, 8.0f, 8.0f, 8.0f), ModelTransform.pivot(0.0f, 0.0f, 0.0f));
+                .cuboid(-4.0f, 12.0f, -4.0f, 8.0f, 8.0f, 8.0f), ModelTransform.rotation(0.0f, 0.0f, 0.0f));
 
         headModelPartData.addChild(EntityModelPartNames.HAT, ModelPartBuilder.create()
                 .uv(32, 0)
@@ -35,7 +35,7 @@ public class CustomHeadEntityModel extends EntityModel<CustomHeadEntityRenderSta
     public void setAngles(CustomHeadEntityRenderState state) {
         super.setAngles(state);
         this.head.pitch = state.pitch * (float) (Math.PI / 180.0);
-        this.head.yaw = state.yawDegrees * (float) (Math.PI / 180.0);
+        this.head.yaw = state.relativeHeadYaw * (float) (Math.PI / 180.0);
     }
 
     @Override

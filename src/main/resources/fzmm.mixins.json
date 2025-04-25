@@ -4,7 +4,6 @@
   "package": "fzmm.zailer.me.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "combined_inventory_getter.PlayerInventoryAccessor",
     "component.book.EditBoxAccessor",
     "component.book.EditBoxWidgetMixin",
     "entity.force_invisible_item_frame.ItemFrameEntityRendererMixin",

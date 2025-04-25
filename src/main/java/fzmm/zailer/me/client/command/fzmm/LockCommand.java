@@ -13,7 +13,8 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ContainerLock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.predicate.ComponentPredicate;
+import net.minecraft.predicate.component.ComponentMapPredicate;
+import net.minecraft.predicate.component.ComponentsPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -48,10 +49,10 @@ public class LockCommand implements ISubCommand {
 
         containerStack.apply(DataComponentTypes.LOCK, ContainerLock.EMPTY, component -> {
             ItemPredicate predicate = ItemPredicate.Builder.create()
-                    .component(ComponentPredicate.builder()
-                            .add(DataComponentTypes.CUSTOM_NAME, key)
-                            .build())
-                    .build();
+                    .components(ComponentsPredicate.Builder.create()
+                            .exact(ComponentMapPredicate.of(DataComponentTypes.CUSTOM_NAME, key))
+                            .build()
+                    ).build();
 
             return new ContainerLock(predicate);
         });

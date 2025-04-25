@@ -46,7 +46,7 @@ public class NbtCommand implements ISubCommand {
     private void showNbt(CommandContext<FabricClientCommandSource> ctx) {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
-        ItemStack stack = client.player.getInventory().getMainHandStack();
+        ItemStack stack = client.player.getInventory().getSelectedStack();
         DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
 
         ComponentChanges components = stack.getComponentChanges();
@@ -60,7 +60,7 @@ public class NbtCommand implements ISubCommand {
         // vanilla chat lines = 100
         final int MAX_CHAT_LINES = 90;
         final int MAX_HOVER_LENGTH = 15000;
-        String nbtString = toFormatedComponent(nbt.getCompound(TagsConstant.ENCODE_STACK_COMPONENTS), false).getString();
+        String nbtString = toFormatedComponent(nbt.getCompoundOrEmpty(TagsConstant.ENCODE_STACK_COMPONENTS), false).getString();
         String nbtStringHover = nbtString;
         int nbtLength = nbtString.length();
         MutableText nbtMessage;
@@ -74,7 +74,7 @@ public class NbtCommand implements ISubCommand {
             String message = String.format("[%s]", Text.translatable("commands.fzmm.nbt.tooLong").getString());
             nbtMessage = Text.literal(message).setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
         } else {
-            nbtMessage = toFormatedComponent(nbt.getCompound(TagsConstant.ENCODE_STACK_COMPONENTS), true);
+            nbtMessage = toFormatedComponent(nbt.getCompoundOrEmpty(TagsConstant.ENCODE_STACK_COMPONENTS), true);
         }
 
         // if the hover text is too long it gives a lot of lag with cursor over it (and doesn't fit on the screen)
@@ -89,8 +89,8 @@ public class NbtCommand implements ISubCommand {
                 .append(Text.literal(stack.getItem().toString())
                         .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR))
                 ).append(nbtMessage.copy().setStyle(nbtMessage.getStyle()
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, nbtString))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(nbtStringHover))))
+                                .withClickEvent(new ClickEvent.CopyToClipboard(nbtString))
+                                .withHoverEvent(new HoverEvent.ShowText(Text.literal(nbtStringHover))))
                         .append(clickToCopyMessage)
                 );
 

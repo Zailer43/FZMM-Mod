@@ -67,7 +67,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
         this.hoveredSurface(EStyles.DEFAULT_HOVERED);
 
         BufferedImage defaultPreview = entry.getHeadSkin(new BufferedImage(SkinPart.MAX_WIDTH, SkinPart.MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB), false);
-        this.previewTexture = new NativeImageBackedTexture(ImageUtils.toNativeImage(defaultPreview));
+        this.previewTexture = new NativeImageBackedTexture(this.textureId::toString, ImageUtils.toNativeImage(defaultPreview));
         MinecraftClient.getInstance().getTextureManager().registerTexture(this.textureId, this.previewTexture);
     }
 

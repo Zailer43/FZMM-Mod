@@ -15,12 +15,12 @@ import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.math.Direction;
 import org.joml.Vector3f;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -105,56 +105,45 @@ public class StatuePart {
 
     public static StatuePart ofItem(ItemStack stack) {
         NbtCompound customDataTag = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(new NbtCompound())).copyNbt();
-        NbtCompound fzmmTag = customDataTag.getCompound(TagsConstant.FZMM);
+        NbtCompound fzmmTag = customDataTag.getCompoundOrEmpty(TagsConstant.FZMM);
 
-        NbtCompound playerStatueTag = fzmmTag.getCompound(TagsConstant.FZMM_PLAYER_STATUE);
-        NbtCompound zFight = playerStatueTag.getCompound(PlayerStatueTags.Z_FIGHT);
+        NbtCompound playerStatueTag = fzmmTag.getCompoundOrEmpty(TagsConstant.FZMM_PLAYER_STATUE);
+        NbtCompound zFight = playerStatueTag.getCompoundOrEmpty(PlayerStatueTags.Z_FIGHT);
 
-        StatuePartEnum part = StatuePartEnum.get(playerStatueTag.getString(PlayerStatueTags.PART));
-        String name = playerStatueTag.getString(PlayerStatueTags.NAME);
-        int headHeight = playerStatueTag.getInt(PlayerStatueTags.HEAD_HEIGHT);
-        HorizontalDirectionOption direction = HorizontalDirectionOption.values()[playerStatueTag.getInt(PlayerStatueTags.DIRECTION)];
-        String skinValue = playerStatueTag.getString(PlayerStatueTags.SKIN_VALUE);
-        int x = zFight.getInt("x");
-        int y = zFight.getInt("y");
-        int z = zFight.getInt("z");
+        StatuePartEnum part = StatuePartEnum.get(playerStatueTag.getString(PlayerStatueTags.PART, ""));
+        String name = playerStatueTag.getString(PlayerStatueTags.NAME, "");
+        int headHeight = playerStatueTag.getInt(PlayerStatueTags.HEAD_HEIGHT, 1);
+        HorizontalDirectionOption direction = HorizontalDirectionOption.values()[playerStatueTag.getInt(PlayerStatueTags.DIRECTION, 0)];
+        String skinValue = playerStatueTag.getString(PlayerStatueTags.SKIN_VALUE, "");
+        int x = zFight.getInt("x", 0);
+        int y = zFight.getInt("y", 0);
+        int z = zFight.getInt("z", 0);
 
         return new StatuePart(part, name, headHeight, x, y, z, direction, skinValue);
     }
 
     public static boolean isStatue(ItemStack stack) {
         NbtCompound customDataTag = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(new NbtCompound())).copyNbt();
-        NbtCompound fzmmTag = customDataTag.getCompound(TagsConstant.FZMM);
+        NbtCompound fzmmTag = customDataTag.getCompoundOrEmpty(TagsConstant.FZMM);
 
-        if (!fzmmTag.contains(TagsConstant.FZMM_PLAYER_STATUE, NbtElement.COMPOUND_TYPE))
-            return false;
-        NbtCompound playerStatueTag = fzmmTag.getCompound(TagsConstant.FZMM_PLAYER_STATUE);
+        Optional<NbtCompound> playerStatueTagOptional = fzmmTag.getCompound(TagsConstant.FZMM_PLAYER_STATUE);
+        if (playerStatueTagOptional.isEmpty()) return false;
+        NbtCompound playerStatueTag = playerStatueTagOptional.get();
 
-        if (!playerStatueTag.contains(PlayerStatueTags.PART, NbtElement.STRING_TYPE))
-            return false;
+        if (playerStatueTag.getString(PlayerStatueTags.PART).isEmpty()) return false;
+        if (playerStatueTag.getString(PlayerStatueTags.NAME).isEmpty()) return false;
+        if (playerStatueTag.getInt(PlayerStatueTags.HEAD_HEIGHT).isEmpty()) return false;
+        if (playerStatueTag.getInt(PlayerStatueTags.DIRECTION).isEmpty()) return false;
 
-        if (!playerStatueTag.contains(PlayerStatueTags.NAME, NbtElement.STRING_TYPE))
-            return false;
+        int directionOrdinal = playerStatueTag.getInt(PlayerStatueTags.DIRECTION, -1);
+        if (Direction.values().length < directionOrdinal || directionOrdinal < 0) return false;
+        if (playerStatueTag.getString(PlayerStatueTags.SKIN_VALUE).isEmpty()) return false;
 
-        if (!playerStatueTag.contains(PlayerStatueTags.HEAD_HEIGHT, NbtElement.INT_TYPE))
-            return false;
+        Optional<NbtCompound> zFightOptional = playerStatueTag.getCompound(PlayerStatueTags.Z_FIGHT);
+        if (zFightOptional.isEmpty()) return false;
+        NbtCompound zFight = zFightOptional.get();
 
-        if (!playerStatueTag.contains(PlayerStatueTags.DIRECTION, NbtElement.INT_TYPE))
-            return false;
-        int directionOrdinal = playerStatueTag.getInt(PlayerStatueTags.DIRECTION);
-
-        if (Direction.values().length < directionOrdinal)
-            return false;
-
-        if (!playerStatueTag.contains(PlayerStatueTags.SKIN_VALUE, NbtElement.STRING_TYPE))
-            return false;
-
-        if (!playerStatueTag.contains(PlayerStatueTags.Z_FIGHT, NbtElement.COMPOUND_TYPE))
-            return false;
-
-        NbtCompound zFight = playerStatueTag.getCompound(PlayerStatueTags.Z_FIGHT);
-
-        return zFight.contains("x", NbtElement.INT_TYPE) && zFight.contains("y", NbtElement.INT_TYPE) && zFight.contains("z", NbtElement.INT_TYPE);
+        return zFight.getInt("x").isPresent() && zFight.getInt("y").isPresent() && zFight.getInt("z").isPresent();
     }
 
     public String getName() {

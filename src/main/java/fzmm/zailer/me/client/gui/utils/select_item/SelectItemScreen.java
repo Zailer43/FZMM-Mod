@@ -6,8 +6,7 @@ import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.logic.FzmmHistory;
-import fzmm.zailer.me.mixin.combined_inventory_getter.PlayerInventoryAccessor;
-import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.InventoryUtils;
 import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.ItemComponent;
@@ -18,12 +17,10 @@ import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.util.FocusHandler;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -94,11 +91,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
         inventoryButton.onPress(buttonComponent -> {
             this.sourceButtonsClicked(inventoryButton.id());
 
-            PlayerInventory inventory = this.client.player.getInventory();
-            List<DefaultedList<ItemStack>> inventoryStacks = ((PlayerInventoryAccessor) (inventory)).getCombinedInventory();
-
-            for (var stackList : inventoryStacks)
-                this.addItemCallback(stackList, true);
+            this.addItemCallback(InventoryUtils.getCombinedInventory(), true);
         });
 
         ButtonComponent defaultButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "default-button");
@@ -120,12 +113,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
         allButton.onPress(buttonComponent -> {
             this.sourceButtonsClicked(allButton.id());
 
-            Set<ItemStack> stackList = new LinkedHashSet<>();
-            PlayerInventory inventory = this.client.player.getInventory();
-            List<DefaultedList<ItemStack>> inventoryStacks = ((PlayerInventoryAccessor) (inventory)).getCombinedInventory();
-
-            for (var list : inventoryStacks)
-                stackList.addAll(list);
+            Set<ItemStack> stackList = new LinkedHashSet<>(InventoryUtils.getCombinedInventory());
 
             for (var itemGroup : ItemGroups.getGroups())
                 stackList.addAll(itemGroup.getDisplayStacks());

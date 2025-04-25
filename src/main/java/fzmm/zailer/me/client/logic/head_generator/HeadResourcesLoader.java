@@ -394,7 +394,7 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
             Text message = Text.translatable("fzmm.gui.headGenerator.model.error.loadingModel", path)
                     .setStyle(Style.EMPTY
                             .withColor(FzmmClient.CHAT_BASE_COLOR)
-                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(e.getMessage())))
+                            .withHoverEvent(new HoverEvent.ShowText(Text.literal(e.getMessage())))
                     );
 
             MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(message);

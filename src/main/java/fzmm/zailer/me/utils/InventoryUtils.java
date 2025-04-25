@@ -1,11 +1,10 @@
 package fzmm.zailer.me.utils;
 
-import fzmm.zailer.me.mixin.combined_inventory_getter.PlayerInventoryAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,18 +17,34 @@ public class InventoryUtils {
         return result.stream().toList();
     }
 
-    public static long getInventorySizeInBytes() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        assert client.player != null;
-        List<DefaultedList<ItemStack>> combinedInventory = ((PlayerInventoryAccessor) client.player.getInventory()).getCombinedInventory();
+    public static long getSizeInBytes(List<ItemStack> stacks) {
         long size = 0;
+        for (ItemStack stack : stacks) {
+            size += ItemUtils.getLengthInBytes(stack);
+        }
+        return size;
+    }
 
-        for (DefaultedList<ItemStack> defaultedList : combinedInventory) {
-            for (ItemStack itemStack : defaultedList) {
-                size += ItemUtils.getLengthInBytes(itemStack);
-            }
+    public static List<ItemStack> getEquipmentStacks() {
+        List<ItemStack> result = new ArrayList<>(PlayerInventory.EQUIPMENT_SLOTS.size());
+
+        assert MinecraftClient.getInstance().player != null;
+        PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
+
+        for (int i = 0; i != PlayerInventory.EQUIPMENT_SLOTS.size(); i++) {
+            result.add(inventory.getStack(PlayerInventory.MAIN_SIZE + i));
         }
 
-        return size;
+        return result;
+    }
+
+    public static List<ItemStack> getCombinedInventory() {
+        assert MinecraftClient.getInstance().player != null;
+        PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
+
+        List<ItemStack> stackList = new ArrayList<>(inventory.getMainStacks());
+        stackList.addAll(InventoryUtils.getEquipmentStacks());
+
+        return stackList;
     }
 }

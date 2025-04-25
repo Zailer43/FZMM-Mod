@@ -101,33 +101,28 @@ public class ScreenshotSource implements IInteractiveImageLoader {
     }
 
     public void takeScreenshot() {
-        int[] pixelArray = null;
-        Exception exception = null;
-
-        MinecraftClient client = MinecraftClient.getInstance();
-        Framebuffer framebuffer = client.getFramebuffer();
-        try (var screenshot = ScreenshotRecorder.takeScreenshot(framebuffer)) {
-            pixelArray = screenshot.copyPixelsArgb();
+        Framebuffer framebuffer = MinecraftClient.getInstance().getFramebuffer();
+        try {
+            ScreenshotRecorder.takeScreenshot(framebuffer, screenshot -> {
+                screenshot.copyPixelsArgb();
+                this.processScreenshot(screenshot.copyPixelsArgb());
+            });
         } catch (Exception e) {
-            exception = e;
+            this.complete(null, e);
         }
+    }
 
-        int[] finalByteArray = pixelArray;
-        Exception finalException = exception;
+    private void processScreenshot(int[] pixelArray) {
         CompletableFuture.supplyAsync(() -> {
-            if (finalByteArray == null) {
+            if (pixelArray == null) {
                 return null;
-            }
-
-            if (finalException != null) {
-                throw new RuntimeException(finalException);
             }
 
             Window window = MinecraftClient.getInstance().getWindow();
             int width = window.getWidth();
             int height = window.getHeight();
             BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            screenshot.getRaster().setDataElements(0, 0, width, height, finalByteArray);
+            screenshot.getRaster().setDataElements(0, 0, width, height, pixelArray);
             int smallerSide = Math.min(width, height);
             int halfLongerSide = smallerSide / 2;
 
@@ -138,33 +133,34 @@ public class ScreenshotSource implements IInteractiveImageLoader {
             scaled.flush();
 
             return finalImage;
-        }, Util.getMainWorkerExecutor()).whenComplete((image, throwable) -> {
-            instance = null;
-            ISnackBarComponent snackBar = null;
+        }, Util.getMainWorkerExecutor()).whenComplete(this::complete);
+    }
 
-            if (throwable != null || image == null) {
-                FzmmClient.LOGGER.error("[ScreenshotSource] Unexpected error while taking screenshot", throwable);
-                snackBar = BaseSnackBarComponent.builder(SnackBarManager.IMAGE_ID)
-                        .title(Text.translatable("fzmm.snack_bar.image.error.title"))
-                        .details(Text.translatable("fzmm.snack_bar.image.error.details.unexpectedError"))
-                        .backgroundColor(EStyles.ALERT_ERROR_COLOR)
-                        .closeButton()
-                        .build();
+    private void complete(BufferedImage image, Throwable throwable) {
+        instance = null;
+        ISnackBarComponent snackBar = null;
 
+        if (throwable != null || image == null) {
+            FzmmClient.LOGGER.error("[ScreenshotSource] Unexpected error while taking screenshot", throwable);
+            snackBar = BaseSnackBarComponent.builder(SnackBarManager.IMAGE_ID)
+                    .title(Text.translatable("fzmm.snack_bar.image.error.title"))
+                    .details(Text.translatable("fzmm.snack_bar.image.error.details.unexpectedError"))
+                    .backgroundColor(EStyles.ALERT_ERROR_COLOR)
+                    .closeButton()
+                    .build();
+        }
+
+        ISnackBarComponent finalSnackBar = snackBar;
+        MinecraftClient.getInstance().execute(() -> {
+            SnackBarManager manager = SnackBarManager.getInstance();
+            Hud.remove(HUD_CAPTURE_SCREENSHOT);
+            if (finalSnackBar != null) {
+                manager.add(finalSnackBar);
             }
 
-            ISnackBarComponent finalSnackBar = snackBar;
-            client.execute(() -> {
-                SnackBarManager manager = SnackBarManager.getInstance();
-                Hud.remove(HUD_CAPTURE_SCREENSHOT);
-                if (finalSnackBar != null) {
-                    manager.add(finalSnackBar);
-                }
-
-                FzmmUtils.setScreen(this.previousScreen);
-                this.previousScreen = null;
-                this.setImage(image);
-            });
+            FzmmUtils.setScreen(this.previousScreen);
+            this.previousScreen = null;
+            this.setImage(image);
         });
     }
 

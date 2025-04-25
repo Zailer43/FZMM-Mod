@@ -18,7 +18,6 @@ import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -206,13 +205,10 @@ public class PlayerStatue {
 
     public static boolean isNameTag(ItemStack stack) {
         NbtCompound customData = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(new NbtCompound())).copyNbt();
-        NbtCompound fzmmTag = customData.getCompound(TagsConstant.FZMM);
+        NbtCompound fzmmTag = customData.getCompoundOrEmpty(TagsConstant.FZMM);
+        NbtCompound playerStatueTag = fzmmTag.getCompoundOrEmpty(TagsConstant.FZMM_PLAYER_STATUE);
 
-        if (!fzmmTag.contains(TagsConstant.FZMM_PLAYER_STATUE, NbtElement.COMPOUND_TYPE))
-            return false;
-        NbtCompound playerStatueTag = fzmmTag.getCompound(TagsConstant.FZMM_PLAYER_STATUE);
-
-        return playerStatueTag.contains(StatuePart.PlayerStatueTags.NAME_TAG, NbtElement.BYTE_TYPE);
+        return playerStatueTag.getByte(StatuePart.PlayerStatueTags.NAME_TAG).isPresent();
     }
 
     public List<ItemStack> getStatueItems() {
