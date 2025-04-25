@@ -8,6 +8,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.item.HangingSignItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -114,7 +115,8 @@ public class SignBuilder {
         this.stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.DEFAULT, component -> {
             NbtCompound result = component.copyNbt();
 
-            BlockEntity.writeIdToNbt(result, BlockEntityType.SIGN);
+            // 1.21.4+
+            BlockEntity.writeIdToNbt(result, this.isHangingSign() ? BlockEntityType.HANGING_SIGN : BlockEntityType.SIGN);
 
             this.addSignMessage(this.frontTextList, this.frontCompound, result, TagsConstant.SIGN_FRONT_TEXT);
             this.addSignMessage(this.backTextList, this.backCompound, result, TagsConstant.SIGN_BACK_TEXT);
@@ -124,6 +126,10 @@ public class SignBuilder {
             return NbtComponent.of(result);
         });
         return this.stack;
+    }
+
+    public boolean isHangingSign() {
+        return this.stack.getItem() instanceof HangingSignItem;
     }
 
     private void addSignMessage(List<Text> list, NbtCompound compound, NbtCompound blockEntityTag, String key) {
