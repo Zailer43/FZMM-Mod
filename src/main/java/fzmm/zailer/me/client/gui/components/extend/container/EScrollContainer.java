@@ -8,6 +8,7 @@ import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.NinePatchTexture;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import org.w3c.dom.Element;
 
@@ -114,7 +115,7 @@ public class EScrollContainer<C extends Component> extends ScrollContainer<C> {
                 x = this.getScrollbarX(flipScroll, x);
             }
 
-            final var progress = Easing.SINE.apply(MathHelper.clamp(lastInteractTime - System.currentTimeMillis(), 0, 750) / 750f);
+            final var progress = Easing.SINE.apply(MathHelper.clamp(lastInteractTime - Util.getEpochTimeMs(), 0, 750) / 750f);
             int alpha = (int) (progress * (scrollbarColor >>> 24));
 
             context.fill(

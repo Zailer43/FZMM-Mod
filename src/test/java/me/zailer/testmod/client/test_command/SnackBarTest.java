@@ -9,6 +9,7 @@ import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 
 import java.util.Random;
 
@@ -99,11 +100,11 @@ public class SnackBarTest {
                 .details(Text.literal("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam id vulputate purus. Cras fringilla urna sed nulla porttitor accumsan. Quisque id ex lorem. Donec cursus, leo vitae sollicitudin bibendum, mauris urna ullamcorper ipsum, eget pharetra felis arcu vitae tellus. Cras posuere, velit vitae congue malesuada, quam eros hendrerit mauris, sed aliquam purus justo et ipsum."))
                 .closeButton()
                 .button(snackBar -> Components.button(Text.literal("random chat number"), buttonComponent -> {
-                    int random = new Random(System.currentTimeMillis()).nextInt(100);
+                    int random = new Random(Util.getEpochTimeMs()).nextInt(100);
                     MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal(String.valueOf(random)));
                 }))
                 .button(snackBar -> Components.button(Text.literal("random snackbar color"), buttonComponent -> {
-                    int color = 0x60000000 + new Random(System.currentTimeMillis()).nextInt(0xFFFFFF);
+                    int color = 0x60000000 + new Random(Util.getEpochTimeMs()).nextInt(0xFFFFFF);
                     snackBar.surface(Surface.flat(color));
                 }))
                 .build()

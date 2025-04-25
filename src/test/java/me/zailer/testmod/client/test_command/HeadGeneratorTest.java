@@ -14,6 +14,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -40,7 +41,7 @@ public class HeadGeneratorTest {
 
     public static void time(int loops) {
         new ImageFileDialogSource().execute(skin -> {
-            var start = System.currentTimeMillis();
+            var start = Util.getMeasuringTimeMs();
 
             var sum = 0L;
             var modelList = HeadResourcesLoader.getLoaded();
@@ -48,17 +49,17 @@ public class HeadGeneratorTest {
             boolean hasUnusedPixels = ImageUtils.hasUnusedPixel(skin);
 
             for (int i = 0; i != loops; i++) {
-                var loopStart = System.currentTimeMillis();
+                var loopStart = Util.getMeasuringTimeMs();
                 for (var model : modelList) {
                     long modelTime = System.nanoTime();
                     var result = getHead(model, skin, hasUnusedPixels);
                     result.flush();
                     hashMap.addTo(model.getKey(), System.nanoTime() - modelTime);
                 }
-                sum += System.currentTimeMillis() - loopStart;
+                sum += Util.getMeasuringTimeMs() - loopStart;
             }
 
-            long totalTime = System.currentTimeMillis() - start;
+            long totalTime = Util.getMeasuringTimeMs() - start;
             String message = "Time: " + "total " + totalTime + "ms / avg " + (sum / (float) loops) + "ms";
 
             var topEntries = hashMap.object2LongEntrySet()
