@@ -7,6 +7,9 @@ import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.*;
 import net.minecraft.loot.LootTables;
@@ -32,9 +35,7 @@ public class FzmmItemGroup {
     public static final Identifier USEFUL_BLOCK_STATES_IDENTIFIER = new Identifier(FzmmClient.MOD_ID, "useful_block_states");
     public static final Identifier LOOT_CHESTS_IDENTIFIER = new Identifier(FzmmClient.MOD_ID, "loot_chests");
 
-    @SuppressWarnings("UnstableApiUsage")
     public static void register() {
-
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.OPERATOR).register(entries -> {
             ArrayList<ItemStack> newEntries = new ArrayList<>();
 
@@ -159,6 +160,15 @@ public class FzmmItemGroup {
 
         Registry.register(Registries.ITEM_GROUP, USEFUL_BLOCK_STATES_IDENTIFIER, usefulBlockStatesItemGroup);
         Registry.register(Registries.ITEM_GROUP, LOOT_CHESTS_IDENTIFIER, lootChestsItemGroup);
+    }
+
+    public static void populateItemGroups() {
+        // since 1.21 the item groups and the search bar are initialized from the CreativeInventory constructor,
+        // not initializing it here will cause that searching in the item groups will have no results if it was
+        // initialized for the first time with ItemGroups#updateDisplayContext
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        assert player != null;
+        new CreativeInventoryScreen(player, player.networkHandler.getEnabledFeatures(), true);
     }
 
     private static void addSpawnEggs(List<ItemStack> entries) {
