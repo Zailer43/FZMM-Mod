@@ -15,6 +15,7 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class AddEncryptProfileOverlay extends OverlayContainer<EFlowLayout> {
         Text duplicateKeyText = Text.translatable("fzmm.gui.encryptbook.addProfile.key.duplicated");
 
         ButtonComponent randomAsymmetric = Components.button(Text.translatable("fzmm.gui.button.random"), buttonComponent -> {
-            int value = new Random(System.currentTimeMillis()).nextInt();
+            int value = new Random(Util.getEpochTimeMs()).nextInt();
             asymmetricComponent.text(String.valueOf(value));
         });
 
