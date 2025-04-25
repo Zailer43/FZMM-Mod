@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.utils.select_item;
 
 import com.google.common.collect.ImmutableList;
+import fzmm.zailer.me.client.FzmmItemGroup;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
@@ -115,7 +116,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
             this.addItemCallback(FzmmHistory.getAllItems(), true);
         });
 
-        ItemGroups.updateDisplayContext(this.client.player.networkHandler.getEnabledFeatures(), true, FzmmUtils.getRegistryManager());
+        FzmmItemGroup.populateItemGroups();
         ButtonComponent allButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "all-button");
         allButton.onPress(buttonComponent -> {
             this.sourceButtonsClicked(allButton.id());

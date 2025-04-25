@@ -10,6 +10,9 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerLootComponent;
 import net.minecraft.component.type.FireworksComponent;
@@ -167,6 +170,15 @@ public class FzmmItemGroup {
 
         Registry.register(Registries.ITEM_GROUP, USEFUL_BLOCK_STATES_IDENTIFIER, usefulBlockStatesItemGroup);
         Registry.register(Registries.ITEM_GROUP, LOOT_CHESTS_IDENTIFIER, lootChestsItemGroup);
+    }
+
+    public static void populateItemGroups() {
+        // since 1.21 the item groups and the search bar are initialized from the CreativeInventory constructor,
+        // not initializing it here will cause that searching in the item groups will have no results if it was
+        // initialized for the first time with ItemGroups#updateDisplayContext
+        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        assert player != null;
+        new CreativeInventoryScreen(player, player.networkHandler.getEnabledFeatures(), true);
     }
 
     private static void addSpawnEggs(List<ItemStack> entries) {
