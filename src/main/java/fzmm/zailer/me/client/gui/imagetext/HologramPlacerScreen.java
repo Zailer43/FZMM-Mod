@@ -63,6 +63,11 @@ public class HologramPlacerScreen extends AbstractAutoPlacer {
     }
 
     @Override
+    protected ItemStack processStack(ItemStack stack) {
+        return stack;
+    }
+
+    @Override
     protected boolean isActive() {
         return isActive;
     }
