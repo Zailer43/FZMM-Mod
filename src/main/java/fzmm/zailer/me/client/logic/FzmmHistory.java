@@ -19,7 +19,7 @@ public class FzmmHistory {
 
     public static void update() {
         FzmmConfig.History config = FzmmClient.CONFIG.history;
-        removeExcess(GENERATED_ITEMS, config.maxHeadHistory());
+        removeExcess(GENERATED_ITEMS, config.maxItemHistory());
         removeExcess(GENERATED_HEADS, config.maxHeadHistory());
     }
 
