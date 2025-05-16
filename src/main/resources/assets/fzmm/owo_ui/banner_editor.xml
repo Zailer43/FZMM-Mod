@@ -126,7 +126,7 @@
 
                                                 <fzmm.flow-layout direction="horizontal">
                                                     <children>
-                                                        <button id="add-pattern">
+                                                        <fzmm.button id="add-pattern">
                                                             <text translate="true">fzmm.gui.bannerEditor.tab.addPatterns</text>
                                                             <tooltip-text translate="true">fzmm.gui.bannerEditor.tab.addPatterns.tooltip</tooltip-text>
 
@@ -134,9 +134,9 @@
                                                                 <horizontal method="fill">33</horizontal>
                                                                 <vertical method="fixed">16</vertical>
                                                             </sizing>
-                                                        </button>
+                                                        </fzmm.button>
 
-                                                        <button id="change-color">
+                                                        <fzmm.button id="change-color">
                                                             <text translate="true">fzmm.gui.bannerEditor.tab.changeColor</text>
                                                             <tooltip-text translate="true">fzmm.gui.bannerEditor.tab.changeColor.tooltip</tooltip-text>
 
@@ -144,9 +144,9 @@
                                                                 <horizontal method="expand">100</horizontal>
                                                                 <vertical method="fixed">16</vertical>
                                                             </sizing>
-                                                        </button>
+                                                        </fzmm.button>
 
-                                                        <button id="remove-pattern">
+                                                        <fzmm.button id="remove-pattern">
                                                             <text translate="true">fzmm.gui.bannerEditor.tab.removePatterns</text>
                                                             <tooltip-text translate="true">fzmm.gui.bannerEditor.tab.removePatterns.tooltip</tooltip-text>
 
@@ -154,7 +154,7 @@
                                                                 <horizontal method="fill">33</horizontal>
                                                                 <vertical method="fixed">16</vertical>
                                                             </sizing>
-                                                        </button>
+                                                        </fzmm.button>
                                                     </children>
 
                                                     <sizing>
@@ -242,6 +242,10 @@
 
             <vertical-alignment>top</vertical-alignment>
             <horizontal-alignment>center</horizontal-alignment>
+
+            <surface>
+                <vanilla-translucent/>
+            </surface>
         </fzmm.flow-layout>
     </components>
 </owo-ui>
