@@ -88,8 +88,8 @@ public class HeadTextureEntry extends AbstractHeadEntry {
     }
 
     private boolean calculateIsEditingSkinBody(int x, int y, int x2, int y2) {
-        for (int i = x; i < y2; i++) {
-            for (int j = y; j < x2; j++) {
+        for (int i = x; i < x2; i++) {
+            for (int j = y; j < y2; j++) {
                 if (ImageUtils.hasPixel(j, i, this.headSkin)) {
                     return true;
                 }
