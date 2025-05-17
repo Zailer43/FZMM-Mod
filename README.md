@@ -28,6 +28,8 @@ The head generator allows you to add accessories like glasses, hats, masks, bear
 **You can also transform your skin into a plushie** (aka: mini, figurine, etc.),
 create a pixel art representation of your skin for a book cover, etc.
 
+<img src="docs/images/head_generator_examples.png" alt="Head generator model examples" width="800">
+
 The default resource pack currently includes:
 
 - 230 texture heads
@@ -37,19 +39,13 @@ For instructions on how to add your own custom heads to the head generator, plea
 
 <details>
 
-#### Examples
-
-<img src="docs/images/head_generator_model_examples.png" alt="Head generator model examples" width="300">
-<br>
-<img src="docs/images/head_generator_texture_examples.png" alt="Head generator texture examples" width="300">
-
 <summary>Images</summary>
 
 #### GUI
 
 <img src="docs/images/head_generator_gui.png" alt="Head generator gui" width="800">
 
-<img src="docs/images/head_generator_gui_layers.png" alt="Head generator gui layers" width="800">
+<img src="docs/images/head_generator_gui_compounds.png" alt="Head generator gui compounds" width="800">
 
 <img src="docs/images/head_generator_gui_overlay.png" alt="Head generator gui overlay" width="800">
 
