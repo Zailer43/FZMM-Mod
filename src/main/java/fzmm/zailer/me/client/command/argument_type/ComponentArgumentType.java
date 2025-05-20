@@ -38,15 +38,16 @@ public class ComponentArgumentType implements ArgumentType<NbtCompound> {
     }
 
     private NbtCompound parseComponent(StringReader stringReader, StringNbtReader nbtReader) throws CommandSyntaxException {
-        int originalCursor = stringReader.getCursor();
         NbtCompound compound = new NbtCompound();
         StringBuilder keyBuilder = new StringBuilder();
 
         stringReader.expect('[');
         stringReader.skipWhitespace();
+        int oldCursor;
 
         while (stringReader.canRead()) {
             char c = stringReader.peek();
+            oldCursor = stringReader.getCursor();
             stringReader.skip();
             stringReader.skipWhitespace();
 
@@ -56,14 +57,12 @@ public class ComponentArgumentType implements ArgumentType<NbtCompound> {
 
                 compound.put(key, nbtReader.parseElement());
             } else if (c == ']') {
+                stringReader.setCursor(oldCursor);
+                stringReader.skip();
                 break;
             } else if (c != ',') {
                 keyBuilder.append(c);
             }
-        }
-
-        while (stringReader.peek(-1) != ']' && stringReader.getCursor() >= originalCursor) {
-            stringReader.setCursor(stringReader.getCursor() - 1);
         }
 
         return compound;
