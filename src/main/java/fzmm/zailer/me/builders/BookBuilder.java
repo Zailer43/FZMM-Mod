@@ -1,5 +1,7 @@
 package fzmm.zailer.me.builders;
 
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
@@ -9,6 +11,7 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.RawFilteredPair;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +91,7 @@ public class BookBuilder {
 
     /**
      * Checks if the book exceeds the serialized length limit
-     * @return -1 if the book does not exceed the limit, otherwise the length
+     * @return -1 if the book does not exceed the limit, {@link Integer#MAX_VALUE} if failed to encode, otherwise the length
      */
     public int exceedsSerializedLengthLimit() {
         DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
@@ -96,7 +99,10 @@ public class BookBuilder {
         for (var pageFilteredPair : this.pages) {
             Text pageText = pageFilteredPair.raw();
             if (pageText != null && WrittenBookContentComponent.exceedsSerializedLengthLimit(pageText, registryManager)) {
-                return Text.Serialization.toJsonString(pageText, registryManager).length();
+                return TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, pageText).result()
+                        .map(JsonElement::toString)
+                        .map(String::length)
+                        .orElse(Integer.MAX_VALUE); // Failed to encode
             }
         }
 

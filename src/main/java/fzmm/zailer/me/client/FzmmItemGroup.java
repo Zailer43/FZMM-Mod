@@ -27,7 +27,9 @@ import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.*;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.storage.NbtWriteView;
 import net.minecraft.text.Text;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.raid.Raid;
 
@@ -389,7 +391,12 @@ public class FzmmItemGroup {
                 stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.DEFAULT, component -> {
                     NbtCompound result = component.copyNbt();
 
-                    BlockEntity.writeIdToNbt(result, BlockEntityType.BRUSHABLE_BLOCK);
+                    try (var logging = new ErrorReporter.Logging(FzmmClient.LOGGER)) {
+                        NbtWriteView nbtWriteView = NbtWriteView.create(logging, FzmmUtils.getRegistryManager());
+                        BlockEntity.writeId(nbtWriteView, BlockEntityType.BRUSHABLE_BLOCK); //  1.21.4+
+
+                        result.copyFrom(nbtWriteView.getNbt());
+                    }
 
                     result.putString("LootTable", identifierString);
 

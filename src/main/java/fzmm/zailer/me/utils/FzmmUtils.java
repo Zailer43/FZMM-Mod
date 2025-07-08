@@ -11,8 +11,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.*;
 import net.minecraft.util.DyeColor;
@@ -240,9 +238,5 @@ public class FzmmUtils {
         } catch (Exception ignored) {
             return Optional.empty();
         }
-    }
-
-    public static NbtElement toNbtElement(Text text) {
-        return TextCodecs.CODEC.encodeStart(NbtOps.INSTANCE, text).getOrThrow();
     }
 }

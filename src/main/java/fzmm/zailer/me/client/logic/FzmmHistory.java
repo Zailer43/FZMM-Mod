@@ -1,12 +1,13 @@
 package fzmm.zailer.me.client.logic;
 
+import com.mojang.datafixers.util.Pair;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
-import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -59,13 +60,12 @@ public class FzmmHistory {
             return;
         }
 
-        NbtCompound stackCompound;
-        try {
-            // May throw an exception if the codec is invalid
-            stackCompound = (NbtCompound) stack.toNbt(FzmmUtils.getRegistryManager());
-        } catch (Exception ignored) {
+        Optional<NbtElement> stackNbtOptional = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).resultOrPartial();
+        if (stackNbtOptional.isEmpty()) {
             return;
         }
+        NbtCompound stackCompound = (NbtCompound) stackNbtOptional.get();
+
         for (var compoundsFromHistory : compounds) {
             if (compoundsFromHistory.equals(stackCompound)) {
                 compounds.remove(compoundsFromHistory);
@@ -101,7 +101,6 @@ public class FzmmHistory {
      * it will cause a codec error
      */
     private static Optional<ItemStack> parseNbt(NbtCompound nbt) {
-        DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
-        return ItemStack.fromNbt(registryManager, nbt);
+        return ItemStack.CODEC.decode(NbtOps.INSTANCE, nbt).map(Pair::getFirst).result();
     }
 }

@@ -13,7 +13,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ParityComponentTest {
@@ -89,10 +88,8 @@ public class ParityComponentTest {
             bookEditScreen.charTyped(testStr.charAt(i), 0);
         }
 
-        var content = bookEditScreen.getPageContent();
-
         MinecraftClient.getInstance().setScreen(null);
-        return Arrays.stream(content.lines).map(line -> line.content).toList();
+        return new ArrayList<>(bookEditScreen.pages);
     }
 
     private static List<String> testBookCustom(String testStr) {

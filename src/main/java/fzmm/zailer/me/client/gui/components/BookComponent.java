@@ -1,16 +1,17 @@
 package fzmm.zailer.me.client.gui.components;
 
 import fzmm.zailer.me.mixin.component.book.EditBoxAccessor;
+import fzmm.zailer.me.mixin_interfaces.IEditBoxTextColorFix;
 import io.wispforest.owo.ui.component.TextAreaComponent;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextHandler;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.EditBox;
 import net.minecraft.client.gui.screen.ingame.BookScreen;
 import net.minecraft.client.input.CursorMovement;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.component.type.WritableBookContentComponent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -27,6 +28,8 @@ public class BookComponent extends TextAreaComponent {
         // text widget width diff = SCROLLBAR_WIDTH + 2 = 8
         // bottomWidgetOffset = displayCharCount offset = 4
         super(Sizing.fixed(BookScreen.MAX_TEXT_WIDTH + 9 + 8), Sizing.fixed(BookScreen.MAX_TEXT_HEIGHT + 4));
+        ((IEditBoxTextColorFix) this).fzmm$textColor(0xFF000000);
+        ((IEditBoxTextColorFix) this).fzmm$cursorColor(0xFF222222);
 
         int rightWidgetOffset = 9;
         int bottomWidgetOffset = 4;
@@ -48,7 +51,7 @@ public class BookComponent extends TextAreaComponent {
     @Override
     protected void drawBox(DrawContext context) {
         Insets margins = this.margins().get();
-        context.drawTexture(RenderLayer::getGuiTextured, BookScreen.BOOK_TEXTURE, this.x() - margins.left(), this.y() - margins.top(), 0, 0, BookScreen.WIDTH, BookScreen.HEIGHT, 256, 256);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, BookScreen.BOOK_TEXTURE, this.x() - margins.left(), this.y() - margins.top(), 0, 0, BookScreen.WIDTH, BookScreen.HEIGHT, 256, 256);
     }
 
     @Override

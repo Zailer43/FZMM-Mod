@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.gui.main.components;
 
 import fzmm.zailer.me.client.gui.main.MainIcon;
+import io.wispforest.owo.mixin.ui.access.ClickableWidgetAccessor;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -30,21 +30,22 @@ public class MainButtonComponent extends ButtonComponent {
         context.drawRectOutline(this.getX(), this.getY(), this.width, this.height, 0x20000000);
 
         var textRenderer = MinecraftClient.getInstance().textRenderer;
-        int color = this.active ? 0xffffff : 0xa0a0a0;
+        int color = this.active ? 0xFFFFFFFF : 0xFFA0A0A0;
         int centerX = this.getX() + this.width / 2;
 
         if (this.textShadow) {
-            context.drawCenteredTextWithShadow(textRenderer, this.getMessage(), centerX, this.getY() + 10, color);
+            context.drawCenteredTextWithShadow(textRenderer, this.getMessage(), centerX,  this.getY() + 10, color);
         } else {
-            context.drawText(this.getMessage(), this.getX() + this.width / 2f - textRenderer.getWidth(this.getMessage()) / 2f, this.getY() + 10, color, Color.WHITE.argb());
+            context.drawText(textRenderer, this.getMessage(), (int) (centerX - textRenderer.getWidth(this.getMessage()) / 2f),  this.getY() + 10, color, false);
         }
+
 
         if (this.icon != null)
             this.icon.render(context, centerX - this.icon.getWidth() / 2, this.getY() + 22, mouseX, mouseY, delta);
 
-        var tooltip = this.getTooltip();
-        if (this.hovered && tooltip != null)
-            context.drawTooltip(textRenderer, tooltip.getLines(MinecraftClient.getInstance()), HoveredTooltipPositioner.INSTANCE, mouseX, mouseY);
+        var tooltip = ((ClickableWidgetAccessor) this).owo$getTooltip();
+        if (this.hovered && tooltip.getTooltip() != null)
+            context.drawTooltip(textRenderer, tooltip.getTooltip().getLines(MinecraftClient.getInstance()), HoveredTooltipPositioner.INSTANCE, mouseX, mouseY, false);
     }
 
     public void setIcon(MainIcon icon) {

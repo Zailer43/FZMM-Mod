@@ -2,8 +2,8 @@ package fzmm.zailer.me.client.gui.main;
 
 import fzmm.zailer.me.client.FzmmIcons;
 import io.wispforest.owo.itemgroup.Icon;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 
 public class MainIcon implements Icon {
     private final int width, height;
@@ -32,7 +32,7 @@ public class MainIcon implements Icon {
 
     @Override
     public void render(DrawContext context, int x, int y, int mouseX, int mouseY, float delta) {
-        context.drawTexture(RenderLayer::getGuiTextured, FzmmIcons.TEXTURE, x, y, this.u, this.v, 32, 32, 16, 16, this.textureWidth, this.textureHeight);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, FzmmIcons.TEXTURE, x, y, this.u, this.v, 32, 32, 16, 16, this.textureWidth, this.textureHeight);
     }
 
     public int getHeight() {

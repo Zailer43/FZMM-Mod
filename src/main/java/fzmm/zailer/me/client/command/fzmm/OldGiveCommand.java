@@ -8,7 +8,6 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.client.command.argument_type.ComponentArgumentType;
 import fzmm.zailer.me.client.command.argument_type.VersionArgumentType;
-import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -104,7 +103,7 @@ public class OldGiveCommand implements ISubCommand {
         try {
             NbtCompound itemNbt = writeNbt(item, damage, nbtCompound, itemVersion);
             return updateStack(itemNbt, itemVersion)
-                    .flatMap(nbtElement -> ItemStack.fromNbt(FzmmUtils.getRegistryManager(), nbtElement));
+                    .flatMap(nbtElement -> ItemStack.CODEC.decode(NbtOps.INSTANCE, nbtElement).map(com.mojang.datafixers.util.Pair::getFirst).result());
         } catch (Exception e) {
             FzmmClient.LOGGER.error("[OldGiveCommand] Failed to update item with '/fzmm old_give': {}:{} (damage: {})", item.toString(), nbtCompound.toString(), damage);
             throw e;
@@ -117,7 +116,7 @@ public class OldGiveCommand implements ISubCommand {
         return Optional.of(Schemas.getFixer().update(TypeReferences.ITEM_STACK,
                 new Dynamic<>(NbtOps.INSTANCE, nbtCompound),
                 itemVersion,
-                SharedConstants.getGameVersion().getSaveVersion().getId()
+                SharedConstants.getGameVersion().dataVersion().id()
         ).getValue());
     }
 

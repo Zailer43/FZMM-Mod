@@ -1,12 +1,14 @@
 package fzmm.zailer.me.client.gui.imagetext;
 
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.ImageMode;
@@ -25,7 +27,6 @@ import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.config.FzmmConfig;
-import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
@@ -41,6 +42,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
 
@@ -355,7 +357,12 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
 
         ItemStack placeholderStack = DisplayBuilder.builder().addLore(wrappedText).get();
         String nbtSize = ItemUtils.getLengthInKB(ItemUtils.getLengthInBytes(placeholderStack));
-        String textSize = ItemUtils.getLengthInKB(Text.Serialization.toJsonString(text, FzmmUtils.getRegistryManager()).length());
+        String textSize = ItemUtils.getLengthInKB(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, text)
+                .result()
+                .map(JsonElement::toString)
+                .orElse("")
+                .length()
+        );
 
         MutableText tooltipText = Text.empty().setStyle(Style.EMPTY.withColor(Formatting.GRAY));
         tooltipText.append(Text.translatable("fzmm.gui.imagetext.label.imagetextSize", nbtSize, textSize));

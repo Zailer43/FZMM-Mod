@@ -133,7 +133,7 @@ public class ResourcePackWriter {
         if (this.filesToWrite.containsKey(metadataPath)) {
             return;
         }
-        int packVersion = SharedConstants.getGameVersion().getResourceVersion(ResourceType.CLIENT_RESOURCES);
+        int packVersion = SharedConstants.getGameVersion().packVersion(ResourceType.CLIENT_RESOURCES);
         JsonObject mcmeta = new JsonObject();
         JsonObject pack = new JsonObject();
         pack.addProperty("pack_format", packVersion);

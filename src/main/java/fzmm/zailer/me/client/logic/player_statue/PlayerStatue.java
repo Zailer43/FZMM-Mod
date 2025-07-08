@@ -1,5 +1,8 @@
 package fzmm.zailer.me.client.logic.player_statue;
 
+import com.google.gson.JsonParser;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.JsonOps;
 import fzmm.zailer.me.builders.ArmorStandBuilder;
 import fzmm.zailer.me.builders.ContainerBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
@@ -18,9 +21,9 @@ import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import org.joml.Vector3f;
 
 import java.awt.image.BufferedImage;
@@ -164,13 +167,11 @@ public class PlayerStatue {
         float y = pos.y() - 0.1f;
         float z = pos.z() + 0.5f;
 
-        DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
-
         Text nameText = Text.of(name);
         if (name != null && !name.isEmpty()) {
             try {
                 // if serialization fails, it throws an exception
-                nameText = Text.Serialization.fromJson(name, registryManager);
+                nameText = TextCodecs.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseString(name)).map(Pair::getFirst).getOrThrow();
 
                 if (nameText == null) {
                     throw new IllegalArgumentException(String.format("[PlayerStatue] 'name' is not a valid JSON string: %s", name));

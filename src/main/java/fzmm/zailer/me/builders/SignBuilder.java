@@ -1,5 +1,6 @@
 package fzmm.zailer.me.builders;
 
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.block.entity.BlockEntity;
@@ -8,14 +9,22 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.*;
+import net.minecraft.item.HangingSignItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.storage.NbtWriteView;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
+import net.minecraft.util.ErrorReporter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class SignBuilder {
 
@@ -110,8 +119,12 @@ public class SignBuilder {
         this.stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.DEFAULT, component -> {
             NbtCompound result = component.copyNbt();
 
-            // 1.21.4+
-            BlockEntity.writeIdToNbt(result, this.isHangingSign() ? BlockEntityType.HANGING_SIGN : BlockEntityType.SIGN);
+            try (var logging = new ErrorReporter.Logging(FzmmClient.LOGGER)) {
+                NbtWriteView nbtWriteView = NbtWriteView.create(logging, FzmmUtils.getRegistryManager());
+                BlockEntity.writeId(nbtWriteView, this.isHangingSign() ? BlockEntityType.HANGING_SIGN : BlockEntityType.SIGN); // 1.21.4+
+
+                result.copyFrom(nbtWriteView.getNbt());
+            }
 
             this.addSignMessage(this.frontTextList, this.frontCompound, result, TagsConstant.SIGN_FRONT_TEXT);
             this.addSignMessage(this.backTextList, this.backCompound, result, TagsConstant.SIGN_BACK_TEXT);
@@ -137,7 +150,20 @@ public class SignBuilder {
         }
 
         NbtList listTag = new NbtList();
-        listTag.addAll(list.stream().map(FzmmUtils::toNbtElement).toList());
+        listTag.addAll(
+                list.stream()
+                        .map(text -> TextCodecs.CODEC.encodeStart(NbtOps.INSTANCE, text).result())
+                        .filter(nbtOptional -> {
+                            if (nbtOptional.isEmpty()) {
+                                FzmmClient.LOGGER.warn("[SignBuilder] Failed to encode text");
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        })
+                        .map(Optional::get)
+                        .toList()
+        );
 
         compound.put(TagsConstant.SIGN_MESSAGES, listTag);
         blockEntityTag.put(key, compound);

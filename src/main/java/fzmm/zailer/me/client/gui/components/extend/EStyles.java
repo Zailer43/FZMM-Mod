@@ -23,7 +23,7 @@ public class EStyles {
     public static final Surface DEFAULT_HOVERED = (context, component) -> context.fill(component.x(), component.y(),
             component.x() + component.width(),
             component.y() + component.height(),
-            component.zIndex(), 0x40000000
+            0x40000000
     );
 
     public static final ButtonComponent.Renderer DEFAULT_FLAT_BUTTON = ButtonComponent.Renderer

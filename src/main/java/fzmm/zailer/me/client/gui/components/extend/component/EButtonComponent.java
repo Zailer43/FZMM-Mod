@@ -31,7 +31,7 @@ public class EButtonComponent extends ButtonComponent {
         var textRenderer = MinecraftClient.getInstance().textRenderer;
 
         // drawScrollableText
-        this.drawMessage(context, textRenderer, Color.ofFormatting(this.active() ? Formatting.WHITE : Formatting.GRAY).rgb());
+        this.drawMessage(context, textRenderer, Color.ofFormatting(this.active() ? Formatting.WHITE : Formatting.GRAY).argb());
     }
 
     /**

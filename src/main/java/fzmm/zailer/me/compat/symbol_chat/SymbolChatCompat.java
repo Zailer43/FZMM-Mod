@@ -67,7 +67,7 @@ public class SymbolChatCompat {
 
     private FontComponentAdapter getFontComponent() {
         FontComponentAdapter.CustomDropDownWidget widget = new FontComponentAdapter.CustomDropDownWidget(0, 0, 180, 15,
-                SymbolChat.fontManager.getFontProcessors(), SymbolChat.selectedFont, false);
+                SymbolChat.fontManager.getFontProcessors(), SymbolChat.fontManager.getCurrentScreenFontProcessor(), false);
         int expandedHeight = 150 + widget.getHeight(); // 150 is hardcoded in DropDownWidget
         widget.setHeight(expandedHeight);
         return new FontComponentAdapter(widget, expandedHeight);

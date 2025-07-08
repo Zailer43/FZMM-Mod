@@ -12,10 +12,4 @@ accessible field net/minecraft/client/gui/screen/ingame/BookScreen WIDTH I
 accessible field net/minecraft/client/gui/screen/ingame/BookScreen HEIGHT I
 
 # Test
-accessible class net/minecraft/client/gui/screen/ingame/BookEditScreen$PageContent
-accessible class net/minecraft/client/gui/screen/ingame/BookEditScreen$Line
-
-accessible method net/minecraft/client/gui/screen/ingame/BookEditScreen getPageContent ()Lnet/minecraft/client/gui/screen/ingame/BookEditScreen$PageContent;
-
-accessible field net/minecraft/client/gui/screen/ingame/BookEditScreen$PageContent lines [Lnet/minecraft/client/gui/screen/ingame/BookEditScreen$Line;
-accessible field net/minecraft/client/gui/screen/ingame/BookEditScreen$Line content Ljava/lang/String;
+accessible field net/minecraft/client/gui/screen/ingame/BookEditScreen pages Ljava/util/List;

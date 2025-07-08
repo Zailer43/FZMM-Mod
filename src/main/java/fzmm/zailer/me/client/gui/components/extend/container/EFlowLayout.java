@@ -35,7 +35,7 @@ public class EFlowLayout extends FlowLayout {
 
     public Surface styledBackground() {
         boolean useOldVanillaBackground = FzmmClient.CONFIG.guiStyle.oldBackground();
-        return useOldVanillaBackground ? Surface.VANILLA_TRANSLUCENT : Surface.OPTIONS_BACKGROUND;
+        return useOldVanillaBackground ? Surface.VANILLA_TRANSLUCENT : Surface.optionsBackground();
     }
 
     /**

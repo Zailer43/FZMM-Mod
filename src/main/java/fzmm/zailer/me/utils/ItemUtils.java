@@ -19,13 +19,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.*;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -276,8 +272,7 @@ public class ItemUtils {
         ByteCountDataOutput byteCountDataOutput = ByteCountDataOutput.getInstance();
 
         try {
-            DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
-            NbtIo.write(stack.toNbt(registryManager), byteCountDataOutput);
+            NbtIo.write(ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).getOrThrow(), byteCountDataOutput);
         } catch (Exception ignored) {
             return 0;
         }

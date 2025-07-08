@@ -5,7 +5,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.command.ISubCommand;
-import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
@@ -16,12 +15,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class NbtCommand implements ISubCommand {
     @Override
@@ -47,10 +47,10 @@ public class NbtCommand implements ISubCommand {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
         ItemStack stack = client.player.getInventory().getSelectedStack();
-        DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
 
         ComponentChanges components = stack.getComponentChanges();
-        if (components.isEmpty() || !(stack.toNbt(registryManager) instanceof NbtCompound nbt) ||
+        Optional<NbtElement> stackNbtOptional = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).result();
+        if (components.isEmpty() || stackNbtOptional.isEmpty() || !(stackNbtOptional.get() instanceof NbtCompound nbt) ||
                 !nbt.contains(TagsConstant.ENCODE_STACK_COMPONENTS)) {
 
             ctx.getSource().sendError(Text.translatable("commands.fzmm.item.withoutNbt"));
