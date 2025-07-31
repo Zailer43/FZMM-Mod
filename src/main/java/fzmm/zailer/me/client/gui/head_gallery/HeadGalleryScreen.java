@@ -153,12 +153,12 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         this.frontEntityPreview = new CustomHeadEntity(this.client.world);
         this.backEntityPreview = new CustomHeadEntity(this.client.world);
 
-        EntityComponent<CustomHeadEntity> backEntityPreview = Components.entity(Sizing.fixed(48), this.backEntityPreview)
+        EntityComponent<CustomHeadEntity> backEntityPreview = EComponents.entity(Sizing.fixed(48), this.backEntityPreview)
                 .allowMouseRotation(true);
         backEntityPreview.onMouseDrag(0, 0, 160, 0, GLFW.GLFW_MOUSE_BUTTON_LEFT);
         backEntityPreview.allowMouseRotation(false);
 
-        previewLayout.child(Components.entity(Sizing.fixed(48), this.frontEntityPreview));
+        previewLayout.child(EComponents.entity(Sizing.fixed(48), this.frontEntityPreview));
         previewLayout.child(backEntityPreview);
         this.updatePreview(Items.PLAYER_HEAD.getDefaultStack());
 

@@ -37,7 +37,7 @@ import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.util.ScreenshotRecorder;
-import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
@@ -58,12 +58,12 @@ public class HeadComponentOverlay extends EFlowLayout {
     public static final Text GIVE_WAITING_UNDEFINED_TEXT = Text.translatable("fzmm.gui.headGenerator.wait");
     public static final String GIVE_WAITING_SECONDS_KEY = "fzmm.gui.headGenerator.wait_seconds";
     private final HeadGeneratorScreen parentScreen;
-    private final EntityComponent<Entity> previewEntity;
+    private final EntityComponent<LivingEntity> previewEntity;
     private boolean isSlimFormat;
     private ButtonComponent selectedSkinFormat;
     private SkinPreEditOption selectedSkinPreEdit;
 
-    public HeadComponentOverlay(HeadGeneratorScreen parentScreen, EntityComponent<Entity> previewEntity,
+    public HeadComponentOverlay(HeadGeneratorScreen parentScreen, EntityComponent<LivingEntity> previewEntity,
                                 AbstractHeadComponentEntry headComponentEntry) {
         super(Sizing.content(), Sizing.content(), Algorithm.VERTICAL);
         this.parentScreen = parentScreen;
@@ -87,9 +87,9 @@ public class HeadComponentOverlay extends EFlowLayout {
             this.previewEntity.cursorStyle(CursorStyle.MOVE);
             int previewEntitySize = this.previewEntity.horizontalSizing().get().value * 2;
             this.previewEntity.sizing(Sizing.fixed(previewEntitySize));
-            if (headComponentEntry.isBodyPreview()) {
-                previewLayout.sizing(Sizing.content(8), Sizing.fixed((int) (previewEntitySize * 2.5)));
-            }
+//            if (headComponentEntry.isBodyPreview()) {
+//                previewLayout.sizing(Sizing.content(8), Sizing.fixed((int) (previewEntitySize * 2.5)));
+//            }
             previewLayout.child(this.previewEntity);
 
             LabelComponent categoryLabel = panel.childByIdOrThrow(LabelComponent.class, "category-label");

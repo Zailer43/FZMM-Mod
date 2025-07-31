@@ -5,6 +5,7 @@ import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntity;
 import fzmm.zailer.me.client.entity.custom_skin.CustomPlayerSkinEntity;
 import fzmm.zailer.me.client.entity.custom_skin.ISkinMutable;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.head_generator.HeadGeneratorScreen;
@@ -23,6 +24,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +38,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     @Nullable
     private Identifier textureId;
     protected AbstractHeadEntry entry;
-    private EntityComponent<Entity> previewComponent;
+    private EntityComponent<LivingEntity> previewComponent;
     protected OverlayContainer<FlowLayout> overlayContainer;
     private boolean isBodyPreview;
 
@@ -79,24 +81,21 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
         if (this.textureId == null)
             return;
         this.isBodyPreview = isBody;
-        Entity previewEntity;
-        int size;
-        int margins;
+        LivingEntity previewEntity;
+        float scale;
         if (isBody) {
+            scale = 0.45f;
             previewEntity = new CustomPlayerSkinEntity(MinecraftClient.getInstance().world);
-            size = BODY_PREVIEW_SIZE;
-            margins = 2;
         } else {
+            scale = 1f;
             previewEntity = new CustomHeadEntity(MinecraftClient.getInstance().world);
-            size = HEAD_PREVIEW_SIZE;
-            margins = 0;
         }
         ((ISkinMutable) previewEntity).texture(this.textureId);
 
         this.removeChild(this.previewComponent);
-        this.previewComponent = Components.entity(Sizing.fixed(size), previewEntity);
-        this.previewComponent.cursorStyle(CursorStyle.HAND)
-                .margins(Insets.left(margins))
+        this.previewComponent = EComponents.entity(Sizing.fixed(HEAD_PREVIEW_SIZE), previewEntity);
+        this.previewComponent.scale(scale)
+                .cursorStyle(CursorStyle.HAND)
                 .tooltip(this.entry.getDisplayName());
         this.child(this.previewComponent);
     }
@@ -133,8 +132,9 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
         }
     }
 
-    protected EntityComponent<Entity> copyCustomHeadEntity() {
-        return Components.entity(this.previewComponent.horizontalSizing().get(), this.previewComponent.entity());
+    protected EntityComponent<LivingEntity> copyCustomHeadEntity() {
+        return EComponents.entity(this.previewComponent.horizontalSizing().get(), this.previewComponent.entity())
+                .scale(this.previewComponent.scale());
     }
 
     public void close() {
@@ -159,7 +159,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     }
 
     protected void addOverlay(HeadGeneratorScreen parent) {
-        EntityComponent<Entity> previewEntity = this.copyCustomHeadEntity().allowMouseRotation(true);
+        EntityComponent<LivingEntity> previewEntity = this.copyCustomHeadEntity().allowMouseRotation(true);
         FlowLayout overlayLayout = new HeadComponentOverlay(parent, previewEntity, this);
 
         this.overlayContainer = new OverlayContainer<>(overlayLayout) {
