@@ -103,7 +103,7 @@ public class OldGiveCommand implements ISubCommand {
         try {
             NbtCompound itemNbt = writeNbt(item, damage, nbtCompound, itemVersion);
             return updateStack(itemNbt, itemVersion)
-                    .flatMap(nbtElement -> ItemStack.CODEC.decode(NbtOps.INSTANCE, nbtElement).map(com.mojang.datafixers.util.Pair::getFirst).result());
+                    .flatMap(nbtElement -> ItemUtils.decodeFromNbt(nbtElement).result());
         } catch (Exception e) {
             FzmmClient.LOGGER.error("[OldGiveCommand] Failed to update item with '/fzmm old_give': {}:{} (damage: {})", item.toString(), nbtCompound.toString(), damage);
             throw e;

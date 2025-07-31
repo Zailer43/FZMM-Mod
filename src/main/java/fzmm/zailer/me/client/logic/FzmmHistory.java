@@ -1,13 +1,12 @@
 package fzmm.zailer.me.client.logic;
 
-import com.mojang.datafixers.util.Pair;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.utils.ItemUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtOps;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ public class FzmmHistory {
             return;
         }
 
-        Optional<NbtElement> stackNbtOptional = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).resultOrPartial();
+        Optional<NbtElement> stackNbtOptional = ItemUtils.encodeToNbt(stack).resultOrPartial();
         if (stackNbtOptional.isEmpty()) {
             return;
         }
@@ -101,6 +100,6 @@ public class FzmmHistory {
      * it will cause a codec error
      */
     private static Optional<ItemStack> parseNbt(NbtCompound nbt) {
-        return ItemStack.CODEC.decode(NbtOps.INSTANCE, nbt).map(Pair::getFirst).result();
+        return ItemUtils.decodeFromNbt(nbt).result();
     }
 }

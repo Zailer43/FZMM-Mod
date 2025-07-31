@@ -99,7 +99,7 @@ public class BookBuilder {
         for (var pageFilteredPair : this.pages) {
             Text pageText = pageFilteredPair.raw();
             if (pageText != null && WrittenBookContentComponent.exceedsSerializedLengthLimit(pageText, registryManager)) {
-                return TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, pageText).result()
+                return TextCodecs.CODEC.encodeStart(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), pageText).result()
                         .map(JsonElement::toString)
                         .map(String::length)
                         .orElse(Integer.MAX_VALUE); // Failed to encode

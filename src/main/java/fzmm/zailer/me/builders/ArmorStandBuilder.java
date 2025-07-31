@@ -1,6 +1,7 @@
 package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
@@ -70,7 +71,7 @@ public class ArmorStandBuilder {
 
     public ArmorStandBuilder setRightHandItem(ItemStack stack) {
         NbtCompound equipmentTag = new NbtCompound();
-        ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).result().ifPresentOrElse(
+        ItemUtils.encodeToNbt(stack).result().ifPresentOrElse(
                 nbtElement -> equipmentTag.put(EquipmentSlot.MAINHAND.getName(), nbtElement),
                 () -> FzmmClient.LOGGER.warn("[ArmorStandBuilder] Failed to encode item for armor stand")
         );

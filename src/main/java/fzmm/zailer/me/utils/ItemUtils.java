@@ -1,5 +1,7 @@
 package fzmm.zailer.me.utils;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.HistoryScreen;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
@@ -272,7 +274,7 @@ public class ItemUtils {
         ByteCountDataOutput byteCountDataOutput = ByteCountDataOutput.getInstance();
 
         try {
-            NbtIo.write(ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).getOrThrow(), byteCountDataOutput);
+            NbtIo.write(encodeToNbt(stack).getOrThrow(), byteCountDataOutput);
         } catch (Exception ignored) {
             return 0;
         }
@@ -290,5 +292,13 @@ public class ItemUtils {
 
         return !(client.interactionManager.getCurrentGameMode().isCreative()
                 || FzmmClient.CONFIG.general.giveClientSide());
+    }
+
+    public static DataResult<NbtElement> encodeToNbt(ItemStack stack) {
+        return ItemStack.CODEC.encodeStart(FzmmUtils.getRegistryOps(NbtOps.INSTANCE), stack);
+    }
+
+    public static DataResult<ItemStack> decodeFromNbt(NbtElement nbt) {
+        return ItemStack.CODEC.decode(FzmmUtils.getRegistryOps(NbtOps.INSTANCE), nbt).map(Pair::getFirst);
     }
 }

@@ -171,7 +171,7 @@ public class PlayerStatue {
         if (name != null && !name.isEmpty()) {
             try {
                 // if serialization fails, it throws an exception
-                nameText = TextCodecs.CODEC.decode(JsonOps.INSTANCE, JsonParser.parseString(name)).map(Pair::getFirst).getOrThrow();
+                nameText = TextCodecs.CODEC.decode(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), JsonParser.parseString(name)).map(Pair::getFirst).getOrThrow();
 
                 if (nameText == null) {
                     throw new IllegalArgumentException(String.format("[PlayerStatue] 'name' is not a valid JSON string: %s", name));

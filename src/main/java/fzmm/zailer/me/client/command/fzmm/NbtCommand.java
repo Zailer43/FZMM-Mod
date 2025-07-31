@@ -5,6 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.command.ISubCommand;
+import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
@@ -15,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
 
@@ -42,15 +42,14 @@ public class NbtCommand implements ISubCommand {
         }).build();
     }
 
-
     private void showNbt(CommandContext<FabricClientCommandSource> ctx) {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
         ItemStack stack = client.player.getInventory().getSelectedStack();
 
-        ComponentChanges components = stack.getComponentChanges();
-        Optional<NbtElement> stackNbtOptional = ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).result();
-        if (components.isEmpty() || stackNbtOptional.isEmpty() || !(stackNbtOptional.get() instanceof NbtCompound nbt) ||
+        ComponentChanges modifiedComponent = stack.getComponentChanges(); // use only to check if it has modified nbt
+        Optional<NbtElement> stackNbtOptional = ItemUtils.encodeToNbt(stack).result();
+        if (modifiedComponent.isEmpty() || stackNbtOptional.isEmpty() || !(stackNbtOptional.get() instanceof NbtCompound nbt) ||
                 !nbt.contains(TagsConstant.ENCODE_STACK_COMPONENTS)) {
 
             ctx.getSource().sendError(Text.translatable("commands.fzmm.item.withoutNbt"));

@@ -152,7 +152,7 @@ public class SignBuilder {
         NbtList listTag = new NbtList();
         listTag.addAll(
                 list.stream()
-                        .map(text -> TextCodecs.CODEC.encodeStart(NbtOps.INSTANCE, text).result())
+                        .map(text -> TextCodecs.CODEC.encodeStart(FzmmUtils.getRegistryOps(NbtOps.INSTANCE), text).result())
                         .filter(nbtOptional -> {
                             if (nbtOptional.isEmpty()) {
                                 FzmmClient.LOGGER.warn("[SignBuilder] Failed to encode text");

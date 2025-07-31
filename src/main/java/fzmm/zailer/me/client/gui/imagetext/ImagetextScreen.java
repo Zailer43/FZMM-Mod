@@ -27,6 +27,7 @@ import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
@@ -357,7 +358,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
 
         ItemStack placeholderStack = DisplayBuilder.builder().addLore(wrappedText).get();
         String nbtSize = ItemUtils.getLengthInKB(ItemUtils.getLengthInBytes(placeholderStack));
-        String textSize = ItemUtils.getLengthInKB(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, text)
+        String textSize = ItemUtils.getLengthInKB(TextCodecs.CODEC.encodeStart(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), text)
                 .result()
                 .map(JsonElement::toString)
                 .orElse("")
