@@ -29,9 +29,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.util.DefaultSkinHelper;
 import net.minecraft.client.util.SkinTextures;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -160,7 +162,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
         previewLayout.child(EComponents.entity(Sizing.fixed(48), this.frontEntityPreview));
         previewLayout.child(backEntityPreview);
-        this.updatePreview(Items.PLAYER_HEAD.getDefaultStack());
+        this.updatePreview(DefaultSkinHelper.getSteve());
 
         this.applyFilters();
         this.setPage(1);
@@ -445,12 +447,26 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
     }
 
     private void updatePreview(ItemStack stack) {
-        Optional<SkinTextures> skinTextures = HeadUtils.getSkinTextures(stack);
-        if (skinTextures.isEmpty())
-            return;
+        Optional<SkinTextures> skinTexturesOptional = HeadUtils.getSkinTextures(stack);
+        ProfileComponent profileComponent = stack.get(DataComponentTypes.PROFILE);
 
-        this.frontEntityPreview.skin(skinTextures.get());
-        this.backEntityPreview.skin(skinTextures.get());
+        if (skinTexturesOptional.isPresent() || profileComponent == null) {
+            this.updatePreview(skinTexturesOptional.orElse(DefaultSkinHelper.getSteve()));
+            return;
+        }
+
+        assert this.client != null;
+        this.client.getSkinProvider().fetchSkinTextures(profileComponent.gameProfile())
+                .whenComplete((skinTextures, throwable) -> {
+                    if (throwable == null && skinTextures.isPresent()) {
+                        this.updatePreview(skinTextures.get());
+                    }
+                });
+    }
+
+    private void updatePreview(SkinTextures textures) {
+        this.frontEntityPreview.skin(textures);
+        this.backEntityPreview.skin(textures);
     }
 
 
