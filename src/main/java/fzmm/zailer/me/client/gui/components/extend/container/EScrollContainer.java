@@ -12,6 +12,7 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import org.w3c.dom.Element;
 
+import java.util.List;
 import java.util.Map;
 
 public class EScrollContainer<C extends Component> extends ScrollContainer<C> {
@@ -69,6 +70,38 @@ public class EScrollContainer<C extends Component> extends ScrollContainer<C> {
         this.scrollbarOffset = this.direction == ScrollDirection.VERTICAL ?
                 this.getScrollbarX(this.flipScroll, this.scrollbarOffset) :
                 this.getScrollbarY(this.flipScroll, this.scrollbarOffset);
+    }
+
+    /**
+     * Copy of {@link io.wispforest.owo.ui.base.BaseParentComponent#drawChildren(OwoUIDrawContext, int, int, float, float, List)}
+     * with workaround to owo-lib in 1.21.6 - 1.21.8
+     */
+    @Override
+    protected void drawChildren(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta, List<? extends Component> children) {
+        if (!this.allowOverflow) {
+            var padding = this.padding.get();
+            context.enableScissor(this.x + padding.left(), this.y + padding.top(), this.x + padding.left() + this.width - padding.horizontal(), this.y + padding.top() + this.height - padding.vertical());
+        }
+
+        var focusHandler = this.focusHandler();
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0; i < children.size(); i++) {
+            final var child = children.get(i);
+            int x = Math.max(child.x(), 0); // in 1.21.6 if x or y is less than 0 scissor is applied incorrectly
+            int y = Math.max(child.y(), 0);
+            if (child.width() <= 0 || child.height() <= 0) continue;
+
+            if (!(context.scissorContains(x, y) || context.scissorContains(x + child.width(), y + child.height()))) continue;
+
+            child.draw(context, mouseX, mouseY, partialTicks, delta);
+            if (focusHandler.lastFocusSource() == FocusSource.KEYBOARD_CYCLE && focusHandler.focused() == child) {
+                child.drawFocusHighlight(context, mouseX, mouseY, partialTicks, delta);
+            }
+        }
+
+        if (!this.allowOverflow) {
+            context.disableScissor();
+        }
     }
 
     @Override
