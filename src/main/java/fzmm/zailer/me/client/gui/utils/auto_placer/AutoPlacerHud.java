@@ -8,16 +8,22 @@ import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.HologramPlacerScreen;
 import fzmm.zailer.me.client.gui.player_statue.PlayerStatuePlacerScreen;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.base.BaseComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.hud.Hud;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,8 +142,20 @@ public class AutoPlacerHud {
     }
 
     public static void init() {
+        UseBlockCallback.EVENT.register(AutoPlacerHud::interactEvent);
         addActivation(PlayerStatuePlacerScreen.getActivation());
         addActivation(HologramPlacerScreen.getActivation());
+    }
+
+    private static ActionResult interactEvent(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
+        if (!world.isClient()) return ActionResult.PASS;
+        if (player.isSneaking()) return ActionResult.PASS;
+        if (ItemUtils.isNotAllowedToGive()) return ActionResult.PASS;
+
+        ItemStack stack = player.getStackInHand(hand);
+        if (stack.getNbt() == null || stack.getNbt().isEmpty()) return ActionResult.PASS;
+
+        return AutoPlacerHud.check(stack) ? ActionResult.FAIL : ActionResult.PASS;
     }
 
     public static void removeHud() {
