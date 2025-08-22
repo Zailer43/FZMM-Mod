@@ -1,17 +1,14 @@
 package fzmm.zailer.me.client.gui.components.extend;
 
-import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
-import fzmm.zailer.me.client.gui.components.extend.component.EEntityComponent;
-import fzmm.zailer.me.client.gui.components.extend.component.EItemComponent;
-import fzmm.zailer.me.client.gui.components.extend.component.ELabelComponent;
+import fzmm.zailer.me.client.gui.components.extend.component.*;
 import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.util.UISounds;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 /**
  * Extended components of the owo-lib components
@@ -45,5 +42,9 @@ public class EComponents {
 
     public static <E extends LivingEntity> EEntityComponent<E> entity(Sizing sizing, E entity) {
         return new EEntityComponent<>(sizing, entity);
+    }
+
+    public static ETextureComponent texture(Identifier texture, int u, int v, int regionWidth, int regionHeight, int textureWidth, int textureHeight) {
+        return new ETextureComponent(texture, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
     }
 }

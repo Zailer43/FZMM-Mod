@@ -1,5 +1,5 @@
 <owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.5/owo-ui.xsd">
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.21.6/owo-ui.xsd">
     <components>
         <fzmm.flow-layout direction="vertical">
             <children>
@@ -8,73 +8,71 @@
                     <text translate="true">fzmm.gui.title.main</text>
                 </fzmm.label>
 
-                <fzmm.scroll direction="vertical">
-                    <fzmm.flow-layout direction="ltr-text-flow">
-                        <children>
-                            <template name="main-button-layout">
-                                <name>imagetext</name>
-                            </template>
-                            <template name="main-button-layout">
-                                <name>textFormat</name>
-                            </template>
-                            <template name="main-button-layout">
-                                <name>playerStatue</name>
-                            </template>
-                            <template name="main-button-layout">
-                                <name>encryptbook</name>
-                            </template>
-                            <template name="main-button-layout">
-                                <name>headGenerator</name>
-                            </template>
-                            <template name="main-button-layout">
-                                <name>converters</name>
-                            </template>
-                            <template name="main-button-layout">
-                                <name>history</name>
-                            </template>
-                            <template name="main-button-layout">
-                                <name>headGallery</name>
-                            </template>
-                            <template name="main-button-layout">
-                                <name>bannerEditor</name>
-                            </template>
-                        </children>
-
-                        <sizing>
-                            <horizontal method="fill">100</horizontal>
-                        </sizing>
-
-                        <vertical-alignment>top</vertical-alignment>
-                        <horizontal-alignment>center</horizontal-alignment>
-
-                        <gap>5</gap>
-
-                    </fzmm.flow-layout>
-
-                    <sizing>
-                        <vertical method="fill">70</vertical>
-                        <horizontal method="fill">80</horizontal>
-                    </sizing>
-                </fzmm.scroll>
-
                 <fzmm.flow-layout direction="vertical">
+                    <children>
+                        <fzmm.label id="hovered">
+                            <margins>
+                                <top>4  </top>
+                            </margins>
+
+                            <sizing>
+                                <vertical method="fixed">12</vertical>
+                            </sizing>
+                        </fzmm.label>
+
+                        <fzmm.flow-layout direction="ltr-text-flow" id="content">
+                            <children>
+                            </children>
+
+                            <margins>
+                                <top>4</top>
+                                <bottom>4</bottom>
+                            </margins>
+
+                            <sizing>
+                                <horizontal method="fixed">300</horizontal>
+                            </sizing>
+
+                            <gap>3</gap>
+                        </fzmm.flow-layout>
+                    </children>
+
+                    <padding>
+                        <all>6</all>
+                    </padding>
+
+                    <margins>
+                        <bottom>20</bottom>
+                    </margins>
+
+                    <surface>
+                        <panel dark="true"/>
+                    </surface>
+
+                    <horizontal-alignment>center</horizontal-alignment>
+                </fzmm.flow-layout>
+
+                <fzmm.flow-layout direction="horizontal">
                     <children>
 
                         <button id="config-button">
                             <text translate="true">fzmm.gui.title.configs.icon</text>
                             <tooltip-text translate="true">fzmm.gui.title.configs</tooltip-text>
 
-                            <margins>
-                                <right>3</right>
-                                <top>3</top>
-                            </margins>
-
                             <sizing>
                                 <vertical method="fixed">16</vertical>
+                                <horizontal method="fixed">16</horizontal>
                             </sizing>
                         </button>
 
                     </children>
+
+                    <margins>
+                        <top>3</top>
+                        <right>3</right>
+                    </margins>
+
+                    <gap>8</gap>
 
                     <positioning type="relative">100,0</positioning>
 
@@ -120,17 +118,34 @@
 
     <templates>
         <main-button-layout>
-            <fzmm.main-button id="{{name}}-button">
-                <text translate="true">fzmm.gui.title.{{name}}</text>
-                <sizing>
-                    <horizontal method="fixed">150</horizontal>
-                    <vertical method="fixed">60</vertical>
-                </sizing>
+            <stack-layout>
+                <children>
+                    <fzmm.button id="{{name}}">
+                        <margins>
+                            <bottom>3</bottom>
+                        </margins>
 
-                <margins>
-                    <bottom>5</bottom>
-                </margins>
-            </fzmm.main-button>
+                        <sizing>
+                            <horizontal method="fixed">40</horizontal>
+                            <vertical method="fixed">40</vertical>
+                        </sizing>
+                    </fzmm.button>
+
+                    <fzmm.texture texture="fzmm:textures/gui/widgets.png"
+                             region-width="16" region-height="16"
+                             u="{{u}}" v="{{v}}" id="icon">
+
+                        <sizing>
+                            <horizontal method="fixed">32</horizontal>
+                            <vertical method="fixed">32</vertical>
+                        </sizing>
+
+                        <margins>
+                            <all>4</all>
+                        </margins>
+                    </fzmm.texture>
+                </children>
+            </stack-layout>
         </main-button-layout>
     </templates>
 </owo-ui>
