@@ -248,8 +248,7 @@ public class HeadComponentOverlay extends EFlowLayout {
     }
 
     private ButtonComponent getModelButton(AbstractHeadComponentEntry headComponentEntry, HeadModelEntry modelEntry,
-                                           int amount, int iconV, @Nullable Consumer<ButtonComponent> callback) {
-        Icon icon = Icon.of(FzmmIcons.TEXTURE, 64, iconV, 256, 256);
+                                           int amount, Icon icon, @Nullable Consumer<ButtonComponent> callback) {
         ButtonComponent result = Components.button(Text.empty(), button -> {
             BufferedImage preview = headComponentEntry.getPreview();
             for (int i = 0; i < amount; i++) {
@@ -291,17 +290,16 @@ public class HeadComponentOverlay extends EFlowLayout {
         FlowLayout rotateSecondRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
         rotateSecondRow.gap(4);
 
-        int iconV = 0;
         rotateFirstRow.children(List.of(
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_X_AXIS, 1, iconV, null),
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Y_AXIS, 1, iconV += 16, null),
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Z_AXIS, 1, iconV += 16, null)
+                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_X_AXIS, 1, FzmmIcons.ROTATE_IN_X_POS, null),
+                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Y_AXIS, 1, FzmmIcons.ROTATE_IN_Y_POS, null),
+                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Z_AXIS, 1, FzmmIcons.ROTATE_IN_Z_POS, null)
         ));
 
         rotateSecondRow.children(List.of(
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_X_AXIS, 3, iconV += 16, null),
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Y_AXIS, 3, iconV += 16, null),
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Z_AXIS, 3, iconV + 16, null)
+                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_X_AXIS, 3, FzmmIcons.ROTATE_IN_X_NEG, null),
+                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Y_AXIS, 3, FzmmIcons.ROTATE_IN_Y_NEG, null),
+                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Z_AXIS, 3, FzmmIcons.ROTATE_IN_Z_NEG, null)
         ));
 
         rotateLayout.children(List.of(rotateFirstRow, rotateSecondRow));
@@ -356,9 +354,9 @@ public class HeadComponentOverlay extends EFlowLayout {
         List<ButtonComponent> buttons = new ArrayList<>();
         List<Component> optionsList = new ArrayList<>();
 
-        ButtonComponent slim = this.getModelButton(headComponentEntry, InternalModels.WIDE_TO_SLIM, 1, 96,
+        ButtonComponent slim = this.getModelButton(headComponentEntry, InternalModels.WIDE_TO_SLIM, 1, FzmmIcons.MODEL_SLIM,
                 modelButton -> this.skinFormatCallback(buttons, modelButton, true));
-        ButtonComponent wide = this.getModelButton(headComponentEntry, InternalModels.SLIM_TO_WIDE, 1, 112,
+        ButtonComponent wide = this.getModelButton(headComponentEntry, InternalModels.SLIM_TO_WIDE, 1, FzmmIcons.MODEL_WIDE,
                 modelButton -> this.skinFormatCallback(buttons, modelButton, false));
 
         optionsList.add(EContainers.horizontalFlow(Sizing.content(), Sizing.content())
