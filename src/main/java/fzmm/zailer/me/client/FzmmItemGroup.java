@@ -37,6 +37,7 @@ public class FzmmItemGroup {
 
     public static void register() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.OPERATOR).register(entries -> {
+            if (MinecraftClient.getInstance().player == null || MinecraftClient.getInstance().world == null) return;
             ArrayList<ItemStack> newEntries = new ArrayList<>();
 
             newEntries.add(new ItemStack(Items.FILLED_MAP));
@@ -354,6 +355,8 @@ public class FzmmItemGroup {
     }
 
     private static void addLootChest(ItemGroup.Entries entries, Item item, List<String> pathList) {
+        if (MinecraftClient.getInstance().player == null || MinecraftClient.getInstance().world == null) return;
+
         for (var path : pathList) {
             ItemStack chest = new ItemStack(item);
             NbtCompound blockEntityTag = new NbtCompound();
