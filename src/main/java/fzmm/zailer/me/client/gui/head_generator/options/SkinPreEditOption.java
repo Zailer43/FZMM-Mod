@@ -8,11 +8,11 @@ import io.wispforest.owo.itemgroup.Icon;
 import java.awt.*;
 
 public enum SkinPreEditOption implements IMode {
-    NONE("none", Icon.of(FzmmIcons.TEXTURE, 48, 0, 256, 256), (graphics, skin, skinPart) ->  {
+    NONE("none", FzmmIcons.PRE_EDIT_NONE, (graphics, skin, skinPart) ->  {
         ImageUtils.drawUsedPixels(skin, false, graphics, false, skinPart);
         ImageUtils.drawUsedPixels(skin, true, graphics, true, skinPart);
     }),
-    OVERLAP("overlap", Icon.of(FzmmIcons.TEXTURE, 48, 16, 256, 256), (graphics, skin, skinPart) -> {
+    OVERLAP("overlap", FzmmIcons.PRE_EDIT_OVERLAP, (graphics, skin, skinPart) -> {
         ImageUtils.drawUsedPixels(skin, false, graphics, false, skinPart);
         ImageUtils.drawUsedPixels(skin, true, graphics, false, skinPart);
 
@@ -20,7 +20,7 @@ public enum SkinPreEditOption implements IMode {
         graphics.setBackground(new Color(0, 0, 0, 0));
         ImageUtils.clearRect(graphics, new byte[][]{usedAreas[2], usedAreas[3]});
     }),
-    REMOVE("remove", Icon.of(FzmmIcons.TEXTURE, 48, 32, 256, 256), (graphics, skin, skinPart) -> {
+    REMOVE("remove", FzmmIcons.PRE_EDIT_REMOVE, (graphics, skin, skinPart) -> {
         ImageUtils.drawUsedPixels(skin, false, graphics, false, skinPart);
 
         byte[][] usedAreas = skinPart.usedAreas();
