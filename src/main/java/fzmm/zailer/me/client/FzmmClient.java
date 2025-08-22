@@ -1,14 +1,15 @@
 package fzmm.zailer.me.client;
 
 import fzmm.zailer.me.client.command.FzmmCommand;
+import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntity;
+import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntityModel;
+import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntityRenderer;
 import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
 import fzmm.zailer.me.client.gui.main.MainScreen;
 import fzmm.zailer.me.client.gui.utils.auto_placer.AutoPlacerHud;
 import fzmm.zailer.me.client.logic.FzmmHistory;
+import fzmm.zailer.me.client.logic.ItemTooltipAppend;
 import fzmm.zailer.me.client.logic.head_generator.HeadResourcesLoader;
-import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntity;
-import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntityModel;
-import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntityRenderer;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.fabricmc.api.ClientModInitializer;
@@ -85,5 +86,6 @@ public class FzmmClient implements ClientModInitializer {
         ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new HeadResourcesLoader());
 
         AutoPlacerHud.init();
+        ItemTooltipAppend.init();
     }
 }
