@@ -46,7 +46,8 @@ public class FzmmItemGroup {
 
     public static void register() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.OPERATOR).register(entries -> {
-            DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
+            if (MinecraftClient.getInstance().player == null || MinecraftClient.getInstance().world == null) return;
+            DynamicRegistryManager registryManager = MinecraftClient.getInstance().player.getRegistryManager();
             ArrayList<ItemStack> newEntries = new ArrayList<>();
 
             newEntries.add(new ItemStack(Items.FILLED_MAP));
@@ -375,8 +376,9 @@ public class FzmmItemGroup {
         return ItemPredicate.Builder.create().tag(Registries.ITEM, tag).build();
     }
 
-    private static void addLootChest(ItemGroup.Entries entries, Item item, List<RegistryKey<LootTable>> lootTableList,
-                                     boolean isBrushable) {
+    private static void addLootChest(ItemGroup.Entries entries, Item item, List<RegistryKey<LootTable>> lootTableList, boolean isBrushable) {
+        if (MinecraftClient.getInstance().player == null || MinecraftClient.getInstance().world == null) return;
+
         for (var lootTable : lootTableList) {
             ItemStack stack = new ItemStack(item);
 
