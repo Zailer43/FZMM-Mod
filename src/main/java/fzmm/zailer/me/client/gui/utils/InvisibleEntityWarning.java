@@ -61,7 +61,7 @@ public class InvisibleEntityWarning {
         overlayTextLayout.child(getCopyButton("/kill @e[tag=" + tag + "] ", Text.translatable("fzmm.snack_bar.entityDifficultToRemove.operator.kill", customEntity)));
         overlayTextLayout.child(getCopyButton("/kill @e[tag=" + tag + ",distance=..3] ", Text.translatable("fzmm.snack_bar.entityDifficultToRemove.operator.killDistance", customEntity)));
         if (isInvisible) {
-            overlayTextLayout.child(getCopyButton("/execute as @e[tag=" + tag + "] run data merge entity @s {Invisible:0b}", Text.translatable("fzmm.snack_bar.entityDifficultToRemove.operator.removeInvisibility", customEntity)));
+            overlayTextLayout.child(getCopyButton("/execute as @e[tag=" + tag + ",distance=..3] run data merge entity @s {Invisible:0b}", Text.translatable("fzmm.snack_bar.entityDifficultToRemove.operator.removeInvisibility", customEntity)));
         }
         overlayTextLayout.child(getLine());
 
