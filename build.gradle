@@ -37,6 +37,7 @@ dependencies {
 
     def fabricDependencies = [
             'fabric-command-api-v2',
+            'fabric-item-api-v1',
             'fabric-item-group-api-v1',
             'fabric-key-binding-api-v1',
             'fabric-resource-loader-v0',
