@@ -4,6 +4,7 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.*;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
+import fzmm.zailer.me.client.gui.components.extend.component.ETextureComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.extend.container.EScrollContainer;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
@@ -15,7 +16,6 @@ import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTabIdentifier;
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 import fzmm.zailer.me.client.gui.components.tabs.ScreenTabContainer;
-import fzmm.zailer.me.client.gui.main.components.MainButtonComponent;
 import fzmm.zailer.me.client.gui.text_format.components.ColorListContainer;
 import fzmm.zailer.me.client.gui.utils.memento.IMemento;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
@@ -282,6 +282,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "button"), element -> EComponents.button(Text.empty()));
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "item"), element -> EComponents.item(ItemStack.EMPTY));
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "label"), element -> EComponents.label(Text.empty()));
+        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "texture"), ETextureComponent::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "flow-layout"), EFlowLayout::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "scroll"), EScrollContainer::parse);
 
@@ -293,7 +294,6 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "suggest-text-option"), element -> new SuggestionTextBox());
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "image-option"), element -> new ImageButtonComponent());
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "screen-tab"), ScreenTabContainer::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "main-button"), element -> new MainButtonComponent(Text.empty(), buttonComponent -> {}));
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "screenshot-zone"), element -> new ScreenshotZoneComponent());
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "color-list"), ColorListContainer::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "font-text-box"), element -> new FontTextBoxComponent(Sizing.fixed(100)));
