@@ -54,8 +54,12 @@ public class OldGiveCommand implements ISubCommand {
         });
         var nbtNode = ClientCommandManager.argument("nbt", ComponentArgumentType.component()).executes(ctx -> {
             Identifier item = ctx.getArgument("item", Identifier.class);
-            // 4 = fzmm -> old_give -> item -> nbt, 5 if damage is specified
-            int damage = ctx.getNodes().size() == 4 ? 0 : IntegerArgumentType.getInteger(ctx, "damage");
+            int damage;
+            try {
+                damage = ctx.getArgument("damage", int.class);
+            } catch (IllegalArgumentException ignored) {
+                damage = 0;// damage no specified
+            }
             NbtCompound nbt = ComponentArgumentType.getNbtCompound(ctx, "nbt");
 
             oldGiveItem(item, damage, nbt, VersionArgumentType.VERSIONS.get(0));
@@ -63,8 +67,12 @@ public class OldGiveCommand implements ISubCommand {
         });
         var versionNode = ClientCommandManager.argument("item_version", VersionArgumentType.version()).executes(ctx -> {
             Identifier item = ctx.getArgument("item", Identifier.class);
-            // 5 = fzmm -> old_give ->  item -> nbt -> item_version, 6 if damage is specified
-            int damage = ctx.getNodes().size() == 5 ? 0 : IntegerArgumentType.getInteger(ctx, "damage");
+            int damage;
+            try {
+                damage = ctx.getArgument("damage", int.class);
+            } catch (IllegalArgumentException ignored) {
+                damage = 0;// damage no specified
+            }
             NbtCompound nbt = ComponentArgumentType.getNbtCompound(ctx, "nbt");
             Pair<String, Integer> version = VersionArgumentType.getVersion(ctx, "item_version");
 
