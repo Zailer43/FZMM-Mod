@@ -48,7 +48,8 @@ public class FzmmItemGroup {
 
     public static void register() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.OPERATOR).register(entries -> {
-            DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
+            if (MinecraftClient.getInstance().player == null || MinecraftClient.getInstance().world == null) return;
+            DynamicRegistryManager registryManager = MinecraftClient.getInstance().player.getRegistryManager();
             ArrayList<ItemStack> newEntries = new ArrayList<>();
 
             newEntries.add(new ItemStack(Items.FILLED_MAP));
@@ -377,8 +378,9 @@ public class FzmmItemGroup {
         return ItemPredicate.Builder.create().tag(Registries.ITEM, tag).build();
     }
 
-    private static void addLootChest(ItemGroup.Entries entries, Item item, List<RegistryKey<LootTable>> lootTableList,
-                                     boolean isBrushable) {
+    private static void addLootChest(ItemGroup.Entries entries, Item item, List<RegistryKey<LootTable>> lootTableList, boolean isBrushable) {
+        if (MinecraftClient.getInstance().player == null || MinecraftClient.getInstance().world == null) return;
+        DynamicRegistryManager registryManager = MinecraftClient.getInstance().player.getRegistryManager();
         for (var lootTable : lootTableList) {
             ItemStack stack = new ItemStack(item);
 
@@ -392,7 +394,7 @@ public class FzmmItemGroup {
                     NbtCompound result = component.copyNbt();
 
                     try (var logging = new ErrorReporter.Logging(FzmmClient.LOGGER)) {
-                        NbtWriteView nbtWriteView = NbtWriteView.create(logging, FzmmUtils.getRegistryManager());
+                        NbtWriteView nbtWriteView = NbtWriteView.create(logging, registryManager);
                         BlockEntity.writeId(nbtWriteView, BlockEntityType.BRUSHABLE_BLOCK); //  1.21.4+
 
                         result.copyFrom(nbtWriteView.getNbt());
