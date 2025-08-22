@@ -9,7 +9,6 @@
     "entity.force_invisible_item_frame.ItemFrameEntityRendererMixin",
     "item_group.fix_translations_update.ItemGroupDisplayContextMixin",
     "item_group.operator_utilities_without_op.ItemGroupMixin",
-    "item_stack.auto_placer.ClientPlayerInteractionManagerMixin",
     "modify_fzmm_command.allow_paragraphs_symbol.TextFieldWidgetMixin",
     "modify_fzmm_command.modify_chat.ChatScreenMixin",
     "screenshot_hud.ChatHudMixin",
