@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class VersionArgumentType implements ArgumentType<Pair<String, Integer>> {
     private static final List<String> EXAMPLES = List.of("1.20.4", "1.12.2");
-    public static final int LATEST_VERSION_WITH_DAMAGE = 1139;
+    public static final int LATEST_VERSION_WITH_DAMAGE = 1343;
     public static final List<Pair<String, Integer>> VERSIONS;
 
     public Pair<String, Integer> parse(StringReader stringReader) throws CommandSyntaxException {
@@ -97,9 +97,9 @@ public class VersionArgumentType implements ArgumentType<Pair<String, Integer>> 
         result.add(new Pair<>("1.13.1", 1628));
         result.add(new Pair<>("1.13", 1519));
 
-        result.add(new Pair<>("1.12.2", 1343));
+        result.add(new Pair<>("1.12.2", LATEST_VERSION_WITH_DAMAGE));
         result.add(new Pair<>("1.12.1", 1241));
-        result.add(new Pair<>("1.12", LATEST_VERSION_WITH_DAMAGE));
+        result.add(new Pair<>("1.12", 1139));
 
         return List.copyOf(result);
     }
