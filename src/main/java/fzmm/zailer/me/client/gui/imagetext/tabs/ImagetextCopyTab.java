@@ -18,7 +18,7 @@ public class ImagetextCopyTab implements IImagetextTab {
     @Override
     public void execute(ImagetextLogic logic) {
         MinecraftClient client = MinecraftClient.getInstance();
-        FzmmUtils.setScreen(new CopyTextScreen(client.currentScreen, logic.getText()));
+        client.execute(() -> FzmmUtils.setScreen(new CopyTextScreen(client.currentScreen, logic.getText())));
     }
 
     @Override
