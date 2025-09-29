@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report a bug
-title: "[Bug]: "
+title: "[Bug] "
 labels: ["bug"]
 body:
   - type: checkboxes
@@ -33,7 +33,7 @@ body:
         
         1. Get a book from creative mode
         
-        2. Use `/fzmm enchant sharpness 3`
+        2. Use: /fzmm enchant sharpness 3
         
         3. The enchantment is knockback!
     validations:
@@ -42,14 +42,22 @@ body:
     id: versions
     attributes:
       label: Versions
-      description: The versions you were using
+      description: The versions of FZMM and its dependencies that you were using
       placeholder: >-
         FZMM = 1.0.0
         
         Minecraft = 2.0.0
+        
+        Fabric API = 0.123.0
+        
+        owo-lib = 1.0.0
       value: >-
         FZMM:
         
         Minecraft:
+        
+        Fabric API:
+        
+        owo-lib:
     validations:
       required: true
