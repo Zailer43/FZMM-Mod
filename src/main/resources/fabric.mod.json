@@ -36,7 +36,7 @@
   "accessWidener": "fzmm.accesswidener",
   "depends": {
     "fabricloader": ">=0.16.8",
-    "fabric": "*",
+    "fabric": ">=0.131.0",
     "minecraft": ">=1.21.6 <=1.21.8",
     "owo": ">=0.12.21 <0.13.0"
   },
