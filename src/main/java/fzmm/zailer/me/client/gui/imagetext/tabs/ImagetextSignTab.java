@@ -9,7 +9,9 @@ import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
+import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
+import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
 import net.minecraft.block.Blocks;
@@ -24,6 +26,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
@@ -35,17 +38,11 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
     private static final String BASE_ITEMS_TRANSLATION_KEY = "fzmm.item.imagetext.sign.";
     private ContextMenuButton signTypeButton;
     private SmallCheckboxComponent isHangingSignButton;
-    private String characters;
     private WoodType woodType;
 
     @Override
-    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        this.characters = algorithm.getCharacters();
-        if (isExecute) {
-            logic.generateImagetext(algorithm, data, this.getLineSplitInterval(this.characters));
-        } else {
-            logic.generateImagetext(algorithm, data);
-        }
+    public void build(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.buildImagetext(algorithm, data);
     }
 
     @Override
@@ -53,21 +50,21 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
         int color = FzmmClient.CONFIG.colors.imagetextMessages().rgb();
 
         List<ItemStack> signContainers = ContainerBuilder.builder()
-                .containerItem(Items.GRAY_SHULKER_BOX)//todo
+                .containerItem(Items.GRAY_SHULKER_BOX)//TODO: replace hardcoded
                 .maxItemByContainer(27)
-                .addAll(this.getSignItems(logic))
+                .addAll(this.signItemsOf(logic))
                 .getAsList();
 
         ItemStack signMainContainer = ContainerBuilder.builder()
-                .containerItem(Items.LIGHT_GRAY_SHULKER_BOX)//TODO
+                .containerItem(Items.LIGHT_GRAY_SHULKER_BOX)
                 .maxItemByContainer(27)
                 .add(
                         DisplayBuilder.builder()
                                 .item(Items.PAPER)
                                 .setName(
                                         Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "details.name",
-                                                this.getHorizontalSigns(logic.getWidth(), this.getLineSplitInterval(this.characters)),
-                                                this.getVerticalSigns(logic.getHeight())
+                                                this.horizontalSignsOf(logic.text()),
+                                                this.verticalSignsOf(logic.height())
                                         ), color)
                                 .get()
                 ).addAll(signContainers)
@@ -75,7 +72,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
 
         signMainContainer = DisplayBuilder.of(signMainContainer)
                 .setName(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "container.name"), color)
-                .addLore(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "container.lore.1", logic.getWidth(), logic.getHeight()), color)
+                .addLore(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "container.lore.1", logic.width(), logic.height()), color)
                 .get();
 
         ItemUtils.give(signMainContainer);
@@ -114,18 +111,21 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
         return Text.translatable("block.minecraft." + type.name() + "_sign");
     }
 
-    public List<ItemStack> getSignItems(ImagetextLogic logic) {
+    public List<ItemStack> signItemsOf(ImagetextLogic logic) {
+        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
         List<SignBuilder> signBuilders = new ArrayList<>();
-        List<Text> imagetext = logic.getWrappedText();
-        int width = logic.getWidth();
-        int height = logic.getHeight();
+        List<Text> imagetext = logic.text();
+        int height = logic.height();
 
-        int lineSplitInterval = this.getLineSplitInterval(this.characters);
-        int horizontalSigns = this.getHorizontalSigns(width, lineSplitInterval);
-        int verticalSigns = this.getVerticalSigns(height);
+        int horizontalSigns = this.horizontalSignsOf(imagetext);
+        int verticalSigns = this.verticalSignsOf(height);
         int maxTextWidth = this.getMaxTextWidth();
         Item item = this.getItem();
 
+        OrderedText[][] imagetextWrapped = new OrderedText[imagetext.size()][horizontalSigns];
+        for (int i = 0; i != imagetext.size(); i++) {
+            imagetextWrapped[i] = textRenderer.wrapLines(imagetext.get(i), maxTextWidth).toArray(OrderedText[]::new);
+        }
 
         for (int y = 0; y != verticalSigns; y++) {
             for (int x = 0; x != horizontalSigns; x++) {
@@ -135,33 +135,52 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
                     signBuilders.add(SignBuilder.builder().item(item));
                 }
 
-                SignBuilder signBuilder = signBuilders.get(index);
-
-                for (int i = 0; i != SignBuilder.MAX_ROWS; i++) {
-                    int imagetextIndex = (y * SignBuilder.MAX_ROWS + i) * horizontalSigns + x;
-                    if (imagetext.size() > imagetextIndex) {
-                        signBuilder.addFrontLine(imagetext.get(imagetextIndex), maxTextWidth);
-                    }
-                }
+                this.addSignLines(x, y, signBuilders.get(index), imagetextWrapped, maxTextWidth);
             }
         }
 
         return this.formatSignItems(signBuilders, horizontalSigns);
     }
 
-    public int getHorizontalSigns(int width, int lineSplitInterval) {
-        int horizontalSigns = (int) Math.floor(width / (double) lineSplitInterval);
-        if (width % lineSplitInterval != 0)
-            horizontalSigns++;
-
-        return horizontalSigns;
+    public int horizontalSignsOf(List<Text> imagetext) {
+        if (imagetext.isEmpty()) return 0;
+        int maxWidth = this.getMaxTextWidth() - 1;
+        return MinecraftClient.getInstance().textRenderer.wrapLines(imagetext.get(0), maxWidth).size();
     }
 
-    public int getVerticalSigns(int height) {
-        int verticalSigns = (int) Math.floor(height / (double) SignBuilder.MAX_ROWS);
-        if (height % SignBuilder.MAX_ROWS != 0)
-            verticalSigns++;
-        return verticalSigns;
+    public int verticalSignsOf(int height) {
+        if (height <= SignBuilder.MAX_ROWS) return 1;
+
+        return (int) Math.floor(height / (double) SignBuilder.MAX_ROWS);
+    }
+
+    public void addSignLines(int x, int y, SignBuilder builder, OrderedText[][] imagetextWrapped, int maxTextWidth) {
+        for (int i = 0; i != SignBuilder.MAX_ROWS; i++) {
+            int index = y * SignBuilder.MAX_ROWS + i;
+            if (index < imagetextWrapped.length && x < imagetextWrapped[index].length) {
+                builder.addFrontLine(this.orderedTextToText(imagetextWrapped[index][x]), maxTextWidth);
+            }
+        }
+    }
+
+    // why exist OrderedText and no a method to convert it to Text ???
+    private Text orderedTextToText(OrderedText text) {
+        ImagetextLine line = new ImagetextLine(0d);
+        StringBuilder characters = new StringBuilder();
+        text.accept((index, style, codePoint) -> {
+            characters.appendCodePoint(codePoint);
+            return true;
+        });
+        // line needs all characters, and use of ImagetextData can give different results because text was wrapped
+        line.characters(FzmmUtils.splitMessage(characters.toString()).toArray(String[]::new));
+
+        text.accept((index, characterStyle, c) -> {
+            if (characterStyle.getColor() != null) {
+                line.add(characterStyle.getColor().getRgb());
+            }
+            return true;
+        });
+        return line.build();
     }
 
     public List<ItemStack> formatSignItems(List<SignBuilder> signBuilders, int signsPerLine) {
@@ -178,15 +197,6 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
         }
 
         return signStackList;
-    }
-
-    public int getLineSplitInterval(String characters) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-
-        int textWidth = textRenderer.getWidth(characters);
-        double numRepeats = this.getMaxTextWidth() / (double) textWidth;
-
-        return (int) Math.floor(numRepeats * characters.length());
     }
 
     public int getMaxTextWidth() {
@@ -225,9 +235,8 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
 
     @Override
     public Text getTooltip(ImagetextLogic logic) {
-        int lineSplitInterval = this.getLineSplitInterval(this.characters);
-        int horizontalSigns = this.getHorizontalSigns(logic.getWidth(), lineSplitInterval);
-        int verticalSigns = this.getVerticalSigns(logic.getHeight());
+        int horizontalSigns = this.horizontalSignsOf(logic.text());
+        int verticalSigns = this.verticalSignsOf(logic.height());
         return Text.translatable("fzmm.gui.imagetext.tab.sign.tooltip", horizontalSigns, verticalSigns);
     }
 
