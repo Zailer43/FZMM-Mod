@@ -47,17 +47,18 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
     }
 
     @Override
-    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        logic.generateImagetext(algorithm, data);
+    public void build(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.buildImagetext(algorithm, data);
     }
 
     @Override
     public void execute(ImagetextLogic logic) {
         NbtCompound textDisplayNbt = new NbtCompound();
         DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
+        int width = logic.isEmpty() ? 1 : MinecraftClient.getInstance().textRenderer.getWidth(logic.text().get(0));
 
-        textDisplayNbt.putString(DisplayEntity.TextDisplayEntity.TEXT_NBT_KEY, Text.Serialization.toJsonString(logic.getText(), registryManager));
-        textDisplayNbt.putInt(TagsConstant.TEXT_DISPLAY_LINE_WIDTH, logic.getLineWidth());
+        textDisplayNbt.putString(DisplayEntity.TextDisplayEntity.TEXT_NBT_KEY, Text.Serialization.toJsonString(logic.mergeText(), registryManager));
+        textDisplayNbt.putInt(TagsConstant.TEXT_DISPLAY_LINE_WIDTH, width);
 
         textDisplayNbt.putInt(TagsConstant.TEXT_DISPLAY_TEXT_OPACITY, (int) this.textOpacity.discreteValue());
         textDisplayNbt.putInt(TagsConstant.TEXT_DISPLAY_BACKGROUND, ((Color) this.backgroundColor.parsedValue()).argb());

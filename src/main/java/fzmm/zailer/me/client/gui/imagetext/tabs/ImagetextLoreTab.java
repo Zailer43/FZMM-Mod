@@ -26,14 +26,14 @@ public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip {
     private LoreOption loreMode;
 
     @Override
-    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        logic.generateImagetext(algorithm, data);
+    public void build(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.buildImagetext(algorithm, data);
     }
 
     @Override
     public void execute(ImagetextLogic logic) {
         ItemStack stack = this.getStack(this.loreMode);
-        List<Text> imagetext = logic.getWrappedText();
+        List<Text> imagetext = logic.text();
 
         DisplayBuilder display = DisplayBuilder.of(stack);
         display.addLore(imagetext).get();
@@ -70,7 +70,7 @@ public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip {
     public Text getTooltip(ImagetextLogic logic) {
         ItemStack stack = this.getStack(this.loreMode);
         int loreSize = stack.getComponents()
-                .getOrDefault(DataComponentTypes.LORE, LoreComponent.DEFAULT).lines().size() + logic.getHeight();
+                .getOrDefault(DataComponentTypes.LORE, LoreComponent.DEFAULT).lines().size() + logic.height();
 
         MutableText currentLore = Text.literal(String.valueOf(loreSize));
         if (loreSize > LoreComponent.MAX_LORES) {

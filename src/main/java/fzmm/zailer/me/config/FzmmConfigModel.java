@@ -84,11 +84,8 @@ public class FzmmConfigModel {
         public boolean defaultPreserveImageAspectRatio = true;
         @ExcludeFromScreen
         public int maxResolution = 127;
-        @ExcludeFromScreen
-        @RangeConstraint(min = 1, max = 1000)
-        public int previewUpdateDelayInMillis = 200;
-        @RangeConstraint(min = 0.0f, max = ImagetextScreen.MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS, decimalPlaces = 1)
-        public double defaultPercentageOfSimilarityToCompress = 2.5d;
+        @RangeConstraint(min = 0.0f, max = ImagetextScreen.MAX_SIMILARITY_THRESHOLD, decimalPlaces = 1)
+        public double defaultSimilarityThreshold = 2.5d;
 
         public static boolean predicateItem(String value) {
             return FzmmConfigModel.predicateItem(value);
