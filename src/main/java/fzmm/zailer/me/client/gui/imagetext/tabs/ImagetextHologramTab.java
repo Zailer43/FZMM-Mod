@@ -37,8 +37,8 @@ public class ImagetextHologramTab implements IImagetextTab {
     private ConfigTextBox posZ;
 
     @Override
-    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        logic.generateImagetext(algorithm, data);
+    public void build(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.buildImagetext(algorithm, data);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ImagetextHologramTab implements IImagetextTab {
         hologramMainContainer = DisplayBuilder.of(hologramMainContainer)
                 .setName(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "name"), color)
                 .addLore(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "lore.1", x, y, z), color)
-                .addLore(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "lore.2", logic.getWidth(), logic.getHeight()), color)
+                .addLore(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "lore.2", logic.width(), logic.height()), color)
                 .get();
 
         ItemUtils.give(hologramMainContainer);
@@ -72,7 +72,7 @@ public class ImagetextHologramTab implements IImagetextTab {
 
     public List<ItemStack> getHologramItems(ImagetextLogic logic, int x, double y, int z) {
         List<ItemStack> hologramItems = new ArrayList<>();
-        List<Text> imagetext = logic.getWrappedText();
+        List<Text> imagetext = logic.text();
         int size = imagetext.size();
 
         for (int i = 0; i != size; i++) {

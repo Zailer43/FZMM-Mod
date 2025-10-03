@@ -8,7 +8,7 @@ import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 
 public interface IImagetextTab extends IScreenTab, IMemento {
 
-    void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute);
+    void build(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute);
 
     void execute(ImagetextLogic logic);
 }

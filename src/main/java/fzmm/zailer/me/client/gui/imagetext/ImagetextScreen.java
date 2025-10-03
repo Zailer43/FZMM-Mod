@@ -1,13 +1,12 @@
 package fzmm.zailer.me.client.gui.imagetext;
 
-import com.google.gson.JsonElement;
-import com.mojang.serialization.JsonOps;
-import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
@@ -15,6 +14,7 @@ import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
+import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
 import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
@@ -27,11 +27,9 @@ import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.config.FzmmConfig;
-import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.ItemUtils;
+import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
@@ -39,11 +37,9 @@ import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.util.FocusHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +56,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
 
     private static final double DEFAULT_SIZE_VALUE = 32;
-    public static final double MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS = 10d;
+    public static final double MAX_SIMILARITY_THRESHOLD = 10d;
+    private static final long PREVIEW_UPDATE_DELAY_MILLIS = 20L;
     private static ImagetextMode selectedMode = ImagetextMode.LORE;
     private static ImagetextAlgorithms selectedAlgorithm = ImagetextAlgorithms.CHARACTERS;
     private static ImagetextMemento memento = null;
@@ -72,8 +69,8 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     private SmallCheckboxComponent smoothImageCheckbox;
     private SliderWidget widthSlider;
     private SliderWidget heightSlider;
-    private SliderWidget percentageOfSimilarityToCompress;
-    private LabelComponent previewLabel;
+    private SliderWidget similarityThreshold;
+    private EFlowLayout previewLayout;
     private Animation.Composed smallGuiAnimation;
     private CompletableFuture<Void> scheduledUpdatePreview = CompletableFuture.completedFuture(null);
 
@@ -125,11 +122,11 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         this.heightSlider = SliderRow.setup(rootComponent, "height", DEFAULT_SIZE_VALUE, 2, config.maxResolution(), Integer.class, 0, 3,
                 aDouble -> this.onResolutionChanged(this.heightSlider, this.widthSlider, false)
         );
-        this.percentageOfSimilarityToCompress = SliderRow.setup(rootComponent, "percentageOfSimilarityToCompress",
-                config.defaultPercentageOfSimilarityToCompress(), 0d, MAX_PERCENTAGE_OF_SIMILARITY_TO_COMPRESS, Double.class,
+        this.similarityThreshold = SliderRow.setup(rootComponent, "similarityThreshold",
+                config.defaultSimilarityThreshold(), 0d, MAX_SIMILARITY_THRESHOLD, Double.class,
                 1, 0.1d, null
         );
-        this.percentageOfSimilarityToCompress.message(s -> Text.literal(s + "%"));
+        this.similarityThreshold.message(s -> Text.literal(s + "%"));
 
         imageButtonLayout.children(imageButtonList);
 
@@ -171,11 +168,11 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         this.setTabs(rootComponent, selectedMode, ImagetextMode.values(), this.tabs);
 
         // preview
-        this.previewLabel = rootComponent.childByIdOrThrow(LabelComponent.class, "preview-label");
+        this.previewLayout = rootComponent.childByIdOrThrow(EFlowLayout.class, "preview-layout");
 
         this.widthSlider.onChanged().subscribe(value -> this.scheduleUpdatePreview());
         this.heightSlider.onChanged().subscribe(value -> this.scheduleUpdatePreview());
-        this.percentageOfSimilarityToCompress.onChanged().subscribe(value -> this.scheduleUpdatePreview());
+        this.similarityThreshold.onChanged().subscribe(value -> this.scheduleUpdatePreview());
         this.showResolutionCheckbox.onChanged().subscribe(buttonComponent -> this.scheduleUpdatePreview());
         this.smoothImageCheckbox.onChanged().subscribe(buttonComponent -> {
             this.getTab(selectedAlgorithm, IImagetextAlgorithm.class, this.algorithmsTabs).clearCache();
@@ -323,50 +320,48 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     public void execute() {
         CompletableFuture.runAsync(() -> {
             Optional<BufferedImage> image = this.imageElements.imageButton().getImage();
-            if (image.isEmpty()) {
-                return;
-            }
+            if (image.isEmpty()) return;
 
-            this.generateImagetext(image.get(), true);
+            this.buildImagetext(image.get(), true);
             this.getTab(selectedMode, IImagetextTab.class).execute(this.imagetextLogic);
+        }).handle((unused, throwable) -> {
+            if (throwable != null) {
+                FzmmClient.LOGGER.error("[ImagetextScreen] Error in imagetext give", throwable);
+                MinecraftClient.getInstance().execute(() -> SnackBarManager.getInstance().add(
+                        BaseSnackBarComponent.builder(SnackBarManager.IMAGETEXT_ID)
+                                .title(Text.literal("fzmm.giveItem.error"))
+                                .backgroundColor(EStyles.ALERT_ERROR_COLOR)
+                                .closeButton()
+                                .build()
+                ));
+            }
+            return null;
         });
     }
 
     public void scheduleUpdatePreview() {
-        if (this.scheduledUpdatePreview != null && !this.scheduledUpdatePreview.isDone()) {
-            this.scheduledUpdatePreview.cancel(true);
-            this.scheduledUpdatePreview = null;
-        }
+        if (this.scheduledUpdatePreview != null && !this.scheduledUpdatePreview.isDone()) return;
 
-        // FIXME: frequent updating of the preview consumes a significant amount of memory,
-        //  leading to frequent garbage collection calls and resulting in noticeable latency spikes
-        int delay = FzmmClient.CONFIG.imagetext.previewUpdateDelayInMillis();
         this.scheduledUpdatePreview = CompletableFuture.runAsync(() -> this.updatePreview(false),
-                CompletableFuture.delayedExecutor(delay, TimeUnit.MILLISECONDS)
+                CompletableFuture.delayedExecutor(PREVIEW_UPDATE_DELAY_MILLIS, TimeUnit.MILLISECONDS)
         );
+        this.scheduledUpdatePreview.handle((unused, throwable) -> {
+            if (throwable != null) {
+                FzmmClient.LOGGER.error("[ImagetextScreen] Error updating preview", throwable);
+            }
+            return null;
+        });
     }
 
     public void updatePreview(boolean isExecute) {
         Optional<BufferedImage> image = this.imageElements.imageButton().getImage();
-        if (image.isEmpty()) {
-            return;
-        }
+        if (image.isEmpty()) return;
 
-        this.generateImagetext(image.get(), isExecute);
-        Text text = this.imagetextLogic.getText();
-        List<Text> wrappedText = this.imagetextLogic.getWrappedText();
-
-        ItemStack placeholderStack = DisplayBuilder.builder().addLore(wrappedText).get();
-        String nbtSize = ItemUtils.getLengthInKB(ItemUtils.getLengthInBytes(placeholderStack));
-        String textSize = ItemUtils.getLengthInKB(TextCodecs.CODEC.encodeStart(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), text)
-                .result()
-                .map(JsonElement::toString)
-                .orElse("")
-                .length()
-        );
+        this.buildImagetext(image.get(), isExecute);
+        List<Text> imagetext = this.imagetextLogic.text();
 
         MutableText tooltipText = Text.empty().setStyle(Style.EMPTY.withColor(Formatting.GRAY));
-        tooltipText.append(Text.translatable("fzmm.gui.imagetext.label.imagetextSize", nbtSize, textSize));
+        tooltipText.append(Text.translatable("fzmm.gui.imagetext.label.textLength", this.imagetextLogic.textLength()));
 
         if (this.getTab(selectedMode, IImagetextTab.class) instanceof IImagetextTooltip metadata) {
             tooltipText.append("\n");
@@ -374,22 +369,27 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         }
 
         assert this.client != null;
-        this.client.execute(() -> {
-            this.previewLabel.text(text);
-            this.previewLabel.tooltip(tooltipText);
-        });
+        this.client.execute(() -> this.previewLayout.<EFlowLayout>configure(layout -> {
+            // Wrapping text is very expensive in memory allocation because (reasons) and (more reasons)
+            // updatePreview is a hot spot, so it is better to avoid wrapping
+            //
+            // To avoid this, is better to use a label for each line of text
+            layout.clearChildren();
+            layout.children(imagetext.stream().map(EComponents::label).toList());
+            layout.tooltip(tooltipText);
+        }));
     }
 
-    private void generateImagetext(BufferedImage image, boolean isExecute) {
+    private void buildImagetext(BufferedImage image, boolean isExecute) {
         int width = (int) this.widthSlider.parsedValue();
         int height = (int) this.heightSlider.parsedValue();
         boolean smoothScaling = this.smoothImageCheckbox.checked();
         boolean showResolution = this.showResolutionCheckbox.checked();
-        double percentageOfSimilarityToCompress = (double) this.percentageOfSimilarityToCompress.parsedValue();
+        double similarityThreshold = (double) this.similarityThreshold.parsedValue();
 
         IImagetextAlgorithm algorithm = (IImagetextAlgorithm) this.algorithmsTabs.get(selectedAlgorithm.getId());
-        ImagetextData data = new ImagetextData(image, width, height, smoothScaling, percentageOfSimilarityToCompress);
-        this.getTab(selectedMode, IImagetextTab.class).generate(algorithm, this.imagetextLogic, data, isExecute);
+        ImagetextData data = new ImagetextData(image, width, height, smoothScaling, similarityThreshold);
+        this.getTab(selectedMode, IImagetextTab.class).build(algorithm, this.imagetextLogic, data, isExecute);
 
         if (showResolution) {
             this.imagetextLogic.addResolution();
@@ -430,7 +430,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
                 this.smoothImageCheckbox.checked(),
                 this.showResolutionCheckbox.checked(),
                 this.preserveImageAspectRatioToggle.enabled(),
-                (double) this.percentageOfSimilarityToCompress.parsedValue(),
+                (double) this.similarityThreshold.parsedValue(),
                 this.createMementoTabs(this.tabs),
                 this.createMementoTabs(this.algorithmsTabs)
         );
@@ -446,15 +446,14 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         this.smoothImageCheckbox.checked(memento.smoothScaling);
         this.showResolutionCheckbox.checked(memento.showResolution);
         this.preserveImageAspectRatioToggle.enabled(memento.preserveImageAspectRatio);
-        this.percentageOfSimilarityToCompress.setFromDiscreteValue(memento.percentageOfSimilarityToCompress);
+        this.similarityThreshold.setFromDiscreteValue(memento.similarityThreshold);
         this.restoreMementoTabs(memento.mementoTabHashMap, this.tabs);
         this.restoreMementoTabs(memento.mementoAlgorithmTabHashMap, this.algorithmsTabs);
     }
 
     private record ImagetextMemento(String imageRowValue, ImageMode imageMode, int width, int height,
                                     boolean smoothScaling, boolean showResolution, boolean preserveImageAspectRatio,
-                                    double percentageOfSimilarityToCompress,
-                                    HashMap<String, IMementoObject> mementoTabHashMap,
+                                    double similarityThreshold, HashMap<String, IMementoObject> mementoTabHashMap,
                                     HashMap<String, IMementoObject> mementoAlgorithmTabHashMap) implements IMementoObject {
     }
 }
