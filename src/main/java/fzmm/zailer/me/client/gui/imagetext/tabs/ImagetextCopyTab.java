@@ -11,14 +11,14 @@ import net.minecraft.client.MinecraftClient;
 
 public class ImagetextCopyTab implements IImagetextTab {
     @Override
-    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        logic.generateImagetext(algorithm, data);
+    public void build(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.buildImagetext(algorithm, data);
     }
 
     @Override
     public void execute(ImagetextLogic logic) {
         MinecraftClient client = MinecraftClient.getInstance();
-        client.execute(() -> FzmmUtils.setScreen(new CopyTextScreen(client.currentScreen, logic.getText())));
+        client.execute(() -> FzmmUtils.setScreen(new CopyTextScreen(client.currentScreen, logic.mergeText())));
     }
 
     @Override

@@ -100,9 +100,9 @@
                                             </fzmm.flow-layout>
 
                                             <template name="small-option">
-                                                <translation-id>percentageOfSimilarityToCompress</translation-id>
+                                                <translation-id>similarityThreshold</translation-id>
                                                 <option>slider</option>
-                                                <id>percentageOfSimilarityToCompress-slider</id>
+                                                <id>similarityThreshold-slider</id>
                                             </template>
 
                                             <template name="small-option">
@@ -388,8 +388,10 @@
 
                                 <fzmm.scroll direction="horizontal">
                                     <fzmm.scroll direction="vertical" flip-scroll="true">
-                                        <fzmm.label id="preview-label">
-                                        </fzmm.label>
+                                        <fzmm.flow-layout direction="vertical" id="preview-layout">
+                                            <children>
+                                            </children>
+                                        </fzmm.flow-layout>
 
                                         <sizing>
                                             <vertical method="expand">100</vertical>

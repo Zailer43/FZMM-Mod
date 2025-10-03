@@ -1,80 +1,100 @@
 package fzmm.zailer.me.client.logic.imagetext;
 
+import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.text.TextCodecs;
 
 public class ImagetextLine {
     public static final String DEFAULT_TEXT = "█";
-    private static final Style WITHOUT_ITALIC = Style.EMPTY.withItalic(false);
-    private final List<ImagetextLineComponent> line;
-    private final String[] charactersToUse;
-    private final boolean isDefaultText;
-    private final double percentageOfSimilarityToCompress;
-    private final int splitLineEvery;
-    private int lineLength;
-    @Nullable
-    private List<MutableText> generatedLine;
+    private static final long LINE_WRAPPER_LENGTH;
+    private static final long ELEMENT_LENGTH;
+    private boolean isDefaultText;
+    private final double similarityThreshold;
+    private String[] characters;
+    private ImagetextLineElement element;
+    private MutableText line;
+    private int elementIndex;
+    private long textLength;
 
-    public ImagetextLine(String charactersToUse, double percentageOfSimilarityToCompress, int splitLineEvery) {
-        this.line = new ArrayList<>();
-        this.charactersToUse = FzmmUtils.splitMessage(charactersToUse).toArray(new String[0]);
-        this.isDefaultText = charactersToUse.equals(DEFAULT_TEXT);
-        this.percentageOfSimilarityToCompress = percentageOfSimilarityToCompress;
-        this.splitLineEvery = splitLineEvery;
-        this.lineLength = 0;
-        this.generatedLine = null;
+    public ImagetextLine(double similarityThreshold) {
+        this.characters(new String[]{DEFAULT_TEXT});
+        this.similarityThreshold = similarityThreshold;
+        this.reset();
+    }
+
+    public void reset() {
+        this.element = null;
+        this.line = Text.empty().setStyle(Style.EMPTY.withItalic(false));
+        this.elementIndex = 0;
+        this.textLength = 0L;
+    }
+
+    public void characters(String[] value) {
+        this.characters = value;
+        this.isDefaultText = value.length == 1 && value[0].equals(DEFAULT_TEXT);
     }
 
     public ImagetextLine add(int color) {
-        int size = this.line.size();
-        ImagetextLineComponent lastComponent = size > 0 ? this.line.get(size - 1) : null;
-
-        if (this.shouldSplitLine(this.lineLength) || lastComponent == null || !lastComponent.tryAdd(color, this.percentageOfSimilarityToCompress)) {
-            this.line.add(new ImagetextLineComponent(color));
+        if (this.element == null) { // first
+            this.element = new ImagetextLineElement(color, this.isDefaultText);
+        } else if (this.element.isSimilar(color, this.similarityThreshold)) {
+            // [blue] -> [blue blue]
+            this.element.increment();
+        } else {
+            // [red red red] -> [red red red] [green]
+            this.nextComponent(color);
         }
 
-        this.lineLength++;
         return this;
     }
 
-    public void generateLine() {
-        List<MutableText> lineList = new ArrayList<>();
-        MutableText line = Text.empty().setStyle(WITHOUT_ITALIC);
-        short lineIndex = 0;
+    private void nextComponent(int color) {
+        if (this.element == null) return;
 
-        int lineComponentSize = this.line.size();
-        for (int i = 0; i != lineComponentSize; i++) {
-            ImagetextLineComponent lineComponent = this.line.get(i);
-            short repetitions = lineComponent.getRepetitions();
-            Text lineComponentText = lineComponent.getText(this.charactersToUse, lineIndex, this.isDefaultText);
-            lineIndex += repetitions;
-            line.append(lineComponentText);
+        Text elementText = this.element.toText(this.characters, this.elementIndex);
+        this.incrementTextLength(elementText.getString());
+        this.line.append(elementText);
+        this.elementIndex += this.element.getRepetitions();
 
-            if (this.shouldSplitLine(lineIndex)) {
-                lineList.add(line);
-                line = Text.empty().setStyle(WITHOUT_ITALIC);
-            } else if (lineComponentSize - 1 == i) {
-                lineList.add(line);
-            }
-        }
-        this.generatedLine = lineList;
+        this.element.reset(color, this.isDefaultText);
     }
 
-    public List<MutableText> getLineComponents() {
-        if (this.generatedLine == null) {
-            this.generateLine();
-        }
-
-        return this.generatedLine;
+    public Text build() {
+        this.nextComponent(-1);
+        return this.line;
     }
 
-    private boolean shouldSplitLine(int index) {
-        return index != 0 && (index % this.splitLineEvery == 0);
+    private void incrementTextLength(String characters) {
+        // Estimate the length to display that information, this is preferred over converting
+        // Text to JSON (for example using Codecs to JSON and then JsonElement::toString),
+        // because that conversion is usually more expensive, therefore, calling that every
+        // time the Imagetext preview needs to be updated is not ideal
+        //
+        // besides, it doesn't have to be that precise... right?
+        // I think it may be necessary because some anticheats get angry if your item exceeds a certain size,
+        // but in my experience, it wasn't very accurate before either in keeping the item within the allowed limit
+        this.textLength += characters.length() + ELEMENT_LENGTH + 1; // 1 for the comma
+    }
+
+    public long textLength() {
+        return this.textLength + LINE_WRAPPER_LENGTH + 1; // 1 for line wrapper comma
+    }
+
+    private static long textLength(Text text) {
+        return TextCodecs.CODEC.encodeStart(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), text)
+                .result()
+                .map(JsonElement::toString)
+                .orElse(DEFAULT_TEXT)
+                .length() - 1;
+    }
+
+    static {
+        Text defaultText = Text.literal(DEFAULT_TEXT).setStyle(Style.EMPTY.withColor(0x123456));
+        ELEMENT_LENGTH = textLength(defaultText) - 1L; // -1 for DEFAULT_TEXT
+        LINE_WRAPPER_LENGTH = textLength(Text.empty().setStyle(Style.EMPTY.withItalic(false)).append(defaultText)) - ELEMENT_LENGTH;
     }
 }
