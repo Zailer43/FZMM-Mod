@@ -25,7 +25,6 @@ public class BaseSnackBarComponent extends EFlowLayout implements ISnackBarCompo
     protected BaseSnackBarComponent(Sizing horizontalSizing, Sizing verticalSizing) {
         super(horizontalSizing, verticalSizing, Algorithm.VERTICAL);
         this.timerEnabled = false;
-        this.zIndex(900);
     }
 
     @Override

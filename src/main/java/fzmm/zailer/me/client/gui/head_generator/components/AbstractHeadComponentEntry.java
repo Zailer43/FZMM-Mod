@@ -13,7 +13,6 @@ import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
 import fzmm.zailer.me.utils.ImageUtils;
 import fzmm.zailer.me.utils.SkinPart;
 import fzmm.zailer.me.utils.list.IListEntry;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.EntityComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
@@ -23,7 +22,6 @@ import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -169,7 +167,6 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
                 onCloseOverlay();
             }
         };
-        this.overlayContainer.zIndex(300);
         parent.addOverlay(this.overlayContainer);
     }
 

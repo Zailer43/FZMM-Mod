@@ -60,7 +60,7 @@ public class ColorListContainer extends FlowLayout {
     public void addEntry() {
         int id = this.colorsLayout.children().size();
         ColorListEntry entry = new ColorListEntry(this, id);
-        ColorRow.setup(entry, String.valueOf(id), this.getRandomColor(), false, 0, this.callback);
+        ColorRow.setup(entry, String.valueOf(id), this.getRandomColor(), false, this.callback);
         this.colorsLayout.child(entry);
         this.updateDisplay();
         this.callback.accept("");

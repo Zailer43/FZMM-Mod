@@ -35,8 +35,6 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
             return true;
         });
 
-        this.zIndex(500);
-
         this.scrollGrid = this.getScrollableGrid();
         if (this.scrollGrid == null) {
             FzmmClient.LOGGER.warn("[FontComponentAdapter] Failed to get scrollable grid");

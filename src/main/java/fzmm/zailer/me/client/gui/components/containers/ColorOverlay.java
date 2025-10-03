@@ -44,7 +44,6 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
         this.addComponents(color, withAlpha, onConfirm, colorPreview);
         this.child.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
         this.child.gap(4);
-        this.zIndex(300);
     }
 
     protected void addComponents(Color color, boolean withAlpha, Consumer<ColorPickerComponent> onConfirm, BoxComponent colorPreview) {
@@ -94,14 +93,12 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
         ButtonComponent removeColorButton = Components.button(Text.translatable("fzmm.gui.button.remove"),
                 this.removeFavoriteExecute(favoriteColorsComponent, config));
         removeColorButton.sizing(Sizing.fixed(50), Sizing.fixed(15))
-                .zIndex(300)
                 .id("remove-favorite-button");
 
         ButtonComponent addColorButton = Components.button(Text.translatable("fzmm.gui.button.add"),
                 this.addFavoriteExecute(picker, favoriteColorsComponent, config));
 
         addColorButton.sizing(Sizing.fixed(50), Sizing.fixed(15))
-                .zIndex(300)
                 .id("add-favorite-button");
 
         FlowLayout buttonsLayout = this.getButtonsLayout(removeColorButton, addColorButton);

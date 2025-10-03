@@ -20,7 +20,6 @@ import java.util.function.Consumer;
 public class ContextMenuButton extends ButtonComponent {
     @Nullable
     private DropdownComponent contextMenu = null;
-    protected int additionalZIndex = 200;
     private Consumer<DropdownComponent> contextMenuOptionsConsumer = dropdownComponent -> {
     };
 
@@ -58,7 +57,6 @@ public class ContextMenuButton extends ButtonComponent {
                                     .cursorStyle(CursorStyle.NONE);
                         }
 
-                        contextMenu.zIndex(this.zIndex() + this.additionalZIndex);
                         contextMenu.mouseDown().subscribe((mouseX1, mouseY1, button1) -> {
                             if (mouseY1 < contextMenuY) {
                                 baseScreen.getRoot().get().removeChild(contextMenu);
@@ -76,10 +74,6 @@ public class ContextMenuButton extends ButtonComponent {
 
     public void setContextMenuOptions(Consumer<DropdownComponent> contextMenuOptionsConsumer) {
         this.contextMenuOptionsConsumer = contextMenuOptionsConsumer;
-    }
-
-    public void additionalZIndex(int additionalZIndex) {
-        this.additionalZIndex = additionalZIndex;
     }
 
     public void removeContextMenu() {

@@ -34,7 +34,7 @@ public class TextFormatSimpleTab implements ITextFormatTab {
 
     @Override
     public void setupComponents(EFlowLayout rootComponent) {
-        this.color = ColorRow.setup(rootComponent, "color", Color.WHITE, false, 0, s -> this.callback.accept(""));
+        this.color = ColorRow.setup(rootComponent, "color", Color.WHITE, false, s -> this.callback.accept(""));
     }
 
     @Override

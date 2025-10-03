@@ -35,7 +35,6 @@ public class DecryptorSaverOverlay extends OverlayContainer<EFlowLayout> {
         this.child.gap(12);
         this.child.padding(Insets.of(6));
         this.child.surface(this.child.styledPanel());
-        this.zIndex(300);
     }
 
     //TODO: import from clipboard button (and export to clipboard button in profile component)

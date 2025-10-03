@@ -47,7 +47,6 @@ public class InvisibleEntityWarning {
         FlowLayout overlayTextLayout = EContainers.verticalFlow(Sizing.fill(100), Sizing.content());
         FlowLayout overlayButtonLayout = EContainers.verticalFlow(Sizing.fill(100), Sizing.content());
         OverlayContainer<FlowLayout> overlayContainer = Containers.overlay(overlayLayout);
-        overlayContainer.zIndex(250);
 
         overlayLayout.padding(Insets.of(8));
         overlayTextLayout.gap(4);

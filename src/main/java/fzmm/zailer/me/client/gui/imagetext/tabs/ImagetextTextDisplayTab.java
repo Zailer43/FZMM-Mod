@@ -88,7 +88,7 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
         assert MinecraftClient.getInstance().player != null;
 
         this.textOpacity = SliderRow.setup(rootComponent, "textDisplayTextOpacity", 255, 0, 255, Integer.class, 0, 10, null);
-        this.backgroundColor = ColorRow.setup(rootComponent, "textDisplayBackgroundColor", Color.ofArgb(DisplayEntity.TextDisplayEntity.INITIAL_BACKGROUND), true, 0, null);
+        this.backgroundColor = ColorRow.setup(rootComponent, "textDisplayBackgroundColor", Color.ofArgb(DisplayEntity.TextDisplayEntity.INITIAL_BACKGROUND), true,  null);
         this.textShadow = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "textDisplayTextShadow-checkbox");
         this.textShadow.checked(false);
         this.textSeeThrough = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "textDisplayTextSeeThrough-checkbox");

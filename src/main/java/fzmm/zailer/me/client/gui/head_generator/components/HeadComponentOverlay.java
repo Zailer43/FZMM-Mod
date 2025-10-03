@@ -191,8 +191,7 @@ public class HeadComponentOverlay extends EFlowLayout {
                 this.updatePreview(headComponentEntry);
             });
 
-            elements.valueField().suggestionsZIndex(350)
-                    .horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
+            elements.valueField().horizontalSizing(Sizing.fixed(OVERLAY_WIDGETS_WIDTH));
         }
     }
 
@@ -209,7 +208,7 @@ public class HeadComponentOverlay extends EFlowLayout {
             ColorParameter color = colorParameter.value().orElse(ColorParameter.getDefault());
             boolean hasAlpha = color.hasAlpha();
 
-            ColorRow.setup(parametersLayout, id, color.color(), hasAlpha, 300, s -> {
+            ColorRow.setup(parametersLayout, id, color.color(), hasAlpha, s -> {
                 colorParameters.update(colorParameter.id(), new ColorParameter(colorRow.getValue(), hasAlpha));
                 this.updatePreview(headComponentEntry);
             });

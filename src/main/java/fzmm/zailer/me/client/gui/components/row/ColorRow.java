@@ -61,7 +61,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
      * but I don't have an Option<Color> object.
      */
     @SuppressWarnings({"ConstantConditions"})
-    public static ConfigTextBox setup(EFlowLayout rootComponent, String id, Color defaultcolor, boolean withAlpha, int additionalZIndex, @Nullable Consumer<String> changedListener) {
+    public static ConfigTextBox setup(EFlowLayout rootComponent, String id, Color defaultcolor, boolean withAlpha, @Nullable Consumer<String> changedListener) {
         ConfigTextBox colorField = ConfigTextBoxRow.setup(rootComponent, getColorFieldId(id), id, defaultcolor.asHexString(withAlpha), changedListener);
 
         colorField.inputPredicate(withAlpha ? s -> s.matches("#[a-zA-Z\\d]{0,8}") : s -> s.matches("#[a-zA-Z\\d]{0,6}"));
@@ -78,7 +78,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
         );
 
         Supplier<Color> valueGetter = () -> (Color) colorField.parsedValue();
-        BoxComponent colorPreview = setupColorPreview(id, rootComponent, withAlpha, additionalZIndex, valueGetter,
+        BoxComponent colorPreview = setupColorPreview(id, rootComponent, withAlpha, valueGetter,
                 (picker) -> colorField.text(picker.selectedColor().asHexString(withAlpha)));
 
         colorField.onChanged().subscribe(value -> colorPreview.color(valueGetter.get()));
@@ -89,14 +89,13 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
 
 
     @SuppressWarnings("ConstantConditions")
-    public static BoxComponent setupColorPreview(String id, EFlowLayout rootComponent, boolean withAlpha, int additionalZIndex, Supplier<Color> valueGetter, Consumer<ColorPickerComponent> onPress) {
+    public static BoxComponent setupColorPreview(String id, EFlowLayout rootComponent, boolean withAlpha, Supplier<Color> valueGetter, Consumer<ColorPickerComponent> onPress) {
         BoxComponent colorPreview = rootComponent.childByIdOrThrow(BoxComponent.class, getColorPreviewId(id));
 
         colorPreview.color(valueGetter.get());
 
         colorPreview.mouseDown().subscribe((mouseX, mouseY, button) -> {
             ColorOverlay colorOverlay = new ColorOverlay(valueGetter.get(), withAlpha, onPress, colorPreview);
-            colorOverlay.zIndex(colorOverlay.zIndex() + additionalZIndex);
 
             if (MinecraftClient.getInstance().currentScreen instanceof BaseFzmmScreen screen) {
                 screen.addOverlay(colorOverlay);

@@ -311,7 +311,6 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
         tagSelectPanel.mouseDown().subscribe((mouseX, mouseY, button) -> true);
         OverlayContainer<FlowLayout> tagOverlay = Containers.overlay(tagSelectPanel);
-        tagOverlay.zIndex(500);
         this.addOverlay(tagOverlay);
     }
 
