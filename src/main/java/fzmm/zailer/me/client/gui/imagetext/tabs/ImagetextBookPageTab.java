@@ -21,21 +21,20 @@ public class ImagetextBookPageTab implements IImagetextTab {
     private BookOption bookMode;
 
     @Override
-    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+    public void build(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
         ImagetextData modifiedData = new ImagetextData(data.image(),
-                this.getMaxImageWidthForBookPage(algorithm.getCharacters()),
+                this.maxImageWidthFrom(algorithm.pixelExample()),
                 15,
                 data.smoothRescaling(),
-                data.percentageOfSimilarityToCompress()
+                data.similarityThreshold()
         );
-
-        logic.generateImagetext(algorithm, modifiedData);
+        logic.buildImagetext(algorithm, modifiedData);
     }
 
     @Override
     public void execute(ImagetextLogic logic) {
         BookBuilder bookBuilder = this.bookMode.getBookBuilder();
-        bookBuilder.addPage(logic.getText());
+        bookBuilder.addPage(logic.mergeText());
 
         ItemUtils.give(bookBuilder.get());
     }
@@ -64,17 +63,18 @@ public class ImagetextBookPageTab implements IImagetextTab {
         return "bookPage";
     }
 
-    private int getMaxImageWidthForBookPage(@Nullable String characters) {
-        if (characters == null)
+    private int maxImageWidthFrom(@Nullable String characters) {
+        if (characters == null) {
             characters = ImagetextLine.DEFAULT_TEXT;
+        }
 
         int maxTextWidth = BookScreen.MAX_TEXT_WIDTH - 1;
         int width = 0;
         TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
 
-        if (characters.length() == 1)
+        if (characters.length() == 1) {
             width = maxTextWidth / textRenderer.getWidth(characters);
-        else {
+        } else {
             String message = "";
             int length = characters.length();
             do {

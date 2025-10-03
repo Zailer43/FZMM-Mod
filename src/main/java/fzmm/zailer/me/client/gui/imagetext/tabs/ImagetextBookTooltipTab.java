@@ -34,8 +34,8 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
     private TextAreaComponent bookTooltipMessage;
 
     @Override
-    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        logic.generateImagetext(algorithm, data);
+    public void build(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.buildImagetext(algorithm, data);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
                 .author(author)
                 .addPage(Text.literal(Formatting.BLUE + bookMessage)
                         .setStyle(Style.EMPTY
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, logic.getText()))
+                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, logic.mergeText()))
                         )
                 );
 

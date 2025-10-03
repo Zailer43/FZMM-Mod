@@ -1,23 +1,22 @@
 package fzmm.zailer.me.client.gui.imagetext.algorithms;
 
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
-import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
     private static final String[] BRAILLE_CHARACTERS;
@@ -26,6 +25,7 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
     private SliderWidget edgeThresholdSlider;
     private SliderWidget edgeDistanceSlider;
     private SmallCheckboxComponent invertBooleanButton;
+    private String[][] brailleImage = null;
     private BufferedImage colorsImage = null;
     private byte[][] grayScaleUpscaledImage = null;
     private final float widthRatio;
@@ -44,26 +44,41 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
     }
 
     @Override
+    public BufferedImage image() {
+        return this.colorsImage;
+    }
+
+    @Override
+    public void image(BufferedImage image) {
+        this.colorsImage = image;
+    }
+
+    @Override
+    public void build() {
+        if (this.grayScaleUpscaledImage == null) {
+            FzmmClient.LOGGER.warn("[ImagetextBrailleAlgorithm] No image set");
+            return;
+        }
+        this.brailleImage = this.brailleImageOf(
+                this.grayScaleUpscaledImage,
+                this.grayScaleUpscaledImage.length / BRAILLE_CHARACTER_WIDTH,
+                this.grayScaleUpscaledImage[0].length / BRAILLE_CHARACTER_HEIGHT
+        );
+    }
+
+    @Override
     public String getId() {
         return "algorithm.braille";
     }
 
     @Override
-    public List<MutableText> get(ImagetextLogic logic, ImagetextData data, int lineSplitInterval) {
-        this.cacheResizedImage(data);
-        List<String> charactersList = this.getBrailleCharacters(this.grayScaleUpscaledImage, data.width(), data.height());
-        List<MutableText> linesList = new ArrayList<>();
+    public String[] linePixels(int line) {
+        return this.brailleImage[line];
+    }
 
-        for (int y = 0; y != data.height(); y++) {
-            ImagetextLine line = new ImagetextLine(charactersList.get(y), data.percentageOfSimilarityToCompress(), lineSplitInterval);
-            for (int x = 0; x != data.width(); x++) {
-                line.add(this.colorsImage.getRGB(x, y));
-            }
-
-            linesList.addAll(line.getLineComponents());
-        }
-
-        return linesList;
+    @Override
+    public String pixelExample() {
+        return BRAILLE_CHARACTERS[BRAILLE_CHARACTERS.length - 1]; // all characters are similar
     }
 
     @Override
@@ -77,11 +92,6 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
         this.edgeDistanceSlider = SliderRow.setup(rootComponent, "edgeDistance", 2, 1, 5, Integer.class, 0, 1, null);
         this.invertBooleanButton = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "invert-checkbox");
         this.invertBooleanButton.checked(false);
-    }
-
-    @Override
-    public String getCharacters() {
-        return BRAILLE_CHARACTERS[BRAILLE_CHARACTERS.length - 1];
     }
 
     @Override
@@ -102,38 +112,35 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
     }
 
     @Override
-    public void cacheResizedImage(ImagetextData data) {
-        if (this.colorsImage == null || this.colorsImage.getWidth() != data.width() || this.colorsImage.getHeight() != data.height()) {
-            this.clearCache();
-            this.colorsImage = ImageUtils.fastResizeImage(data.image(), data.width(), data.height(), data.smoothRescaling());
-            BufferedImage upscaledImage = ImageUtils.fastResizeImage(data.image(), data.width() * BRAILLE_CHARACTER_WIDTH, data.height() * BRAILLE_CHARACTER_HEIGHT, data.smoothRescaling());
-            this.grayScaleUpscaledImage = this.toGrayScale(upscaledImage);
-            upscaledImage.flush();
-        }
+    public boolean tryUpdateCache(ImagetextData data) {
+        if (!IImagetextAlgorithm.super.tryUpdateCache(data)) return false;
+
+        BufferedImage upscaledImage = ImageUtils.fastResizeImage(data.image(), data.width() * BRAILLE_CHARACTER_WIDTH,
+                data.height() * BRAILLE_CHARACTER_HEIGHT, data.smoothRescaling()
+        );
+        this.grayScaleUpscaledImage = this.toGrayScale(upscaledImage);
+        upscaledImage.flush();
+
+        return true;
     }
 
     @Override
     public void clearCache() {
-        if (this.colorsImage != null) {
-            this.colorsImage.flush();
-        }
-        this.colorsImage = null;
+        IImagetextAlgorithm.super.clearCache();
         this.grayScaleUpscaledImage = null;
     }
 
-    public List<String> getBrailleCharacters(byte[][] grayScaleImage, int width, int height) {
-        List<String> result = new ArrayList<>();
+    protected String[][] brailleImageOf(byte[][] grayScaleImage, int width, int height) {
+        String[][] result = new String[height][width];
         int edgeThreshold = (int) this.edgeThresholdSlider.discreteValue();
         int edgeDistance = (int) this.edgeDistanceSlider.discreteValue();
 
         for (int y = 0; y != height; y++) {
-            StringBuilder builder = new StringBuilder();
             int yOffset = y * BRAILLE_CHARACTER_HEIGHT;
             for (int x = 0; x != width; x++) {
                 int xOffset = x * BRAILLE_CHARACTER_WIDTH;
-                builder.append(this.getBrailleCharacter(grayScaleImage, xOffset, yOffset, edgeThreshold, edgeDistance));
+                result[y][x] = this.brailleCharOf(grayScaleImage, xOffset, yOffset, edgeThreshold, edgeDistance);
             }
-            result.add(builder.toString());
         }
 
         return result;
@@ -143,21 +150,21 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
      * @param grayScaleImage the image must have width multiply of {@link ImagetextBrailleAlgorithm#BRAILLE_CHARACTER_WIDTH}
      *                       and height multiply of {@link ImagetextBrailleAlgorithm#BRAILLE_CHARACTER_HEIGHT}
      */
-    public String getBrailleCharacter(byte[][] grayScaleImage, int x, int y, int edgeThreshold, int edgeDistance) {
+    protected String brailleCharOf(byte[][] grayScaleImage, int x, int y, int edgeThreshold, int edgeDistance) {
         int index = BRAILLE_CHARACTERS.length - 1;
         int yOffset = y;
 
-        index -= this.getBrailleCharacterIndex(0, grayScaleImage, x, yOffset, edgeThreshold, edgeDistance);
-        index -= this.getBrailleCharacterIndex(1, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
-        index -= this.getBrailleCharacterIndex(2, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
-        index -= this.getBrailleCharacterIndex(3, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
+        index -= this.brailleCharIndexOf(0, grayScaleImage, x, yOffset, edgeThreshold, edgeDistance);
+        index -= this.brailleCharIndexOf(1, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
+        index -= this.brailleCharIndexOf(2, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
+        index -= this.brailleCharIndexOf(3, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
 
         yOffset = y;
 
-        index -= this.getBrailleCharacterIndex(4, grayScaleImage, ++x, yOffset, edgeThreshold, edgeDistance);
-        index -= this.getBrailleCharacterIndex(5, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
-        index -= this.getBrailleCharacterIndex(6, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
-        index -= this.getBrailleCharacterIndex(7, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
+        index -= this.brailleCharIndexOf(4, grayScaleImage, ++x, yOffset, edgeThreshold, edgeDistance);
+        index -= this.brailleCharIndexOf(5, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
+        index -= this.brailleCharIndexOf(6, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
+        index -= this.brailleCharIndexOf(7, grayScaleImage, x, ++yOffset, edgeThreshold, edgeDistance);
 
         if (this.invertBooleanButton.checked()) {
             index = BRAILLE_CHARACTERS.length - 1 - index;
@@ -166,15 +173,12 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
         return BRAILLE_CHARACTERS[index];
     }
 
-    private int getBrailleCharacterIndex(int index, byte[][] grayScaleImage, int x, int y, int edgeThreshold, int edgeDistance) {
-        if (this.isEdge(grayScaleImage, x, y, edgeThreshold, edgeDistance))
-            return 1 << index;
-
-        return 0;
+    protected int brailleCharIndexOf(int index, byte[][] grayScaleImage, int x, int y, int edgeThreshold, int edgeDistance) {
+        return this.isEdge(grayScaleImage, x, y, edgeThreshold, edgeDistance) ? 1 << index : 0;
     }
 
     // pain
-    public boolean isEdge(byte[][] grayScaleImage, int x, int y, int edgeThreshold, int edgeDistance) {
+    protected boolean isEdge(byte[][] grayScaleImage, int x, int y, int edgeThreshold, int edgeDistance) {
         byte pixel = grayScaleImage[x][y];
 
         byte left = x < edgeDistance ? pixel : grayScaleImage[x - edgeDistance][y];
@@ -182,33 +186,34 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
         byte top = y < edgeDistance ? pixel : grayScaleImage[x][y - edgeDistance];
         byte bottom = y > grayScaleImage[0].length - edgeDistance - 1 ? pixel : grayScaleImage[x][y + edgeDistance];
 
-        boolean isPixelLeftEdge = this.isEdgeThreshold(pixel, left, edgeThreshold);
-        boolean isPixelRightEdge = this.isEdgeThreshold(pixel, right, edgeThreshold);
-        boolean isPixelTopEdge = this.isEdgeThreshold(pixel, top, edgeThreshold);
-        boolean isPixelBottomEdge = this.isEdgeThreshold(pixel, bottom, edgeThreshold);
-
-        return isPixelLeftEdge || isPixelRightEdge || isPixelTopEdge || isPixelBottomEdge;
+        return this.isEdgeThreshold(pixel, left, edgeThreshold) ||
+                this.isEdgeThreshold(pixel, right, edgeThreshold) ||
+                this.isEdgeThreshold(pixel, top, edgeThreshold) ||
+                this.isEdgeThreshold(pixel, bottom, edgeThreshold);
     }
 
-    private boolean isEdgeThreshold(byte pixelByte, byte edgePixelByte, int edgeThreshold) {
+    protected boolean isEdgeThreshold(byte pixelByte, byte edgePixelByte, int edgeThreshold) {
         int pixel = Byte.toUnsignedInt(pixelByte);
         int edgePixel = Byte.toUnsignedInt(edgePixelByte);
         return (pixel > edgePixel + edgeThreshold) || (pixel < edgePixel - edgeThreshold);
     }
 
     /**
-     * The use of BufferedImage is avoided here because when the grayscale color is obtained with BufferedImage#getRgb
-     * the colors are combined, and since in braille the final imagetext is upscaled, then there are more pixels
-     * and a little bit expensive
+     * The use of {@link BufferedImage#getRGB(int, int)} is avoided here because when the color is obtained with
+     * {@link BufferedImage#getRGB(int, int)} the colors are combined, and since in braille the final imagetext
+     * is upscaled, then there are more pixels and can be a bit more expensive
      */
-    public byte[][] toGrayScale(BufferedImage image) {
+    protected byte[][] toGrayScale(BufferedImage image) {
         byte[][] result = new byte[image.getWidth()][image.getHeight()];
+        WritableRaster raster = image.getRaster();
+        ColorModel colorModel = image.getColorModel();
+
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
-                int rgba = image.getRGB(x, y);
-                int red = (rgba >> 16) & 0xFF;
-                int green = (rgba >> 8) & 0xFF;
-                int blue = rgba & 0xFF;
+                Object elements = raster.getDataElements(x, y, null);
+                int red = colorModel.getRed(elements);
+                int green = colorModel.getGreen(elements);
+                int blue = colorModel.getBlue(elements);
                 int average = (red + green + blue) / 3;
 
                 result[x][y] = (byte) average;
@@ -240,7 +245,9 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
     }
 
     static {
-        BRAILLE_CHARACTERS = "⠀⠁⠂⠃⠄⠅⠆⠇⡀⡁⡂⡃⡄⡅⡆⡇⠈⠉⠊⠋⠌⠍⠎⠏⡈⡉⡊⡋⡌⡍⡎⡏⠐⠑⠒⠓⠔⠕⠖⠗⡐⡑⡒⡓⡔⡕⡖⡗⠘⠙⠚⠛⠜⠝⠞⠟⡘⡙⡚⡛⡜⡝⡞⡟⠠⠡⠢⠣⠤⠥⠦⠧⡠⡡⡢⡣⡤⡥⡦⡧⠨⠩⠪⠫⠬⠭⠮⠯⡨⡩⡪⡫⡬⡭⡮⡯⠰⠱⠲⠳⠴⠵⠶⠷⡰⡱⡲⡳⡴⡵⡶⡷⠸⠹⠺⠻⠼⠽⠾⠿⡸⡹⡺⡻⡼⡽⡾⡿⢀⢁⢂⢃⢄⢅⢆⢇⣀⣁⣂⣃⣄⣅⣆⣇⢈⢉⢊⢋⢌⢍⢎⢏⣈⣉⣊⣋⣌⣍⣎⣏⢐⢑⢒⢓⢔⢕⢖⢗⣐⣑⣒⣓⣔⣕⣖⣗⢘⢙⢚⢛⢜⢝⢞⢟⣘⣙⣚⣛⣜⣝⣞⣟⢠⢡⢢⢣⢤⢥⢦⢧⣠⣡⣢⣣⣤⣥⣦⣧⢨⢩⢪⢫⢬⢭⢮⢯⣨⣩⣪⣫⣬⣭⣮⣯⢰⢱⢲⢳⢴⢵⢶⢷⣰⣱⣲⣳⣴⣵⣶⣷⢸⢹⢺⢻⢼⢽⢾⢿⣸⣹⣺⣻⣼⣽⣾⣿"
-                .split("");
+        BRAILLE_CHARACTERS = ("⠀⠁⠂⠃⠄⠅⠆⠇⡀⡁⡂⡃⡄⡅⡆⡇⠈⠉⠊⠋⠌⠍⠎⠏⡈⡉⡊⡋⡌⡍⡎⡏⠐⠑⠒⠓⠔⠕⠖⠗⡐⡑⡒⡓⡔⡕⡖⡗⠘⠙⠚⠛⠜⠝⠞⠟⡘⡙⡚⡛⡜⡝⡞⡟⠠⠡⠢⠣⠤⠥⠦⠧⡠⡡⡢⡣" +
+                "⡤⡥⡦⡧⠨⠩⠪⠫⠬⠭⠮⠯⡨⡩⡪⡫⡬⡭⡮⡯⠰⠱⠲⠳⠴⠵⠶⠷⡰⡱⡲⡳⡴⡵⡶⡷⠸⠹⠺⠻⠼⠽⠾⠿⡸⡹⡺⡻⡼⡽⡾⡿⢀⢁⢂⢃⢄⢅⢆⢇⣀⣁⣂⣃⣄⣅⣆⣇⢈⢉⢊⢋⢌⢍⢎⢏⣈⣉⣊⣋⣌⣍⣎⣏⢐⢑⢒⢓⢔⢕" +
+                "⢖⢗⣐⣑⣒⣓⣔⣕⣖⣗⢘⢙⢚⢛⢜⢝⢞⢟⣘⣙⣚⣛⣜⣝⣞⣟⢠⢡⢢⢣⢤⢥⢦⢧⣠⣡⣢⣣⣤⣥⣦⣧⢨⢩⢪⢫⢬⢭⢮⢯⣨⣩⣪⣫⣬⣭⣮⣯⢰⢱⢲⢳⢴⢵⢶⢷⣰⣱⣲⣳⣴⣵⣶⣷⢸⢹⢺⢻⢼⢽⢾⢿⣸⣹⣺⣻⣼⣽⣾⣿"
+        ).split("");
     }
 }

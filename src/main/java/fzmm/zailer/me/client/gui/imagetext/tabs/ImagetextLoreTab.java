@@ -22,14 +22,14 @@ public class ImagetextLoreTab implements IImagetextTab {
     private LoreOption loreMode;
 
     @Override
-    public void generate(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
-        logic.generateImagetext(algorithm, data);
+    public void build(IImagetextAlgorithm algorithm, ImagetextLogic logic, ImagetextData data, boolean isExecute) {
+        logic.buildImagetext(algorithm, data);
     }
 
     @Override
     public void execute(ImagetextLogic logic) {
         ItemStack stack = this.getStack(this.loreMode);
-        List<Text> imagetext = logic.getWrappedText();
+        List<Text> imagetext = logic.text();
 
         DisplayBuilder display = DisplayBuilder.of(stack);
         display.addLore(imagetext).get();

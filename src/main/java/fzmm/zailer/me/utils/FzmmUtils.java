@@ -2,6 +2,7 @@ package fzmm.zailer.me.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.serialization.DynamicOps;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -13,6 +14,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.RegistryOps;
 import net.minecraft.text.*;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
@@ -180,6 +182,10 @@ public class FzmmUtils {
     public static DynamicRegistryManager getRegistryManager() {
         assert MinecraftClient.getInstance().world != null;
         return MinecraftClient.getInstance().world.getRegistryManager();
+    }
+
+    public static <T> RegistryOps<T> getRegistryOps(DynamicOps<T> registry) {
+        return RegistryOps.of(registry, getRegistryManager());
     }
 
     public static <T extends Screen & ISnackBarScreen> void setScreen(T screen) {
