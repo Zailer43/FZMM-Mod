@@ -7,7 +7,7 @@ import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.LoreOption;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
@@ -19,9 +19,12 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
-public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip {
+public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip, IMemento {
     private ContextMenuButton loreModeButton;
     private LoreOption loreMode;
 
@@ -98,16 +101,13 @@ public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip {
     }
 
     @Override
-    public IMementoObject createMemento() {
-        return new LoreMementoTab(this.loreMode);
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.loreMode);
     }
 
     @Override
-    public void restoreMemento(IMementoObject mementoTab) {
-        LoreMementoTab memento = (LoreMementoTab) mementoTab;
-        this.updateLoreMode(memento.mode);
-    }
-
-    private record LoreMementoTab(LoreOption mode) implements IMementoObject {
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.loreMode = (LoreOption) input.readObject();
+        this.updateLoreMode(this.loreMode);
     }
 }

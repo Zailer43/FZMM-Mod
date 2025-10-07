@@ -7,7 +7,7 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
@@ -30,11 +30,14 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
+public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMemento {
     private static final String BASE_ITEMS_TRANSLATION_KEY = "fzmm.item.imagetext.sign.";
     private ContextMenuButton signTypeButton;
     private SmallCheckboxComponent isHangingSignButton;
@@ -222,15 +225,20 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
     }
 
     @Override
-    public IMementoObject createMemento() {
-        return new SignMementoTab(this.woodType, this.isHangingSignButton.checked());
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.woodType.name());
+        output.writeBoolean(this.isHangingSignButton.checked());
     }
 
     @Override
-    public void restoreMemento(IMementoObject mementoTab) {
-        SignMementoTab memento = (SignMementoTab) mementoTab;
-        this.updateSignType(memento.signType);
-        this.isHangingSignButton.checked(memento.isHangingSign());
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        String woodName = (String) input.readObject();
+        WoodType woodType = WoodType.stream()
+                .filter(woodType1 -> woodType1.name().equals(woodName))
+                .findFirst()
+                .orElse(WoodType.OAK);
+        this.updateSignType(woodType);
+        this.isHangingSignButton.checked(input.readBoolean());
     }
 
     @Override
@@ -240,6 +248,4 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip {
         return Text.translatable("fzmm.gui.imagetext.tab.sign.tooltip", horizontalSigns, verticalSigns);
     }
 
-    private record SignMementoTab(WoodType signType, boolean isHangingSign) implements IMementoObject {
-    }
 }
