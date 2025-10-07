@@ -3,7 +3,9 @@ package fzmm.zailer.me.client.gui.head_generator.category;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
 import net.minecraft.text.Text;
 
-public interface IHeadCategory {
+import java.io.Serializable;
+
+public interface IHeadCategory extends Serializable {
     IHeadCategory[] NATURAL_CATEGORIES = new IHeadCategory[] {
             new HeadAllCategory(),
             new HeadTextureCategory(),

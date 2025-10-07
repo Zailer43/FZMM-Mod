@@ -10,7 +10,7 @@ import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.BookOption;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
@@ -27,7 +27,11 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-public class ImagetextBookTooltipTab implements IImagetextTab {
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+public class ImagetextBookTooltipTab implements IImagetextTab, IMemento {
     private ContextMenuButton bookTooltipButton;
     private BookOption bookMode;
     private TextBoxComponent bookTooltipAuthor;
@@ -107,19 +111,16 @@ public class ImagetextBookTooltipTab implements IImagetextTab {
     }
 
     @Override
-    public IMementoObject createMemento() {
-        return new BookTooltipMementoTab(this.bookMode,
-                this.bookTooltipAuthor.getText(), this.bookTooltipMessage.getText());
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.bookTooltipAuthor.getText());
+        output.writeObject(this.bookTooltipMessage.getText());
+        output.writeObject(this.bookMode);
     }
 
     @Override
-    public void restoreMemento(IMementoObject mementoTab) {
-        BookTooltipMementoTab memento = (BookTooltipMementoTab) mementoTab;
-        this.bookTooltipAuthor.text(memento.author);
-        this.bookTooltipMessage.text(memento.message);
-        this.updateBookTooltip(memento.mode);
-    }
-
-    private record BookTooltipMementoTab(BookOption mode, String author, String message) implements IMementoObject {
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.bookTooltipAuthor.text((String) input.readObject());
+        this.bookTooltipMessage.text((String) input.readObject());
+        this.updateBookTooltip((BookOption) input.readObject());
     }
 }

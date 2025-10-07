@@ -5,7 +5,6 @@ import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.utils.InvisibleEntityWarning;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.gui.utils.select_item.RequestedItem;
 import fzmm.zailer.me.client.gui.utils.select_item.SelectItemScreen;
 import fzmm.zailer.me.client.logic.player_statue.PlayerStatue;
@@ -63,15 +62,5 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
     @Override
     public boolean canExecute() {
         return true;
-    }
-
-    @Override
-    public IMementoObject createMemento() {
-        return null;
-    }
-
-    @Override
-    public void restoreMemento(IMementoObject mementoTab) {
-
     }
 }

@@ -3,7 +3,7 @@ package fzmm.zailer.me.builders;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import fzmm.zailer.me.client.logic.FzmmHistory;
+import fzmm.zailer.me.client.logic.history.FzmmHistory;
 import fzmm.zailer.me.utils.ItemUtils;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;

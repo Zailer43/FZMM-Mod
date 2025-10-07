@@ -9,8 +9,8 @@ import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.player_statue.PlayerStatueScreen;
 import fzmm.zailer.me.client.gui.utils.InvisibleEntityWarning;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.head_generator.model.InternalModels;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.player_statue.PlayerStatue;
 import fzmm.zailer.me.client.logic.player_statue.StatuePart;
 import fzmm.zailer.me.utils.ImageUtils;
@@ -21,10 +21,13 @@ import net.minecraft.text.Text;
 import org.joml.Vector3f;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class PlayerStatueGenerateTab implements IPlayerStatueTab {
+public class PlayerStatueGenerateTab implements IPlayerStatueTab, IMemento {
     private static final ImageStatus INVALID_SKIN_SIZE = new ImageStatus("error.title", "error.details.playerStatue.invalidSkinSize", true);
     private static CompletableFuture<Void> CREATE_COMPLETABLE_FUTURE = null;
     private ImageRowsElements skinElements;
@@ -106,17 +109,14 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab {
     }
 
     @Override
-    public IMementoObject createMemento() {
-        return new GenerateMementoTab(this.skinElements.valueField().getText(), this.skinElements.mode().get());
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.skinElements.valueField().getText());
+        output.writeObject(this.skinElements.mode().get());
     }
 
     @Override
-    public void restoreMemento(IMementoObject mementoTab) {
-        GenerateMementoTab memento = (GenerateMementoTab) mementoTab;
-        this.skinElements.valueField().text(memento.skinRowValue);
-        this.skinElements.imageModeButtons().get(memento.sourceType).onPress();
-    }
-
-    private record GenerateMementoTab(String skinRowValue, ImageMode sourceType) implements IMementoObject {
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.skinElements.valueField().text((String) input.readObject());
+        this.skinElements.imageModeButtons().get((ImageMode) input.readObject()).onPress();
     }
 }

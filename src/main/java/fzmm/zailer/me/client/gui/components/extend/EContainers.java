@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.components.extend;
 
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.extend.container.EScrollContainer;
+import fzmm.zailer.me.client.gui.components.tabs.TabContainer;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.Component;
@@ -37,5 +38,17 @@ public class EContainers {
 
     public static <C extends Component> EScrollContainer<C> horizontalScroll(Sizing horizontalSizing, Sizing verticalSizing, C child, boolean flipScroll) {
         return new EScrollContainer<>(ScrollContainer.ScrollDirection.HORIZONTAL, horizontalSizing, verticalSizing, child, flipScroll);
+    }
+
+    public static TabContainer tabHorizontal(Sizing horizontalSizing, Sizing verticalSizing) {
+        return new TabContainer(horizontalSizing, verticalSizing, FlowLayout.Algorithm.HORIZONTAL);
+    }
+
+    public static TabContainer tabVertical(Sizing horizontalSizing, Sizing verticalSizing) {
+        return new TabContainer(horizontalSizing, verticalSizing, FlowLayout.Algorithm.VERTICAL);
+    }
+
+    public static TabContainer tabLtrTextFlow(Sizing horizontalSizing, Sizing verticalSizing) {
+        return new TabContainer(horizontalSizing, verticalSizing, FlowLayout.Algorithm.LTR_TEXT);
     }
 }

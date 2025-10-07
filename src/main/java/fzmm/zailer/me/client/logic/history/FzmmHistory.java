@@ -1,4 +1,4 @@
-package fzmm.zailer.me.client.logic;
+package fzmm.zailer.me.client.logic.history;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
@@ -16,8 +16,9 @@ import java.util.Optional;
 public class FzmmHistory {
     private static final ArrayDeque<NbtCompound> GENERATED_ITEMS = new ArrayDeque<>();
     private static final ArrayDeque<NbtCompound> GENERATED_HEADS = new ArrayDeque<>();
+    private static final UniqueMementoCaretaker SCREEN_CARETAKER = new UniqueMementoCaretaker();
 
-    public static void update() {
+    public static void onUpdateConfig() {
         FzmmConfig.History config = FzmmClient.CONFIG.history;
         removeExcess(GENERATED_ITEMS, config.maxItemHistory());
         removeExcess(GENERATED_HEADS, config.maxHeadHistory());
@@ -75,7 +76,7 @@ public class FzmmHistory {
         removeExcess(compounds, max);
     }
 
-    public static void removeExcess(ArrayDeque<NbtCompound> compounds, int max){
+    public static void removeExcess(ArrayDeque<NbtCompound> compounds, int max) {
         if (max < 1) {
             compounds.clear();
             return;
@@ -91,6 +92,22 @@ public class FzmmHistory {
         result.addAll(getGeneratedItems());
         result.addAll(getGeneratedHeads());
         return result;
+    }
+
+    public static void saveScreen(IMemento screen) {
+        try {
+            SCREEN_CARETAKER.backup(screen);
+        } catch (Exception e) {
+            FzmmClient.LOGGER.error("[FzmmHistory] Failed to save memento", e);
+        }
+    }
+
+    public static void restoreScreen(IMemento screen) {
+        try {
+            SCREEN_CARETAKER.restore(screen);
+        } catch (Exception e) {
+            FzmmClient.LOGGER.error("[FzmmHistory] Failed to restore memento", e);
+        }
     }
 
     /**
