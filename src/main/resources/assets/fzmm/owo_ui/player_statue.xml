@@ -31,35 +31,60 @@
                                 <id>name</id>
                                 <symbolChatButtons>true</symbolChatButtons>
                             </fzmm.text-box-row>
-                            <fzmm.screen-tab-row>
-                                <id>tabs</id>
-                            </fzmm.screen-tab-row>
 
-                            <fzmm.screen-tab>
-                                <id>generate</id>
+                            <fzmm.flow-layout direction="horizontal">
                                 <children>
-                                    <fzmm.image-rows>
-                                        <buttonId>skin</buttonId>
-                                        <imageModeId>skin-source</imageModeId>
-                                    </fzmm.image-rows>
+                                    <fzmm.button id="generate-button"/>
+                                    <fzmm.button id="update-button"/>
                                 </children>
-                            </fzmm.screen-tab>
 
-                            <fzmm.screen-tab>
-                                <id>update</id>
+                                <gap>2</gap>
+                                <surface>
+                                    <panel dark="true"/>
+                                </surface>
+                                <padding>
+                                    <all>6</all>
+                                </padding>
+                                <margins>
+                                    <vertical>2</vertical>
+                                </margins>
+                            </fzmm.flow-layout>
+
+                            <fzmm.tab-container direction="vertical" id="tabs">
                                 <children>
+                                    <fzmm.label id="tab-label">
+                                        <margins>
+                                            <vertical>4</vertical>
+                                        </margins>
+                                    </fzmm.label>
                                 </children>
-                            </fzmm.screen-tab>
+
+                                <tabs>
+                                    <fzmm.flow-layout direction="vertical" id="generate">
+                                        <children>
+                                            <fzmm.image-rows>
+                                                <buttonId>skin</buttonId>
+                                                <imageModeId>skin-source</imageModeId>
+                                            </fzmm.image-rows>
+                                        </children>
+                                    </fzmm.flow-layout>
+
+                                    <fzmm.flow-layout direction="vertical" id="update">
+                                        <children>
+                                        </children>
+                                    </fzmm.flow-layout>
+                                </tabs>
+
+                                <horizontal-alignment>center</horizontal-alignment>
+                            </fzmm.tab-container>
                         </children>
+                        <horizontal-alignment>center</horizontal-alignment>
                     </fzmm.flow-layout>
 
                     <sizing>
                         <vertical method="fill">90</vertical>
                     </sizing>
 
-                    <margins>
-                        <vertical>10</vertical>
-                    </margins>
                 </fzmm.scroll>
 
                 <fzmm.flow-layout direction="horizontal">

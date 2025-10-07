@@ -2,7 +2,8 @@ package fzmm.zailer.me.client.gui.converters.tabs;
 
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.NumberRow;
-import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
+import fzmm.zailer.me.client.gui.components.tabs.ITab;
+import fzmm.zailer.me.client.gui.converters.ConvertersScreen;
 import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.ButtonComponent;
@@ -11,14 +12,18 @@ import net.minecraft.util.math.random.Random;
 import java.util.UUID;
 
 @SuppressWarnings("UnstableApiUsage")
-public class ConverterArrayToUuidTab implements IScreenTab {
+public class ConverterArrayToUuidTab implements ITab {
     private static final int ARRAY_SIZE = 4;
     private ConfigTextBox[] textBoxArray;
-
 
     @Override
     public String getId() {
         return "arrayToUuid";
+    }
+
+    @Override
+    public String getTranslationKey() {
+        return ConvertersScreen.BUTTON_TRANSLATION_KEY + this.getId();
     }
 
     @Override

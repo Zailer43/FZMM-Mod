@@ -8,7 +8,6 @@ import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.NumberRow;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.utils.InvisibleEntityWarning;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
@@ -115,14 +114,5 @@ public class ImagetextHologramTab implements IImagetextTab {
         }
 
         return false;
-    }
-
-    @Override
-    public IMementoObject createMemento() {
-        return null;
-    }
-
-    @Override
-    public void restoreMemento(IMementoObject mementoTab) {
     }
 }

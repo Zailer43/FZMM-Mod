@@ -14,7 +14,7 @@ import fzmm.zailer.me.client.gui.head_generator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
 import fzmm.zailer.me.client.gui.player_statue.PlayerStatueScreen;
 import fzmm.zailer.me.client.gui.text_format.TextFormatScreen;
-import fzmm.zailer.me.client.logic.FzmmHistory;
+import fzmm.zailer.me.client.logic.history.FzmmHistory;
 import fzmm.zailer.me.utils.HoverAnimationState;
 import io.wispforest.owo.config.ui.ConfigScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
