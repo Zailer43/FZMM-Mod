@@ -4,6 +4,7 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.FzmmIcons;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.HistoryScreen;
+import fzmm.zailer.me.client.gui.banner_editor.BannerEditorScreen;
 import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.component.ELabelComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
@@ -41,16 +42,16 @@ public class MainScreen extends BaseFzmmScreen {
 
     private HashMap<String, ButtonData> getEntries() {
         HashMap<String, ButtonData> result = new LinkedHashMap<>();
-
-        result.put("headGenerator", new ButtonData(HeadGeneratorScreen::new, FzmmIcons.HEAD_GENERATOR));
-        result.put("headGallery", new ButtonData(HeadGalleryScreen::new, FzmmIcons.HEAD_GALLERY));
+        // maybe this should have a better order... and a config for it
         result.put("imagetext", new ButtonData(ImagetextScreen::new, FzmmIcons.IMAGETEXT));
         result.put("textFormat", new ButtonData(TextFormatScreen::new, FzmmIcons.TEXT_FORMAT));
         result.put("playerStatue", new ButtonData(PlayerStatueScreen::new, FzmmIcons.PLAYER_STATUE));
         result.put("encryptbook", new ButtonData(EncryptBookScreen::new, FzmmIcons.ENCRYPT_BOOK));
-        result.put("history", new ButtonData(HistoryScreen::new, FzmmIcons.HISTORY, !FzmmHistory.getAllItems().isEmpty()));
+        result.put("headGenerator", new ButtonData(HeadGeneratorScreen::new, FzmmIcons.HEAD_GENERATOR));
         result.put("converters", new ButtonData(ConvertersScreen::new, FzmmIcons.CONVERTERS));
-        result.put("bannerEditor", new ButtonData(ConvertersScreen::new, FzmmIcons.BANNER_EDITOR));
+        result.put("history", new ButtonData(HistoryScreen::new, FzmmIcons.HISTORY, !FzmmHistory.getAllItems().isEmpty()));
+        result.put("headGallery", new ButtonData(HeadGalleryScreen::new, FzmmIcons.HEAD_GALLERY));
+        result.put("bannerEditor", new ButtonData(BannerEditorScreen::new, FzmmIcons.BANNER_EDITOR));
 
         return result;
     }
