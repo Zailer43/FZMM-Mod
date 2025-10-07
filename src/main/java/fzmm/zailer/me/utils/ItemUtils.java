@@ -7,7 +7,7 @@ import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.SnackBarBuilder;
-import fzmm.zailer.me.client.logic.FzmmHistory;
+import fzmm.zailer.me.client.logic.history.FzmmHistory;
 import io.wispforest.owo.config.ui.ConfigScreen;
 import io.wispforest.owo.ui.component.Components;
 import net.minecraft.client.MinecraftClient;

@@ -21,12 +21,11 @@ import fzmm.zailer.me.client.gui.head_generator.components.HeadComponentOverlay;
 import fzmm.zailer.me.client.gui.head_generator.components.HeadCompoundComponentEntry;
 import fzmm.zailer.me.client.gui.head_generator.options.ISkinPreEdit;
 import fzmm.zailer.me.client.gui.head_generator.options.SkinPreEditOption;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.head_generator.HeadResourcesLoader;
 import fzmm.zailer.me.client.logic.head_generator.model.HeadModelEntry;
 import fzmm.zailer.me.client.logic.head_generator.model.InternalModels;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.utils.*;
 import fzmm.zailer.me.utils.list.ListUtils;
 import io.wispforest.owo.config.ui.ConfigScreen;
@@ -49,6 +48,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
@@ -60,11 +62,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
-public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScreen {
+public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     private static final int COMPOUND_HEAD_LAYOUT_WIDTH = 60;
     private static final int HEAD_PREVIEW_SCHEDULE_DELAY_MILLIS = 1;
     public static final Path SKIN_SAVE_FOLDER_PATH = Path.of(FabricLoader.getInstance().getGameDir().toString(), FzmmClient.MOD_ID, "skins");
-    private static HeadGeneratorMemento memento = null;
     private final Set<String> favoritesHeadsOnOpenScreen;
     private ImageRowsElements skinElements;
     private TextBoxComponent headNameField;
@@ -643,43 +644,26 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMementoScree
     }
 
     @Override
-    public void setMemento(IMementoObject memento) {
-        HeadGeneratorScreen.memento = (HeadGeneratorMemento) memento;
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.skinElements.mode().get());
+        output.writeObject(this.skinElements.valueField().getText());
+        output.writeObject(this.headNameField.getText());
+        output.writeBoolean(this.showFavorites);
+        output.writeObject(this.skinPreEdit());
+        output.writeObject(this.selectedCategory);
+        output.writeObject(this.searchField.getText());
     }
 
     @Override
-    public Optional<IMementoObject> getMemento() {
-        return Optional.ofNullable(memento);
-    }
-
-    @Override
-    public IMementoObject createMemento() {
-        return new HeadGeneratorMemento(
-                this.headNameField.getText(),
-                this.skinElements.mode().get(),
-                this.skinElements.valueField().getText(),
-                this.showFavorites,
-                this.skinPreEdit(),
-                this.selectedCategory,
-                this.searchField.getText()
-        );
-    }
-
-    @Override
-    public void restoreMemento(IMementoObject mementoObject) {
-        HeadGeneratorMemento memento = (HeadGeneratorMemento) mementoObject;
-        this.skinElements.imageModeButtons().get(memento.skinMode).onPress();
-        this.skinElements.valueField().text(memento.skinRowValue);
-        this.headNameField.text(memento.headName);
-        if (memento.showFavorites)
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.skinElements.imageModeButtons().get((ImageMode) input.readObject()).onPress();
+        this.skinElements.valueField().text((String) input.readObject());
+        this.headNameField.text((String) input.readObject());
+        if (input.readBoolean()) { // showFavorites
             this.toggleFavoriteListExecute();
-        this.skinPreEditButtons.get(memento.skinPreEditOption).onPress();
-        this.updateCategory(memento.category);
-        this.searchField.text(memento.search);
-    }
-
-    private record HeadGeneratorMemento(String headName, ImageMode skinMode, String skinRowValue, boolean showFavorites,
-                                        SkinPreEditOption skinPreEditOption, IHeadCategory category,
-                                        String search) implements IMementoObject {
+        }
+        this.skinPreEditButtons.get((SkinPreEditOption) input.readObject()).onPress();
+        this.updateCategory((IHeadCategory) input.readObject());
+        this.searchField.text((String) input.readObject());
     }
 }

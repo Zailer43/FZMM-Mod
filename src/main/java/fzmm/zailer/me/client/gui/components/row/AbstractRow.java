@@ -48,7 +48,7 @@ public abstract class AbstractRow extends EFlowLayout {
 
         FlowLayout rowLayout = (FlowLayout) EContainers
                 .horizontalFlow(Sizing.fill(100), Sizing.fixed(ROW_HEIGHT))
-                .child(this.getLabel(id, tooltipId, components.length != 0))
+                .child(this.getLabel(id, tooltipId))
                 .gap(BaseFzmmScreen.COMPONENT_DISTANCE)
                 .alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER)
                 .margins(Insets.vertical(VERTICAL_MARGIN))
@@ -84,9 +84,8 @@ public abstract class AbstractRow extends EFlowLayout {
                 .id(getResetButtonId(id));
     }
 
-    public Component getLabel(String id, String tooltipId, boolean isOption) {
-        String baseTranslationKey = isOption ? BaseFzmmScreen.getOptionBaseTranslationKey(this.baseTranslationKey) : BaseFzmmScreen.getTabTranslationKey(this.baseTranslationKey);
-        return getLabel(id, tooltipId, baseTranslationKey, this.translate);
+    public Component getLabel(String id, String tooltipId) {
+        return getLabel(id, tooltipId, BaseFzmmScreen.getOptionBaseTranslationKey(this.baseTranslationKey), this.translate);
     }
 
     public static Component getLabel(String id, String tooltipId, String baseTranslationKey, boolean translate) {

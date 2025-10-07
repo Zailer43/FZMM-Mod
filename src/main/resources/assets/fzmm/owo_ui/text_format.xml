@@ -73,89 +73,114 @@
                                     </fzmm.boolean-button>
                                 </children>
 
-                                <gap>8</gap>
-
+                                <gap>2</gap>
+                                <surface>
+                                    <panel dark="true"/>
+                                </surface>
+                                <padding>
+                                    <all>6</all>
+                                </padding>
                                 <margins>
-                                    <vertical>4</vertical>
+                                    <vertical>2</vertical>
                                 </margins>
+                            </fzmm.flow-layout>
+
+                            <fzmm.flow-layout direction="horizontal">
+                                <children>
+                                    <fzmm.button id="simple-button"/>
+                                    <fzmm.button id="gradient-button"/>
+                                    <fzmm.button id="interleaved_colors-button"/>
+                                    <fzmm.button id="rainbow-button"/>
+                                    <fzmm.button id="placeholder_api-button"/>
+                                </children>
+
+                                <gap>2</gap>
+
+                                <surface>
+                                    <panel dark="true"/>
+                                </surface>
+
+                                <padding>
+                                    <all>6</all>
+                                </padding>
+                            </fzmm.flow-layout>
+
+                            <fzmm.tab-container direction="vertical" id="tabs">
+                                <children>
+                                    <fzmm.label id="tab-label">
+                                        <margins>
+                                            <vertical>4</vertical>
+                                        </margins>
+                                    </fzmm.label>
+                                </children>
+
+                                <tabs>
+                                    <fzmm.flow-layout direction="vertical" id="simple">
+                                        <children>
+                                            <fzmm.color-row>
+                                                <id>color</id>
+                                            </fzmm.color-row>
+                                        </children>
+                                    </fzmm.flow-layout>
+
+                                    <fzmm.flow-layout direction="vertical" id="gradient">
+                                        <children>
+                                            <fzmm.color-list>
+                                                <id>gradientColorList</id>
+                                            </fzmm.color-list>
+                                        </children>
+                                    </fzmm.flow-layout>
+
+                                    <fzmm.flow-layout direction="vertical" id="interleaved_colors">
+                                        <children>
+                                            <fzmm.slider-row>
+                                                <id>interleavedDistance</id>
+                                            </fzmm.slider-row>
+                                            <fzmm.color-list>
+                                                <id>interleavedColorList</id>
+                                            </fzmm.color-list>
+                                        </children>
+                                    </fzmm.flow-layout>
+
+                                    <fzmm.flow-layout direction="vertical" id="rainbow">
+                                        <children>
+                                            <fzmm.slider-row>
+                                                <id>hue</id>
+                                            </fzmm.slider-row>
+                                            <fzmm.slider-row>
+                                                <id>brightness</id>
+                                            </fzmm.slider-row>
+                                            <fzmm.slider-row>
+                                                <id>saturation</id>
+                                            </fzmm.slider-row>
+                                            <fzmm.slider-row>
+                                                <id>hueStep</id>
+                                            </fzmm.slider-row>
+                                        </children>
+                                    </fzmm.flow-layout>
+
+                                    <fzmm.flow-layout direction="vertical" id="placeholder_api">
+                                        <children>
+                                            <fzmm.flow-layout direction="vertical" id="placeholder-info">
+                                                <children>
+
+                                                </children>
+
+                                                <vertical-alignment>center</vertical-alignment>
+                                                <horizontal-alignment>center</horizontal-alignment>
+
+                                                <sizing>
+                                                    <horizontal method="fill">100</horizontal>
+                                                </sizing>
+
+                                                <gap>8</gap>
+                                            </fzmm.flow-layout>
+                                        </children>
+                                    </fzmm.flow-layout>
+                                </tabs>
 
                                 <horizontal-alignment>center</horizontal-alignment>
-
-                                <sizing>
-                                    <horizontal method="fill">100</horizontal>
-                                </sizing>
-                            </fzmm.flow-layout>
-                            <fzmm.screen-tab-row>
-                                <id>tabs</id>
-                            </fzmm.screen-tab-row>
-
-                            <fzmm.screen-tab>
-                                <id>rainbow</id>
-                                <children>
-                                    <fzmm.slider-row>
-                                        <id>hue</id>
-                                    </fzmm.slider-row>
-                                    <fzmm.slider-row>
-                                        <id>brightness</id>
-                                    </fzmm.slider-row>
-                                    <fzmm.slider-row>
-                                        <id>saturation</id>
-                                    </fzmm.slider-row>
-                                    <fzmm.slider-row>
-                                        <id>hueStep</id>
-                                    </fzmm.slider-row>
-                                </children>
-                            </fzmm.screen-tab>
-
-                            <fzmm.screen-tab>
-                                <id>gradient</id>
-                                <children>
-                                    <fzmm.color-list>
-                                        <id>gradientColorList</id>
-                                    </fzmm.color-list>
-                                </children>
-                            </fzmm.screen-tab>
-
-                            <fzmm.screen-tab>
-                                <id>simple</id>
-                                <children>
-                                    <fzmm.color-row>
-                                        <id>color</id>
-                                    </fzmm.color-row>
-                                </children>
-                            </fzmm.screen-tab>
-
-                            <fzmm.screen-tab>
-                                <id>interleaved_colors</id>
-                                <children>
-                                    <fzmm.slider-row>
-                                        <id>interleavedDistance</id>
-                                    </fzmm.slider-row>
-                                    <fzmm.color-list>
-                                        <id>interleavedColorList</id>
-                                    </fzmm.color-list>
-                                </children>
-                            </fzmm.screen-tab>
-
-                            <fzmm.screen-tab>
-                                <id>placeholder_api</id>
-                                <children>
-                                    <fzmm.flow-layout direction="vertical" id="placeholder-info">
-                                        <children>
-
-                                        </children>
-
-                                        <vertical-alignment>center</vertical-alignment>
-                                        <horizontal-alignment>center</horizontal-alignment>
-
-                                        <sizing>
-                                            <horizontal method="fill">100</horizontal>
-                                        </sizing>
-
-                                        <gap>8</gap>
-                                    </fzmm.flow-layout>
-                                </children>
-                            </fzmm.screen-tab>
+                            </fzmm.tab-container>
                         </children>
 
                         <horizontal-alignment>center</horizontal-alignment>

@@ -3,17 +3,16 @@ package fzmm.zailer.me.client.gui.head_gallery;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntity;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.extend.component.EItemComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.head_gallery.HeadGalleryResources;
 import fzmm.zailer.me.client.logic.head_gallery.MinecraftHeadsData;
-import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntity;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.HeadUtils;
 import io.wispforest.owo.ui.component.*;
@@ -37,18 +36,20 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen {
+public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
 
     private static final int SELECTED_TAG_COLOR = 0x43BCB2;
     private static final String TAG_BUTTON_TEXT = "fzmm.gui.headGallery.button.tags";
     private static final String TAG_LABEL_TEXT = "fzmm.gui.headGallery.label.tags-overlay";
-    private static HeadGalleryMemento memento = null;
     private int page;
     private double itemScale;
-    private boolean setStyle;
+    private CheckboxComponent styleCheckbox;
     private FlowLayout contentLayout;
     private LabelComponent currentPageLabel;
     private final ObjectArrayList<MinecraftHeadsData> categoryHeads;
@@ -69,7 +70,6 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         super("head_gallery", "headGallery", parent);
         this.categoryHeads = new ObjectArrayList<>();
         this.categoryHeadsWithFilter = new ObjectArrayList<>();
-        this.setStyle = FzmmClient.CONFIG.headGallery.setStyleToHeads();
         this.itemScale = FzmmClient.CONFIG.headGallery.itemScale();
     }
 
@@ -139,11 +139,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
             this.setPage(this.page);
         });
 
-        CheckboxComponent styleCheckbox = rootComponent.childByIdOrThrow(CheckboxComponent.class, "style-checkbox");
-        styleCheckbox.checked(this.setStyle).onChanged(value -> {
-            this.setStyle = value;
-            this.setPage(this.page);
-        });
+        this.styleCheckbox = rootComponent.childByIdOrThrow(CheckboxComponent.class, "style-checkbox");
+        this.styleCheckbox.checked(FzmmClient.CONFIG.headGallery.setStyleToHeads()).onChanged(value -> this.setPage(this.page));
 
         // bottom right
         rootComponent.childByIdOrThrow(ButtonComponent.class, "minecraft-heads-button").onPress(this::minecraftHeadsExecute);
@@ -391,7 +388,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
 
 
             EItemComponent itemComponent;
-            if (this.setStyle) {
+            if (this.styleCheckbox.isChecked()) {
                 DisplayBuilder builder = DisplayBuilder.of(head);
                 builder.setName(Text.translatable("fzmm.item.headGallery.heads.name", minecraftHeadsData.name()).getString(), nameColor)
                         .addLore(Text.translatable("fzmm.item.headGallery.heads.tags.title").getString(), tagsColor);
@@ -453,46 +450,35 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMementoScreen 
         this.backEntityPreview.skin(skinTextures.get());
     }
 
-
     @Override
-    public void setMemento(IMementoObject memento) {
-        HeadGalleryScreen.memento = (HeadGalleryMemento) memento;
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.selectedCategory);
+        output.writeObject(this.contentSearchField.getText());
+        output.writeBoolean(this.styleCheckbox.isChecked());
+        output.writeObject(this.selectedTags);
+        output.writeInt(this.page);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Optional<IMementoObject> getMemento() {
-        return Optional.ofNullable(memento);
-    }
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.selectedCategory = (String) input.readObject();
+        this.contentSearchField.text((String) input.readObject());
+        this.styleCheckbox.checked(input.readBoolean());
+        if (this.selectedCategory == null) return;
 
-    @Override
-    public IMementoObject createMemento() {
-        return new HeadGalleryMemento(new HashSet<>(this.selectedTags),
-                this.page,
-                this.selectedCategory,
-                this.contentSearchField.getText()
-        );
-    }
+        List<Component> categoryList = new ArrayList<>(this.categoryButtonList);
+        categoryList.removeIf(component -> !this.selectedCategory.equals(component.id()));
+        categoryList.stream().findAny().ifPresent(component -> this.categoryButtonExecute((ButtonComponent) component, this.selectedCategory, () -> {
 
-    @Override
-    public void restoreMemento(IMementoObject mementoObject) {
-        HeadGalleryMemento memento = (HeadGalleryMemento) mementoObject;
-        this.selectedCategory = memento.category;
-        this.contentSearchField.text(memento.contentSearch);
-
-        if (memento.category != null) {
-            List<Component> categoryList = new ArrayList<>(this.categoryButtonList);
-            categoryList.removeIf(component -> !this.selectedCategory.equals(component.id()));
-            categoryList.stream().findAny().ifPresent(component -> this.categoryButtonExecute((ButtonComponent) component, this.selectedCategory, () -> {
-
-                this.selectedTags = memento.selectedTags;
+            try {
+                this.selectedTags = (Set<String>) input.readObject();
                 this.tagButton.setMessage(this.getTagButtonText());
                 this.applyFilters();
-                this.setPage(memento.page);
-            }));
-        }
-    }
-
-    private record HeadGalleryMemento(Set<String> selectedTags, int page, String category,
-                                      String contentSearch) implements IMementoObject {
+                this.setPage(input.readInt());
+            } catch (IOException | ClassNotFoundException e) {
+                FzmmClient.LOGGER.error("[HeadGalleryScreen] Failed to restore category", e);
+            }
+        }));
     }
 }

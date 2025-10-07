@@ -11,10 +11,9 @@ import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.encrypt_book.components.AddEncryptProfileOverlay;
 import fzmm.zailer.me.client.gui.encrypt_book.components.DecryptorSaverOverlay;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.enycrpt_book.EncryptbookLogic;
 import fzmm.zailer.me.client.logic.enycrpt_book.TranslationEncryptProfile;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmWikiConstants;
 import io.wispforest.owo.ui.component.ButtonComponent;
@@ -33,14 +32,15 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen {
-    private static EncryptBookMemento memento = null;
+public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
     private TextAreaComponent messageTextArea;
     private TextBoxComponent paddingCharactersField;
     private TextBoxComponent authorField;
@@ -244,37 +244,20 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMementoScreen 
     }
 
     @Override
-    public void setMemento(IMementoObject memento) {
-        EncryptBookScreen.memento = (EncryptBookMemento) memento;
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.messageTextArea.getText());
+        output.writeObject(this.authorField.getText());
+        output.writeObject(this.titleField.getText());
+        output.writeObject(this.paddingCharactersField.getText());
+        output.writeInt(this.selectedProfileIndex);
     }
 
     @Override
-    public Optional<IMementoObject> getMemento() {
-        return Optional.ofNullable(memento);
-    }
-
-    @Override
-    public IMementoObject createMemento() {
-        return new EncryptBookMemento(
-                this.messageTextArea.getText(),
-                this.authorField.getText(),
-                this.titleField.getText(),
-                this.paddingCharactersField.getText(),
-                this.selectedProfileIndex
-        );
-    }
-
-    @Override
-    public void restoreMemento(IMementoObject mementoObject) {
-        EncryptBookMemento memento = (EncryptBookMemento) mementoObject;
-        this.messageTextArea.text(memento.message);
-        this.authorField.text(memento.author);
-        this.titleField.text(memento.title);
-        this.paddingCharactersField.text(memento.paddingCharacters);
-        this.selectProfile(memento.selectedProfileIndex);
-    }
-
-    private record EncryptBookMemento(String message, String author, String title, String paddingCharacters,
-                                      int selectedProfileIndex) implements IMementoObject {
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.messageTextArea.text((String) input.readObject());
+        this.authorField.text((String) input.readObject());
+        this.titleField.text((String) input.readObject());
+        this.paddingCharactersField.text((String) input.readObject());
+        this.selectProfile(input.readInt());
     }
 }

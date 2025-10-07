@@ -2,7 +2,6 @@ package fzmm.zailer.me.client.gui.text_format.tabs;
 
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.compat.CompatMods;
 import fzmm.zailer.me.compat.placeholder_api.PlaceholderApiCompat;
@@ -20,7 +19,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class TextFormatPlaceholderApiTab implements ITextFormatTab {
-
     private static final String PLACEHOLDER_WIKI = "https://placeholders.pb4.eu/user/text-format";
     private FlowLayout infoLayout;
 
@@ -87,15 +85,5 @@ public class TextFormatPlaceholderApiTab implements ITextFormatTab {
     @Override
     public boolean hasStyles() {
         return false;
-    }
-
-    @Override
-    public IMementoObject createMemento() {
-        return null;
-    }
-
-    @Override
-    public void restoreMemento(IMementoObject mementoTab) {
-
     }
 }

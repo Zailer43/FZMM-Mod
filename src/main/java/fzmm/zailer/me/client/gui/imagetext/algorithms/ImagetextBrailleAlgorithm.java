@@ -4,7 +4,6 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.utils.ImageUtils;
@@ -16,6 +15,9 @@ import net.minecraft.text.Text;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 
 public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
@@ -68,7 +70,7 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
 
     @Override
     public String getId() {
-        return "algorithm.braille";
+        return "braille";
     }
 
     @Override
@@ -224,24 +226,17 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
     }
 
     @Override
-    public IMementoObject createMemento() {
-        return new BrailleAlgorithmMementoTab(
-                (int) this.edgeThresholdSlider.discreteValue(),
-                (int) this.edgeDistanceSlider.discreteValue(),
-                this.invertBooleanButton.checked()
-        );
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeInt((int) this.edgeThresholdSlider.discreteValue());
+        output.writeInt((int) this.edgeDistanceSlider.discreteValue());
+        output.writeBoolean(this.invertBooleanButton.checked());
     }
 
     @Override
-    public void restoreMemento(IMementoObject mementoObject) {
-        BrailleAlgorithmMementoTab memento = (BrailleAlgorithmMementoTab) mementoObject;
-        this.edgeThresholdSlider.setFromDiscreteValue(memento.edgeThreshold);
-        this.edgeDistanceSlider.setFromDiscreteValue(memento.edgeDistance);
-        this.invertBooleanButton.checked(memento.invert);
-    }
-
-    private record BrailleAlgorithmMementoTab(int edgeThreshold, int edgeDistance,
-                                              boolean invert) implements IMementoObject {
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.edgeThresholdSlider.setFromDiscreteValue(input.readInt());
+        this.edgeDistanceSlider.setFromDiscreteValue(input.readInt());
+        this.invertBooleanButton.checked(input.readBoolean());
     }
 
     static {

@@ -1,21 +1,27 @@
 package fzmm.zailer.me.client.gui.imagetext.algorithms;
 
-import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
-import fzmm.zailer.me.client.gui.utils.memento.IMemento;
+import fzmm.zailer.me.client.gui.components.tabs.ITab;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 
-public interface IImagetextAlgorithm extends IMemento, IScreenTab {
+public interface IImagetextAlgorithm extends IMemento, ITab {
+
+    @Override
+    String getId();
+
+    @Override
+    default String getTranslationKey() {
+        return "fzmm.gui.imagetext.tab.algorithm." + this.getId();
+    }
 
     BufferedImage image();
 
     void image(BufferedImage image);
 
     void build();
-
-    String getId();
 
     String[] linePixels(int line);
 

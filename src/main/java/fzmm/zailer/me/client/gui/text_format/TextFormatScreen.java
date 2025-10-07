@@ -3,17 +3,15 @@ package fzmm.zailer.me.client.gui.text_format;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
-import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
-import fzmm.zailer.me.client.gui.text_format.tabs.ITextFormatTab;
-import fzmm.zailer.me.client.gui.text_format.tabs.TextFormatTabs;
+import fzmm.zailer.me.client.gui.components.tabs.TabContainer;
+import fzmm.zailer.me.client.gui.text_format.tabs.*;
 import fzmm.zailer.me.client.gui.utils.CopyTextScreen;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
@@ -30,14 +28,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
-import java.util.Optional;
 
-public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
+public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
     public static final Text EMPTY_COLOR_TEXT = Text.translatable("fzmm.gui.textFormat.error.emptyColor").setStyle(Style.EMPTY.withColor(EStyles.TEXT_ERROR_COLOR.rgb()));
-    private static TextFormatMemento memento = null;
-    private static TextFormatTabs selectedTab = TextFormatTabs.SIMPLE;
     private LabelComponent messagePreviewLabel;
     private TextBoxComponent messageTextField;
     private EBooleanButton boldToggle;
@@ -47,6 +44,7 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
     private EBooleanButton underlineToggle;
     private FlowLayout stylesLayout;
     private List<ButtonWidget> executeButtons;
+    private TabContainer tabContainer;
     private boolean initialized;
 
     public TextFormatScreen(@Nullable Screen parent) {
@@ -68,27 +66,19 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
         this.strikethroughToggle = this.setupStyleButton(rootComponent, "strikethrough");
         this.underlineToggle = this.setupStyleButton(rootComponent, "underline");
         //tabs
-        this.setTabs(selectedTab);
-        for (var tab : TextFormatTabs.values())
-            this.getTab(tab, ITextFormatTab.class).componentsCallback(object -> this.updateMessagePreview());
-
-        ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
-        for (var textFormatTab : TextFormatTabs.values()) {
-            ITextFormatTab tab = this.getTab(textFormatTab, ITextFormatTab.class);
-            tab.setupComponents(rootComponent);
-            ButtonComponent button = rootComponent.childByIdOrThrow(ButtonComponent.class, ScreenTabRow.getScreenTabButtonId(tab));
-            button.active(!tab.getId().equals(selectedTab.getId()));
-            button.onPress(buttonComponent -> {
-                selectedTab = this.selectScreenTab(rootComponent, tab, selectedTab);
-                this.tabCallback(tab);
-            });
+        this.tabContainer = rootComponent.childByIdOrThrow(TabContainer.class, "tabs");
+        List<ITextFormatTab> tabs = List.of(new TextFormatSimpleTab(), new TextFormatGradientTab(),
+                new TextFormatInterleavedColorsTab(), new TextFormatRainbowTab(), new TextFormatPlaceholderApiTab()
+        );
+        this.tabContainer.addParsedTabs(tabs);
+        this.tabContainer.setupTabs(rootComponent, tabs.get(0).getId(), this::tabCallback);
+        for (var tab : tabs) {
+            tab.componentsCallback(object -> this.updateMessagePreview());
         }
-        this.selectScreenTab(rootComponent, selectedTab, selectedTab);
+        this.tabContainer.selectTab();
 
         this.setupBottomButtons(rootComponent);
         this.initialized = true;
-        this.updateMessagePreview();
-        this.tabCallback(this.getTab(selectedTab, ITextFormatTab.class));
     }
 
     @Override
@@ -97,12 +87,12 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
     }
 
     private void tabCallback(ITextFormatTab tab) {
-        this.updateMessagePreview();
-
         for (var child : this.stylesLayout.children()) {
-            if (child instanceof ButtonComponent buttonComponent)
-                buttonComponent.active = tab.hasStyles();
+            if (child instanceof ButtonComponent buttonComponent) {
+                buttonComponent.active(tab.hasStyles());
+            }
         }
+        this.updateMessagePreview();
     }
 
     private void setupBottomButtons(EFlowLayout rootComponent) {
@@ -137,7 +127,7 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
         });
         ButtonComponent randomButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "random-button");
         randomButton.active(executeButtonsActive);
-        randomButton.onPress(button -> this.getTab(selectedTab, ITextFormatTab.class).setRandomValues());
+        randomButton.onPress(button -> ((ITextFormatTab) this.tabContainer.selectedTab()).setRandomValues());
 
         ButtonComponent copyButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "copy-button");
         copyButton.active(executeButtonsActive);
@@ -147,8 +137,7 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
     }
 
     public void updateMessagePreview() {
-        if (!this.initialized)
-            return;
+        if (!this.initialized) return;
         String message = this.messageTextField.getText();
         if (message.length() < 2) {
             this.toggleExecuteButtons(false);
@@ -164,13 +153,14 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
         boolean italic = this.italicToggle.enabled();
 
         TextFormatLogic logic = new TextFormatLogic(message, obfuscated, bold, strikethrough, underline, italic);
-        Text messagePreview = this.getTab(selectedTab, ITextFormatTab.class).getText(logic);
+        Text messagePreview = ((ITextFormatTab) this.tabContainer.selectedTab()).getText(logic);
         this.messagePreviewLabel.text(messagePreview);
     }
 
     private void toggleExecuteButtons(boolean value) {
-        for (var button : executeButtons)
+        for (var button : this.executeButtons) {
             button.active = value;
+        }
     }
 
     private EBooleanButton setupStyleButton(EFlowLayout rootComponent, String id) {
@@ -181,42 +171,25 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMementoScreen {
     }
 
     @Override
-    public void setMemento(IMementoObject memento) {
-        TextFormatScreen.memento = (TextFormatMemento) memento;
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.messageTextField.getText());
+        output.writeBoolean(this.obfuscatedToggle.enabled());
+        output.writeBoolean(this.boldToggle.enabled());
+        output.writeBoolean(this.strikethroughToggle.enabled());
+        output.writeBoolean(this.underlineToggle.enabled());
+        output.writeBoolean(this.italicToggle.enabled());
+        this.tabContainer.backup(output);
     }
 
     @Override
-    public Optional<IMementoObject> getMemento() {
-        return Optional.ofNullable(memento);
-    }
-
-    @Override
-    public TextFormatMemento createMemento() {
-        return new TextFormatMemento(
-                this.messageTextField.getText(),
-                this.obfuscatedToggle.enabled(),
-                this.boldToggle.enabled(),
-                this.strikethroughToggle.enabled(),
-                this.underlineToggle.enabled(),
-                this.italicToggle.enabled(),
-                this.createMementoTabs()
-        );
-    }
-
-    @Override
-    public void restoreMemento(IMementoObject mementoObject) {
-        TextFormatMemento memento = (TextFormatMemento) mementoObject;
-        this.messageTextField.text(memento.message);
-        this.obfuscatedToggle.enabled(memento.obfuscated);
-        this.boldToggle.enabled(memento.bold);
-        this.strikethroughToggle.enabled(memento.strikethrough);
-        this.underlineToggle.enabled(memento.underline);
-        this.italicToggle.enabled(memento.italic);
-        this.restoreMementoTabs(memento.mementoTabHashMap);
-    }
-
-    public record TextFormatMemento(String message, boolean obfuscated, boolean bold,
-                                    boolean strikethrough, boolean underline, boolean italic,
-                                    HashMap<String, IMementoObject> mementoTabHashMap) implements IMementoObject {
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.messageTextField.text((String) input.readObject());
+        this.obfuscatedToggle.enabled(input.readBoolean());
+        this.boldToggle.enabled(input.readBoolean());
+        this.strikethroughToggle.enabled(input.readBoolean());
+        this.underlineToggle.enabled(input.readBoolean());
+        this.italicToggle.enabled(input.readBoolean());
+        this.tabContainer.restore(input);
+        this.updateMessagePreview();
     }
 }

@@ -5,7 +5,6 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SuggestionTextBox;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -14,6 +13,9 @@ import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -49,7 +51,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
 
     @Override
     public String getId() {
-        return "algorithm.characters";
+        return "characters";
     }
 
     @Override
@@ -108,16 +110,12 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
     }
 
     @Override
-    public IMementoObject createMemento() {
-        return new CharactersAlgorithmMementoTab(this.charactersTextField.getText());
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.charactersTextField.getText());
     }
 
     @Override
-    public void restoreMemento(IMementoObject mementoObject) {
-        CharactersAlgorithmMementoTab memento = (CharactersAlgorithmMementoTab) mementoObject;
-        this.charactersTextField.text(memento.characters);
-    }
-
-    private record CharactersAlgorithmMementoTab(String characters) implements IMementoObject {
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.charactersTextField.text((String) input.readObject());
     }
 }

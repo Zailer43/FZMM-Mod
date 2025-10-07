@@ -5,7 +5,6 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
-import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
@@ -15,15 +14,12 @@ import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
-import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
-import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
+import fzmm.zailer.me.client.gui.components.tabs.TabContainer;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
-import fzmm.zailer.me.client.gui.imagetext.algorithms.ImagetextAlgorithms;
-import fzmm.zailer.me.client.gui.imagetext.tabs.IImagetextTab;
-import fzmm.zailer.me.client.gui.imagetext.tabs.IImagetextTooltip;
-import fzmm.zailer.me.client.gui.imagetext.tabs.ImagetextMode;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.ImagetextBrailleAlgorithm;
+import fzmm.zailer.me.client.gui.imagetext.algorithms.ImagetextCharactersAlgorithm;
+import fzmm.zailer.me.client.gui.imagetext.tabs.*;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.config.FzmmConfig;
@@ -45,8 +41,10 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -54,16 +52,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("UnstableApiUsage")
-public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
+public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
 
     private static final double DEFAULT_SIZE_VALUE = 32;
     public static final double MAX_SIMILARITY_THRESHOLD = 10d;
     private static final long PREVIEW_UPDATE_DELAY_MILLIS = 20L;
-    private static ImagetextMode selectedMode = ImagetextMode.LORE;
-    private static ImagetextAlgorithms selectedAlgorithm = ImagetextAlgorithms.CHARACTERS;
-    private static ImagetextMemento memento = null;
     private final ImagetextLogic imagetextLogic;
-    private final HashMap<String, IScreenTab> algorithmsTabs;
     private ImageRowsElements imageElements;
     private EBooleanButton preserveImageAspectRatioToggle;
     private SmallCheckboxComponent showResolutionCheckbox;
@@ -74,12 +68,13 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     private EFlowLayout previewLayout;
     private Animation.Composed smallGuiAnimation;
     private CompletableFuture<Void> scheduledUpdatePreview = CompletableFuture.completedFuture(null);
+    private TabContainer algorithmTabContainer;
+    private TabContainer modeTabContainer;
 
 
     public ImagetextScreen(@Nullable Screen parent) {
         super("imagetext", "imagetext", parent);
         this.imagetextLogic = new ImagetextLogic();
-        this.algorithmsTabs = new HashMap<>();
     }
 
     @Override
@@ -97,13 +92,9 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         List<Component> imageButtonList = new ArrayList<>();
 
         for (var value : ImageMode.values()) {
-            FlowLayout buttonLayout = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
-            buttonLayout.tooltip(Text.translatable(value.getTranslationKey() + ".tooltip"));
-            ButtonComponent button = this.imageElements.imageModeButtons().get(value);
-            button.sizing(Sizing.fixed(16));
-
-            buttonLayout.child(button);
-            imageButtonList.add(buttonLayout);
+            ButtonComponent modeButton = this.imageElements.imageModeButtons().get(value);
+            modeButton.sizing(Sizing.fixed(16));
+            imageButtonList.add(modeButton);
         }
         imageButtonList.add(Components.spacer().verticalSizing(Sizing.fixed(1)));
         imageButtonList.add(this.imageElements.imageButton().verticalSizing(Sizing.fixed(16)).margins(Insets.none()));
@@ -132,41 +123,50 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         imageButtonLayout.children(imageButtonList);
 
         // algorithm options
+        this.algorithmTabContainer = rootComponent.childByIdOrThrow(TabContainer.class, "algorithm-tabs");
+        List<IImagetextAlgorithm> algorithmTabs = List.of(new ImagetextCharactersAlgorithm(), new ImagetextBrailleAlgorithm());
+        this.algorithmTabContainer.addParsedTabs(algorithmTabs);
         ContextMenuButton algorithmButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "algorithm-button");
         algorithmButton.setContextMenuOptions(contextMenu -> {
-            for (var algorithm : ImagetextAlgorithms.values()) {
-                contextMenu.button(algorithm.getText(this.getBaseScreenTranslationKey()), dropdown -> {
-                            algorithmButton.removeContextMenu();
-                            this.getTab(selectedAlgorithm, IImagetextAlgorithm.class, this.algorithmsTabs).clearCache();
-                            selectedAlgorithm = algorithm;
-                            algorithmButton.setMessage(this.getAlgorithmText());
-                            this.selectTab(rootComponent, algorithm, this.algorithmsTabs);
-                            this.scheduleUpdatePreview();
-                            this.onResolutionChanged(this.widthSlider, this.heightSlider, true);
-                        }
-                );
+            for (var algorithm : algorithmTabs) {
+                contextMenu.button(algorithm.getButtonText(), dropdown -> {
+                    algorithmButton.removeContextMenu();
+                    algorithm.clearCache();
+                    this.algorithmTabContainer.selectTab(algorithm);
+                    algorithmButton.setMessage(this.getAlgorithmText());
+                    this.scheduleUpdatePreview();
+                    this.onResolutionChanged(this.widthSlider, this.heightSlider, true);
+                });
             }
         });
+        for (var algorithm : algorithmTabs) {
+            algorithm.setupComponents(rootComponent);
+        }
+        this.algorithmTabContainer.selectTab();
         algorithmButton.setMessage(this.getAlgorithmText());
-        this.setTabs(rootComponent, selectedAlgorithm, ImagetextAlgorithms.values(), this.algorithmsTabs);
 
         // image mode
+        this.modeTabContainer = rootComponent.childByIdOrThrow(TabContainer.class, "mode-tabs");
+        List<IImagetextTab> modeTabs = List.of(new ImagetextLoreTab(), new ImagetextBookPageTab(), new ImagetextBookTooltipTab(),
+                new ImagetextTextDisplayTab(), new ImagetextSignTab(), new ImagetextHologramTab(), new ImagetextCopyTab()
+        );
+        this.modeTabContainer.addParsedTabs(modeTabs);
         ContextMenuButton modeButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "mode-button");
         modeButton.setContextMenuOptions(contextMenu -> {
-            for (var mode : ImagetextMode.values()) {
-                contextMenu.button(mode.getText(this.getBaseScreenTranslationKey()), dropdown -> {
-                            modeButton.removeContextMenu();
-                            selectedMode = mode;
-                            modeButton.setMessage(this.getModeText());
-                            this.selectTab(rootComponent, mode, this.tabs);
-                            this.scheduleUpdatePreview();
-                        }
-                );
+            for (var mode : modeTabs) {
+                contextMenu.button(mode.getButtonText(), dropdown -> {
+                    modeButton.removeContextMenu();
+                    this.modeTabContainer.selectTab(mode);
+                    modeButton.setMessage(this.getModeText());
+                    this.scheduleUpdatePreview();
+                });
             }
         });
-
+        for (var tab : modeTabs) {
+            tab.setupComponents(rootComponent);
+        }
+        this.modeTabContainer.selectTab();
         modeButton.setMessage(this.getModeText());
-        this.setTabs(rootComponent, selectedMode, ImagetextMode.values(), this.tabs);
 
         // preview
         this.previewLayout = rootComponent.childByIdOrThrow(EFlowLayout.class, "preview-layout");
@@ -176,12 +176,11 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         this.similarityThreshold.onChanged().subscribe(value -> this.scheduleUpdatePreview());
         this.showResolutionCheckbox.onChanged().subscribe(buttonComponent -> this.scheduleUpdatePreview());
         this.smoothImageCheckbox.onChanged().subscribe(buttonComponent -> {
-            this.getTab(selectedAlgorithm, IImagetextAlgorithm.class, this.algorithmsTabs).clearCache();
+            ((IImagetextAlgorithm) this.algorithmTabContainer.selectedTab()).clearCache();
             this.scheduleUpdatePreview();
         });
 
-        for (var imagetextTab : ImagetextAlgorithms.values()) {
-            IImagetextAlgorithm tab = this.getTab(imagetextTab, IImagetextAlgorithm.class, this.algorithmsTabs);
+        for (var tab : algorithmTabs) {
             tab.setUpdatePreviewCallback(this::scheduleUpdatePreview);
         }
 
@@ -192,7 +191,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         imageButton.setButtonCallback(image -> {
             executeButton.active = image.isPresent();
             if (image.isPresent()) {
-                this.getTab(selectedAlgorithm, IImagetextAlgorithm.class, this.algorithmsTabs).clearCache();
+                ((IImagetextAlgorithm) this.algorithmTabContainer.selectedTab()).clearCache();
                 this.scheduleUpdatePreview();
                 this.updateAspectRatio(image.get());
             }
@@ -211,7 +210,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         this.smallGuiAnimation = Animation.compose(imageLayoutAnimation, algorithmLayoutAnimationHorizontal, algorithmLayoutAnimationVertical, imageModeFixAnimation);
 
         // animation of expand preview
-        ScrollContainer<?> leftOptionsScroll =  rootComponent.childByIdOrThrow(ScrollContainer.class, "left-options-scroll");
+        ScrollContainer<?> leftOptionsScroll = rootComponent.childByIdOrThrow(ScrollContainer.class, "left-options-scroll");
         ButtonComponent expandPreviewButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "expand-preview-button");
 
         Animation<Sizing> leftOptionsAnimation = leftOptionsScroll.horizontalSizing().animate(100, Easing.CUBIC, Sizing.expand(0));
@@ -234,23 +233,6 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         focusHandler.focus(this.imageElements.valueField(), Component.FocusSource.MOUSE_CLICK);
     }
 
-    @SuppressWarnings("unchecked")
-    private void setTabs(EFlowLayout rootComponent, ITabsEnum selectedTab, ITabsEnum[] enumValues, HashMap<String, IScreenTab> tabsHashMap) {
-        Enum<? extends ITabsEnum> selectedTabEnum = (Enum<? extends ITabsEnum>) selectedTab;
-        this.setTabs(tabsHashMap, selectedTabEnum);
-        for (var imagetextTab : enumValues) {
-            IScreenTab tab = this.getTab(imagetextTab, IImagetextTab.class, tabsHashMap);
-            tab.setupComponents(rootComponent);
-        }
-        this.selectTab(rootComponent, selectedTab, tabsHashMap);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void selectTab(FlowLayout rootComponent, ITabsEnum selectedTab, HashMap<String, IScreenTab> tabsHashMap) {
-        Enum<? extends ITabsEnum> selectedTabEnum = (Enum<? extends ITabsEnum>) selectedTab;
-        this.selectScreenTab(rootComponent, selectedTab, selectedTabEnum, tabsHashMap, false);
-    }
-
     @Override
     public void resize(MinecraftClient client, int width, int height) {
         super.resize(client, width, height);
@@ -271,22 +253,18 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     }
 
     private Text getAlgorithmText() {
-        return Text.translatable("fzmm.gui.imagetext.tab.algorithm", selectedAlgorithm.getText(this.getBaseScreenTranslationKey()));
+        return Text.translatable("fzmm.gui.imagetext.tab.algorithm", this.algorithmTabContainer.selectedTab().getButtonText());
     }
 
     private Text getModeText() {
-        return Text.translatable("fzmm.gui.imagetext.tab.mode", selectedMode.getText(this.getBaseScreenTranslationKey()));
+        return Text.translatable("fzmm.gui.imagetext.tab.mode", this.modeTabContainer.selectedTab().getButtonText());
     }
 
     private void onResolutionChanged(SliderWidget config, SliderWidget configToChange, boolean isWidth) {
-        if (!this.imageElements.imageButton().hasImage() || !this.preserveImageAspectRatioToggle.enabled()) {
-            return;
-        }
+        if (!this.imageElements.imageButton().hasImage() || !this.preserveImageAspectRatioToggle.enabled()) return;
 
         Optional<BufferedImage> imageOptional = this.imageElements.imageButton().getImage();
-        if (imageOptional.isEmpty()) {
-            return;
-        }
+        if (imageOptional.isEmpty()) return;
         BufferedImage image = imageOptional.get();
         int width = image.getWidth();
         int height = image.getHeight();
@@ -294,7 +272,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         int value;
         int valueToChange;
         float algorithmAspectRatio;
-        IImagetextAlgorithm algorithm = (IImagetextAlgorithm) this.algorithmsTabs.get(selectedAlgorithm.getId());
+        IImagetextAlgorithm algorithm = this.algorithmTabContainer.selectedTab();
         if (isWidth) {
             value = width;
             valueToChange = height;
@@ -324,7 +302,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
             if (image.isEmpty()) return;
 
             this.buildImagetext(image.get(), true);
-            this.getTab(selectedMode, IImagetextTab.class).execute(this.imagetextLogic);
+            ((IImagetextTab) this.modeTabContainer.selectedTab()).execute(this.imagetextLogic);
         }).handle((unused, throwable) -> {
             if (throwable != null) {
                 FzmmClient.LOGGER.error("[ImagetextScreen] Error in imagetext give", throwable);
@@ -364,7 +342,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         MutableText tooltipText = Text.empty().setStyle(Style.EMPTY.withColor(Formatting.GRAY));
         tooltipText.append(Text.translatable("fzmm.gui.imagetext.label.textLength", this.imagetextLogic.textLength()));
 
-        if (this.getTab(selectedMode, IImagetextTab.class) instanceof IImagetextTooltip metadata) {
+        if (this.modeTabContainer.selectedTab() instanceof IImagetextTooltip metadata) {
             tooltipText.append("\n");
             tooltipText.append(metadata.getTooltip(this.imagetextLogic));
         }
@@ -388,9 +366,9 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
         boolean showResolution = this.showResolutionCheckbox.checked();
         double similarityThreshold = (double) this.similarityThreshold.parsedValue();
 
-        IImagetextAlgorithm algorithm = (IImagetextAlgorithm) this.algorithmsTabs.get(selectedAlgorithm.getId());
+        IImagetextAlgorithm algorithm = this.algorithmTabContainer.selectedTab();
         ImagetextData data = new ImagetextData(image, width, height, smoothScaling, similarityThreshold);
-        this.getTab(selectedMode, IImagetextTab.class).build(algorithm, this.imagetextLogic, data, isExecute);
+        this.modeTabContainer.<IImagetextTab>selectedTab().build(algorithm, this.imagetextLogic, data, isExecute);
 
         if (showResolution) {
             this.imagetextLogic.addResolution();
@@ -398,9 +376,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     }
 
     private void updateAspectRatio(BufferedImage image) {
-        if (!this.preserveImageAspectRatioToggle.enabled()) {
-            return;
-        }
+        if (!this.preserveImageAspectRatioToggle.enabled()) return;
 
         int width = image.getWidth();
         int height = image.getHeight();
@@ -413,48 +389,30 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMementoScreen {
     }
 
     @Override
-    public void setMemento(IMementoObject memento) {
-        ImagetextScreen.memento = (ImagetextMemento) memento;
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.imageElements.valueField().getText());
+        output.writeObject(this.imageElements.mode().get());
+        output.writeInt((int) this.widthSlider.parsedValue());
+        output.writeInt((int) this.heightSlider.parsedValue());
+        output.writeBoolean(this.smoothImageCheckbox.checked());
+        output.writeBoolean(this.showResolutionCheckbox.checked());
+        output.writeBoolean(this.preserveImageAspectRatioToggle.enabled());
+        output.writeDouble((double) this.similarityThreshold.parsedValue());
+        this.modeTabContainer.backup(output);
+        this.algorithmTabContainer.backup(output);
     }
 
     @Override
-    public Optional<IMementoObject> getMemento() {
-        return Optional.ofNullable(memento);
-    }
-
-    @Override
-    public IMementoObject createMemento() {
-        return new ImagetextMemento(this.imageElements.valueField().getText(),
-                this.imageElements.mode().get(),
-                (int) this.widthSlider.parsedValue(),
-                (int) this.heightSlider.parsedValue(),
-                this.smoothImageCheckbox.checked(),
-                this.showResolutionCheckbox.checked(),
-                this.preserveImageAspectRatioToggle.enabled(),
-                (double) this.similarityThreshold.parsedValue(),
-                this.createMementoTabs(this.tabs),
-                this.createMementoTabs(this.algorithmsTabs)
-        );
-    }
-
-    @Override
-    public void restoreMemento(IMementoObject mementoObject) {
-        ImagetextMemento memento = (ImagetextMemento) mementoObject;
-        this.imageElements.valueField().text(memento.imageRowValue);
-        this.imageElements.imageModeButtons().get(memento.imageMode).onPress();
-        this.widthSlider.setFromDiscreteValue(memento.width);
-        this.heightSlider.setFromDiscreteValue(memento.height);
-        this.smoothImageCheckbox.checked(memento.smoothScaling);
-        this.showResolutionCheckbox.checked(memento.showResolution);
-        this.preserveImageAspectRatioToggle.enabled(memento.preserveImageAspectRatio);
-        this.similarityThreshold.setFromDiscreteValue(memento.similarityThreshold);
-        this.restoreMementoTabs(memento.mementoTabHashMap, this.tabs);
-        this.restoreMementoTabs(memento.mementoAlgorithmTabHashMap, this.algorithmsTabs);
-    }
-
-    private record ImagetextMemento(String imageRowValue, ImageMode imageMode, int width, int height,
-                                    boolean smoothScaling, boolean showResolution, boolean preserveImageAspectRatio,
-                                    double similarityThreshold, HashMap<String, IMementoObject> mementoTabHashMap,
-                                    HashMap<String, IMementoObject> mementoAlgorithmTabHashMap) implements IMementoObject {
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.imageElements.valueField().text((String) input.readObject());
+        this.imageElements.imageModeButtons().get((ImageMode) input.readObject()).onPress();
+        this.widthSlider.setFromDiscreteValue(input.readInt());
+        this.heightSlider.setFromDiscreteValue(input.readInt());
+        this.smoothImageCheckbox.checked(input.readBoolean());
+        this.showResolutionCheckbox.checked(input.readBoolean());
+        this.preserveImageAspectRatioToggle.enabled(input.readBoolean());
+        this.similarityThreshold.setFromDiscreteValue(input.readDouble());
+        this.modeTabContainer.restore(input);
+        this.algorithmTabContainer.restore(input);
     }
 }

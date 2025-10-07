@@ -12,14 +12,10 @@ import fzmm.zailer.me.client.gui.components.image.ScreenshotZoneComponent;
 import fzmm.zailer.me.client.gui.components.row.*;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
-import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
-import fzmm.zailer.me.client.gui.components.tabs.IScreenTabIdentifier;
-import fzmm.zailer.me.client.gui.components.tabs.ITabsEnum;
-import fzmm.zailer.me.client.gui.components.tabs.ScreenTabContainer;
+import fzmm.zailer.me.client.gui.components.tabs.TabContainer;
 import fzmm.zailer.me.client.gui.text_format.components.ColorListContainer;
-import fzmm.zailer.me.client.gui.utils.memento.IMemento;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
+import fzmm.zailer.me.client.logic.history.FzmmHistory;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.compat.symbol_chat.SymbolChatCompat;
 import fzmm.zailer.me.compat.symbol_chat.components.FontTextBoxComponent;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -33,7 +29,6 @@ import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.FocusHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -41,8 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.w3c.dom.Element;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Optional;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -53,14 +46,12 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     public static final int BUTTON_TEXT_PADDING = 8;
     public static final int COMPONENT_DISTANCE = 8;
     private final SymbolChatCompat symbolChatCompat;
-    protected final HashMap<String, IScreenTab> tabs;
     protected final FlowLayout snackBarLayout;
 
     public BaseFzmmScreen(String screenPath, String baseScreenTranslationKey, @Nullable Screen parent) {
         super(EFlowLayout.class, DataSource.asset(Identifier.of(FzmmClient.MOD_ID, screenPath)));
         this.baseScreenTranslationKey = baseScreenTranslationKey;
         this.parent = parent;
-        this.tabs = new HashMap<>();
         this.symbolChatCompat = new SymbolChatCompat();
         this.snackBarLayout = new SnackBarLayout(Sizing.content(), Sizing.content());
     }
@@ -81,12 +72,10 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     protected void init() {
         super.init();
         Optional<EFlowLayout> root = this.getRoot();
-        if (root.isEmpty()) {
-            return;
-        }
+        if (root.isEmpty()) return;
 
-        if (FzmmClient.CONFIG.history.automaticallyRecoverScreens() && this instanceof IMementoScreen mementoScreen) {
-            mementoScreen.getMemento().ifPresent(mementoScreen::restoreMemento);
+        if (FzmmClient.CONFIG.history.automaticallyRecoverScreens() && this instanceof IMemento memento) {
+            FzmmHistory.restoreScreen(memento);
         }
 
         if (root.get().focusHandler() != null) {
@@ -104,12 +93,8 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     public void removed() {
         this.clearSnackBars();
 
-        if (FzmmClient.CONFIG.history.automaticallyRecoverScreens() && this instanceof IMementoScreen mementoScreen) {
-            try {
-                mementoScreen.setMemento(mementoScreen.createMemento());
-            } catch (NullPointerException e) {
-                FzmmClient.LOGGER.error("[BaseFzmmScreen] Failed to create memento", e);
-            }
+        if (FzmmClient.CONFIG.history.automaticallyRecoverScreens() && this instanceof IMemento memento && !this.invalid) {
+            FzmmHistory.saveScreen(memento);
         }
 
         super.removed();
@@ -121,84 +106,9 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
         this.setScreen(this.parent);
     }
 
-    protected void setTabs(Enum<? extends ITabsEnum> tabs) {
-        this.setTabs(this.tabs, tabs);
-    }
-
-    protected void setTabs(HashMap<String, IScreenTab> hashMap, Enum<? extends ITabsEnum> tabs) {
-        for (var tab : tabs.getDeclaringClass().getEnumConstants())
-            hashMap.put(tab.getId(), tab.createTab());
-    }
-
-    protected HashMap<String, IMementoObject> createMementoTabs() {
-        return this.createMementoTabs(this.tabs);
-    }
-
-    protected HashMap<String, IMementoObject> createMementoTabs(HashMap<String, IScreenTab> tabsHashMap) {
-        HashMap<String, IMementoObject> tabs = new HashMap<>();
-        for (var tab : tabsHashMap.values()) {
-            if (tab instanceof IMemento mementoTab)
-                tabs.put(tab.getId(), mementoTab.createMemento());
-
-        }
-        return tabs;
-    }
-
-    protected void restoreMementoTabs(HashMap<String, IMementoObject> mementoTabs) {
-        this.restoreMementoTabs(mementoTabs, this.tabs);
-    }
-
-    protected void restoreMementoTabs(HashMap<String, IMementoObject> mementoTabs, HashMap<String, IScreenTab> tabsHashMap) {
-        for (var tab : tabsHashMap.values()) {
-            if (tab instanceof IMemento mementoTab)
-                mementoTab.restoreMemento(mementoTabs.get(tab.getId()));
-        }
-    }
-
-    public <T extends Enum<? extends IScreenTabIdentifier>> T selectScreenTab(FlowLayout rootComponent, IScreenTabIdentifier selectedTab, T tabs) {
-        return this.selectScreenTab(rootComponent, selectedTab, tabs, this.tabs, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends Enum<? extends IScreenTabIdentifier>> T selectScreenTab(FlowLayout rootComponent, IScreenTabIdentifier selectedTab,
-                                                                              T tabs, HashMap<String, IScreenTab> tabsHashMap, boolean addLabel) {
-        for (var tabId : tabsHashMap.keySet()) {
-            ScreenTabContainer screenTabContainer = rootComponent.childById(ScreenTabContainer.class, ScreenTabContainer.getScreenTabId(tabId));
-            ButtonWidget screenTabButton = rootComponent.childById(ButtonWidget.class, ScreenTabRow.getScreenTabButtonId(tabId));
-            boolean isSelectedTab = selectedTab.getId().equals(tabId);
-
-            if (screenTabContainer != null) {
-                screenTabContainer.setSelected(isSelectedTab, addLabel);
-            }
-
-            if (screenTabButton != null) {
-                screenTabButton.active = !isSelectedTab;
-            }
-        }
-
-
-        Optional<T> result = (Optional<T>) Arrays.stream(tabs.getDeclaringClass().getEnumConstants())
-                .filter(tab -> tab.getId().equals(selectedTab.getId()))
-                .findFirst();
-
-        assert result.isPresent();
-
-        return result.get();
-    }
-
-    public <T extends IScreenTab> T getTab(IScreenTabIdentifier tab, Class<T> ignored) {
-        return this.getTab(tab, ignored, this.tabs);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends IScreenTab> T getTab(IScreenTabIdentifier tab, Class<T> ignored, HashMap<String, IScreenTab> tabsHashMap) {
-        return (T) tabsHashMap.get(tab.getId());
-    }
-
     public String getBaseScreenTranslationKey() {
         return this.baseScreenTranslationKey;
     }
-
 
     public static String getBaseTranslationKey(Element element) {
         Screen currentScreen = MinecraftClient.getInstance().currentScreen;
@@ -207,10 +117,6 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
 
     public static String getBaseTranslationKey(String baseTranslationKey) {
         return "fzmm.gui." + baseTranslationKey;
-    }
-
-    public static String getTabTranslationKey(String baseScreenTranslationKey) {
-        return getBaseTranslationKey(baseScreenTranslationKey) + ".tab.";
     }
 
     public static String getOptionBaseTranslationKey(String baseScreenTranslationKey) {
@@ -274,7 +180,6 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "context-menu-button-row"), ContextMenuButtonRow::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "image-rows"), ImageRows::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "number-row"), NumberRow::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "screen-tab-row"), ScreenTabRow::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "slider-row"), SliderRow::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "text-box-row"), TextBoxRow::parse);
 
@@ -284,8 +189,11 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "item"), element -> EComponents.item(ItemStack.EMPTY));
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "label"), element -> EComponents.label(Text.empty()));
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "texture"), ETextureComponent::parse);
+
+        // extended containers
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "flow-layout"), EFlowLayout::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "scroll"), EScrollContainer::parse);
+        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "tab-container"), TabContainer::parse);
 
         // these are necessary in case you want to create the fields manually with XML
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "book"), element -> new BookComponent());
@@ -294,7 +202,6 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "text-option"), element -> new ConfigTextBox());
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "suggest-text-option"), element -> new SuggestionTextBox());
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "image-option"), element -> new ImageButtonComponent());
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "screen-tab"), ScreenTabContainer::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "screenshot-zone"), element -> new ScreenshotZoneComponent());
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "color-list"), ColorListContainer::parse);
         UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "font-text-box"), element -> new FontTextBoxComponent(Sizing.fixed(100)));

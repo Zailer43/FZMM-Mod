@@ -5,15 +5,15 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.NumberRow;
-import fzmm.zailer.me.client.gui.components.row.ScreenTabRow;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
-import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
+import fzmm.zailer.me.client.gui.components.tabs.ITab;
+import fzmm.zailer.me.client.gui.components.tabs.TabContainer;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.player_statue.tabs.IPlayerStatueTab;
-import fzmm.zailer.me.client.gui.player_statue.tabs.PlayerStatueTabs;
+import fzmm.zailer.me.client.gui.player_statue.tabs.PlayerStatueGenerateTab;
+import fzmm.zailer.me.client.gui.player_statue.tabs.PlayerStatueUpdateTab;
 import fzmm.zailer.me.client.gui.utils.InvisibleEntityWarning;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoScreen;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.player_statue.StatuePart;
 import fzmm.zailer.me.utils.FzmmWikiConstants;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
@@ -27,22 +27,20 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Optional;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
-public class PlayerStatueScreen extends BaseFzmmScreen implements IMementoScreen {
+public class PlayerStatueScreen extends BaseFzmmScreen implements IMemento {
     public static final String EXECUTE_ID = "execute-button";
-    private static PlayerStatueTabs selectedTab = PlayerStatueTabs.CREATE;
-    private static PlayerStatueMemento memento = null;
     private HorizontalDirectionOption direction;
     private ConfigTextBox posX;
     private ConfigTextBox posY;
     private ConfigTextBox posZ;
     private TextBoxComponent nameField;
-
-    private ButtonWidget executeButton;
-
+    private TabContainer tabContainer;
 
     public PlayerStatueScreen(@Nullable Screen parent) {
         super("player_statue", "playerStatue", parent);
@@ -70,23 +68,15 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMementoScreen
         this.posZ = NumberRow.setup(rootComponent, "posZ", player.getBlockZ(), Float.class);
         this.nameField = TextBoxRow.setup(rootComponent, "name", "", 0xFFFF);
         //tabs
-        this.setTabs(selectedTab);
-        ScreenTabRow.setup(rootComponent, "tabs", selectedTab);
-        for (var playerStatueTab : PlayerStatueTabs.values()) {
-            IScreenTab tab = this.getTab(playerStatueTab, IPlayerStatueTab.class);
-            tab.setupComponents(rootComponent);
-            ButtonComponent button = rootComponent.childByIdOrThrow(ButtonComponent.class, ScreenTabRow.getScreenTabButtonId(tab));
-            button.active(!tab.getId().equals(selectedTab.getId()));
-            button.onPress(buttonComponent -> {
-                selectedTab = this.selectScreenTab(rootComponent, tab, selectedTab);
-                this.executeButton.active = this.getTab(selectedTab, IPlayerStatueTab.class).canExecute();
-            });
-        }
-        this.selectScreenTab(rootComponent, selectedTab, selectedTab);
+        this.tabContainer = rootComponent.childByIdOrThrow(TabContainer.class, "tabs");
+        List<ITab> tabs = List.of(new PlayerStatueGenerateTab(), new PlayerStatueUpdateTab());
+        this.tabContainer.addParsedTabs(tabs);
+        this.tabContainer.setupTabs(rootComponent, tabs.get(0).getId(), IPlayerStatueTab::canExecute);
+        this.tabContainer.selectTab();
         //buttons
         rootComponent.childByIdOrThrow(ButtonComponent.class, "faq-button").onPress(this::faqExecute);
-        this.executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, EXECUTE_ID).onPress(this::execute);
-        this.executeButton.active = this.getTab(selectedTab, IPlayerStatueTab.class).canExecute();
+        ButtonComponent executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, EXECUTE_ID).onPress(this::execute);
+        executeButton.active(this.tabContainer.<IPlayerStatueTab>selectedTab().canExecute());
 
         rootComponent.childByIdOrThrow(ButtonComponent.class, "difficult-to-remove-entity-button").onPress(buttonComponent ->
                 InvisibleEntityWarning.addOverlay(true, true, Text.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG)
@@ -104,36 +94,18 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMementoScreen
         float z = (float) this.posZ.parsedValue();
         String name = this.nameField.getText();
 
-        this.getTab(selectedTab, IPlayerStatueTab.class).execute(this.direction, x, y, z, name);
+        this.tabContainer.<IPlayerStatueTab>selectedTab().execute(this.direction, x, y, z, name);
     }
 
     @Override
-    public void setMemento(IMementoObject memento) {
-        PlayerStatueScreen.memento = (PlayerStatueMemento) memento;
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.nameField.getText());
+        this.tabContainer.backup(output);
     }
 
     @Override
-    public Optional<IMementoObject> getMemento() {
-        return Optional.ofNullable(memento);
-    }
-
-    @Override
-    public IMementoObject createMemento() {
-        return new PlayerStatueMemento(
-                this.nameField.getText(),
-                this.createMementoTabs()
-        );
-    }
-
-    @Override
-    public void restoreMemento(IMementoObject mementoObject) {
-        PlayerStatueMemento memento = (PlayerStatueMemento) mementoObject;
-        this.nameField.text(memento.name());
-        this.restoreMementoTabs(memento.mementoTabHashMap);
-    }
-
-    private record PlayerStatueMemento(String name,
-                                       HashMap<String, IMementoObject> mementoTabHashMap) implements IMementoObject {
-
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.nameField.text((String) input.readObject());
+        this.tabContainer.restore(input);
     }
 }

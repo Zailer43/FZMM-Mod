@@ -7,9 +7,9 @@ import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntityRenderer;
 import fzmm.zailer.me.client.gui.components.image.source.ScreenshotSource;
 import fzmm.zailer.me.client.gui.main.MainScreen;
 import fzmm.zailer.me.client.gui.utils.auto_placer.AutoPlacerHud;
-import fzmm.zailer.me.client.logic.FzmmHistory;
 import fzmm.zailer.me.client.logic.ItemTooltipAppend;
 import fzmm.zailer.me.client.logic.head_generator.HeadResourcesLoader;
+import fzmm.zailer.me.client.logic.history.FzmmHistory;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.fabricmc.api.ClientModInitializer;
@@ -76,8 +76,8 @@ public class FzmmClient implements ClientModInitializer {
                         ResourcePackActivationType.DEFAULT_ENABLED
                 )).filter(success -> !success).ifPresent(success -> LOGGER.warn("[FzmmClient] Failed to register default heads resource pack"));
 
-        CONFIG.history.subscribeToMaxItemHistory(integer -> FzmmHistory.update());
-        CONFIG.history.subscribeToMaxHeadHistory(integer -> FzmmHistory.update());
+        CONFIG.history.subscribeToMaxItemHistory(integer -> FzmmHistory.onUpdateConfig());
+        CONFIG.history.subscribeToMaxHeadHistory(integer -> FzmmHistory.onUpdateConfig());
 
         EntityRendererRegistry.register(CustomHeadEntity.CUSTOM_HEAD_ENTITY_TYPE, CustomHeadEntityRenderer::new);
         FabricDefaultAttributeRegistry.register(CustomHeadEntity.CUSTOM_HEAD_ENTITY_TYPE, CustomHeadEntity.createMobAttributes());

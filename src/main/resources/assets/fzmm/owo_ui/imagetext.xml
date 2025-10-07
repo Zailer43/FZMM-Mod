@@ -155,45 +155,48 @@
                                                 </margins>
                                             </fzmm.context-menu-button>
 
-                                            <fzmm.screen-tab>
-                                                <id>algorithm.characters</id>
-                                                <children>
-                                                    <!-- symbol chat buttons are added from the code -->
-                                                    <template name="small-option">
-                                                        <translation-id>characters</translation-id>
-                                                        <option>suggest-text</option>
-                                                        <id>characters-text-box</id>
-                                                    </template>
-                                                </children>
+                                            <fzmm.tab-container direction="vertical" id="algorithm-tabs">
+                                                <tabs>
+                                                    <fzmm.flow-layout direction="vertical" id="characters">
+                                                        <children>
+                                                           <!-- symbol chat buttons are added from the code -->
+                                                            <template name="small-option">
+                                                                <translation-id>characters</translation-id>
+                                                                <option>suggest-text</option>
+                                                                <id>characters-text-box</id>
+                                                            </template>
+                                                        </children>
+                                                    </fzmm.flow-layout>
 
-                                            </fzmm.screen-tab>
-                                            <fzmm.screen-tab>
-                                                <id>algorithm.braille</id>
-                                                <children>
-                                                        <template name="small-option">
-                                                            <translation-id>edgeThreshold</translation-id>
-                                                            <option>slider</option>
-                                                            <id>edgeThreshold-slider</id>
-                                                        </template>
-                                                    <template name="small-option">
-                                                        <translation-id>edgeDistance</translation-id>
-                                                        <option>slider</option>
-                                                        <id>edgeDistance-slider</id>
-                                                    </template>
-                                                    <template name="small-option">
-                                                        <translation-id>invert</translation-id>
-                                                        <option>checkbox</option>
-                                                        <id>invert-checkbox</id>
-                                                    </template>
-                                                </children>
-                                                <gap>2</gap>
+                                                    <fzmm.flow-layout direction="vertical" id="braille">
+                                                        <children>
+                                                            <template name="small-option">
+                                                                <translation-id>edgeThreshold</translation-id>
+                                                                <option>slider</option>
+                                                                <id>edgeThreshold-slider</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>edgeDistance</translation-id>
+                                                                <option>slider</option>
+                                                                <id>edgeDistance-slider</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>invert</translation-id>
+                                                                <option>checkbox</option>
+                                                                <id>invert-checkbox</id>
+                                                            </template>
+                                                        </children>
 
-                                                <!-- fix characters-text-box bottom -->
-                                                <margins>
-                                                    <bottom>1</bottom>
-                                                </margins>
+                                                        <gap>2</gap>
 
-                                            </fzmm.screen-tab>
+                                                        <!-- fix characters-text-box bottom -->
+                                                        <margins>
+                                                            <bottom>1</bottom>
+                                                        </margins>
+                                                    </fzmm.flow-layout>
+
+                                                </tabs>
+                                            </fzmm.tab-container>
 
                                         </children>
 
@@ -227,123 +230,120 @@
                                                 </margins>
                                             </fzmm.context-menu-button>
 
-                                            <fzmm.screen-tab>
-                                                <id>lore</id>
-                                                <children>
-                                                    <template name="small-option">
-                                                        <translation-id>loreMode</translation-id>
-                                                        <option>context-menu</option>
-                                                        <id>loreMode</id>
-                                                    </template>
-                                                </children>
-                                            </fzmm.screen-tab>
+                                            <fzmm.tab-container direction="vertical" id="mode-tabs">
+                                                <tabs>
+                                                    <fzmm.flow-layout direction="vertical" id="lore">
+                                                        <children>
+                                                            <template name="small-option">
+                                                                <translation-id>loreMode</translation-id>
+                                                                <option>context-menu</option>
+                                                                <id>loreMode</id>
+                                                            </template>
+                                                        </children>
+                                                    </fzmm.flow-layout>
 
-                                            <fzmm.screen-tab>
-                                                <id>bookPage</id>
-                                                <children>
+                                                    <fzmm.flow-layout direction="vertical" id="bookPage">
+                                                        <children>
+                                                            <template name="small-option">
+                                                                <translation-id>bookPageMode</translation-id>
+                                                                <option>context-menu</option>
+                                                                <id>bookPageMode</id>
+                                                            </template>
+                                                        </children>
+                                                    </fzmm.flow-layout>
 
-                                                    <template name="small-option">
-                                                        <translation-id>bookPageMode</translation-id>
-                                                        <option>context-menu</option>
-                                                        <id>bookPageMode</id>
-                                                    </template>
-                                                </children>
-                                            </fzmm.screen-tab>
+                                                    <fzmm.flow-layout direction="vertical" id="bookTooltip">
+                                                        <children>
+                                                            <template name="small-option">
+                                                                <translation-id>bookTooltipMode</translation-id>
+                                                                <option>context-menu</option>
+                                                                <id>bookTooltipMode</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>bookTooltipAuthor</translation-id>
+                                                                <option>text</option>
+                                                                <id>bookTooltipAuthor-text-box</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>bookTooltipMessage</translation-id>
+                                                                <option>text-area</option>
+                                                                <id>bookTooltipMessage-text-area</id>
+                                                            </template>
+                                                        </children>
+                                                    </fzmm.flow-layout>
 
-                                            <fzmm.screen-tab>
-                                                <id>bookTooltip</id>
-                                                <children>
-                                                    <template name="small-option">
-                                                        <translation-id>bookTooltipMode</translation-id>
-                                                        <option>context-menu</option>
-                                                        <id>bookTooltipMode</id>
-                                                    </template>
-                                                    <template name="small-option">
-                                                        <translation-id>bookTooltipAuthor</translation-id>
-                                                        <option>text</option>
-                                                        <id>bookTooltipAuthor-text-box</id>
-                                                    </template>
-                                                    <template name="small-option">
-                                                        <translation-id>bookTooltipMessage</translation-id>
-                                                        <option>text-area</option>
-                                                        <id>bookTooltipMessage-text-area</id>
-                                                    </template>
-                                                </children>
-                                            </fzmm.screen-tab>
+                                                    <fzmm.flow-layout direction="vertical" id="textDisplay">
+                                                        <children>
+                                                            <template name="small-option">
+                                                                <translation-id>textDisplayTextOpacity</translation-id>
+                                                                <option>slider</option>
+                                                                <id>textDisplayTextOpacity-slider</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>textDisplayBackgroundColor</translation-id>
+                                                                <option>color</option>
+                                                                <id>textDisplayBackgroundColor</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>textDisplayTextShadow</translation-id>
+                                                                <option>checkbox</option>
+                                                                <id>textDisplayTextShadow-checkbox</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>textDisplayTextSeeThrough</translation-id>
+                                                                <option>checkbox</option>
+                                                                <id>textDisplayTextSeeThrough-checkbox</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>textDisplayTextAlignment</translation-id>
+                                                                <option>context-menu</option>
+                                                                <id>textDisplayTextAlignment</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>textDisplayBillboard</translation-id>
+                                                                <option>context-menu</option>
+                                                                <id>textDisplayBillboard</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>textDisplayRotation</translation-id>
+                                                                <option>slider</option>
+                                                                <id>textDisplayRotation-slider</id>
+                                                            </template>
+                                                        </children>
+                                                    </fzmm.flow-layout>
 
-                                            <fzmm.screen-tab>
-                                                <id>textDisplay</id>
-                                                <children>
-                                                    <template name="small-option">
-                                                        <translation-id>textDisplayTextOpacity</translation-id>
-                                                        <option>slider</option>
-                                                        <id>textDisplayTextOpacity-slider</id>
-                                                    </template>
-                                                    <template name="small-option">
-                                                        <translation-id>textDisplayBackgroundColor</translation-id>
-                                                        <option>color</option>
-                                                        <id>textDisplayBackgroundColor</id>
-                                                    </template>
-                                                    <template name="small-option">
-                                                        <translation-id>textDisplayTextShadow</translation-id>
-                                                        <option>checkbox</option>
-                                                        <id>textDisplayTextShadow-checkbox</id>
-                                                    </template>
-                                                    <template name="small-option">
-                                                        <translation-id>textDisplayTextSeeThrough</translation-id>
-                                                        <option>checkbox</option>
-                                                        <id>textDisplayTextSeeThrough-checkbox</id>
-                                                    </template>
-                                                    <template name="small-option">
-                                                        <translation-id>textDisplayTextAlignment</translation-id>
-                                                        <option>context-menu</option>
-                                                        <id>textDisplayTextAlignment</id>
-                                                    </template>
-                                                    <template name="small-option">
-                                                        <translation-id>textDisplayBillboard</translation-id>
-                                                        <option>context-menu</option>
-                                                        <id>textDisplayBillboard</id>
-                                                    </template>
-                                                    <template name="small-option">
-                                                        <translation-id>textDisplayRotation</translation-id>
-                                                        <option>slider</option>
-                                                        <id>textDisplayRotation-slider</id>
-                                                    </template>
-                                                </children>
-                                            </fzmm.screen-tab>
+                                                    <fzmm.flow-layout direction="vertical" id="sign">
+                                                        <children>
+                                                            <template name="small-option">
+                                                                <translation-id>signType</translation-id>
+                                                                <option>context-menu</option>
+                                                                <id>signType</id>
+                                                            </template>
+                                                            <template name="small-option">
+                                                                <translation-id>isHangingSign</translation-id>
+                                                                <option>checkbox</option>
+                                                                <id>isHangingSign-checkbox</id>
+                                                            </template>
+                                                        </children>
+                                                    </fzmm.flow-layout>
 
-                                            <fzmm.screen-tab>
-                                                <id>sign</id>
-                                                <children>
-                                                    <template name="small-option">
-                                                        <translation-id>signType</translation-id>
-                                                        <option>context-menu</option>
-                                                        <id>signType</id>
-                                                    </template>
-                                                    <template name="small-option">
-                                                        <translation-id>isHangingSign</translation-id>
-                                                        <option>checkbox</option>
-                                                        <id>isHangingSign-checkbox</id>
-                                                    </template>
-                                                </children>
-                                            </fzmm.screen-tab>
+                                                    <fzmm.flow-layout direction="vertical" id="hologram">
+                                                        <children>
+                                                            <template name="small-option">
+                                                                <translation-id>hologramPos</translation-id>
+                                                                <option>pos</option>
+                                                                <id>hologramPos</id>
+                                                            </template>
+                                                        </children>
+                                                    </fzmm.flow-layout>
 
-                                            <fzmm.screen-tab>
-                                                <id>hologram</id>
-                                                <children>
-                                                    <template name="small-option">
-                                                        <translation-id>hologramPos</translation-id>
-                                                        <option>pos</option>
-                                                        <id>hologramPos</id>
-                                                    </template>
-                                                </children>
-                                            </fzmm.screen-tab>
+                                                    <fzmm.flow-layout direction="vertical" id="copy">
+                                                        <children>
+                                                        </children>
+                                                    </fzmm.flow-layout>
+                                                </tabs>
+                                            </fzmm.tab-container>
 
-                                            <fzmm.screen-tab>
-                                                <id>copy</id>
-                                                <children>
-                                                </children>
-                                            </fzmm.screen-tab>
                                         </children>
 
                                         <padding>
