@@ -1,14 +1,12 @@
 package fzmm.zailer.me.client.gui.text_format.tabs;
 
-import fzmm.zailer.me.client.gui.components.tabs.IScreenTab;
-import fzmm.zailer.me.client.gui.utils.memento.IMemento;
+import fzmm.zailer.me.client.gui.components.tabs.ITab;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 
-
-public interface ITextFormatTab extends IScreenTab, IMemento {
+public interface ITextFormatTab extends ITab {
     Text getText(TextFormatLogic logic);
 
     void setRandomValues();
@@ -16,4 +14,9 @@ public interface ITextFormatTab extends IScreenTab, IMemento {
     void componentsCallback(Consumer<Object> callback);
 
     boolean hasStyles();
+
+    @Override
+    default String getTranslationKey() {
+        return "fzmm.gui.textFormat.tab." + this.getId();
+    }
 }

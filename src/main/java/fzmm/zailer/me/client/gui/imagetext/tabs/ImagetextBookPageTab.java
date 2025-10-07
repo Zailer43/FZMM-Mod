@@ -5,7 +5,7 @@ import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.BookOption;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
@@ -16,7 +16,11 @@ import net.minecraft.client.gui.screen.ingame.BookScreen;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
-public class ImagetextBookPageTab implements IImagetextTab {
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+public class ImagetextBookPageTab implements IImagetextTab, IMemento {
     private ContextMenuButton bookPageButton;
     private BookOption bookMode;
 
@@ -87,16 +91,12 @@ public class ImagetextBookPageTab implements IImagetextTab {
     }
 
     @Override
-    public IMementoObject createMemento() {
-        return new BookPageMementoTab(this.bookMode);
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeObject(this.bookMode);
     }
 
     @Override
-    public void restoreMemento(IMementoObject mementoTab) {
-        BookPageMementoTab memento = (BookPageMementoTab) mementoTab;
-        this.updateBookPage(memento.mode);
-    }
-
-    private record BookPageMementoTab(BookOption mode) implements IMementoObject {
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.updateBookPage((BookOption) input.readObject());
     }
 }

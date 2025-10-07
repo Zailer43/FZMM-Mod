@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
-import fzmm.zailer.me.client.logic.FzmmHistory;
+import fzmm.zailer.me.client.logic.history.FzmmHistory;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;

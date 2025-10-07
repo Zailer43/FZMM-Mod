@@ -8,7 +8,7 @@ import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.utils.InvisibleEntityWarning;
-import fzmm.zailer.me.client.gui.utils.memento.IMementoObject;
+import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -29,9 +29,13 @@ import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 
 @SuppressWarnings("UnstableApiUsage")
-public class ImagetextTextDisplayTab implements IImagetextTab {
+public class ImagetextTextDisplayTab implements IImagetextTab, IMemento {
     private static final String TEXT_DISPLAY_TAG = "ImagetextTextDisplay";
     private SliderWidget textOpacity;
     private ConfigTextBox backgroundColor;
@@ -142,30 +146,22 @@ public class ImagetextTextDisplayTab implements IImagetextTab {
     }
 
     @Override
-    public IMementoObject createMemento() {
-        return new TextDisplayMementoTab(
-                (int) this.textOpacity.discreteValue(),
-                this.backgroundColor.getText(),
-                this.textShadow.checked(),
-                this.textSeeThrough.checked(),
-                this.textAlignment,
-                this.billboard
-        );
+    public void backup(ObjectOutputStream output) throws IOException {
+        output.writeInt((int) this.textOpacity.discreteValue());
+        output.writeObject(this.backgroundColor.getText());
+        output.writeBoolean(this.textShadow.checked());
+        output.writeBoolean(this.textSeeThrough.checked());
+        output.writeObject(this.textAlignment);
+        output.writeObject(this.billboard);
     }
 
     @Override
-    public void restoreMemento(IMementoObject mementoTab) {
-        TextDisplayMementoTab memento = (TextDisplayMementoTab) mementoTab;
-        this.textOpacity.setFromDiscreteValue(memento.textOpacity);
-        this.backgroundColor.text(memento.backgroundColor);
-        this.textShadow.checked(memento.textShadow);
-        this.textSeeThrough.checked(memento.textSeeThrough);
-        this.updateTextAlignment(memento.textAlignment);
-        this.updateBillboard(memento.billboard);
-    }
-
-    private record TextDisplayMementoTab(int textOpacity, String backgroundColor, boolean textShadow,
-                                         boolean textSeeThrough, DisplayEntity.TextDisplayEntity.TextAlignment textAlignment,
-                                         DisplayEntity.BillboardMode billboard) implements IMementoObject {
+    public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
+        this.textOpacity.setFromDiscreteValue(input.readInt());
+        this.backgroundColor.text((String) input.readObject());
+        this.textShadow.checked(input.readBoolean());
+        this.textSeeThrough.checked(input.readBoolean());
+        this.updateTextAlignment((DisplayEntity.TextDisplayEntity.TextAlignment) input.readObject());
+        this.updateBillboard((DisplayEntity.BillboardMode) input.readObject());
     }
 }
