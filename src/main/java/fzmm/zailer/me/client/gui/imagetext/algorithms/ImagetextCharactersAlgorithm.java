@@ -6,7 +6,7 @@ import fzmm.zailer.me.client.gui.components.SuggestionTextBox;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
-import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.TextUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
@@ -42,7 +42,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
 
     private void updatePalette() {
         String palette = this.sanitize(this.charactersTextField.getText());
-        this.palette = FzmmUtils.splitMessage(palette).toArray(new String[0]);
+        this.palette = TextUtils.splitMessage(palette).toArray(new String[0]);
     }
 
     private String sanitize(String value) {

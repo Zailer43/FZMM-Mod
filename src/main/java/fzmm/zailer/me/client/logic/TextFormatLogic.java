@@ -1,6 +1,6 @@
 package fzmm.zailer.me.client.logic;
 
-import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.TextUtils;
 import io.wispforest.owo.ui.core.Color;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -31,11 +31,11 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
         if (colors.isEmpty())
             return Text.empty();
 
-        int messageLength = FzmmUtils.splitMessage(this.message).size();
+        int messageLength = TextUtils.splitMessage(this.message).size();
         int[][] colorComponents = this.getColorComponents(colors);
         int[][] gradientComponents = this.getGradientComponents(colorComponents, messageLength);
         int[] gradientColors = this.getGradientColors(gradientComponents);
-        return this.applyColors(FzmmUtils.splitMessage(this.message), gradientColors);
+        return this.applyColors(TextUtils.splitMessage(this.message), gradientColors);
     }
 
 
@@ -99,7 +99,7 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
     }
 
     public Text getRainbow(float hue, float saturation, float brightness, float hueStep) {
-        List<String> characters = FzmmUtils.splitMessage(this.message);
+        List<String> characters = TextUtils.splitMessage(this.message);
         int messageLength = characters.size();
         int[] colors = new int[messageLength];
 
@@ -116,7 +116,7 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
     }
 
     public Text getInterleaved(List<Color> colors, int distance) {
-        List<String> characters = FzmmUtils.splitMessage(this.message);
+        List<String> characters = TextUtils.splitMessage(this.message);
 
         List<String> messageSplit = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();

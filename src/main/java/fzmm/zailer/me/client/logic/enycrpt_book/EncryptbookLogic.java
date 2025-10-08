@@ -3,8 +3,8 @@ package fzmm.zailer.me.client.logic.enycrpt_book;
 import fzmm.zailer.me.builders.BookBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
-import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
+import fzmm.zailer.me.utils.TextUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Style;
@@ -40,11 +40,11 @@ public class EncryptbookLogic {
     private static List<String> encryptMessage(String message, FzmmConfig.Encryptbook config, String paddingChars,
                                                int maxMessageLength, List<Short> encrypteIndex) {
         Random random = new Random(new Date().getTime());
-        List<String> paddingCharacters = FzmmUtils.splitMessage(paddingChars);
+        List<String> paddingCharacters = TextUtils.splitMessage(paddingChars);
 
         message += config.separatorMessage();
         message = message.replaceAll(" ", "_");
-        List<String> splitMessage = new ArrayList<>(FzmmUtils.splitMessage(message));
+        List<String> splitMessage = new ArrayList<>(TextUtils.splitMessage(message));
         int paddingCharactersCount = paddingCharacters.size();
 
         for (int i = splitMessage.size(); i < maxMessageLength; i++) {
