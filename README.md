@@ -184,6 +184,7 @@ It includes:
 - Special name tags with the description of use for each one
 - Unobtainable paints (1.19+)
 - Ender dragon and wither spawn eggs
+- Petrified oak slab
 
 
 <img src="docs/images/operator_utilities.png" alt="Unobtainable items" width="300">
