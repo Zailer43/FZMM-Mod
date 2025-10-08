@@ -12,6 +12,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.text.*;
@@ -23,7 +25,6 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClients;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -69,19 +70,6 @@ public class FzmmUtils {
             return disableItalicConfig(text);
         }
         return text;
-    }
-
-    /**
-     * Splits the characters of a message correctly including multibyte characters correctly
-     */
-    public static List<String> splitMessage(String message) {
-        List<String> characters = new ArrayList<>(message.length());
-        for (int i = 0; i < message.length(); ) {
-            int codePoint = message.codePointAt(i);
-            characters.add(new String(Character.toChars(codePoint)));
-            i += Character.charCount(codePoint);
-        }
-        return characters;
     }
 
     public static int getMaxWidth(Collection<StringVisitable> collection) {
@@ -228,21 +216,7 @@ public class FzmmUtils {
         return onlineUsername.map(networkHandler::getPlayerListEntry).orElse(null);
     }
 
-    public static Optional<String> decodeBase64(String encoded) {
-        try {
-            byte[] decodedValue = Base64.getDecoder().decode(encoded);
-            return Optional.of(new String(decodedValue, StandardCharsets.UTF_8));
-        } catch (Exception ignored) {
-            return Optional.empty();
-        }
-    }
-
-    public static Optional<String> encodeBase64(String message) {
-        try {
-            byte[] messageByte = message.getBytes(StandardCharsets.UTF_8);
-            return Optional.of(Base64.getEncoder().encodeToString(messageByte));
-        } catch (Exception ignored) {
-            return Optional.empty();
-        }
+    public static NbtElement toNbtElement(Text text) {
+        return TextCodecs.CODEC.encodeStart(NbtOps.INSTANCE, text).getOrThrow();
     }
 }
