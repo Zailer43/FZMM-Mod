@@ -226,17 +226,10 @@ public class HeadUtils {
     public static ProfileComponent minimizeTextures(GameProfile profile) {
         ProfileComponent profileComponent = new ProfileComponent(profile);
         Optional<String> unwrappedUrl = unwrapUrl(profileComponent);
-        if (unwrappedUrl.isEmpty()) {
-            return profileComponent;
-        }
-
-        Optional<String> wrappedUrl = wrapUrl(unwrappedUrl.get());
-        if (wrappedUrl.isEmpty()) {
-            return profileComponent;
-        }
+        if (unwrappedUrl.isEmpty()) return profileComponent;
 
         PropertyMap propertiesMap = new PropertyMap();
-        propertiesMap.put("textures", new Property("textures", wrappedUrl.get()));
+        propertiesMap.put("textures", new Property("textures", wrapUrl(unwrappedUrl.get())));
 
         return new ProfileComponent(Optional.of(profile.getName()), Optional.of(profile.getId()), propertiesMap);
     }
@@ -248,7 +241,7 @@ public class HeadUtils {
             return Optional.empty();
         }
 
-        Optional<String> textureValueOptional = FzmmUtils.decodeBase64(texturesProperties.get(0).value());
+        Optional<String> textureValueOptional = TextUtils.decodeBase64(texturesProperties.get(0).value());
         if (textureValueOptional.isEmpty()) {
             return Optional.empty();
         }
@@ -280,7 +273,7 @@ public class HeadUtils {
         }
     }
 
-    public static Optional<String> wrapUrl(String url) {
+    public static String wrapUrl(String url) {
         JsonObject skin = new JsonObject();
         skin.addProperty("url", url);
 
@@ -290,6 +283,6 @@ public class HeadUtils {
         JsonObject json = new JsonObject();
         json.add("textures", textures);
 
-        return FzmmUtils.encodeBase64(json.toString());
+        return TextUtils.encodeBase64(json.toString());
     }
 }

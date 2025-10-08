@@ -1,4 +1,4 @@
-package me.zailer.testmod.client.argument_type;
+package me.zailer.testmod.client.unit_test;
 
 import com.mojang.brigadier.StringReader;
 import fzmm.zailer.me.client.command.argument_type.ComponentArgumentType;
