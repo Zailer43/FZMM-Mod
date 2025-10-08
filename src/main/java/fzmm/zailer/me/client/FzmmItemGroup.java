@@ -58,6 +58,7 @@ public class FzmmItemGroup {
             newEntries.add(new ItemStack(Items.LINGERING_POTION));
             newEntries.add(new ItemStack(Items.TIPPED_ARROW));
             newEntries.add(Items.DRAGON_EGG.getDefaultStack());
+            newEntries.add(Items.PETRIFIED_OAK_SLAB.getDefaultStack());
 
             addSpawnEggs(newEntries);
             addArmorStand(newEntries);
