@@ -11,8 +11,8 @@ import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
-import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
+import fzmm.zailer.me.utils.TextUtils;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.HangingSignBlock;
@@ -175,7 +175,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
             return true;
         });
         // line needs all characters, and use of ImagetextData can give different results because text was wrapped
-        line.characters(FzmmUtils.splitMessage(characters.toString()).toArray(String[]::new));
+        line.characters(TextUtils.splitMessage(characters.toString()).toArray(String[]::new));
 
         text.accept((index, characterStyle, c) -> {
             if (characterStyle.getColor() != null) {

@@ -4,8 +4,8 @@ import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.components.tabs.ITab;
 import fzmm.zailer.me.client.gui.converters.ConvertersScreen;
-import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.SnackBarManager;
+import fzmm.zailer.me.utils.TextUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 
@@ -26,11 +26,11 @@ public class ConverterBase64Tab implements ITab {
         TextFieldWidget messageField = TextBoxRow.setup(rootComponent, "message", "", 5000);
 
         rootComponent.childByIdOrThrow(ButtonComponent.class, "copyDecoded-button").onPress(buttonComponent ->
-                FzmmUtils.decodeBase64(messageField.getText()).ifPresent(SnackBarManager::copyToClipboard)
+                TextUtils.decodeBase64(messageField.getText()).ifPresent(SnackBarManager::copyToClipboard)
         );
 
         rootComponent.childByIdOrThrow(ButtonComponent.class, "copyEncoded-button").onPress(buttonComponent ->
-                FzmmUtils.encodeBase64(messageField.getText()).ifPresent(SnackBarManager::copyToClipboard)
+                SnackBarManager.copyToClipboard(TextUtils.encodeBase64(messageField.getText()))
         );
     }
 }
