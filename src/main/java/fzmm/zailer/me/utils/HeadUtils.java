@@ -239,12 +239,7 @@ public class HeadUtils {
             return result;
         }
 
-        Optional<String> wrappedUrl = wrapUrl(unwrappedUrl.get());
-        if (wrappedUrl.isEmpty()) {
-            return result;
-        }
-
-        result.getProperties().put("textures", new Property("textures", wrappedUrl.get()));
+        result.getProperties().put("textures", new Property("textures", wrapUrl(unwrappedUrl.get())));
 
         return result;
     }
@@ -256,7 +251,7 @@ public class HeadUtils {
             return Optional.empty();
         }
 
-        Optional<String> textureValueOptional = FzmmUtils.decodeBase64(texturesProperties.get(0).value());
+        Optional<String> textureValueOptional = TextUtils.decodeBase64(texturesProperties.get(0).value());
         if (textureValueOptional.isEmpty()) {
             return Optional.empty();
         }
@@ -288,7 +283,7 @@ public class HeadUtils {
         }
     }
 
-    public static Optional<String> wrapUrl(String url) {
+    public static String wrapUrl(String url) {
         JsonObject skin = new JsonObject();
         skin.addProperty("url", url);
 
@@ -298,6 +293,6 @@ public class HeadUtils {
         JsonObject json = new JsonObject();
         json.add("textures", textures);
 
-        return FzmmUtils.encodeBase64(json.toString());
+        return TextUtils.encodeBase64(json.toString());
     }
 }

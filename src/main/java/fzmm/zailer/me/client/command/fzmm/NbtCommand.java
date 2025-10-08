@@ -5,22 +5,15 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.command.ISubCommand;
-import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.TagsConstant;
+import fzmm.zailer.me.utils.TextUtils;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.*;
-import net.minecraft.util.Formatting;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class NbtCommand implements ISubCommand {
     @Override
@@ -41,7 +34,6 @@ public class NbtCommand implements ISubCommand {
         }).build();
     }
 
-
     private void showNbt(CommandContext<FabricClientCommandSource> ctx) {
         MinecraftClient client = MinecraftClient.getInstance();
         assert client.player != null;
@@ -53,14 +45,29 @@ public class NbtCommand implements ISubCommand {
         }
 
         assert stack.getNbt() != null;
-        // vanilla chat lines = 100
-        final int MAX_CHAT_LINES = 90;
         final int MAX_HOVER_LENGTH = 15000;
         String nbtString = stack.getNbt().toString();
         String nbtStringHover = nbtString;
+        nbtString = TextUtils.removeUnpairedMultibyte(nbtString);
         int nbtLength = nbtString.length();
-        MutableText nbtMessage;
 
+        // if the hover text is too long it gives a lot of lag with cursor over it (and doesn't fit on the screen)
+        if (nbtLength > MAX_HOVER_LENGTH) {
+            nbtStringHover = "..." + nbtStringHover.substring(nbtLength - MAX_HOVER_LENGTH, nbtLength);
+        }
+
+        Text length = Text.literal(String.valueOf(nbtLength))
+                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
+        MutableText lengthMessage = Text.translatable("commands.fzmm.nbt.length", length)
+                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
+
+        MutableText nbtText = this.nbtToText(stack.getNbt(), client, nbtString);
+        MutableText message = this.nbtChatMessageOf(stack, nbtText, nbtString, nbtStringHover);
+        client.inGameHud.getChatHud().addMessage(message.append("\n").append(lengthMessage));
+    }
+
+    private MutableText nbtToText(NbtCompound nbt, MinecraftClient client, String nbtString) {
+        final int MAX_CHAT_LINES = 90; // vanilla chat lines = 100
         // check if the message length fits within 90% of the maximum chat lines in vanilla
         // in order to avoid writing a message too long which could cause crash with mods
         // that increase the limit beyond vanilla (and lag spike in vanilla)
@@ -68,33 +75,22 @@ public class NbtCommand implements ISubCommand {
         // note: the final result could be more than 90% due to formatting adding spaces.
         if (client.textRenderer.getWidth(nbtString) > ChatHud.getWidth(client.options.getChatWidth().getValue()) * MAX_CHAT_LINES) {
             String message = String.format("[%s]", Text.translatable("commands.fzmm.nbt.tooLong").getString());
-            nbtMessage = Text.literal(message).setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
+            return Text.literal(message).setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
         } else {
-            nbtMessage = NbtHelper.toPrettyPrintedText(stack.getNbt()).copy();
+            return NbtHelper.toPrettyPrintedText(nbt).copy();
         }
+    }
 
-        // if the hover text is too long it gives a lot of lag with cursor over it (and doesn't fit on the screen)
-        if (nbtLength > MAX_HOVER_LENGTH) {
-            nbtStringHover = "..." + nbtStringHover.substring(nbtLength - MAX_HOVER_LENGTH, nbtLength);
-        }
-
+    private MutableText nbtChatMessageOf(ItemStack stack, MutableText nbtMessage, String nbtString, String nbtStringHover) {
         Text clickToCopyMessage = Text.literal(" (").append(Text.translatable("commands.fzmm.nbt.click")).append(")")
                 .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
 
-        MutableText message = Text.empty()
-                .append(Text.literal(stack.getItem().toString())
-                        .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR))
-                ).append(nbtMessage.copy().setStyle(nbtMessage.getStyle()
+        return Text.literal(stack.getItem().toString()).setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR))
+                .append(nbtMessage.copy().append(clickToCopyMessage)
+                        .setStyle(nbtMessage.getStyle()
                                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, nbtString))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(nbtStringHover))))
-                        .append(clickToCopyMessage)
+                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(nbtStringHover)))
+                        )
                 );
-
-        Text length = Text.literal(String.valueOf(nbtLength))
-                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
-        MutableText lengthMessage = Text.translatable("commands.fzmm.nbt.length", length)
-                .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
-
-        client.inGameHud.getChatHud().addMessage(message.append("\n").append(lengthMessage));
     }
 }
