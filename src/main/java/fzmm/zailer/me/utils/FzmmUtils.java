@@ -25,7 +25,10 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClients;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -204,16 +207,14 @@ public class FzmmUtils {
     @Nullable
     public static PlayerListEntry getOnlinePlayer(String username) {
         ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-        if (networkHandler == null) {
-            return null;
-        }
+        if (networkHandler == null) return null;
 
-        Optional<String> onlineUsername = networkHandler.getPlayerList().stream()
-                .map(entry -> entry.getProfile().getName())
-                .filter(name -> name.equalsIgnoreCase(username))
-                .findFirst();
+        List<PlayerListEntry> playerList = networkHandler.getPlayerList().stream()
+                .filter(entry -> entry.getProfile().getName().equalsIgnoreCase(username))
+                .toList();
 
-        return onlineUsername.map(networkHandler::getPlayerListEntry).orElse(null);
+        // entry can be null in some cases
+        return playerList.isEmpty() ? null : playerList.get(0);
     }
 
     public static NbtElement toNbtElement(Text text) {
