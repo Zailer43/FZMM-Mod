@@ -31,6 +31,7 @@ public class TabContainer extends EFlowLayout {
     @Nullable
     private ELabelComponent labelComponent;
     private String selectedTab;
+    private Consumer<ITab> onSelect = tab -> {};
 
     public TabContainer(Sizing horizontalSizing, Sizing verticalSizing, Algorithm algorithm) {
         super(horizontalSizing, verticalSizing, algorithm);
@@ -60,9 +61,10 @@ public class TabContainer extends EFlowLayout {
 
         String previousTab = this.selectedTab;
         this.selectedTab = id;
+        ITab tab = this.selectedTab();
 
         if (this.labelComponent != null) {
-            String translationKey = this.selectedTab().getTranslationKey();
+            String translationKey = tab.getTranslationKey();
             this.labelComponent.text(Text.translatable(translationKey)).tooltip(Text.translatable(translationKey + ".tooltip"));
         }
 
@@ -74,6 +76,7 @@ public class TabContainer extends EFlowLayout {
             if (previousTab != null) {
                 this.tabsView.child(this.tabs.get(previousTab));
             }
+            this.onSelect.accept(tab);
 
             ParentComponent rootComponent = this.root();
             if (rootComponent == null) return;
@@ -107,8 +110,12 @@ public class TabContainer extends EFlowLayout {
         return this.tabs.keySet();
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends ITab> void setupTabs(EFlowLayout rootComponent, String selectedId, Consumer<T> onPress) {
+    public TabContainer onSelect(Consumer<ITab> onSelect) {
+        this.onSelect = onSelect;
+        return this;
+    }
+
+    public TabContainer setupTabs(EFlowLayout rootComponent, String selectedId) {
         EButtonComponent selectedButton = null;
         for (var tab : this.parsedTabs) {
             String id = tab.getId();
@@ -118,7 +125,6 @@ public class TabContainer extends EFlowLayout {
 
             buttonComponent.onPress(button -> {
                 this.selectTab(id);
-                onPress.accept((T) tab);
 
                 for (var tabId : this.tabIds()) {
                     rootComponent.childByIdOrThrow(EButtonComponent.class, tabId + "-button").active(true);
@@ -135,6 +141,7 @@ public class TabContainer extends EFlowLayout {
         if (selectedButton != null) {
             selectedButton.onPress();
         }
+        return this;
     }
 
     public void backup(ObjectOutputStream output) throws IOException {
@@ -166,7 +173,7 @@ public class TabContainer extends EFlowLayout {
         }
     }
 
-    public void addParsedTabs(List<? extends ITab> tabs) {
+    public TabContainer addParsedTabs(List<? extends ITab> tabs) {
         this.parsedTabs.addAll(tabs);
         if (this.parsedTabs.size() != this.tabs.size()) {
             throw new IllegalStateException("Tabs of '" + this.id() + "' are mismatching (expected tabs: " + this.parsedTabs.size() + ", actual components: " + this.tabs.size() + ")");
@@ -177,6 +184,8 @@ public class TabContainer extends EFlowLayout {
                 throw new IllegalStateException("Tab '" + tab + "' of '" + this.id() + "' has no component");
             }
         }
+
+        return this;
     }
 
     @Override
