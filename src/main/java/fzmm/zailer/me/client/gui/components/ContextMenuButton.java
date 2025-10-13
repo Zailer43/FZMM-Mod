@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.components;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import io.wispforest.owo.ui.component.ButtonComponent;
+import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import io.wispforest.owo.ui.component.DropdownComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -11,13 +11,14 @@ import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.AbstractInput;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ContextMenuButton extends ButtonComponent {
+public class ContextMenuButton extends EButtonComponent {
     @Nullable
     private DropdownComponent contextMenu = null;
     private Consumer<DropdownComponent> contextMenuOptionsConsumer = dropdownComponent -> {
@@ -30,7 +31,7 @@ public class ContextMenuButton extends ButtonComponent {
     }
 
     @Override
-    public void onPress() {
+    public void onPress(AbstractInput input) {
         Screen screen = MinecraftClient.getInstance().currentScreen;
         if (!(screen instanceof BaseFzmmScreen baseScreen)) {
             return;
@@ -57,8 +58,8 @@ public class ContextMenuButton extends ButtonComponent {
                                     .cursorStyle(CursorStyle.NONE);
                         }
 
-                        contextMenu.mouseDown().subscribe((mouseX1, mouseY1, button1) -> {
-                            if (mouseY1 < contextMenuY) {
+                        contextMenu.mouseDown().subscribe((contextInput, doubled) -> {
+                            if (contextInput.y() < contextMenuY) {
                                 baseScreen.getRoot().get().removeChild(contextMenu);
                                 UISounds.playButtonSound();
                             }

@@ -4,9 +4,9 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.TypedEntityData;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.*;
@@ -37,7 +37,9 @@ public class ArmorStandBuilder {
         ItemStack armorStand = new ItemStack(Items.ARMOR_STAND);
 
         armorStand.apply(DataComponentTypes.CUSTOM_NAME, null, component -> itemName);
-        armorStand.apply(DataComponentTypes.ENTITY_DATA, null, component -> NbtComponent.of(this.entityTag));
+        armorStand.apply(DataComponentTypes.ENTITY_DATA, null, entityData ->
+                TypedEntityData.create(EntityType.ARMOR_STAND, this.entityTag)
+        );
         return armorStand;
     }
 

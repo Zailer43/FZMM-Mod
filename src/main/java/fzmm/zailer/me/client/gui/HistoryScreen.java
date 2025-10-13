@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.logic.history.FzmmHistory;
 import io.wispforest.owo.ui.component.ButtonComponent;
@@ -17,8 +18,8 @@ import java.util.List;
 public class HistoryScreen extends BaseFzmmScreen {
 
     private static final Text GENERATED_ITEMS_EMPTY_TEXT = Text.translatable("fzmm.gui.history.label.generatedWithFzmm.empty");
-    private ButtonComponent itemGenerated;
-    private ButtonComponent headGenerated;
+    private EButtonComponent itemGenerated;
+    private EButtonComponent headGenerated;
     private FlowLayout contentLayout;
     private LabelComponent labelError;
 
@@ -31,8 +32,10 @@ public class HistoryScreen extends BaseFzmmScreen {
     protected void setup(EFlowLayout rootComponent) {
         this.contentLayout = rootComponent.childById(FlowLayout.class, "content");
 
-        this.itemGenerated = rootComponent.childByIdOrThrow(ButtonComponent.class, "itemGeneratedWithFzmm").onPress(this::itemGeneratedExecute);
-        this.headGenerated = rootComponent.childByIdOrThrow(ButtonComponent.class, "headGeneratedWithFzmm").onPress(this::headGeneratedExecute);
+        this.itemGenerated = rootComponent.childByIdOrThrow(EButtonComponent.class, "itemGeneratedWithFzmm");
+        this.itemGenerated.onPress(this::itemGeneratedExecute);
+        this.headGenerated = rootComponent.childByIdOrThrow(EButtonComponent.class, "headGeneratedWithFzmm");
+        this.headGenerated.onPress(this::headGeneratedExecute);
 
         this.labelError = rootComponent.childByIdOrThrow(LabelComponent.class, "error-label");
 

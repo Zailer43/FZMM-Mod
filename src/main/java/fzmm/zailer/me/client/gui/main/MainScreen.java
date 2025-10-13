@@ -122,7 +122,7 @@ public class MainScreen extends BaseFzmmScreen {
                 int background = 0x479E4A | (alpha << 24);
                 context.fill(button.x(), button.y(), button.x() + button.width(), button.y() + button.height(), background);
             }
-            context.drawBorder(button.x(), button.y(), button.width(), button.height(), borderColor);
+            context.drawRectOutline(button.x(), button.y(), button.width(), button.height(), borderColor);
         };
     }
 

@@ -6,6 +6,7 @@ import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.renderstate.EntityElementRenderState;
 import net.minecraft.client.gui.ScreenRect;
 import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.RotationAxis;
 import org.joml.Matrix4f;
@@ -34,10 +35,10 @@ public class EEntityComponent<T extends LivingEntity> extends EntityComponent<T>
         matrix.rotate(RotationAxis.POSITIVE_X.rotationDegrees(35));
         matrix.rotate(RotationAxis.POSITIVE_Y.rotationDegrees(-45 + this.mouseRotation));
 
-        var entityState = this.dispatcher.getRenderer(this.entity).createRenderState();
+        EntityRenderState entityState = this.manager.getRenderer(this.entity).createRenderState();
 
         // replace partialTicks to 0f to fix shaking
-        ((EntityRenderer)this.dispatcher.getRenderer(this.entity)).updateRenderState(this.entity, entityState, 0f);
+        ((EntityRenderer) this.manager.getRenderer(this.entity)).updateRenderState(this.entity, entityState, 0f);
         context.state.addSpecialElement(new EntityElementRenderState(
                 entityState,
                 matrix,

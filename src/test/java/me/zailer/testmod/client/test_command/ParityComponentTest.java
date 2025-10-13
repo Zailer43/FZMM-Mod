@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.gui.components.BookComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.BookEditScreen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.component.type.WritableBookContentComponent;
 import net.minecraft.item.Items;
 import net.minecraft.text.Text;
@@ -85,7 +86,7 @@ public class ParityComponentTest {
         MinecraftClient.getInstance().setScreen(bookEditScreen);
 
         for (int i = 0; i < testStr.length(); i++) {
-            bookEditScreen.charTyped(testStr.charAt(i), 0);
+            bookEditScreen.keyPressed(new KeyInput(testStr.charAt(i), 0, 0));
         }
 
         MinecraftClient.getInstance().setScreen(null);
@@ -108,7 +109,7 @@ public class ParityComponentTest {
 
         for (int i = 0; i < testStr.length(); i++) {
             component.setFocused(true);
-            component.charTyped(testStr.charAt(i), 0);
+            component.keyPressed(new KeyInput(testStr.charAt(i), 0, 0));
         }
 
         MinecraftClient.getInstance().setScreen(null);

@@ -13,7 +13,7 @@ public class SymbolComponentAdapter extends VanillaWidgetComponent {
         this.widget.visible = true;
 
         // fix click in the background
-        this.mouseDown().subscribe((mouseX, mouseY, button) -> true);
+        this.mouseDown().subscribe((input, doubled) -> true);
     }
 
     @Override

@@ -3,12 +3,11 @@ package fzmm.zailer.me.builders;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.TagsConstant;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.TypedEntityData;
 import net.minecraft.item.HangingSignItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,11 +15,9 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.storage.NbtWriteView;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
-import net.minecraft.util.ErrorReporter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,22 +113,15 @@ public class SignBuilder {
     }
 
     public ItemStack get() {
-        this.stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.DEFAULT, component -> {
-            NbtCompound result = component.copyNbt();
-
-            try (var logging = new ErrorReporter.Logging(FzmmClient.LOGGER)) {
-                NbtWriteView nbtWriteView = NbtWriteView.create(logging, FzmmUtils.getRegistryManager());
-                BlockEntity.writeId(nbtWriteView, this.isHangingSign() ? BlockEntityType.HANGING_SIGN : BlockEntityType.SIGN); // 1.21.4+
-
-                result.copyFrom(nbtWriteView.getNbt());
-            }
+        this.stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, TypedEntityData.create(BlockEntityType.SIGN, new NbtCompound()), entityData -> {
+            NbtCompound result = entityData.copyNbtWithoutId();
 
             this.addSignMessage(this.frontTextList, this.frontCompound, result, TagsConstant.SIGN_FRONT_TEXT);
             this.addSignMessage(this.backTextList, this.backCompound, result, TagsConstant.SIGN_BACK_TEXT);
 
             result.putBoolean(TagsConstant.SIGN_IS_WAXED, this.isWaxed);
 
-            return NbtComponent.of(result);
+            return TypedEntityData.create(BlockEntityType.SIGN, result);
         });
         return this.stack;
     }

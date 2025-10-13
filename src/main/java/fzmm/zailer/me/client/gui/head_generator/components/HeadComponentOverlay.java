@@ -7,6 +7,7 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
@@ -60,7 +61,7 @@ public class HeadComponentOverlay extends EFlowLayout {
     private final HeadGeneratorScreen parentScreen;
     private final EntityComponent<LivingEntity> previewEntity;
     private boolean isSlimFormat;
-    private ButtonComponent selectedSkinFormat;
+    private EButtonComponent selectedSkinFormat;
     private SkinPreEditOption selectedSkinPreEdit;
 
     public HeadComponentOverlay(HeadGeneratorScreen parentScreen, EntityComponent<LivingEntity> previewEntity,
@@ -75,7 +76,7 @@ public class HeadComponentOverlay extends EFlowLayout {
         Map<String, String> parameters = Map.of("name", entry.getDisplayName().getString());
 
         FlowLayout headOverlay = this.parentScreen.getModel().expandTemplate(EFlowLayout.class, "head-overlay", parameters).<EFlowLayout>configure(panel -> {
-            panel.mouseDown().subscribe((mouseX1, mouseY1, button1) -> true);
+            panel.mouseDown().subscribe((input, doubled) -> true);
             int giveButtonWidth = FzmmUtils.getMaxWidth(List.of(GIVE_BUTTON_TEXT,
                     GIVE_WAITING_UNDEFINED_TEXT,
                     Text.translatable(GIVE_WAITING_SECONDS_KEY, 1))
@@ -246,9 +247,10 @@ public class HeadComponentOverlay extends EFlowLayout {
         defaultOptionsLayout.child(this.getSkinFormatOptions(headComponentEntry));
     }
 
-    private ButtonComponent getModelButton(AbstractHeadComponentEntry headComponentEntry, HeadModelEntry modelEntry,
-                                           int amount, Icon icon, @Nullable Consumer<ButtonComponent> callback) {
-        ButtonComponent result = Components.button(Text.empty(), button -> {
+    private EButtonComponent getModelButton(AbstractHeadComponentEntry headComponentEntry, HeadModelEntry modelEntry,
+                                           int amount, Icon icon, @Nullable Consumer<EButtonComponent> callback) {
+        EButtonComponent result = EComponents.button(Text.empty());
+        result.onPress(button -> {
             BufferedImage preview = headComponentEntry.getPreview();
             for (int i = 0; i < amount; i++) {
                 BufferedImage updatedSkin = modelEntry.getHeadSkin(preview, this.parentScreen.hasUnusedPixels());
@@ -258,7 +260,7 @@ public class HeadComponentOverlay extends EFlowLayout {
             headComponentEntry.updatePreview(preview);
 
             if (callback != null) {
-                callback.accept(button);
+                callback.accept((EButtonComponent) button);
             }
         });
 
@@ -311,7 +313,7 @@ public class HeadComponentOverlay extends EFlowLayout {
         FlowLayout preEditRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
         preEditRow.gap(4);
 
-        HashMap<SkinPreEditOption, ButtonComponent> preEditHashMap = new HashMap<>();
+        HashMap<SkinPreEditOption, EButtonComponent> preEditHashMap = new HashMap<>();
         for (var preEdit : SkinPreEditOption.values()) {
             FlowLayout layout = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
             this.parentScreen.setupPreEditButton(layout, preEdit, preEditHashMap, skinPreEditOption -> {
@@ -350,12 +352,12 @@ public class HeadComponentOverlay extends EFlowLayout {
         FlowLayout skinFormatRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
         skinFormatRow.gap(4);
 
-        List<ButtonComponent> buttons = new ArrayList<>();
+        List<EButtonComponent> buttons = new ArrayList<>();
         List<Component> optionsList = new ArrayList<>();
 
-        ButtonComponent slim = this.getModelButton(headComponentEntry, InternalModels.WIDE_TO_SLIM, 1, FzmmIcons.MODEL_SLIM,
+        EButtonComponent slim = this.getModelButton(headComponentEntry, InternalModels.WIDE_TO_SLIM, 1, FzmmIcons.MODEL_SLIM,
                 modelButton -> this.skinFormatCallback(buttons, modelButton, true));
-        ButtonComponent wide = this.getModelButton(headComponentEntry, InternalModels.SLIM_TO_WIDE, 1, FzmmIcons.MODEL_WIDE,
+        EButtonComponent wide = this.getModelButton(headComponentEntry, InternalModels.SLIM_TO_WIDE, 1, FzmmIcons.MODEL_WIDE,
                 modelButton -> this.skinFormatCallback(buttons, modelButton, false));
 
         optionsList.add(EContainers.horizontalFlow(Sizing.content(), Sizing.content())
@@ -383,7 +385,7 @@ public class HeadComponentOverlay extends EFlowLayout {
         return skinFormatLayout;
     }
 
-    private void skinFormatCallback(List<ButtonComponent> buttons, ButtonComponent modelButton, boolean isSlim) {
+    private void skinFormatCallback(List<EButtonComponent> buttons, EButtonComponent modelButton, boolean isSlim) {
         for (var button : buttons) {
             button.active = button != modelButton;
         }

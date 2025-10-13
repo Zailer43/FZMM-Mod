@@ -96,13 +96,13 @@
                 <fzmm.flow-layout direction="horizontal">
                     <children>
 
-                        <button id="execute-button">
+                        <fzmm.button id="execute-button">
                             <text translate="true">gui.done</text>
 
                             <sizing>
                                 <vertical method="fixed">16</vertical>
                             </sizing>
-                        </button>
+                        </fzmm.button>
 
                         <spacer>
                             <sizing>
@@ -111,14 +111,14 @@
                             </sizing>
                         </spacer>
 
-                        <button id="back-button">
+                        <fzmm.button id="back-button">
                             <text translate="true">fzmm.gui.button.back.icon</text>
                             <tooltip-text translate="true">fzmm.gui.button.back</tooltip-text>
 
                             <sizing>
                                 <vertical method="fixed">16</vertical>
                             </sizing>
-                        </button>
+                        </fzmm.button>
 
                     </children>
 
@@ -144,20 +144,20 @@
         <source-buttons>
             <fzmm.flow-layout direction="horizontal">
                 <children>
-                    <button id="{{left-button}}-button">
+                    <fzmm.button id="{{left-button}}-button">
                         <text translate="true">fzmm.gui.selectItem.button.source.{{left-button}}</text>
 
                         <sizing>
                             <horizontal method="fill">49</horizontal>
                         </sizing>
-                    </button>
-                    <button id="{{right-button}}-button">
+                    </fzmm.button>
+                    <fzmm.button id="{{right-button}}-button">
                         <text translate="true">fzmm.gui.selectItem.button.source.{{right-button}}</text>
 
                         <sizing>
                             <horizontal method="fill">49</horizontal>
                         </sizing>
-                    </button>
+                    </fzmm.button>
                 </children>
 
                 <gap>4</gap>

@@ -5,11 +5,9 @@ import fzmm.zailer.me.builders.BlockStateItemBuilder;
 import fzmm.zailer.me.builders.CrossbowBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
@@ -17,8 +15,8 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerLootComponent;
 import net.minecraft.component.type.FireworksComponent;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.TypedEntityData;
 import net.minecraft.item.*;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
@@ -27,9 +25,7 @@ import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.*;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.storage.NbtWriteView;
 import net.minecraft.text.Text;
-import net.minecraft.util.ErrorReporter;
 import net.minecraft.util.Identifier;
 import net.minecraft.village.raid.Raid;
 
@@ -104,11 +100,12 @@ public class FzmmItemGroup {
                     entries.add(new BlockStateItemBuilder(Items.BARREL, "openBarrel").add("open", true).get());
                     entries.add(new BlockStateItemBuilder(Items.IRON_TRAPDOOR, "openIronTrapdoor").add("open", true).get());
                     entries.add(new BlockStateItemBuilder(Items.IRON_DOOR, "openIronDoor").add("open", true).get());
+                    addItemTag(ItemTags.WOODEN_SHELVES, item -> entries.add(new BlockStateItemBuilder(item, "poweredShelf", item).add("powered", true).get()));
                     entries.add(new BlockStateItemBuilder(Items.END_PORTAL_FRAME, "endPortalFrameWithEye").add("eye", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.LANTERN, "hangingLantern", Items.LANTERN).add("hanging", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.LANTERN, "lanternOnTheFloor", Items.LANTERN).add("hanging", false).get());
-                    entries.add(new BlockStateItemBuilder(Items.SOUL_LANTERN, "hangingLantern", Items.SOUL_LANTERN).add("hanging", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.SOUL_LANTERN, "lanternOnTheFloor", Items.SOUL_LANTERN).add("hanging", false).get());
+                    addItemTag(ItemTags.LANTERNS, item -> {
+                        entries.add(new BlockStateItemBuilder(item, "hangingLantern", item).add("hanging", true).get());
+                        entries.add(new BlockStateItemBuilder(item, "lanternOnTheFloor", item).add("hanging", false).get());
+                    });
                     entries.add(new BlockStateItemBuilder(Items.MANGROVE_PROPAGULE, "hangingMangrovePropagule").add("hanging", true).get());
                     // it is not possible to place it on faces of blocks other than the bottom one, it is useless
 //                    stacks.add(new BlockStateTagItem(Items.MANGROVE_PROPAGULE, "Mangrove propagule on the floor").add("hanging", false).get());
@@ -230,15 +227,13 @@ public class FzmmItemGroup {
         NbtCompound entityTag = new NbtCompound();
         entityTag.putBoolean("Invisible", true);
 
-        itemFrame.apply(DataComponentTypes.ENTITY_DATA, null, nbtComponent -> {
+        itemFrame.apply(DataComponentTypes.ENTITY_DATA, null, entityData -> {
             NbtCompound result = entityTag.copy();
-            result.putString(TagsConstant.ENTITY_TAG_ID, Registries.ENTITY_TYPE.getId(EntityType.ITEM_FRAME).getPath());
-            return NbtComponent.of(result);
+            return TypedEntityData.create(EntityType.ITEM_FRAME, result);
         });
-        glowItemFrame.apply(DataComponentTypes.ENTITY_DATA, null, nbtComponent -> {
+        glowItemFrame.apply(DataComponentTypes.ENTITY_DATA, null, entityData -> {
             NbtCompound result = entityTag.copy();
-            result.putString(TagsConstant.ENTITY_TAG_ID, Registries.ENTITY_TYPE.getId(EntityType.GLOW_ITEM_FRAME).getPath());
-            return NbtComponent.of(result);
+            return TypedEntityData.create(EntityType.ITEM_FRAME, result);
         });
 
         itemFrame.apply(DataComponentTypes.CUSTOM_NAME, null, component -> {
@@ -344,7 +339,6 @@ public class FzmmItemGroup {
 
     private static void addLootChest(ItemGroup.Entries entries, Item item, List<RegistryKey<LootTable>> lootTableList, boolean isBrushable) {
         if (MinecraftClient.getInstance().player == null || MinecraftClient.getInstance().world == null) return;
-        DynamicRegistryManager registryManager = MinecraftClient.getInstance().player.getRegistryManager();
         for (var lootTable : lootTableList) {
             ItemStack stack = new ItemStack(item);
 
@@ -354,19 +348,12 @@ public class FzmmItemGroup {
             // container_loot component like other lootable blocks in 1.20.5
             // https://bugs.mojang.com/browse/MC-271530
             if (isBrushable) {
-                stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.DEFAULT, component -> {
-                    NbtCompound result = component.copyNbt();
-
-                    try (var logging = new ErrorReporter.Logging(FzmmClient.LOGGER)) {
-                        NbtWriteView nbtWriteView = NbtWriteView.create(logging, registryManager);
-                        BlockEntity.writeId(nbtWriteView, BlockEntityType.BRUSHABLE_BLOCK); //  1.21.4+
-
-                        result.copyFrom(nbtWriteView.getNbt());
-                    }
+                stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, TypedEntityData.create(BlockEntityType.BRUSHABLE_BLOCK, new NbtCompound()), entityData -> {
+                    NbtCompound result = entityData.copyNbtWithoutId();
 
                     result.putString("LootTable", identifierString);
 
-                    return NbtComponent.of(result);
+                    return TypedEntityData.create(BlockEntityType.BRUSHABLE_BLOCK, result);
                 });
             } else {
                 stack.apply(DataComponentTypes.CONTAINER_LOOT, null,

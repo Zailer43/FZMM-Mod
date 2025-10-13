@@ -2,19 +2,17 @@ package fzmm.zailer.me.utils.skin;
 
 import com.mojang.authlib.GameProfile;
 import fzmm.zailer.me.builders.HeadBuilder;
-import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ImageUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.client.util.SkinTextures;
+import net.minecraft.entity.player.SkinTextures;
 import net.minecraft.item.ItemStack;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 public class CacheSkinGetter extends SkinGetterDecorator {
 
@@ -28,42 +26,26 @@ public class CacheSkinGetter extends SkinGetterDecorator {
 
     @Override
     public Optional<BufferedImage> getSkin(String playerName) {
-        Optional<GameProfile> profileOptional = this.getProfile(playerName);
-        if (profileOptional.isEmpty()) {
-            return super.getSkin(playerName);
-        }
+        // obtains the player's skin, if server plugin/mod modifies it, this will obtain that one, which may be convenient
+        assert MinecraftClient.getInstance().getNetworkHandler() != null;
+        PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getCaseInsensitivePlayerInfo(playerName);
+        if (playerListEntry == null) return super.getSkin(playerName);
 
-        Optional<BufferedImage> cacheSkin = this.getSkin(profileOptional.get());
-
+        Optional<BufferedImage> cacheSkin = this.getSkin(playerListEntry.getSkinTextures());
         return cacheSkin.isPresent() ? cacheSkin : super.getSkin(playerName);
     }
 
-    public Optional<BufferedImage> getSkin(GameProfile profile) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        assert client.player != null;
-
-        Optional<SkinTextures> textures;
+    public Optional<BufferedImage> getSkin(SkinTextures textures) {
+        AbstractTexture texture;
         try {
-            // if the list of players was not loaded, fetch it and gets the skin from there,
-            // which can give a skin provided by the server
-            textures = client.getSkinProvider().fetchSkinTextures(profile).get();
-        } catch (ExecutionException | InterruptedException ignored) {
-            return Optional.empty();
+            texture = MinecraftClient.getInstance().getTextureManager().getTexture(textures.body().texturePath());
+        } catch (Exception e) {
+            texture = null;
         }
-
-        if (textures.isEmpty()) {
-            return Optional.empty();
-        }
-
-        AbstractTexture texture = client.getTextureManager().getTexture(textures.get().texture());
-        if (!(texture instanceof NativeImageBackedTexture nativeTexture)) {
-            return Optional.empty();
-        }
+        if (!(texture instanceof NativeImageBackedTexture nativeTexture)) return Optional.empty();
 
         NativeImage nativeImage = nativeTexture.getImage();
-        if (nativeImage == null) {
-            return Optional.empty();
-        }
+        if (nativeImage == null) return Optional.empty();
 
         return Optional.of(ImageUtils.getBufferedImgFromNativeImg(nativeImage));
     }
@@ -77,11 +59,9 @@ public class CacheSkinGetter extends SkinGetterDecorator {
 
     @Override
     protected Optional<GameProfile> getProfile(String playerName) {
-        PlayerListEntry playerListEntry = FzmmUtils.getOnlinePlayer(playerName);
-        if (playerListEntry == null) {
-            return Optional.empty();
-        }
+        assert MinecraftClient.getInstance().getNetworkHandler() != null;
+        PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getCaseInsensitivePlayerInfo(playerName);
 
-        return Optional.of(playerListEntry.getProfile());
+        return Optional.ofNullable(playerListEntry == null ? null : playerListEntry.getProfile());
     }
 }

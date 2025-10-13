@@ -110,7 +110,7 @@
 
 
             <vertical-alignment>center</vertical-alignment>
-            <horizontal-alignment>center</horizontal-alignment>
+            <horizontal-alignment>center</horizontal-alignment>1
 
             <surface>
                 <vanilla-translucent/>
@@ -120,13 +120,13 @@
 
     <templates>
         <option-button>
-            <button id="{{id}}">
+            <fzmm.button id="{{id}}">
                 <text translate="true">fzmm.gui.history.option.{{translation}}</text>
 
                 <sizing>
                     <horizontal method="fill">97</horizontal>
                 </sizing>
-            </button>
+            </fzmm.button>
         </option-button>
     </templates>
 </owo-ui>

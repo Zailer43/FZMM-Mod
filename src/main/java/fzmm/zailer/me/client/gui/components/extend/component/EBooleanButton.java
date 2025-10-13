@@ -2,11 +2,11 @@ package fzmm.zailer.me.client.gui.components.extend.component;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.utils.FzmmUtils;
-import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
+import net.minecraft.client.input.AbstractInput;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.w3c.dom.Element;
@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
 import java.util.List;
 import java.util.Map;
 
-public class EBooleanButton extends ButtonComponent {
+public class EBooleanButton extends EButtonComponent {
 
     protected boolean enabled = false;
     protected final Text enabledText;
@@ -42,10 +42,10 @@ public class EBooleanButton extends ButtonComponent {
     }
 
     @Override
-    public void onPress() {
+    public void onPress(AbstractInput input) {
         this.enabled = !this.enabled;
         this.updateMessage();
-        super.onPress();
+        super.onPress(input);
     }
 
     protected void updateMessage() {

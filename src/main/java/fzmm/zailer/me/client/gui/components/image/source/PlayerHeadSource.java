@@ -5,13 +5,13 @@ import fzmm.zailer.me.client.gui.utils.select_item.RequestedItem;
 import fzmm.zailer.me.client.gui.utils.select_item.SelectItemScreen;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
+import fzmm.zailer.me.utils.skin.CacheSkinGetter;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -56,17 +56,19 @@ public class PlayerHeadSource implements IInteractiveImageLoader {
         return false;
     }
 
-    private void setImage(ItemStack head) {
-        Optional<BufferedImage> skinOptional = Optional.empty();
-
-        try {
-            if (head != null) {
-                skinOptional = HeadUtils.getSkin(head);
-            }
-        } catch (IOException ignored) {
+    private void setImage(@Nullable ItemStack head) {
+        if (head == null) {
+            this.setImage((BufferedImage) null);
+            return;
         }
 
-        this.setImage(skinOptional.orElse(null));
+        HeadUtils.getSkinTextures(head).whenComplete((skinOptional, throwable) -> MinecraftClient.getInstance().execute(() -> {
+            if (throwable != null || skinOptional.isEmpty()) {
+                this.setImage((BufferedImage) null);
+            } else {
+                this.setImage(new CacheSkinGetter().getSkin(skinOptional.get()).orElse(null));
+            }
+        }));
     }
 
     public void setImage(BufferedImage image) {

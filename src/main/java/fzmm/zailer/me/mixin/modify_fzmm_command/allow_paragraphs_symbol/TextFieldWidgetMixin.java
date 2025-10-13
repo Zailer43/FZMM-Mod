@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import fzmm.zailer.me.mixin_interfaces.IAllowParagraphs;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.CharInput;
 import net.minecraft.util.StringHelper;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.Mixin;
@@ -38,15 +39,13 @@ public abstract class TextFieldWidgetMixin implements IAllowParagraphs {
     }
 
     @WrapOperation(
-            method = "charTyped(CI)Z",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/util/StringHelper;isValidChar(C)Z")
+            method = "charTyped(Lnet/minecraft/client/input/CharInput;)Z",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/input/CharInput;isValidChar()Z")
     )
-    private boolean fzmm$allowParagraphInCharTyped(char c, Operation<Boolean> original) {
-        if (this.fzmm$allowParagraphs) {
-            return true;
-        }
+    private boolean fzmm$allowParagraphInCharTyped(CharInput instance, Operation<Boolean> original) {
+        if (this.fzmm$allowParagraphs) return true;
 
-        return original.call(c);
+        return original.call(instance);
     }
 
     @Unique

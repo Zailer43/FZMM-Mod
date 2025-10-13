@@ -19,13 +19,13 @@ public class CustomHeadEntityRenderer extends MobEntityRenderer<CustomHeadEntity
 
     @Override
     public CustomHeadEntityRenderState createRenderState() {
-        return new CustomHeadEntityRenderState(DefaultSkinHelper.getSteve().texture());
+        return new CustomHeadEntityRenderState(DefaultSkinHelper.getSteve().body().texturePath());
     }
 
     @Override
     public void updateRenderState(CustomHeadEntity customHeadEntity, CustomHeadEntityRenderState state, float f) {
         super.updateRenderState(customHeadEntity, state, f);
-        state.texture = customHeadEntity.skin().texture();
+        state.texture = customHeadEntity.skin().body().texturePath();
     }
 
     @Override

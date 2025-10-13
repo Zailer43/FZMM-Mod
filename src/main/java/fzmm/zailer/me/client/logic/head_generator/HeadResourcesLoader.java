@@ -17,7 +17,6 @@ import fzmm.zailer.me.client.logic.head_generator.model.steps.select.ModelSelect
 import fzmm.zailer.me.client.logic.head_generator.texture.HeadTextureEntry;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.core.Color;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SynchronousResourceReloader;
@@ -34,7 +33,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.Function;
 
-public class HeadResourcesLoader implements SynchronousResourceReloader, IdentifiableResourceReloadListener {
+public class HeadResourcesLoader implements SynchronousResourceReloader {
 
     private static ImmutableList<AbstractHeadEntry> LOADED_RESOURCES = ImmutableList.<AbstractHeadEntry>builder().build();
     private static ImmutableMap<String, BufferedImage> LOADED_MODEL_TEXTURES = ImmutableMap.<String, BufferedImage>builder().build();
@@ -65,11 +64,6 @@ public class HeadResourcesLoader implements SynchronousResourceReloader, Identif
 
     public static Optional<BufferedImage> getModelTexture(String path) {
         return Optional.ofNullable(LOADED_MODEL_TEXTURES.get(path));
-    }
-
-    @Override
-    public Identifier getFabricId() {
-        return Identifier.of(FzmmClient.MOD_ID, "head-resources-loader");
     }
 
     @Override

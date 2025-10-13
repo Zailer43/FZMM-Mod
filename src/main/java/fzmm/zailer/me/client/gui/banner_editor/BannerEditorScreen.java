@@ -7,8 +7,8 @@ import fzmm.zailer.me.client.gui.banner_editor.tabs.AddPatternTab;
 import fzmm.zailer.me.client.gui.banner_editor.tabs.ChangeColorTab;
 import fzmm.zailer.me.client.gui.banner_editor.tabs.IBannerTab;
 import fzmm.zailer.me.client.gui.banner_editor.tabs.RemovePatternTab;
-import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
+import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.utils.select_item.RequestedItem;
@@ -24,6 +24,7 @@ import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -80,7 +81,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
             colorSelectedLayout.padding(Insets.of(1));
             colorSelectedLayout.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
 
-            colorBox.mouseDown().subscribe((mouseX, mouseY, button) -> {
+            colorBox.mouseDown().subscribe((input, doubled) -> {
                 this.selectedColor = dyeColor;
                 this.updatePreview(this.bannerBuilder);
 
@@ -182,12 +183,10 @@ public class BannerEditorScreen extends BaseFzmmScreen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (this.clipboard.keyPressed(keyCode, modifiers)) {
-            return true;
-        }
+    public boolean keyPressed(KeyInput input) {
+        if (this.clipboard.keyPressed(input)) return true;
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     private void isShieldButtonExecute(boolean value) {

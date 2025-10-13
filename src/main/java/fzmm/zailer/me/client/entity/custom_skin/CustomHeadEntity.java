@@ -2,10 +2,10 @@ package fzmm.zailer.me.client.entity.custom_skin;
 
 import fzmm.zailer.me.client.FzmmClient;
 import net.minecraft.client.util.DefaultSkinHelper;
-import net.minecraft.client.util.SkinTextures;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.SkinTextures;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -24,7 +24,7 @@ public class CustomHeadEntity extends MobEntity implements ISkinMutable {
                     .build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, FzmmClient.CUSTOM_HEAD_ENTITY))
     );
 
-    private SkinTextures textures = new SkinTextures(DefaultSkinHelper.getTexture(), null, null, null, SkinTextures.Model.WIDE, false);
+    private SkinTextures textures = DefaultSkinHelper.getSteve();
 
     public CustomHeadEntity(World world) {
         super(CUSTOM_HEAD_ENTITY_TYPE, world);

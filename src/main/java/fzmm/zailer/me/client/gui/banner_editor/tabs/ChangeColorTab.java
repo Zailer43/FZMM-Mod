@@ -4,7 +4,7 @@ import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.utils.history.HistoryClipboard;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.util.UISounds;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.AbstractInput;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BannerPatternsComponent;
 import net.minecraft.item.Item;
@@ -36,8 +36,8 @@ public class ChangeColorTab extends AbstractModifyPatternTab {
         ItemStack itemComponentStack = itemComponent.stack();
         boolean isBaseBanner = componentLayer == null;
 
-        itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            this.componentExecute(clipboard, currentBanner, componentColor, componentLayer);
+        itemComponent.mouseDown().subscribe((input, doubled) -> {
+            this.componentExecute(input, clipboard, currentBanner, componentColor, componentLayer);
             return true;
         });
 
@@ -74,7 +74,7 @@ public class ChangeColorTab extends AbstractModifyPatternTab {
         itemComponent.mouseLeave().subscribe(() -> itemComponent.stack(itemComponentStack));
     }
 
-    private void componentExecute(HistoryClipboard clipboard, BannerBuilder currentBanner, DyeColor selectedColor,
+    private void componentExecute(AbstractInput input, HistoryClipboard clipboard, BannerBuilder currentBanner, DyeColor selectedColor,
                                   @Nullable BannerPatternsComponent.Layer componentLayer) {
         UISounds.playButtonSound();
 
@@ -83,7 +83,7 @@ public class ChangeColorTab extends AbstractModifyPatternTab {
         DyeColor componentColor = componentLayer == null ? currentBanner.baseBannerColor() : componentLayer.color();
         boolean isBaseBannerColor = currentBanner.baseBannerColor() == componentColor;
 
-        if (Screen.hasShiftDown()) {
+        if (input.hasShift()) {
             if (isBaseBannerColor) {
                 currentBanner.baseBannerColor(selectedColor);
             }

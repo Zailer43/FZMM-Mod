@@ -2,8 +2,8 @@ package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.TypedEntityData;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -44,7 +44,9 @@ public class SpawnEggBuilder {
 
     public ItemStack get() {
         this.entityTag.putString(TagsConstant.ENTITY_TAG_ID, Registries.ENTITY_TYPE.getId(this.entityType).getPath());
-        this.stack.apply(DataComponentTypes.ENTITY_DATA, null, component -> NbtComponent.of(this.entityTag));
+        this.stack.apply(DataComponentTypes.ENTITY_DATA, null,
+                entityData -> TypedEntityData.create(this.entityType, this.entityTag)
+        );
 
         return this.stack;
     }

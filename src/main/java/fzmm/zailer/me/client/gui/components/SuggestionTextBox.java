@@ -15,7 +15,10 @@ import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -137,7 +140,7 @@ public class SuggestionTextBox extends FontTextBoxComponent {
 
         if (childrenSize > newIndex) {
             Component selectedComponent = children.get(newIndex);
-            selectedComponent.onFocusGained(FocusSource.MOUSE_CLICK);
+            selectedComponent.onFocusGained(FocusSource.KEYBOARD_CYCLE);
             this.suggestionsContainer.scrollTo(selectedComponent);
         }
 
@@ -222,15 +225,7 @@ public class SuggestionTextBox extends FontTextBoxComponent {
         layout.focusGained().subscribe(source -> layout.surface(Surface.BLANK));
         layout.hoveredSurface(selectedSurface);
         layout.focusLost().subscribe(() -> layout.surface(unselectedSurface));
-        layout.mouseDown().subscribe((mouseX, mouseY, button) -> {
-            this.text(suggestion);
-            if (this.suggestionSelectedCallback != null && !this.disableCallback) {
-                this.suggestionSelectedCallback.run();
-            }
-
-            this.closeContextMenu();
-            return true;
-        });
+        layout.mouseDown().subscribe((input, doubled) -> selectSuggestion(suggestion));
         layout.surface(unselectedSurface)
                 .verticalAlignment(VerticalAlignment.CENTER)
                 .cursorStyle(CursorStyle.HAND);
@@ -239,6 +234,16 @@ public class SuggestionTextBox extends FontTextBoxComponent {
                 .margins(Insets.horizontal(4));
 
         return layout.child(labelComponent);
+    }
+
+    private boolean selectSuggestion(String suggestion) {
+        this.text(suggestion);
+        if (this.suggestionSelectedCallback != null && !this.disableCallback) {
+            this.suggestionSelectedCallback.run();
+        }
+
+        this.closeContextMenu();
+        return true;
     }
 
     private int getMaxSuggestionsHeight(int lines) {
@@ -305,46 +310,46 @@ public class SuggestionTextBox extends FontTextBoxComponent {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        boolean result = switch (keyCode) {
-            case GLFW.GLFW_KEY_TAB:
-                if (!this.contextMenuIsOpen()) {
-                    this.openContextMenu();
-                    yield true;
-                }
-                assert this.suggestionsLayout != null;
-                if (this.suggestionsLayout.children().isEmpty()) {
-                    this.updateSuggestions(this.getText());
-                    yield !this.suggestionsLayout.children().isEmpty();
-                } else {
-                    yield this.updateSelectedSuggestionIndex(1);
-                }
-            case GLFW.GLFW_KEY_DOWN:
-                yield this.updateSelectedSuggestionIndex(1);
-            case GLFW.GLFW_KEY_UP:
-                yield this.updateSelectedSuggestionIndex(-1);
-            case GLFW.GLFW_KEY_ENTER, GLFW.GLFW_KEY_KP_ENTER:
-                if (this.suggestionsLayout == null) {
-                    yield false;
-                }
+    public boolean keyPressed(KeyInput input) {
+        if (input.isTab()) {
+            if (!this.contextMenuIsOpen()) {
+                this.openContextMenu();
+                return true;
+            }
+            assert this.suggestionsLayout != null;
+            if (this.suggestionsLayout.children().isEmpty()) {
+                this.updateSuggestions(this.getText());
+                return !this.suggestionsLayout.children().isEmpty();
+            } else {
+                return this.updateSelectedSuggestionIndex(1);
+            }
+        }
 
-                List<Component> children = this.suggestionsLayout.children();
-                if (this.selectedSuggestionIndex >= 0 && this.selectedSuggestionIndex < children.size()) {
-                    this.disableCallback = true;
-                    Component selectedComponent = children.get(this.selectedSuggestionIndex);
-                    selectedComponent.onMouseDown(selectedComponent.x(), selectedComponent.y(), GLFW.GLFW_MOUSE_BUTTON_1);
-                    this.disableCallback = false;
-                    yield true;
-                }
-            case GLFW.GLFW_KEY_ESCAPE:
-                boolean contextMenuIsOpen = this.contextMenuIsOpen();
-                this.closeContextMenu();
-                yield contextMenuIsOpen;
-            default:
-                yield false;
-        };
+        if (input.isDown()) return this.updateSelectedSuggestionIndex(1);
+        if (input.isUp()) return this.updateSelectedSuggestionIndex(-1);
 
-        return result || super.keyPressed(keyCode, scanCode, modifiers);
+        if (input.isEnter()) {
+            if (this.suggestionsLayout == null) return false;
+
+            List<Component> children = this.suggestionsLayout.children();
+            if (this.selectedSuggestionIndex >= 0 && this.selectedSuggestionIndex < children.size()) {
+                this.disableCallback = true;
+                Component selectedComponent = children.get(this.selectedSuggestionIndex);
+                // this should be a custom component because onKeyPress can't be called
+                // in a context menu since it doesn't have a focusHandler
+                selectedComponent.onMouseDown(new Click(selectedComponent.x(), selectedComponent.y(), new MouseInput(GLFW.GLFW_MOUSE_BUTTON_1, 0)), false);
+                this.disableCallback = false;
+                return true;
+            }
+        }
+
+        if (input.isEscape()) {
+            boolean contextMenuIsOpen = this.contextMenuIsOpen();
+            this.closeContextMenu();
+            return contextMenuIsOpen;
+        }
+
+        return super.keyPressed(input);
     }
 
     public enum SuggestionPosition {

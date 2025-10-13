@@ -7,7 +7,7 @@ import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.NinePatchTexture;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import org.w3c.dom.Element;
@@ -18,6 +18,7 @@ public class EScrollContainer<C extends Component> extends ScrollContainer<C> {
     public static final int SCROLLBAR_THICCNESS = 5;
     protected boolean preventShiftScroll = false;
     protected boolean flipScroll = false;
+    private boolean isShiftDown = false;
 
     public EScrollContainer(ScrollDirection direction, Sizing horizontalSizing, Sizing verticalSizing, C child, boolean flipScroll) {
         super(direction, horizontalSizing, verticalSizing, child);
@@ -78,10 +79,15 @@ public class EScrollContainer<C extends Component> extends ScrollContainer<C> {
 
     @Override
     public boolean onMouseScroll(double mouseX, double mouseY, double amount) {
-        if (this.preventShiftScroll && Screen.hasShiftDown()) {
-            return false;
-        }
+        if (this.preventShiftScroll && this.isShiftDown) return false;
+
         return super.onMouseScroll(mouseX, mouseY, amount);
+    }
+
+    @Override
+    public boolean onKeyPress(KeyInput input) {
+        this.isShiftDown = input.hasShift();
+        return super.onKeyPress(input);
     }
 
     @Override

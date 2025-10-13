@@ -29,6 +29,8 @@ import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.FocusHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -132,8 +134,8 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+    public boolean keyPressed(KeyInput input) {
+        if (input.key() == GLFW.GLFW_KEY_ESCAPE) {
             if (this.symbolChatCompat.symbol().isMounted()) {
                 this.symbolChatCompat.symbol().remove();
                 this.symbolChatCompat.selectedComponent(null);
@@ -147,18 +149,16 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
             }
         }
 
-        if (super.keyPressed(keyCode, scanCode, modifiers))
-            return true;
+        if (super.keyPressed(input)) return true;
 
-        return this.symbolChatCompat.keyPressed(keyCode, scanCode, modifiers);
+        return this.symbolChatCompat.keyPressed(input);
     }
 
     @Override
-    public boolean charTyped(char chr, int modifiers) {
-        if (super.charTyped(chr, modifiers))
-            return true;
+    public boolean charTyped(CharInput input) {
+        if (super.charTyped(input)) return true;
 
-        return this.symbolChatCompat.charTyped(chr, modifiers);
+        return this.symbolChatCompat.charTyped(input);
     }
 
     @Override

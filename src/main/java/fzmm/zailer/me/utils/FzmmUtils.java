@@ -9,7 +9,6 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -21,7 +20,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.HttpClients;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +36,7 @@ public class FzmmUtils {
         if (clientPlayer != null) {
             List<String> playerNamesList = clientPlayer.networkHandler.getPlayerList().stream()
                     .map(PlayerListEntry::getProfile)
-                    .map(GameProfile::getName)
+                    .map(GameProfile::name)
                     .toList();
 
             for (String playerName : playerNamesList) {
@@ -196,23 +194,6 @@ public class FzmmUtils {
                 .setDefaultRequestConfig(requestConfig)
                 .setUserAgent(FzmmClient.HTTP_USER_AGENT)
                 .build();
-    }
-
-    /**
-     * @param username player's username (capitalization is ignored)
-     * @return {@code null} if player is not online, otherwise {@link PlayerListEntry}
-     */
-    @Nullable
-    public static PlayerListEntry getOnlinePlayer(String username) {
-        ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
-        if (networkHandler == null) return null;
-
-        List<PlayerListEntry> playerList = networkHandler.getPlayerList().stream()
-                .filter(entry -> entry.getProfile().getName().equalsIgnoreCase(username))
-                .toList();
-
-        // entry can be null in some cases
-        return playerList.isEmpty() ? null : playerList.get(0);
     }
 
 }

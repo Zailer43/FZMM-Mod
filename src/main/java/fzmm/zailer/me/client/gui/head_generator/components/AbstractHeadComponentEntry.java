@@ -16,14 +16,17 @@ import fzmm.zailer.me.utils.list.IListEntry;
 import io.wispforest.owo.ui.component.EntityComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
-import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.core.CursorStyle;
+import io.wispforest.owo.ui.core.HorizontalAlignment;
+import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.VerticalAlignment;
 import io.wispforest.owo.ui.util.UIErrorToast;
 import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.AssetInfo;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
@@ -34,7 +37,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     protected final HeadGeneratorScreen parentScreen;
     private final NativeImageBackedTexture previewTexture;
     @Nullable
-    private Identifier textureId;
+    private AssetInfo.TextureAsset texture;
     protected AbstractHeadEntry entry;
     private EntityComponent<LivingEntity> previewComponent;
     protected OverlayContainer<FlowLayout> overlayContainer;
@@ -43,7 +46,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     public AbstractHeadComponentEntry(AbstractHeadEntry entry, Sizing horizontalSizing, Sizing verticalSizing, HeadGeneratorScreen parent) {
         super(horizontalSizing, verticalSizing, Algorithm.VERTICAL);
         this.entry = entry;
-        this.textureId = this.getTextureId();
+        this.texture = this.getTexture();
         this.setBodyPreview(entry.isEditingSkinBody());
 
         this.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
@@ -52,7 +55,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
 
         this.parentScreen = parent;
 
-        this.mouseDown().subscribe((mouseX, mouseY, button) -> {
+        this.mouseDown().subscribe((input, doubled) -> {
             try {
                 this.addOverlay(parent);
             } catch (Exception e) {
@@ -67,8 +70,8 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
         this.hoveredSurface(EStyles.DEFAULT_HOVERED);
 
         BufferedImage defaultPreview = entry.getHeadSkin(new BufferedImage(SkinPart.MAX_WIDTH, SkinPart.MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB), false);
-        this.previewTexture = new NativeImageBackedTexture(this.textureId::toString, ImageUtils.toNativeImage(defaultPreview));
-        MinecraftClient.getInstance().getTextureManager().registerTexture(this.textureId, this.previewTexture);
+        this.previewTexture = new NativeImageBackedTexture(this.texture::toString, ImageUtils.toNativeImage(defaultPreview));
+        MinecraftClient.getInstance().getTextureManager().registerTexture(this.texture.texturePath(), this.previewTexture);
     }
 
     public boolean isBodyPreview() {
@@ -76,7 +79,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     }
 
     public void setBodyPreview(boolean isBody) {
-        if (this.textureId == null)
+        if (this.texture == null)
             return;
         this.isBodyPreview = isBody;
         LivingEntity previewEntity;
@@ -88,7 +91,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
             scale = 1f;
             previewEntity = new CustomHeadEntity(MinecraftClient.getInstance().world);
         }
-        ((ISkinMutable) previewEntity).texture(this.textureId);
+        ((ISkinMutable) previewEntity).texture(this.texture);
 
         this.removeChild(this.previewComponent);
         this.previewComponent = EComponents.entity(Sizing.fixed(HEAD_PREVIEW_SIZE), previewEntity);
@@ -117,7 +120,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
      * @param previewSkin Update preview with {@link BufferedImage}
      */
     public void updatePreview(BufferedImage previewSkin) {
-        if (this.textureId == null)
+        if (this.texture == null)
             return;
         NativeImage nativeImage = ImageUtils.toNativeImage(previewSkin);
         this.previewTexture.setImage(nativeImage);
@@ -136,8 +139,10 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     }
 
     public void close() {
-        MinecraftClient.getInstance().getTextureManager().destroyTexture(this.textureId);
-        this.textureId = null;
+        if (this.texture == null) return;
+
+        MinecraftClient.getInstance().getTextureManager().destroyTexture(this.texture.texturePath());
+        this.texture = null;
     }
 
     @Override
@@ -177,7 +182,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     protected abstract void addTopRightButtons(EFlowLayout panel, FlowLayout layout);
 
 
-    protected abstract Identifier getTextureId();
+    protected abstract AssetInfo.TextureAsset getTexture();
 
     @Override
     public AbstractHeadEntry getValue() {

@@ -75,7 +75,7 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
         layout.padding(Insets.of(5));
         layout.surface(layout.styledPanel());
         layout.horizontalAlignment(HorizontalAlignment.CENTER);
-        layout.mouseDown().subscribe((mouseX, mouseY, button) -> true);
+        layout.mouseDown().subscribe((input, doubled) -> true);
 
         Component labelComponent = EComponents.label(Text.translatable("fzmm.gui.colorPicker.title.favorite"))
                 .shadow(true)
@@ -179,7 +179,7 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
         colorLayout.alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER);
         colorLayout.child(boxComponent);
 
-        boxComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
+        boxComponent.mouseDown().subscribe((input, doubled) -> {
             picker.selectedColor(color);
 
             this.updateSelected(color, colorLayout);
@@ -214,7 +214,7 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
                 .padding(Insets.of(5))
                 .surface(layout.styledPanel())
                 .horizontalAlignment(HorizontalAlignment.CENTER)
-                .mouseDown().subscribe((mouseX, mouseY, button) -> true);
+                .mouseDown().subscribe((input, doubled) -> true);
 
         Component labelComponent = EComponents.label(Text.translatable("fzmm.gui.colorPicker.title.picker"));
 

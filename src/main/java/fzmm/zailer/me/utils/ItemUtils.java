@@ -200,7 +200,7 @@ public class ItemUtils {
                     return null;
                 }
 
-                return HeadUtils.minimizeTextures(profileComponent.gameProfile());
+                return HeadUtils.minimizeTextures(profileComponent.getGameProfile());
             });
         }
 

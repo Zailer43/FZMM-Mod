@@ -2,18 +2,17 @@ package fzmm.zailer.me.utils.skin;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import com.mojang.authlib.properties.PropertyMap;
+import com.mojang.authlib.yggdrasil.ProfileResult;
+import com.mojang.authlib.yggdrasil.response.NameAndId;
 import fzmm.zailer.me.builders.HeadBuilder;
-import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.ImageUtils;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ApiServices;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 public class VanillaSkinGetter extends SkinGetterDecorator {
 
@@ -32,7 +31,7 @@ public class VanillaSkinGetter extends SkinGetterDecorator {
             return super.getSkin(playerName);
         }
 
-        MinecraftProfileTexture skinTexture = MinecraftClient.getInstance().getSessionService()
+        MinecraftProfileTexture skinTexture = MinecraftClient.getInstance().getApiServices().sessionService()
                 .getTextures(profile.get())
                 .skin();
         if (skinTexture == null) {
@@ -58,18 +57,11 @@ public class VanillaSkinGetter extends SkinGetterDecorator {
 
     @Override
     public Optional<GameProfile> getProfile(String playerName) {
-        try {
-            return Optional.of(new ProfileComponent(
-                    Optional.of(playerName),
-                    Optional.empty(),
-                    new PropertyMap()
-            ).getFuture()
-                    .get()
-                    .gameProfile());
-        } catch (InterruptedException | ExecutionException e) {
-            FzmmClient.LOGGER.error("[VanillaSkinGetter] Failed to get profile for player '{}'", playerName, e);
-        }
+        ApiServices apiServices = MinecraftClient.getInstance().getApiServices();
+        Optional<NameAndId> nameAndId = apiServices.profileRepository().findProfileByName(playerName);
+        if (nameAndId.isEmpty()) return Optional.empty();
 
-        return Optional.empty();
+        ProfileResult profileResult = apiServices.sessionService().fetchProfile(nameAndId.get().id(), false);
+        return profileResult == null ? Optional.empty() : Optional.of(profileResult.profile());
     }
 }

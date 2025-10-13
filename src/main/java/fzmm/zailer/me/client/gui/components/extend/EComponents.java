@@ -31,7 +31,7 @@ public class EComponents {
         result.showOverlay(true)
                 .setTooltipFromStack(true)
                 .cursorStyle(CursorStyle.HAND)
-                .mouseDown().subscribe((mouseX, mouseY, button) -> {
+                .mouseDown().subscribe((input, doubled) -> {
                     ItemUtils.give(stack);
                     UISounds.playButtonSound();
                     return true;

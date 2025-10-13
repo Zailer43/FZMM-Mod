@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui.components.image;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
 import fzmm.zailer.me.client.gui.components.image.source.IInteractiveImageLoader;
@@ -10,7 +11,6 @@ import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.SnackBarBuilder;
 import fzmm.zailer.me.utils.SnackBarManager;
-import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ImageButtonComponent extends ButtonComponent {
+public class ImageButtonComponent extends EButtonComponent {
 
     private @Nullable BufferedImage image;
     private IImageGetter mode;

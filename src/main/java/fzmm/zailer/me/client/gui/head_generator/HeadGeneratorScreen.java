@@ -6,6 +6,7 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
@@ -69,7 +70,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     private final Set<String> favoritesHeadsOnOpenScreen;
     private ImageRowsElements skinElements;
     private TextBoxComponent headNameField;
-    private HashMap<SkinPreEditOption, ButtonComponent> skinPreEditButtons;
+    private HashMap<SkinPreEditOption, EButtonComponent> skinPreEditButtons;
     private SkinPreEditOption selectedSkinPreEdit;
     private TextBoxComponent searchField;
     private List<HeadComponentEntry> headComponentEntries;
@@ -389,11 +390,12 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     }
 
     public void setupPreEditButton(FlowLayout preEditLayout, SkinPreEditOption preEditOption,
-                                   HashMap<SkinPreEditOption, ButtonComponent> skinPreEditButtons,
+                                   HashMap<SkinPreEditOption, EButtonComponent> skinPreEditButtons,
                                    Consumer<SkinPreEditOption> selectPreEditCallback) {
         preEditLayout.tooltip(Text.translatable(preEditOption.getTranslationKey() + ".tooltip"));
 
-        ButtonComponent preEditButton = Components.button(Text.empty(), button -> {
+        EButtonComponent preEditButton = EComponents.button(Text.empty());
+        preEditButton.onPress(button -> {
             selectPreEditCallback.accept(preEditOption);
 
             for (var option : skinPreEditButtons.keySet()) {

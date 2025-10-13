@@ -24,9 +24,11 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.util.FocusHandler;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.component.type.WrittenBookContentComponent;
 import net.minecraft.text.Style;
@@ -122,7 +124,7 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
                         profile.isOldAlgorithm()
                 ));
 
-                layout.mouseDown().subscribe((mouseX, mouseY, button) -> this.profileSelect(layout, profile, finalI));
+                layout.mouseDown().subscribe((input, doubled) -> this.profileSelect(layout, profile, finalI));
 
                 ButtonComponent removeButton = layout.childByIdOrThrow(ButtonComponent.class, "remove-button");
 
@@ -187,7 +189,7 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
             return;
         }
         int selectedProfileIndex = index < profileLayout.size() ? index : 0;
-        profileLayout.get(selectedProfileIndex).onMouseDown(0, 0, 0);
+        profileLayout.get(selectedProfileIndex).onMouseDown(new Click(0, 0, new MouseInput(0, 0)), false);
     }
 
     public void updateDecryptorStatus(@Nullable TranslationEncryptProfile profile) {

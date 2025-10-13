@@ -25,13 +25,13 @@ import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.util.FocusHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.screen.ConfirmLinkScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.util.DefaultSkinHelper;
-import net.minecraft.client.util.SkinTextures;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ProfileComponent;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.MouseInput;
+import net.minecraft.entity.player.SkinTextures;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -154,12 +154,11 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
 
         EntityComponent<CustomHeadEntity> backEntityPreview = EComponents.entity(Sizing.fixed(48), this.backEntityPreview)
                 .allowMouseRotation(true);
-        backEntityPreview.onMouseDrag(0, 0, 160, 0, GLFW.GLFW_MOUSE_BUTTON_LEFT);
+        backEntityPreview.onMouseDrag(new Click(0, 0, new MouseInput(GLFW.GLFW_MOUSE_BUTTON_LEFT, 0)), 160, 0);
         backEntityPreview.allowMouseRotation(false);
 
         previewLayout.child(EComponents.entity(Sizing.fixed(48), this.frontEntityPreview));
         previewLayout.child(backEntityPreview);
-        this.updatePreview(DefaultSkinHelper.getSteve());
 
         this.applyFilters();
         this.setPage(1);
@@ -171,15 +170,13 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (super.keyPressed(keyCode, scanCode, modifiers)) {
-            return true;
-        }
+    public boolean keyPressed(KeyInput input) {
+        if (super.keyPressed(input)) return true;
 
-        if (keyCode == GLFW.GLFW_KEY_LEFT) {
+        if (input.isLeft()) {
             this.setPage(this.page - 1);
             return true;
-        } else if (keyCode == GLFW.GLFW_KEY_RIGHT) {
+        } else if (input.isRight()) {
             this.setPage(this.page + 1);
             return true;
         }
@@ -306,7 +303,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
             });
         });
 
-        tagSelectPanel.mouseDown().subscribe((mouseX, mouseY, button) -> true);
+        tagSelectPanel.mouseDown().subscribe((input, doubled) -> true);
         OverlayContainer<FlowLayout> tagOverlay = Containers.overlay(tagSelectPanel);
         this.addOverlay(tagOverlay);
     }
@@ -443,21 +440,11 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void updatePreview(ItemStack stack) {
-        Optional<SkinTextures> skinTexturesOptional = HeadUtils.getSkinTextures(stack);
-        ProfileComponent profileComponent = stack.get(DataComponentTypes.PROFILE);
-
-        if (skinTexturesOptional.isPresent() || profileComponent == null) {
-            this.updatePreview(skinTexturesOptional.orElse(DefaultSkinHelper.getSteve()));
-            return;
-        }
-
-        assert this.client != null;
-        this.client.getSkinProvider().fetchSkinTextures(profileComponent.gameProfile())
-                .whenComplete((skinTextures, throwable) -> {
-                    if (throwable == null && skinTextures.isPresent()) {
-                        this.updatePreview(skinTextures.get());
-                    }
-                });
+        HeadUtils.getSkinTextures(stack).whenComplete((skinTextures, throwable) -> {
+            if (throwable == null && skinTextures.isPresent()) {
+                this.updatePreview(skinTextures.get());
+            }
+        });
     }
 
     private void updatePreview(SkinTextures textures) {

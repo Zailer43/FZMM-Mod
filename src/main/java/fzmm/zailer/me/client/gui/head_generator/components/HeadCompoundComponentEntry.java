@@ -19,6 +19,7 @@ import io.wispforest.owo.ui.core.VerticalAlignment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Text;
+import net.minecraft.util.AssetInfo;
 import net.minecraft.util.Identifier;
 
 import java.awt.image.BufferedImage;
@@ -84,8 +85,8 @@ public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
     }
 
     @Override
-    protected Identifier getTextureId() {
-        return Identifier.of(FzmmClient.MOD_ID, "head_generator/compound/" + COMPOUND_INDEX++);
+    protected AssetInfo.TextureAsset getTexture() {
+        return new AssetInfo.TextureAssetInfo(Identifier.of(FzmmClient.MOD_ID, "head_generator/compound/" + COMPOUND_INDEX++));
     }
 
 }

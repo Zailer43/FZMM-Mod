@@ -27,7 +27,7 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
         this.widget.visible = true;
         this.expandedHeight = expandedHeight;
 
-        this.mouseDown().subscribe((mouseX, mouseY, button) -> {
+        this.mouseDown().subscribe((input, doubled) -> {
             // ignore collapse
             this.expand();
 

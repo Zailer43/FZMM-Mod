@@ -2,15 +2,15 @@ package fzmm.zailer.me.client.gui.components.row.image;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SuggestionTextBox;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.row.AbstractRow;
-import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
@@ -66,10 +66,11 @@ public class ImageRows extends EFlowLayout {
         FlowLayout imageModeLayout = rootComponent.childByIdOrThrow(FlowLayout.class, imageModeId + "-layout");
         imageModeLayout.gap(4);
         AtomicReference<ImageMode> selectedMode = new AtomicReference<>(defaultValue);
-        HashMap<ImageMode, ButtonComponent> imageModeButtons = new HashMap<>();
+        HashMap<ImageMode, EButtonComponent> imageModeButtons = new HashMap<>();
         
         for (var modeOption : ImageMode.values()) {
-            ButtonComponent modeButton = Components.button(Text.translatable(modeOption.getTranslationKey()), button -> {
+            EButtonComponent modeButton = EComponents.button(Text.translatable(modeOption.getTranslationKey()));
+            modeButton.onPress(button -> {
                 selectedMode.set(modeOption);
 
                 for (var imageMode : ImageMode.values()) {

@@ -1,5 +1,7 @@
 package fzmm.zailer.me.utils;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -12,10 +14,11 @@ import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.skin.CacheSkinGetter;
 import io.wispforest.owo.Owo;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.SkinTextures;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
+import net.minecraft.entity.player.SkinTextures;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Util;
 
 import javax.imageio.ImageIO;
@@ -183,25 +186,13 @@ public class HeadUtils {
         FzmmClient.LOGGER.error("[HeadUtils] HTTP error {}, generating skin '{}', Code: '{}', Error: '{}'", this.httpResponseCode, skinName, code, error);
     }
 
-    public static Optional<BufferedImage> getSkin(ItemStack stack) throws IOException {
+    public static CompletableFuture<Optional<SkinTextures>> getSkinTextures(ItemStack stack) {
         ProfileComponent profileComponent = stack.get(DataComponentTypes.PROFILE);
-        if (profileComponent == null) {
-            return Optional.empty();
-        }
+        if (profileComponent == null) return CompletableFuture.completedFuture(Optional.empty());
 
-        return new CacheSkinGetter().getSkin(profileComponent.gameProfile());
-    }
-
-    public static Optional<SkinTextures> getSkinTextures(ItemStack stack) {
-        ProfileComponent profileComponent = stack.get(DataComponentTypes.PROFILE);
-        if (profileComponent == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(MinecraftClient.getInstance()
+        return MinecraftClient.getInstance()
                 .getSkinProvider()
-                .getSkinTextures(profileComponent.gameProfile())
-        );
+                .fetchSkinTextures(profileComponent.getGameProfile());
     }
 
     public static Optional<ItemStack> uploadAndGetHead(String playerName) {
@@ -224,18 +215,20 @@ public class HeadUtils {
     }
 
     public static ProfileComponent minimizeTextures(GameProfile profile) {
-        ProfileComponent profileComponent = new ProfileComponent(profile);
+        ProfileComponent profileComponent = ProfileComponent.ofStatic(profile);
         Optional<String> unwrappedUrl = unwrapUrl(profileComponent);
         if (unwrappedUrl.isEmpty()) return profileComponent;
 
-        PropertyMap propertiesMap = new PropertyMap();
-        propertiesMap.put("textures", new Property("textures", wrapUrl(unwrappedUrl.get())));
+        Multimap<String, Property> properties = ImmutableMultimap.of("textures", new Property("textures", wrapUrl(unwrappedUrl.get())));
+        PropertyMap propertiesMap = new PropertyMap(properties);
 
-        return new ProfileComponent(Optional.of(profile.getName()), Optional.of(profile.getId()), propertiesMap);
+        profile = new GameProfile(profile.id(), profile.name(), propertiesMap);
+
+        return ProfileComponent.ofStatic(profile);
     }
 
     public static Optional<String> unwrapUrl(ProfileComponent profileComponent) {
-        List<Property> texturesProperties = profileComponent.properties().get("textures").stream().toList();
+        List<Property> texturesProperties = profileComponent.getGameProfile().properties().get("textures").stream().toList();
 
         if (texturesProperties.isEmpty()) {
             return Optional.empty();
@@ -284,5 +277,13 @@ public class HeadUtils {
         json.add("textures", textures);
 
         return TextUtils.encodeBase64(json.toString());
+    }
+
+    public static ItemStack dynamicHead(String name) {
+        ItemStack result = Items.PLAYER_HEAD.getDefaultStack();
+
+        result.apply(DataComponentTypes.PROFILE, null, profileComponent -> ProfileComponent.ofDynamic(name));
+
+        return result;
     }
 }

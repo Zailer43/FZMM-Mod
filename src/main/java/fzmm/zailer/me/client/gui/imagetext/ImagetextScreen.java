@@ -400,6 +400,10 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
         output.writeDouble((double) this.similarityThreshold.parsedValue());
         this.modeTabContainer.backup(output);
         this.algorithmTabContainer.backup(output);
+        this.getRoot().ifPresent(layout -> {
+            layout.childByIdOrThrow(ContextMenuButton.class, "mode-button").setMessage(this.getModeText());
+            layout.childByIdOrThrow(ContextMenuButton.class, "algorithm-button").setMessage(this.getAlgorithmText());
+        });
     }
 
     @Override

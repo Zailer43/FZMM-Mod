@@ -7,6 +7,8 @@ import fzmm.zailer.me.compat.symbol_chat.components.FontComponentAdapter;
 import fzmm.zailer.me.compat.symbol_chat.components.SymbolComponentAdapter;
 import io.wispforest.owo.ui.core.Component;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.replaceitem.symbolchat.SymbolChat;
@@ -89,20 +91,16 @@ public class SymbolChatCompat {
         this.selectedComponent = selectedComponent;
     }
 
-    public boolean charTyped(char chr, int modifiers) {
-        if (!CompatMods.SYMBOL_CHAT_PRESENT) {
-            return false;
-        }
+    public boolean charTyped(CharInput input) {
+        if (!CompatMods.SYMBOL_CHAT_PRESENT) return false;
 
-        return this.symbolHandler.charTyped(chr, modifiers) || this.fontHandler.charTyped(chr, modifiers);
+        return this.symbolHandler.charTyped(input) || this.fontHandler.charTyped(input);
     }
 
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (!CompatMods.SYMBOL_CHAT_PRESENT) {
-            return false;
-        }
+    public boolean keyPressed(KeyInput input) {
+        if (!CompatMods.SYMBOL_CHAT_PRESENT) return false;
 
-        return this.symbolHandler.keyPressed(keyCode, scanCode, modifiers) || this.fontHandler.keyPressed(keyCode, scanCode, modifiers);
+        return this.symbolHandler.keyPressed(input) || this.fontHandler.keyPressed(input);
     }
 
     public void processFont(TextFieldWidget widget, String text, Consumer<String> writeConsumer) {

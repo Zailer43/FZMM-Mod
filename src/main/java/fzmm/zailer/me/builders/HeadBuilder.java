@@ -1,5 +1,7 @@
 package fzmm.zailer.me.builders;
 
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
@@ -40,14 +42,10 @@ public class HeadBuilder {
 
         stack.apply(DataComponentTypes.PROFILE, null, component -> {
 
-            PropertyMap propertiesMap = new PropertyMap();
-            propertiesMap.put("textures", new Property("textures", this.skinValue));
+            Multimap<String, Property> properties = ImmutableMultimap.of("textures", new Property("textures", this.skinValue));
+            PropertyMap propertiesMap = new PropertyMap(properties);
 
-            return new ProfileComponent(
-                    safeHeadName(this.headName),
-                    Optional.of(this.uuid),
-                    propertiesMap
-            );
+            return ProfileComponent.ofStatic(new GameProfile(this.uuid, safeHeadName(this.headName).orElse(""), propertiesMap));
         });
         stack = ItemUtils.process(stack);
 
@@ -97,9 +95,11 @@ public class HeadBuilder {
 
     public static ItemStack of(String username) {
         ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
+        Optional<String> nameOptional = safeHeadName(username);
+        if (nameOptional.isEmpty()) return head;
 
         head.apply(DataComponentTypes.PROFILE, null, component ->
-                new ProfileComponent(safeHeadName(username), Optional.empty(), new PropertyMap()));
+                ProfileComponent.ofDynamic(nameOptional.get()));
         head = ItemUtils.process(head);
 
         FzmmHistory.addGeneratedHeads(head);
@@ -109,7 +109,7 @@ public class HeadBuilder {
     public static ItemStack of(GameProfile profile) {
         ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
 
-        head.apply(DataComponentTypes.PROFILE, null, component -> new ProfileComponent(profile));
+        head.apply(DataComponentTypes.PROFILE, null, component -> ProfileComponent.ofStatic(profile));
         head = ItemUtils.process(head);
 
         FzmmHistory.addGeneratedHeads(head);

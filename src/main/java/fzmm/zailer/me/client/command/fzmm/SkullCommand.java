@@ -29,7 +29,7 @@ public class SkullCommand implements ISubCommand {
 
     @Override
     public String syntax() {
-        return "skull <skull owner> cache/mineskin/mojang";
+        return "skull <skull owner> static/dynamic/cache/mineskin";
     }
 
     @Override
@@ -55,6 +55,25 @@ public class SkullCommand implements ISubCommand {
     private List<LiteralCommandNode<FabricClientCommandSource>> getArgSubCommands() {
         List<LiteralCommandNode<FabricClientCommandSource>> result = new ArrayList<>();
 
+        result.add(ClientCommandManager.literal("static")
+                .executes(ctx -> {
+
+                    String skullOwner = ctx.getArgument("skull owner", String.class);
+                    this.getHead(new VanillaSkinGetter(), skullOwner)
+                            .whenComplete((stack, throwable) -> ItemUtils.give(stack));
+
+                    return 1;
+                }).build());
+
+        result.add(ClientCommandManager.literal("dynamic")
+                .executes(ctx -> {
+
+                    String skullOwner = ctx.getArgument("skull owner", String.class);
+                    ItemUtils.give(HeadUtils.dynamicHead(skullOwner));
+
+                    return 1;
+                }).build());
+
         result.add(ClientCommandManager.literal("cache")
                 .executes(ctx -> {
 
@@ -75,15 +94,7 @@ public class SkullCommand implements ISubCommand {
                     return 1;
                 }).build());
 
-        result.add(ClientCommandManager.literal("mojang")
-                .executes(ctx -> {
 
-                    String skullOwner = ctx.getArgument("skull owner", String.class);
-                    this.getHead(new VanillaSkinGetter(), skullOwner)
-                            .whenComplete((stack, throwable) -> ItemUtils.give(stack));
-
-                    return 1;
-                }).build());
 
         return result;
     }

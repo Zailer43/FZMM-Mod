@@ -16,7 +16,8 @@ import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.TypedEntityData;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -103,7 +104,8 @@ public class ImagetextHologramTab implements IImagetextTab {
     }
 
     public static boolean isHologramPart(ItemStack stack) {
-        NbtCompound entityNbt = stack.getOrDefault(DataComponentTypes.ENTITY_DATA, NbtComponent.of(new NbtCompound())).copyNbt();
+        NbtCompound entityNbt = stack.getOrDefault(DataComponentTypes.ENTITY_DATA, TypedEntityData.create(EntityType.ARMOR_STAND, new NbtCompound()))
+                .copyNbtWithoutId();
 
         NbtList tags = entityNbt.getListOrEmpty(TagsConstant.ENTITY_TAG_TAGS_ID);
 

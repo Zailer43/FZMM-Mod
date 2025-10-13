@@ -5,8 +5,10 @@ import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.OwoUIDrawContext;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.PressableWidget;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
@@ -52,5 +54,9 @@ public class EButtonComponent extends ButtonComponent {
 
     public void setMessageProvider(Function<Text, Text> messageProvider) {
         this.messageProvider = messageProvider;
+    }
+
+    public void onPress() {
+        this.onPress(new Click(0, 0, new MouseInput(0, 0)));
     }
 }

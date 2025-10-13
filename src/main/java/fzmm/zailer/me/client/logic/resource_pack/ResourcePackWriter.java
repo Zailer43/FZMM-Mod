@@ -3,9 +3,7 @@ package fzmm.zailer.me.client.logic.resource_pack;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Util;
 
 import javax.imageio.ImageIO;
@@ -133,10 +131,11 @@ public class ResourcePackWriter {
         if (this.filesToWrite.containsKey(metadataPath)) {
             return;
         }
-        int packVersion = SharedConstants.getGameVersion().packVersion(ResourceType.CLIENT_RESOURCES);
         JsonObject mcmeta = new JsonObject();
         JsonObject pack = new JsonObject();
-        pack.addProperty("pack_format", packVersion);
+        // use hardcoded all-versions pack format because this is used for custom resource packs
+        pack.addProperty("min_format", 65); // min version with new pack format
+        pack.addProperty("max_format", 9999);
         pack.addProperty("description", this.description);
         mcmeta.add("pack", pack);
 

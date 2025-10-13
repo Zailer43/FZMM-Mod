@@ -17,6 +17,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.util.AssetInfo;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 
@@ -133,8 +134,8 @@ public class HeadComponentEntry extends AbstractHeadComponentEntry {
     }
 
     @Override
-    protected Identifier getTextureId() {
-        return Identifier.of(FzmmClient.MOD_ID, "head_generator/preview/" + this.entry.getKey());
+    protected AssetInfo.TextureAsset getTexture() {
+        return new AssetInfo.TextureAssetInfo(Identifier.of(FzmmClient.MOD_ID, "head_generator/preview/" + this.entry.getKey()));
     }
 
     private void addCompoundButtonExecute(ButtonComponent button) {

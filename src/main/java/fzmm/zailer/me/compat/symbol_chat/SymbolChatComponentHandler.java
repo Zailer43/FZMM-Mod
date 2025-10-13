@@ -11,6 +11,8 @@ import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
@@ -98,12 +100,12 @@ public class SymbolChatComponentHandler<T extends VanillaWidgetComponent> {
         this.component = null;
     }
 
-    public boolean charTyped(char chr, int modifiers) {
-        return this.component != null && this.component.onCharTyped(chr, modifiers);
+    public boolean charTyped(CharInput input) {
+        return this.component != null && this.component.onCharTyped(input);
     }
 
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        return this.component != null && this.component.onKeyPress(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyInput input) {
+        return this.component != null && this.component.onKeyPress(input);
     }
     
     public Optional<T> getComponent() {

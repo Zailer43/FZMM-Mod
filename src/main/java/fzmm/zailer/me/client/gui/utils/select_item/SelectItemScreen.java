@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import fzmm.zailer.me.client.FzmmItemGroup;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
+import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.logic.history.FzmmHistory;
@@ -88,21 +89,21 @@ public class SelectItemScreen extends BaseFzmmScreen {
     private void setupSourceButtons(EFlowLayout rootComponent) {
         assert this.client != null;
         assert this.client.player != null;
-        ButtonComponent inventoryButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "inventory-button");
+        EButtonComponent inventoryButton = rootComponent.childByIdOrThrow(EButtonComponent.class, "inventory-button");
         inventoryButton.onPress(buttonComponent -> {
             this.sourceButtonsClicked(inventoryButton.id());
 
             this.addItemCallback(InventoryUtils.getCombinedInventory(), true);
         });
 
-        ButtonComponent defaultButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "default-button");
+        EButtonComponent defaultButton = rootComponent.childByIdOrThrow(EButtonComponent.class, "default-button");
         defaultButton.onPress(buttonComponent -> {
             this.sourceButtonsClicked(defaultButton.id());
 
             this.addItemCallback(this.selectedRequestedItem.defaultItems(), false);
         });
 
-        ButtonComponent historyButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "history-button");
+        EButtonComponent historyButton = rootComponent.childByIdOrThrow(EButtonComponent.class, "history-button");
         historyButton.onPress(buttonComponent -> {
             this.sourceButtonsClicked(historyButton.id());
 
@@ -110,7 +111,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
         });
 
         FzmmItemGroup.populateItemGroups();
-        ButtonComponent allButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "all-button");
+        EButtonComponent allButton = rootComponent.childByIdOrThrow(EButtonComponent.class, "all-button");
         allButton.onPress(buttonComponent -> {
             this.sourceButtonsClicked(allButton.id());
 
@@ -150,7 +151,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
 
         ItemComponent itemComponent = EComponents.item(processedStack).setTooltipFromStack(true);
 
-        itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
+        itemComponent.mouseDown().subscribe((input, doubled) -> {
             this.selectedRequestedItem.setStack(processedStack);
             this.requestedItems.get(this.selectedRequestedItem).stack(processedStack);
             this.executeButton.active = this.canExecute();

@@ -28,7 +28,7 @@ public class RemovePatternTab extends AbstractModifyPatternTab {
             return;
         }
 
-        itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
+        itemComponent.mouseDown().subscribe((input, doubled) -> {
             UISounds.playButtonSound();
             clipboard.addUndo(currentBanner);
 

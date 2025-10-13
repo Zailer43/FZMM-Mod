@@ -4,6 +4,7 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.encrypt_book.translation_file_saver.ITranslationFileSaver;
@@ -12,7 +13,6 @@ import fzmm.zailer.me.client.gui.encrypt_book.translation_file_saver.Translation
 import fzmm.zailer.me.client.gui.encrypt_book.translation_file_saver.TranslationWriteLang;
 import fzmm.zailer.me.client.logic.enycrpt_book.TranslationEncryptProfile;
 import fzmm.zailer.me.utils.SnackBarManager;
-import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
@@ -54,9 +54,9 @@ public class DecryptorSaverOverlay extends OverlayContainer<EFlowLayout> {
         );
 
         for (var option : options) {
-            optionsLayout.child(Components.button(option.getMessage(), optionButton -> {
+            optionsLayout.child(EComponents.button(option.getMessage()).onPress(optionButton -> {
                         for (var optionComponent : optionsLayout.children()) {
-                            if (optionComponent instanceof ButtonComponent buttonComponent) {
+                            if (optionComponent instanceof EButtonComponent buttonComponent) {
                                 buttonComponent.active = buttonComponent != optionButton;
                             }
                         }
@@ -66,7 +66,7 @@ public class DecryptorSaverOverlay extends OverlayContainer<EFlowLayout> {
         }
 
         // default
-        ((ButtonComponent) optionsLayout.children().get(0)).onPress();
+        ((EButtonComponent) optionsLayout.children().get(0)).onPress();
 
         // bottom buttons
         FlowLayout buttonLayout = EContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(20));

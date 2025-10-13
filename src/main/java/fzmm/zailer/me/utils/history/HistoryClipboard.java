@@ -2,6 +2,7 @@ package fzmm.zailer.me.utils.history;
 
 import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import io.wispforest.owo.util.Observable;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
@@ -47,16 +48,12 @@ public class HistoryClipboard {
         ));
     }
 
-    public boolean keyPressed(int keyCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_Z && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0 && (modifiers & GLFW.GLFW_MOD_SHIFT) == 0) {
-            return this.undo();
-        }
+    public boolean keyPressed(KeyInput input) {
+        if (!input.hasCtrl()) return false;
 
-        if ((keyCode == GLFW.GLFW_KEY_Z && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0  && (modifiers & GLFW.GLFW_MOD_SHIFT) != 0 )
-                || (keyCode == GLFW.GLFW_KEY_Y && (modifiers & GLFW.GLFW_MOD_CONTROL) != 0)) {
+        if (input.key() == GLFW.GLFW_KEY_Z && !input.hasShift()) return this.undo();
 
-            return this.redo();
-        }
+        if ((input.key() == GLFW.GLFW_KEY_Z && input.hasShift()) || input.key() == GLFW.GLFW_KEY_Y) return this.redo();
 
         return false;
     }

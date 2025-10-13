@@ -57,7 +57,7 @@ public class AddPatternTab implements IBannerTab {
                         .sizing(Sizing.fixed(32), Sizing.fixed(32))
                         .tooltip(BannerBuilder.tooltipOf(new BannerPatternsComponent.Layer(pattern, color)));
 
-                itemComponent.mouseDown().subscribe((mouseX, mouseY, button) -> {
+                itemComponent.mouseDown().subscribe((input, doubled) -> {
                     UISounds.playButtonSound();
                     clipboard.addUndo(currentBanner);
 
