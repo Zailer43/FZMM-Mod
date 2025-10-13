@@ -50,6 +50,13 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMemento {
     protected void setup(EFlowLayout rootComponent) {
         PlayerEntity player = MinecraftClient.getInstance().player;
         assert player != null;
+        //buttons
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "faq-button").onPress(this::faqExecute);
+        ButtonComponent executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, EXECUTE_ID).onPress(this::execute);
+
+        rootComponent.childByIdOrThrow(ButtonComponent.class, "difficult-to-remove-entity-button").onPress(buttonComponent ->
+                InvisibleEntityWarning.addOverlay(true, true, Text.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG)
+        );
         //general
         ContextMenuButton directionButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "horizontal-direction-context-menu-option");
         directionButton.setContextMenuOptions(dropdownComponent -> {
@@ -70,17 +77,10 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMemento {
         //tabs
         this.tabContainer = rootComponent.childByIdOrThrow(TabContainer.class, "tabs");
         List<ITab> tabs = List.of(new PlayerStatueGenerateTab(), new PlayerStatueUpdateTab());
-        this.tabContainer.addParsedTabs(tabs);
-        this.tabContainer.setupTabs(rootComponent, tabs.get(0).getId(), IPlayerStatueTab::canExecute);
-        this.tabContainer.selectTab();
-        //buttons
-        rootComponent.childByIdOrThrow(ButtonComponent.class, "faq-button").onPress(this::faqExecute);
-        ButtonComponent executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, EXECUTE_ID).onPress(this::execute);
-        executeButton.active(this.tabContainer.<IPlayerStatueTab>selectedTab().canExecute());
-
-        rootComponent.childByIdOrThrow(ButtonComponent.class, "difficult-to-remove-entity-button").onPress(buttonComponent ->
-                InvisibleEntityWarning.addOverlay(true, true, Text.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG)
-        );
+        this.tabContainer.addParsedTabs(tabs)
+                .onSelect(tab -> executeButton.active(((IPlayerStatueTab) tab).canExecute()))
+                .setupTabs(rootComponent, tabs.get(0).getId())
+                .selectTab();
     }
 
     private void faqExecute(ButtonWidget buttonWidget) {
