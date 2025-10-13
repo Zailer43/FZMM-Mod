@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -82,7 +83,7 @@ public class FzmmItemGroup {
 
             entries.addAfter(Items.DEBUG_STICK, newEntries);
         });
-
+        // TODO: this need be sorted/organized
         ItemGroup usefulBlockStatesItemGroup = FabricItemGroup.builder()
                 .displayName(Text.translatable(USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY))
                 .icon(() -> new ItemStack(Items.REDSTONE_LAMP))
@@ -104,10 +105,10 @@ public class FzmmItemGroup {
                     entries.add(new BlockStateItemBuilder(Items.IRON_TRAPDOOR, "openIronTrapdoor").add("open", true).get());
                     entries.add(new BlockStateItemBuilder(Items.IRON_DOOR, "openIronDoor").add("open", true).get());
                     entries.add(new BlockStateItemBuilder(Items.END_PORTAL_FRAME, "endPortalFrameWithEye").add("eye", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.LANTERN, "hangingLantern").add("hanging", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.LANTERN, "lanternOnTheFloor").add("hanging", false).get());
-                    entries.add(new BlockStateItemBuilder(Items.SOUL_LANTERN, "hangingSoulLantern").add("hanging", true).get());
-                    entries.add(new BlockStateItemBuilder(Items.SOUL_LANTERN, "soulLanternOnTheFloor").add("hanging", false).get());
+                    entries.add(new BlockStateItemBuilder(Items.LANTERN, "hangingLantern", Items.LANTERN).add("hanging", true).get());
+                    entries.add(new BlockStateItemBuilder(Items.LANTERN, "lanternOnTheFloor", Items.LANTERN).add("hanging", false).get());
+                    entries.add(new BlockStateItemBuilder(Items.SOUL_LANTERN, "hangingLantern", Items.SOUL_LANTERN).add("hanging", true).get());
+                    entries.add(new BlockStateItemBuilder(Items.SOUL_LANTERN, "lanternOnTheFloor", Items.SOUL_LANTERN).add("hanging", false).get());
                     entries.add(new BlockStateItemBuilder(Items.MANGROVE_PROPAGULE, "hangingMangrovePropagule").add("hanging", true).get());
                     // it is not possible to place it on faces of blocks other than the bottom one, it is useless
 //                    stacks.add(new BlockStateTagItem(Items.MANGROVE_PROPAGULE, "Mangrove propagule on the floor").add("hanging", false).get());
@@ -143,14 +144,14 @@ public class FzmmItemGroup {
                     entries.add(new BlockStateItemBuilder(Items.CHEST, "rightChest").add("type", "right").get());
                     entries.add(new BlockStateItemBuilder(Items.TRAPPED_CHEST, "leftTrappedChest").add("type", "left").get());
                     entries.add(new BlockStateItemBuilder(Items.TRAPPED_CHEST, "rightTrappedChest").add("type", "right").get());
-                    addHalfDoors(entries);
+                    addItemTag(ItemTags.DOORS, item -> addHalfUpper(entries, item, "halfDoor"));
                     addTallFlowers(entries);
-                    addLeaves(entries);
-                    addLitCandles(entries);
-                    addHalfBed(entries);
-                    addLockedBed(entries);
+                    addItemTag(ItemTags.LEAVES, item -> entries.add(new BlockStateItemBuilder(item, "nonPersistentLeaves", item).add("persistent", false).get()));
+                    addItemTag(ItemTags.CANDLES, item -> entries.add(new BlockStateItemBuilder(item, "litCandle", item).add("lit", true).get()));
+                    addItemTag(ItemTags.BEDS, item -> entries.add(new BlockStateItemBuilder(item, "bedHeadPart", item).add("part", "head").get()));
+                    addItemTag(ItemTags.BEDS, item -> entries.add(new BlockStateItemBuilder(item, "lockedBed", item).add("occupied", true).get()));
                     entries.add(new BlockStateItemBuilder(Items.MANGROVE_ROOTS, "waterloggedMangroveRoots").add("waterlogged", true).get());
-                    addWaterloggedBlocks(entries);
+                    addItemTag(ItemTags.SLABS, item -> entries.add(new BlockStateItemBuilder(item, "waterloggedBlock", item).add("type", "double").add("waterlogged", true).get()));
                 }).build();
 
         ItemGroup lootChestsItemGroup = FabricItemGroup.builder()
@@ -302,24 +303,6 @@ public class FzmmItemGroup {
         entries.add(crossbowFirework.get());
     }
 
-    private static void addLeaves(ItemGroup.Entries entries) {
-        ItemPredicate predicate = itemPredicate(ItemTags.LEAVES);
-        for (var item : Registries.ITEM) {
-            if (predicate.test(new ItemStack(item))) {
-                entries.add(new BlockStateItemBuilder(item, "nonPersistentLeaves", item).add("persistent", false).get());
-            }
-        }
-    }
-
-    private static void addHalfDoors(ItemGroup.Entries entries) {
-        ItemPredicate predicate = itemPredicate(ItemTags.DOORS);
-        for (var item : Registries.ITEM) {
-            if (predicate.test(new ItemStack(item))) {
-                addHalfUpper(entries, item, "halfDoor");
-            }
-        }
-    }
-
     private static void addTallFlowers(ItemGroup.Entries entries) {
         String suffix = "tallFlowerSelfDestructs";
         // TallFlowerBlock
@@ -339,44 +322,24 @@ public class FzmmItemGroup {
         entries.add(new BlockStateItemBuilder(item, translation, item).add("half", "upper").get());
     }
 
-    private static void addLitCandles(ItemGroup.Entries entries) {
-        ItemPredicate predicate = itemPredicate(ItemTags.CANDLES);
+    private static void addItemTag(TagKey<Item> tag, Consumer<Item> consumer) {
+        Optional<ItemPredicate> predicate = itemPredicate(tag);
+        if (predicate.isEmpty()) return;
+
         for (var item : Registries.ITEM) {
-            if (predicate.test(new ItemStack(item))) {
-                entries.add(new BlockStateItemBuilder(item, "litCandle", item).add("lit", true).get());
+            if (predicate.get().test(new ItemStack(item))) {
+                consumer.accept(item);
             }
         }
     }
 
-    private static void addHalfBed(ItemGroup.Entries entries) {
-        ItemPredicate predicate = itemPredicate(ItemTags.BEDS);
-        for (var item : Registries.ITEM) {
-            if (predicate.test(new ItemStack(item))) {
-                entries.add(new BlockStateItemBuilder(item, "bedHeadPart", item).add("part", "head").get());
-            }
+    private static Optional<ItemPredicate> itemPredicate(TagKey<Item> tag) {
+        try {
+            return Optional.of(ItemPredicate.Builder.create().tag(Registries.ITEM, tag).build());
+        } catch (Exception ignored) {
+            FzmmClient.LOGGER.warn("[FzmmItemGroup] Missing tag '{}' (this can be ignored in multiplayer)", tag.id());
+            return Optional.empty();
         }
-    }
-
-    private static void addLockedBed(ItemGroup.Entries entries) {
-        ItemPredicate predicate = itemPredicate(ItemTags.BEDS);
-        for (var item : Registries.ITEM) {
-            if (predicate.test(new ItemStack(item))) {
-                entries.add(new BlockStateItemBuilder(item, "lockedBed", item).add("occupied", true).get());
-            }
-        }
-    }
-
-    private static void addWaterloggedBlocks(ItemGroup.Entries entries) {
-        ItemPredicate predicate = itemPredicate(ItemTags.SLABS);
-        for (var item : Registries.ITEM) {
-            if (predicate.test(new ItemStack(item))) {
-                entries.add(new BlockStateItemBuilder(item, "waterloggedBlock", item).add("type", "double").add("waterlogged", true).get());
-            }
-        }
-    }
-
-    private static ItemPredicate itemPredicate(TagKey<Item> tag) {
-        return ItemPredicate.Builder.create().tag(Registries.ITEM, tag).build();
     }
 
     private static void addLootChest(ItemGroup.Entries entries, Item item, List<RegistryKey<LootTable>> lootTableList, boolean isBrushable) {
