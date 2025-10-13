@@ -15,8 +15,7 @@
     "modify_fzmm_command.allow_paragraphs_symbol.TextFieldWidgetMixin",
     "modify_fzmm_command.modify_chat.ChatScreenMixin",
     "screenshot_hud.ChatHudMixin",
-    "screenshot_hud.GameRendererMixin",
-    "social_interactions_head_button.SocialInteractionsPlayerListEntryMixin"
+    "screenshot_hud.GameRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
