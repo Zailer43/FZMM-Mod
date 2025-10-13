@@ -122,17 +122,19 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
         imageButtonLayout.children(imageButtonList);
 
         // algorithm options
-        this.algorithmTabContainer = rootComponent.childByIdOrThrow(TabContainer.class, "algorithm-tabs");
         List<IImagetextAlgorithm> algorithmTabs = List.of(new ImagetextCharactersAlgorithm(), new ImagetextBrailleAlgorithm());
-        this.algorithmTabContainer.addParsedTabs(algorithmTabs);
         ContextMenuButton algorithmButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "algorithm-button");
+        this.algorithmTabContainer = rootComponent.childByIdOrThrow(TabContainer.class, "algorithm-tabs");
+        this.algorithmTabContainer.addParsedTabs(algorithmTabs).onSelect(tab -> {
+            algorithmButton.setMessage(this.getAlgorithmText());
+            this.scheduleUpdatePreview();
+        });
         algorithmButton.setContextMenuOptions(contextMenu -> {
             for (var algorithm : algorithmTabs) {
                 contextMenu.button(algorithm.getButtonText(), dropdown -> {
                     algorithmButton.removeContextMenu();
                     algorithm.clearCache();
                     this.algorithmTabContainer.selectTab(algorithm);
-                    algorithmButton.setMessage(this.getAlgorithmText());
                     this.scheduleUpdatePreview();
                     this.onResolutionChanged(this.widthSlider, this.heightSlider, true);
                 });
@@ -142,22 +144,22 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
             algorithm.setupComponents(rootComponent);
         }
         this.algorithmTabContainer.selectTab();
-        algorithmButton.setMessage(this.getAlgorithmText());
 
         // image mode
-        this.modeTabContainer = rootComponent.childByIdOrThrow(TabContainer.class, "mode-tabs");
         List<IImagetextTab> modeTabs = List.of(new ImagetextLoreTab(), new ImagetextBookPageTab(), new ImagetextBookTooltipTab(),
                 new ImagetextTextDisplayTab(), new ImagetextSignTab(), new ImagetextHologramTab(), new ImagetextCopyTab()
         );
-        this.modeTabContainer.addParsedTabs(modeTabs);
         ContextMenuButton modeButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "mode-button");
+        this.modeTabContainer = rootComponent.childByIdOrThrow(TabContainer.class, "mode-tabs");
+        this.modeTabContainer.addParsedTabs(modeTabs).onSelect(tab -> {
+            modeButton.setMessage(this.getModeText());
+            this.scheduleUpdatePreview();
+        });
         modeButton.setContextMenuOptions(contextMenu -> {
             for (var mode : modeTabs) {
                 contextMenu.button(mode.getButtonText(), dropdown -> {
                     modeButton.removeContextMenu();
                     this.modeTabContainer.selectTab(mode);
-                    modeButton.setMessage(this.getModeText());
-                    this.scheduleUpdatePreview();
                 });
             }
         });
@@ -165,7 +167,6 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
             tab.setupComponents(rootComponent);
         }
         this.modeTabContainer.selectTab();
-        modeButton.setMessage(this.getModeText());
 
         // preview
         this.previewLayout = rootComponent.childByIdOrThrow(EFlowLayout.class, "preview-layout");

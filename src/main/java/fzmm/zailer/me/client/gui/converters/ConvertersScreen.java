@@ -28,9 +28,7 @@ public class ConvertersScreen extends BaseFzmmScreen implements IMemento {
     protected void setup(EFlowLayout rootComponent) {
         this.tabContainer = rootComponent.childByIdOrThrow(TabContainer.class, "tabs");
         List<ITab> tabs = List.of(new ConverterBase64Tab(), new ConverterUuidToArrayTab(), new ConverterArrayToUuidTab());
-        this.tabContainer.addParsedTabs(tabs);
-        this.tabContainer.setupTabs(rootComponent, tabs.get(0).getId(), iTab -> {
-        });
+        this.tabContainer.addParsedTabs(tabs).setupTabs(rootComponent, tabs.get(0).getId());
     }
 
     @Override

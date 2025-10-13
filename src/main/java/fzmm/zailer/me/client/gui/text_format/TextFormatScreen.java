@@ -7,6 +7,7 @@ import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
+import fzmm.zailer.me.client.gui.components.tabs.ITab;
 import fzmm.zailer.me.client.gui.components.tabs.TabContainer;
 import fzmm.zailer.me.client.gui.text_format.tabs.*;
 import fzmm.zailer.me.client.gui.utils.CopyTextScreen;
@@ -70,8 +71,9 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
         List<ITextFormatTab> tabs = List.of(new TextFormatSimpleTab(), new TextFormatGradientTab(),
                 new TextFormatInterleavedColorsTab(), new TextFormatRainbowTab(), new TextFormatPlaceholderApiTab()
         );
-        this.tabContainer.addParsedTabs(tabs);
-        this.tabContainer.setupTabs(rootComponent, tabs.get(0).getId(), this::tabCallback);
+        this.tabContainer.addParsedTabs(tabs)
+                .onSelect(this::onSelectTab)
+                .setupTabs(rootComponent, tabs.get(0).getId());
         for (var tab : tabs) {
             tab.componentsCallback(object -> this.updateMessagePreview());
         }
@@ -86,10 +88,10 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
         focusHandler.focus(this.messageTextField, Component.FocusSource.MOUSE_CLICK);
     }
 
-    private void tabCallback(ITextFormatTab tab) {
+    private void onSelectTab(ITab tab) {
         for (var child : this.stylesLayout.children()) {
             if (child instanceof ButtonComponent buttonComponent) {
-                buttonComponent.active(tab.hasStyles());
+                buttonComponent.active(((ITextFormatTab) tab).hasStyles());
             }
         }
         this.updateMessagePreview();
@@ -190,6 +192,5 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
         this.underlineToggle.enabled(input.readBoolean());
         this.italicToggle.enabled(input.readBoolean());
         this.tabContainer.restore(input);
-        this.updateMessagePreview();
     }
 }
