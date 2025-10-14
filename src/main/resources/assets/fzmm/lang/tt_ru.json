@@ -636,10 +636,9 @@
     "itemGroup.fzmm.useful_block_states.item.glowBerries": "Өлгергән нурлы җиләкләр",
     "itemGroup.fzmm.useful_block_states.item.glowLichenBlock": "Нурлы мүк блогы",
     "itemGroup.fzmm.useful_block_states.item.halfDoor": "%s (өске өлеше)",
-    "itemGroup.fzmm.useful_block_states.item.hangingLantern": "Элүле фонарь",
+    "itemGroup.fzmm.useful_block_states.item.hangingLantern": "%s (hanging)",
     "itemGroup.fzmm.useful_block_states.item.hangingMangrovePropagule": "Элүле мангр сабы",
-    "itemGroup.fzmm.useful_block_states.item.hangingSoulLantern": "Элүле җан фонаре",
-    "itemGroup.fzmm.useful_block_states.item.lanternOnTheFloor": "Идәндә лампа",
+    "itemGroup.fzmm.useful_block_states.item.lanternOnTheFloor": "%s (on the floor)",
     "itemGroup.fzmm.useful_block_states.item.leftChest": "Сандыкның сул яртысы",
     "itemGroup.fzmm.useful_block_states.item.leftTrappedChest": "Капкын сандыкның сул яртысы",
     "itemGroup.fzmm.useful_block_states.item.litBlastFurnace": "Янган эретү миче",
@@ -673,7 +672,6 @@
     "itemGroup.fzmm.useful_block_states.item.snowyGrassBlock": "Карланган кәс",
     "itemGroup.fzmm.useful_block_states.item.snowyMycelium": "Карланган гөмбәлек",
     "itemGroup.fzmm.useful_block_states.item.snowyPodzol": "Карланган подзол",
-    "itemGroup.fzmm.useful_block_states.item.soulLanternOnTheFloor": "Идәндә җан лампасы",
     "itemGroup.fzmm.useful_block_states.item.tallFlowerSelfDestructs": "%s (үз-үзен җимерүче)",
     "itemGroup.fzmm.useful_block_states.item.turtleEgg4": "Ташбака йомыркасы ×4",
     "itemGroup.fzmm.useful_block_states.item.unstableTnt": "Тотрыксыз динамит (әгәр яшәү шартында ватсак, ул шартланачак)",
@@ -695,7 +693,6 @@
     "itemGroup.op.nameTag.johnny.comment.3": "(гастлардан һәм башка явызлардан бүтән)",
     "itemGroup.op.nameTag.toast.comment.1": "«Toast» исемле куян xyzen420 уенчысының дус кызы",
     "itemGroup.op.nameTag.toast.comment.2": "югалтылган куян текстурасы белән булачак.",
-    "key.category.fzmm": "FZMM",
     "key.fzmm.mainGui": "Төп меню",
     "modmenu.descriptionTranslation.fzmm": "Нигездә, NBT-предметларны иҗат шартында үзгәртү яки ясау өчен кулланылучы Fabric моды, шулай ук берничә файдалылыкка ия",
     "modmenu.nameTranslation.fzmm": "FZMM",
@@ -843,6 +840,8 @@
     "fzmm.gui.button.clipboard.undo": "Undo",
     "fzmm.gui.button.clipboard.redo": "Redo",
     "fzmm.gui.bannerEditor.option.isShield.disabled": "Item: Banner",
-    "fzmm.gui.bannerEditor.option.isShield.enabled": "Item: Shield"
+    "fzmm.gui.bannerEditor.option.isShield.enabled": "Item: Shield",
+    "itemGroup.fzmm.useful_block_states.item.poweredShelf": "%s (powered)",
+    "key.category.fzmm.general": "FZMM General"
 }
 
