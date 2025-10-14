@@ -636,10 +636,9 @@
     "itemGroup.fzmm.useful_block_states.item.glowBerries": "Куст выросших светящихся ягод",
     "itemGroup.fzmm.useful_block_states.item.glowLichenBlock": "Блок лишайника",
     "itemGroup.fzmm.useful_block_states.item.halfDoor": "%s (верхняя часть)",
-    "itemGroup.fzmm.useful_block_states.item.hangingLantern": "Висячий фонарь",
+    "itemGroup.fzmm.useful_block_states.item.hangingLantern": "%s (висящий)",
     "itemGroup.fzmm.useful_block_states.item.hangingMangrovePropagule": "Висячий росток мангрового дерева",
-    "itemGroup.fzmm.useful_block_states.item.hangingSoulLantern": "Висячий фонарь душ",
-    "itemGroup.fzmm.useful_block_states.item.lanternOnTheFloor": "Фонарь на полу",
+    "itemGroup.fzmm.useful_block_states.item.lanternOnTheFloor": "%s (на полу)",
     "itemGroup.fzmm.useful_block_states.item.leftChest": "Левая половина сундука",
     "itemGroup.fzmm.useful_block_states.item.leftTrappedChest": "Левая половина сундука-ловушки",
     "itemGroup.fzmm.useful_block_states.item.litBlastFurnace": "Зажжённая плавильная печь",
@@ -673,7 +672,6 @@
     "itemGroup.fzmm.useful_block_states.item.snowyGrassBlock": "Заснеженный блок травы",
     "itemGroup.fzmm.useful_block_states.item.snowyMycelium": "Заснеженный мицелий",
     "itemGroup.fzmm.useful_block_states.item.snowyPodzol": "Заснеженный подзол",
-    "itemGroup.fzmm.useful_block_states.item.soulLanternOnTheFloor": "Фонарь душ на полу",
     "itemGroup.fzmm.useful_block_states.item.tallFlowerSelfDestructs": "%s (самоуничтожающийся)",
     "itemGroup.fzmm.useful_block_states.item.turtleEgg4": "Черепашьи яйца x4",
     "itemGroup.fzmm.useful_block_states.item.unstableTnt": "Нестабильный динамит (если его сломать в выживании, то он взорвётся)",
@@ -695,7 +693,6 @@
     "itemGroup.op.nameTag.johnny.comment.3": "(кроме гастов и других зловредов)",
     "itemGroup.op.nameTag.toast.comment.1": "Кролик с именем \"Toast\" поменяет текстуру на кролика",
     "itemGroup.op.nameTag.toast.comment.2": "подруги игрока xyzen420, который потерялся",
-    "key.category.fzmm": "FZMM",
     "key.fzmm.mainGui": "Главное меню",
     "modmenu.descriptionTranslation.fzmm": "Мод для Fabric, который в основном предназначен для редактирования или создания NBT предметов в творческом режиме, но также имеет несколько утилит",
     "modmenu.nameTranslation.fzmm": "FZMM",
@@ -843,6 +840,8 @@
     "fzmm.gui.button.clipboard.undo": "Отменить",
     "fzmm.gui.button.clipboard.redo": "Вернуть",
     "fzmm.gui.bannerEditor.option.isShield.disabled": "Предмет: Флаг",
-    "fzmm.gui.bannerEditor.option.isShield.enabled": "Предмет: Щит"
+    "fzmm.gui.bannerEditor.option.isShield.enabled": "Предмет: Щит",
+    "itemGroup.fzmm.useful_block_states.item.poweredShelf": "%s (запитан)",
+    "key.category.fzmm.general": "Общее из FZMM"
 }
 
