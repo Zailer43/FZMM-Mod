@@ -2,6 +2,7 @@ accessWidener v1 named
 
 accessible class net/minecraft/client/gui/EditBox$Substring
 
+accessible method net/minecraft/client/gui/widget/TextFieldWidget getMaxLength ()I
 accessible method net/minecraft/client/util/ScreenshotRecorder getScreenshotFilename (Ljava/io/File;)Ljava/io/File;
 accessible method net/minecraft/client/MinecraftClient doItemUse ()V
 accessible method net/minecraft/block/entity/SkullBlockEntity fetchProfile (Ljava/lang/String;)Ljava/util/concurrent/CompletableFuture;
