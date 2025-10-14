@@ -583,7 +583,7 @@
   "itemGroup.op.nameTag.johnny.comment.3": "(except ghasts and other illagers)",
   "itemGroup.op.nameTag.toast.comment.1": "Naming a rabbit \"Toast\" causes it to have a special memorial",
   "itemGroup.op.nameTag.toast.comment.2": "skin of user xyzen420's girlfriend's missing rabbit.",
-  "key.category.fzmm": "FZMM",
+  "key.category.fzmm.general": "FZMM General",
   "key.fzmm.mainGui": "Main GUI",
   "modmenu.descriptionTranslation.fzmm": "A fabric mod that is mainly for editing or creating NBT of items in creative but it also has a few utilities",
   "modmenu.nameTranslation.fzmm": "FZMM",

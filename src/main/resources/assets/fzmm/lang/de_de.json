@@ -636,10 +636,9 @@
     "itemGroup.fzmm.useful_block_states.item.glowBerries": "Glow berries with berries",
     "itemGroup.fzmm.useful_block_states.item.glowLichenBlock": "Glow lichen block",
     "itemGroup.fzmm.useful_block_states.item.halfDoor": "%s (upper half)",
-    "itemGroup.fzmm.useful_block_states.item.hangingLantern": "Hanging lantern",
+    "itemGroup.fzmm.useful_block_states.item.hangingLantern": "%s (hanging)",
     "itemGroup.fzmm.useful_block_states.item.hangingMangrovePropagule": "Hanging mangrove propagule",
-    "itemGroup.fzmm.useful_block_states.item.hangingSoulLantern": "Hanging soul lantern",
-    "itemGroup.fzmm.useful_block_states.item.lanternOnTheFloor": "Lantern on the floor",
+    "itemGroup.fzmm.useful_block_states.item.lanternOnTheFloor": "%s (on the floor)",
     "itemGroup.fzmm.useful_block_states.item.leftChest": "Left half of chest",
     "itemGroup.fzmm.useful_block_states.item.leftTrappedChest": "Left half of trapped chest",
     "itemGroup.fzmm.useful_block_states.item.litBlastFurnace": "Lit blast furnace",
@@ -673,7 +672,6 @@
     "itemGroup.fzmm.useful_block_states.item.snowyGrassBlock": "Snowy grass block",
     "itemGroup.fzmm.useful_block_states.item.snowyMycelium": "Snowy mycelium",
     "itemGroup.fzmm.useful_block_states.item.snowyPodzol": "Snowy podzol",
-    "itemGroup.fzmm.useful_block_states.item.soulLanternOnTheFloor": "Soul lantern on the floor",
     "itemGroup.fzmm.useful_block_states.item.tallFlowerSelfDestructs": "%s (self-destructs)",
     "itemGroup.fzmm.useful_block_states.item.turtleEgg4": "Turtle egg x4",
     "itemGroup.fzmm.useful_block_states.item.unstableTnt": "Unstable TNT (if it breaks in survival it explodes)",
@@ -695,7 +693,6 @@
     "itemGroup.op.nameTag.johnny.comment.3": "(except ghasts and other illagers)",
     "itemGroup.op.nameTag.toast.comment.1": "Naming a rabbit \"Toast\" causes it to have a special memorial",
     "itemGroup.op.nameTag.toast.comment.2": "skin of user xyzen420's girlfriend's missing rabbit.",
-    "key.category.fzmm": "FZMM",
     "key.fzmm.mainGui": "Main GUI",
     "modmenu.descriptionTranslation.fzmm": "A fabric mod that is mainly for editing or creating NBT of items in creative but it also has a few utilities",
     "modmenu.nameTranslation.fzmm": "FZMM",
@@ -843,6 +840,8 @@
     "fzmm.gui.button.clipboard.undo": "Undo",
     "fzmm.gui.button.clipboard.redo": "Redo",
     "fzmm.gui.bannerEditor.option.isShield.disabled": "Item: Banner",
-    "fzmm.gui.bannerEditor.option.isShield.enabled": "Item: Shield"
+    "fzmm.gui.bannerEditor.option.isShield.enabled": "Item: Shield",
+    "itemGroup.fzmm.useful_block_states.item.poweredShelf": "%s (powered)",
+    "key.category.fzmm.general": "FZMM General"
 }
 
