@@ -636,10 +636,9 @@
     "itemGroup.fzmm.useful_block_states.item.glowBerries": "발광 열매가 달린 덩굴",
     "itemGroup.fzmm.useful_block_states.item.glowLichenBlock": "발광 이끼 블록",
     "itemGroup.fzmm.useful_block_states.item.halfDoor": "%s (위쪽)",
-    "itemGroup.fzmm.useful_block_states.item.hangingLantern": "매달린 랜턴",
+    "itemGroup.fzmm.useful_block_states.item.hangingLantern": "%s (걸린)",
     "itemGroup.fzmm.useful_block_states.item.hangingMangrovePropagule": "매달린 맹그로브나무 주아",
-    "itemGroup.fzmm.useful_block_states.item.hangingSoulLantern": "매달린 영혼 랜턴",
-    "itemGroup.fzmm.useful_block_states.item.lanternOnTheFloor": "땅에 놓인 랜턴",
+    "itemGroup.fzmm.useful_block_states.item.lanternOnTheFloor": "%s (놓인)",
     "itemGroup.fzmm.useful_block_states.item.leftChest": "왼쪽 큰 상자",
     "itemGroup.fzmm.useful_block_states.item.leftTrappedChest": "왼쪽 큰 덫 상자",
     "itemGroup.fzmm.useful_block_states.item.litBlastFurnace": "불 붙은 용광로",
@@ -673,7 +672,6 @@
     "itemGroup.fzmm.useful_block_states.item.snowyGrassBlock": "눈 덮인 잔디 블록",
     "itemGroup.fzmm.useful_block_states.item.snowyMycelium": "눈 덮인 균사체",
     "itemGroup.fzmm.useful_block_states.item.snowyPodzol": "눈 덮인 회백토",
-    "itemGroup.fzmm.useful_block_states.item.soulLanternOnTheFloor": "땅에 놓인 영혼 랜턴",
     "itemGroup.fzmm.useful_block_states.item.tallFlowerSelfDestructs": "혼자 파괴되는 %s",
     "itemGroup.fzmm.useful_block_states.item.turtleEgg4": "거북알 x4",
     "itemGroup.fzmm.useful_block_states.item.unstableTnt": "불안전한 TNT (서바이벌에서 부술 시 점화됩니다)",
@@ -695,7 +693,6 @@
     "itemGroup.op.nameTag.johnny.comment.3": "(가스트랑 다른 우민들은 예외입니다)",
     "itemGroup.op.nameTag.toast.comment.1": "이 이름을 가진 토끼는 유저 xyzen420의 여자친구의 실종된 토끼를",
     "itemGroup.op.nameTag.toast.comment.2": "기념하는 특별한 스킨을 갖게 됩니다.",
-    "key.category.fzmm": "FZMM",
     "key.fzmm.mainGui": "메인 창",
     "modmenu.descriptionTranslation.fzmm": "주로 크리에이티브 아이템의 NBT를 편집하거나 생성하는 데 사용되지만 몇가지 편리한 기능들도 제공하는 패브릭 모드입니다.",
     "modmenu.nameTranslation.fzmm": "FZMM",
@@ -843,6 +840,8 @@
     "fzmm.gui.button.clipboard.undo": "실행 취소",
     "fzmm.gui.button.clipboard.redo": "다시 실행",
     "fzmm.gui.bannerEditor.option.isShield.disabled": "아이템: 현수막",
-    "fzmm.gui.bannerEditor.option.isShield.enabled": "아이템: 방패"
+    "fzmm.gui.bannerEditor.option.isShield.enabled": "아이템: 방패",
+    "itemGroup.fzmm.useful_block_states.item.poweredShelf": "%s (활성화됨)",
+    "key.category.fzmm.general": "FZMM 일반"
 }
 
