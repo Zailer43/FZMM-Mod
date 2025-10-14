@@ -533,7 +533,7 @@
     "fzmm.gui.textFormat.tab.gradient.tooltip": "Un gradiente de múltiples colores.",
     "fzmm.gui.textFormat.tab.interleaved_colors": "Intercalado",
     "fzmm.gui.textFormat.tab.interleaved_colors.tooltip": "Colorear el texto con múltiples colores en orden intercalado.",
-    "fzmm.gui.textFormat.tab.placeholder_api": "Wiki de Placeholder API",
+    "fzmm.gui.textFormat.tab.placeholder_api": "Placeholder API",
     "fzmm.gui.textFormat.tab.placeholder_api.tooltip": "\"Es un formato simple de texto inspirado en formatos como\nHTML o MiniMessage. Se creó para permitir una forma rápida\ny legible de formatear los componentes de texto de Minecraft\"",
     "fzmm.gui.textFormat.tab.rainbow": "Arcoíris",
     "fzmm.gui.textFormat.tab.rainbow.tooltip": "Colorea el texto con colores en orden de una rueda de colores.",
@@ -636,10 +636,9 @@
     "itemGroup.fzmm.useful_block_states.item.glowBerries": "Bayas luminosas con bayas",
     "itemGroup.fzmm.useful_block_states.item.glowLichenBlock": "Bloque de liquen luminoso",
     "itemGroup.fzmm.useful_block_states.item.halfDoor": "%s (mitad superior)",
-    "itemGroup.fzmm.useful_block_states.item.hangingLantern": "Farol colgando",
+    "itemGroup.fzmm.useful_block_states.item.hangingLantern": "%s (colgante)",
     "itemGroup.fzmm.useful_block_states.item.hangingMangrovePropagule": "Propágulo de mangle colgando",
-    "itemGroup.fzmm.useful_block_states.item.hangingSoulLantern": "Farol de almas colgando",
-    "itemGroup.fzmm.useful_block_states.item.lanternOnTheFloor": "Farol en el piso",
+    "itemGroup.fzmm.useful_block_states.item.lanternOnTheFloor": "%s (en el suelo)",
     "itemGroup.fzmm.useful_block_states.item.leftChest": "Mitad izquierda de cofre",
     "itemGroup.fzmm.useful_block_states.item.leftTrappedChest": "Mitad izquierda de cofre trampa",
     "itemGroup.fzmm.useful_block_states.item.litBlastFurnace": "Alto horno encendido",
@@ -673,7 +672,6 @@
     "itemGroup.fzmm.useful_block_states.item.snowyGrassBlock": "Bloque de pasto con nieve",
     "itemGroup.fzmm.useful_block_states.item.snowyMycelium": "Micelio con nieve",
     "itemGroup.fzmm.useful_block_states.item.snowyPodzol": "Podsol con nieve",
-    "itemGroup.fzmm.useful_block_states.item.soulLanternOnTheFloor": "Farol de almas en el piso",
     "itemGroup.fzmm.useful_block_states.item.tallFlowerSelfDestructs": "%s (autodestructivo)",
     "itemGroup.fzmm.useful_block_states.item.turtleEgg4": "Huevos de tortuga x4",
     "itemGroup.fzmm.useful_block_states.item.unstableTnt": "TNT inestable (si se rompe en supervivencia explota)",
@@ -695,7 +693,6 @@
     "itemGroup.op.nameTag.johnny.comment.3": "(excepto ghast y otros illagers)",
     "itemGroup.op.nameTag.toast.comment.1": "Nombrar un conejo \"Toast\" causa que tenga una skin causa que tenga una skin",
     "itemGroup.op.nameTag.toast.comment.2": "en memoria especial al conejo perdido de la novia de xyzen420.",
-    "key.category.fzmm": "FZMM",
     "key.fzmm.mainGui": "GUI principal",
     "modmenu.descriptionTranslation.fzmm": "Un mod de fabric que es principalmente para editar o crear NBT de ítems en creativo, pero también tiene algunas utilidades",
     "modmenu.nameTranslation.fzmm": "FZMM",
@@ -843,6 +840,8 @@
     "fzmm.gui.button.clipboard.undo": "Deshacer",
     "fzmm.gui.button.clipboard.redo": "Rehacer",
     "fzmm.gui.bannerEditor.option.isShield.disabled": "Ítem: Bandera",
-    "fzmm.gui.bannerEditor.option.isShield.enabled": "Ítem: Escudo"
+    "fzmm.gui.bannerEditor.option.isShield.enabled": "Ítem: Escudo",
+    "itemGroup.fzmm.useful_block_states.item.poweredShelf": "%s (encendido)",
+    "key.category.fzmm.general": "General de FZMM"
 }
 
