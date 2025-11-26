@@ -28,6 +28,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.item.component.SeededContainerLoot;
 import net.minecraft.world.item.component.TypedEntityData;
+import net.minecraft.world.level.block.CopperBulbBlock;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
@@ -93,6 +94,7 @@ public class FzmmItemGroup {
                     entries.accept(new BlockStateItemBuilder(Items.FURNACE, "litFurnace").add("lit", true).get());
                     entries.accept(new BlockStateItemBuilder(Items.SMOKER, "litSmoker").add("lit", true).get());
                     entries.accept(new BlockStateItemBuilder(Items.BLAST_FURNACE, "litBlastFurnace").add("lit", true).get());
+                    addCopperBulbs(entries);
                     entries.accept(new BlockStateItemBuilder(Items.CAMPFIRE, "offCampfire").add("lit", false).get());
                     entries.accept(new BlockStateItemBuilder(Items.CAMPFIRE, "signalFireOfCampfire").add("signal_fire", true).get());
                     entries.accept(new BlockStateItemBuilder(Items.SOUL_CAMPFIRE, "offSoulCampfire").add("lit", false).get());
@@ -300,6 +302,14 @@ public class FzmmItemGroup {
         CrossbowBuilder crossbowFirework = CrossbowBuilder.builder().putProjectile(firework);
 
         entries.add(crossbowFirework.get());
+    }
+
+    private static void addCopperBulbs(CreativeModeTab.Output entries) {
+        for (var item : BuiltInRegistries.ITEM) {
+            if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof CopperBulbBlock) {
+                entries.accept(new BlockStateItemBuilder(item, "litBulb", item).add("lit", true).get());
+            }
+        }
     }
 
     private static void addTallFlowers(CreativeModeTab.Output entries) {
