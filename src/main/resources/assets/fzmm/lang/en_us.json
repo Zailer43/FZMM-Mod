@@ -533,6 +533,7 @@
   "itemGroup.fzmm.useful_block_states.item.leftChest": "Left half of chest",
   "itemGroup.fzmm.useful_block_states.item.leftTrappedChest": "Left half of trapped chest",
   "itemGroup.fzmm.useful_block_states.item.litBlastFurnace": "Lit blast furnace",
+  "itemGroup.fzmm.useful_block_states.item.litBulb": "%s (lit)",
   "itemGroup.fzmm.useful_block_states.item.litCandle": "%s (lit)",
   "itemGroup.fzmm.useful_block_states.item.litFurnace": "Lit furnace",
   "itemGroup.fzmm.useful_block_states.item.litRedstoneLamp": "Lit redstone lamp",

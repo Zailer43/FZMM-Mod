@@ -7,6 +7,7 @@ import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.block.BulbBlock;
 import net.minecraft.block.entity.BannerPattern;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
@@ -89,6 +90,7 @@ public class FzmmItemGroup {
                     entries.add(new BlockStateItemBuilder(Items.FURNACE, "litFurnace").add("lit", true).get());
                     entries.add(new BlockStateItemBuilder(Items.SMOKER, "litSmoker").add("lit", true).get());
                     entries.add(new BlockStateItemBuilder(Items.BLAST_FURNACE, "litBlastFurnace").add("lit", true).get());
+                    addCopperBulbs(entries);
                     entries.add(new BlockStateItemBuilder(Items.CAMPFIRE, "offCampfire").add("lit", false).get());
                     entries.add(new BlockStateItemBuilder(Items.CAMPFIRE, "signalFireOfCampfire").add("signal_fire", true).get());
                     entries.add(new BlockStateItemBuilder(Items.SOUL_CAMPFIRE, "offSoulCampfire").add("lit", false).get());
@@ -296,6 +298,14 @@ public class FzmmItemGroup {
         CrossbowBuilder crossbowFirework = CrossbowBuilder.builder().putProjectile(firework);
 
         entries.add(crossbowFirework.get());
+    }
+
+    private static void addCopperBulbs(ItemGroup.Entries entries) {
+        for (var item : Registries.ITEM) {
+            if (item instanceof BlockItem blockItem && blockItem.getBlock() instanceof BulbBlock) {
+                entries.add(new BlockStateItemBuilder(item, "litBulb", item).add("lit", true).get());
+            }
+        }
     }
 
     private static void addTallFlowers(ItemGroup.Entries entries) {
