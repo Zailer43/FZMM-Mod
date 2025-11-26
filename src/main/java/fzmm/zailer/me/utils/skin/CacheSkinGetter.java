@@ -62,6 +62,6 @@ public class CacheSkinGetter extends SkinGetterDecorator {
         assert MinecraftClient.getInstance().getNetworkHandler() != null;
         PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getCaseInsensitivePlayerInfo(playerName);
 
-        return Optional.ofNullable(playerListEntry == null ? null : playerListEntry.getProfile());
+        return playerListEntry == null ? super.getProfile(playerName) : Optional.ofNullable(playerListEntry.getProfile());
     }
 }

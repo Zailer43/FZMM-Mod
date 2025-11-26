@@ -59,9 +59,9 @@ public class VanillaSkinGetter extends SkinGetterDecorator {
     public Optional<GameProfile> getProfile(String playerName) {
         ApiServices apiServices = MinecraftClient.getInstance().getApiServices();
         Optional<NameAndId> nameAndId = apiServices.profileRepository().findProfileByName(playerName);
-        if (nameAndId.isEmpty()) return Optional.empty();
+        if (nameAndId.isEmpty()) return super.getProfile(playerName);
 
         ProfileResult profileResult = apiServices.sessionService().fetchProfile(nameAndId.get().id(), false);
-        return profileResult == null ? Optional.empty() : Optional.of(profileResult.profile());
+        return profileResult == null ? super.getProfile(playerName) : Optional.of(profileResult.profile());
     }
 }
