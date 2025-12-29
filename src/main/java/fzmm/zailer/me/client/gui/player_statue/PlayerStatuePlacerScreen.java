@@ -8,9 +8,6 @@ import fzmm.zailer.me.client.logic.player_statue.PlayerStatue;
 import fzmm.zailer.me.utils.InventoryUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.ui.core.UIComponent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +16,10 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.BaseEntityBlock;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 public class PlayerStatuePlacerScreen extends AbstractAutoPlacer {
     public static boolean isActive = false;
@@ -93,5 +94,11 @@ public class PlayerStatuePlacerScreen extends AbstractAutoPlacer {
     @Override
     protected boolean isActive() {
         return isActive;
+    }
+
+    @Override
+    protected void setActive(boolean active) {
+        super.setActive(active);
+        PlayerStatuePlacerScreen.isActive = active;
     }
 }

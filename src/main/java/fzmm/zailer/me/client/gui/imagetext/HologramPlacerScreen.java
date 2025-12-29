@@ -72,6 +72,11 @@ public class HologramPlacerScreen extends AbstractAutoPlacer {
         return isActive;
     }
 
+    @Override
+    protected void setActive(boolean active) {
+        super.setActive(active);
+        HologramPlacerScreen.isActive = active;
+    }
 
     public static boolean isHologram(ItemStack container) {
         List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container);

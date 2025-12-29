@@ -7,15 +7,15 @@
                     <children>
                         <fzmm.flow-layout direction="horizontal">
                             <children>
-                                <button id="execute">
+                                <fzmm.button id="execute">
                                     <text translate="true">fzmm.gui.playerStatuePlacer.option.place-player-statue</text>
                                     <positioning type="relative">0,0</positioning>
-                                </button>
+                                </fzmm.button>
 
-                                <button id="cancel">
+                                <fzmm.button id="cancel">
                                     <text translate="true">fzmm.gui.button.cancel</text>
                                     <positioning type="relative">100,0</positioning>
-                                </button>
+                                </fzmm.button>
                             </children>
 
                             <sizing>
