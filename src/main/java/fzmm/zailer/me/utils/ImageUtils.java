@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
@@ -38,7 +39,7 @@ public class ImageUtils {
     }
 
     public static Optional<BufferedImage> getImageFromUrl(String urlLocation) throws IOException {
-        try {
+        try (var client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build()) {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(urlLocation))
                     .timeout(Duration.ofSeconds(10))
@@ -46,7 +47,7 @@ public class ImageUtils {
                     .GET()
                     .build();
 
-            HttpResponse<InputStream> response = FzmmUtils.getHttpClient().send(request, HttpResponse.BodyHandlers.ofInputStream());
+            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
             if (response.statusCode() == 200) {
                 try (InputStream is = response.body()) {

@@ -21,8 +21,6 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.DyeColor;
 
-import java.net.http.HttpClient;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -182,12 +180,6 @@ public class FzmmUtils {
             client.setScreen(screen);
             SnackBarManager.getInstance().moveToScreen(screen);
         }
-    }
-
-    public static HttpClient getHttpClient() {
-        return HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
     }
 
 }
