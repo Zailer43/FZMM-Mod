@@ -1,10 +1,9 @@
 package fzmm.zailer.me.client.gui.utils.auto_placer;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
-import fzmm.zailer.me.client.gui.player_statue.PlayerStatuePlacerScreen;
 import fzmm.zailer.me.utils.ItemUtils;
-import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Component;
@@ -25,7 +24,8 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
     private static final int DELAY_IN_MILLISECONDS = 500;
     protected FlowLayout loadingBarLayout;
     protected LabelComponent loadingLabel;
-    protected ButtonComponent cancelButton;
+    protected EButtonComponent cancelButton;
+    protected EButtonComponent executeButton;
 
     public AbstractAutoPlacer(String screenPath, String baseScreenTranslationKey, @Nullable Screen parent) {
         super(screenPath, baseScreenTranslationKey, parent);
@@ -38,10 +38,11 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
 
         rootComponent.childByIdOrThrow(FlowLayout.class, "main-layout");
 
-        ButtonComponent executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "execute");
-        executeButton.setMessage(Text.translatable(BaseFzmmScreen.getOptionBaseTranslationKey(this.baseScreenTranslationKey) + "execute"));
+        this.executeButton = rootComponent.childByIdOrThrow(EButtonComponent.class, "execute");
+        this.executeButton.setMessage(Text.translatable(BaseFzmmScreen.getOptionBaseTranslationKey(this.baseScreenTranslationKey) + "execute"));
+        this.executeButton.onPress(buttonComponent -> this.execute());
 
-        this.cancelButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "cancel");
+        this.cancelButton = rootComponent.childByIdOrThrow(EButtonComponent.class, "cancel");
         this.cancelButton.onPress(buttonComponent -> this.close());
 
         this.loadingBarLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "loading-bar");
@@ -49,8 +50,6 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
         FlowLayout infoLabels = rootComponent.childByIdOrThrow(FlowLayout.class, "info-labels");
 
         infoLabels.children(this.getInfoLabels());
-
-        executeButton.onPress(buttonComponent -> this.execute());
     }
 
     protected abstract List<Component> getInfoLabels();
@@ -61,8 +60,7 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
         this.client.execute(() -> {
             //noinspection resource
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-            PlayerStatuePlacerScreen.isActive = true;
-            this.cancelButton.active = false;
+            this.setActive(true);
 
             SimpleOption<Boolean> sneakToggled = this.client.options.getSneakToggled();
             boolean isSneakToggled = sneakToggled.getValue();
@@ -92,8 +90,7 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
             scheduler.schedule(() -> {
                 ItemUtils.updateHand(this.getFinalStack());
 
-                PlayerStatuePlacerScreen.isActive = false;
-                this.cancelButton.active = true;
+                this.setActive(false);
                 Text backText = Text.translatable("fzmm.gui.button.back");
                 this.cancelButton.setMessage(backText);
                 this.cancelButton.horizontalSizing(Sizing.fixed(this.client.textRenderer.getWidth(backText) + BaseFzmmScreen.BUTTON_TEXT_PADDING));
@@ -115,6 +112,11 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
         }
 
         this.updateLoadingBar(index, containerItemsSize);
+    }
+
+    protected void setActive(boolean active) {
+        this.cancelButton.active(!active);
+        this.executeButton.active(!active);
     }
 
     protected void updateLoadingBar(int index, int maxIndex) {

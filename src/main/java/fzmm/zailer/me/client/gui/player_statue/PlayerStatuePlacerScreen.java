@@ -98,4 +98,10 @@ public class PlayerStatuePlacerScreen extends AbstractAutoPlacer {
     protected boolean isActive() {
         return isActive;
     }
+
+    @Override
+    protected void setActive(boolean active) {
+        super.setActive(active);
+        PlayerStatuePlacerScreen.isActive = active;
+    }
 }
