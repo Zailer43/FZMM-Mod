@@ -2,6 +2,7 @@ package fzmm.zailer.me.config;
 
 import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
 import fzmm.zailer.me.client.logic.enycrpt_book.TranslationEncryptProfile;
+import fzmm.zailer.me.client.logic.mineskin.model.MSVisibility;
 import io.wispforest.owo.config.annotation.*;
 import io.wispforest.owo.ui.core.Color;
 import net.minecraft.item.Items;
@@ -74,7 +75,7 @@ public class FzmmConfigModel {
 
     public static class MineskinNest {
         public String apiKey = "";
-        public boolean publicSkins = false;
+        public MSVisibility visibility = MSVisibility.UNLISTED;
     }
 
     public static class ImagetextNest {

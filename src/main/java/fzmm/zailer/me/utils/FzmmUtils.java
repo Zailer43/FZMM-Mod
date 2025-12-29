@@ -16,10 +16,6 @@ import net.minecraft.registry.RegistryOps;
 import net.minecraft.text.*;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.HttpClients;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -180,20 +176,6 @@ public class FzmmUtils {
             client.setScreen(screen);
             SnackBarManager.getInstance().moveToScreen(screen);
         }
-    }
-
-    public static CloseableHttpClient getHttpClient() {
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(3000)
-                .setSocketTimeout(3000)
-                .build();
-
-        return HttpClients.custom()
-                .setRetryHandler(new DefaultHttpRequestRetryHandler(0, false))
-                .disableAutomaticRetries()
-                .setDefaultRequestConfig(requestConfig)
-                .setUserAgent(FzmmClient.HTTP_USER_AGENT)
-                .build();
     }
 
 }

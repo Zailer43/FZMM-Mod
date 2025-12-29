@@ -17,6 +17,9 @@ import fzmm.zailer.me.client.logic.head_generator.model.steps.select.ModelSelect
 import fzmm.zailer.me.client.logic.head_generator.texture.HeadTextureEntry;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.core.Color;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SynchronousResourceReloader;
@@ -41,6 +44,17 @@ public class HeadResourcesLoader implements SynchronousResourceReloader {
     public static final String FZMM_MODELS_FOLDER = "fzmm_models";
     public static final String INTERNAL_FOLDER = "internal";
     public static final String INTERNAL_MODELS_FOLDER = FZMM_MODELS_FOLDER + "/" + INTERNAL_FOLDER;
+
+    public static void registerBuiltinResourcePack() {
+        FabricLoader.getInstance().getModContainer(FzmmClient.MOD_ID)
+                .map(container -> ResourceManagerHelper.registerBuiltinResourcePack(
+                        Identifier.of(FzmmClient.MOD_ID, "fzmm_default_heads"),
+                        container,
+                        Text.literal("FZMM: Head generator"),
+                        ResourcePackActivationType.DEFAULT_ENABLED
+                )).filter(success -> !success)
+                .ifPresent(success -> FzmmClient.LOGGER.warn("[HeadResourcesLoader] Failed to register default heads resource pack"));
+    }
 
     public static ImmutableList<AbstractHeadEntry> getAllLoaded() {
         return LOADED_RESOURCES;

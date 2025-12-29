@@ -15,8 +15,8 @@ import fzmm.zailer.me.client.logic.player_statue.PlayerStatue;
 import fzmm.zailer.me.client.logic.player_statue.StatuePart;
 import fzmm.zailer.me.utils.ImageUtils;
 import fzmm.zailer.me.utils.ItemUtils;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import org.joml.Vector3f;
 
@@ -25,11 +25,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletionException;
 
 public class PlayerStatueGenerateTab implements IPlayerStatueTab, IMemento {
     private static final ImageStatus INVALID_SKIN_SIZE = new ImageStatus("error.title", "error.details.playerStatue.invalidSkinSize", true);
-    private static CompletableFuture<Void> CREATE_COMPLETABLE_FUTURE = null;
+    public static boolean active = false;
     private ImageRowsElements skinElements;
     private ButtonWidget executeButton;
 
@@ -47,9 +48,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab, IMemento {
         skinButton.setImageLoadedEvent(this::skinCallback);
         skinButton.setButtonCallback(skinOptional -> {
             this.executeButton.active = this.canExecute();
-            if (skinOptional.isEmpty()) {
-                return;
-            }
+            if (skinOptional.isEmpty()) return;
 
             BufferedImage skin = skinOptional.get();
             if (skin.getWidth() == 64 && skin.getHeight() == 32) {
@@ -61,32 +60,24 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab, IMemento {
 
     @Override
     public void execute(HorizontalDirectionOption direction, float x, float y, float z, String name) {
-        if (!this.canExecute()) {
-            return;
-        }
+        if (!this.canExecute()) return;
 
         Optional<BufferedImage> image = this.skinElements.imageButton().getImage();
+        if (image.isEmpty()) return;
 
-        if (image.isEmpty()) {
-            return;
-        }
+        active = true;
+        this.executeButton.active = false;
+        Vector3f pos = new Vector3f(x, y, z);
 
-        CREATE_COMPLETABLE_FUTURE = CompletableFuture.runAsync(() -> {
-            this.executeButton.active = false;
-
-
-            Vector3f pos = new Vector3f(x, y, z);
-
-            ItemStack statueGenerated = new PlayerStatue(image.get(), name, pos, direction)
-                    .generateStatues()
-                    .getStatueInContainer();
-
-            ItemUtils.give(statueGenerated);
-            InvisibleEntityWarning.add(true, true, Text.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG);
-
+        PlayerStatue statue = new PlayerStatue(image.get(), name, pos, direction);
+        statue.generateStatues().whenComplete((unused, throwable) -> MinecraftClient.getInstance().execute(() -> {
+            active = false;
             this.executeButton.active = true;
-            CREATE_COMPLETABLE_FUTURE = null;
-        });
+            if (throwable instanceof CancellationException || throwable instanceof CompletionException) return;
+
+            ItemUtils.give(statue.getStatueInContainer());
+            InvisibleEntityWarning.add(true, true, Text.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG);
+        }));
     }
 
     @Override
@@ -95,7 +86,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab, IMemento {
     }
 
     public boolean canExecute(boolean hasImage) {
-        return hasImage && CREATE_COMPLETABLE_FUTURE == null;
+        return hasImage && !active;
     }
 
     public ImageStatus skinCallback(BufferedImage image) {

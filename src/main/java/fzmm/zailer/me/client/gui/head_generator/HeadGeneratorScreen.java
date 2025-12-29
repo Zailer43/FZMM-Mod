@@ -22,16 +22,17 @@ import fzmm.zailer.me.client.gui.head_generator.components.HeadComponentOverlay;
 import fzmm.zailer.me.client.gui.head_generator.components.HeadCompoundComponentEntry;
 import fzmm.zailer.me.client.gui.head_generator.options.ISkinPreEdit;
 import fzmm.zailer.me.client.gui.head_generator.options.SkinPreEditOption;
+import fzmm.zailer.me.client.logic.api.ApiResponse;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.head_generator.HeadResourcesLoader;
 import fzmm.zailer.me.client.logic.head_generator.model.HeadModelEntry;
 import fzmm.zailer.me.client.logic.head_generator.model.InternalModels;
 import fzmm.zailer.me.client.logic.history.IMemento;
+import fzmm.zailer.me.client.logic.mineskin.model.MSQueue;
+import fzmm.zailer.me.client.logic.mineskin.model.MSSkin;
 import fzmm.zailer.me.utils.*;
 import fzmm.zailer.me.utils.list.ListUtils;
-import io.wispforest.owo.config.ui.ConfigScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
@@ -446,7 +447,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
         this.contentLayout.children(newResults);
     }
 
-    public void giveHead(BufferedImage image, String textureName) {
+    public void giveHead(BufferedImage image) {
         assert this.client != null;
         this.client.execute(() -> {
             this.setUndefinedDelay();
@@ -459,57 +460,57 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
                     .build();
             this.addSnackBar(snackBar);
 
-            new HeadUtils().uploadHead(image, headName + " + " + textureName).thenAccept(headUtils -> {
-                HeadBuilder builder = headUtils.getBuilder();
-                if (!headName.isBlank()) {
-                    builder.headName(headName);
-                }
-
-                boolean generated = ItemUtils.give(builder.get());
+            FzmmClient.MINESKIN_API.upload(image).whenComplete((response, throwable) -> {
+                boolean generated = this.giveItem(response, throwable, headName);
 
                 this.client.execute(() -> {
-                    this.setDelay(headUtils.getDelayForNext(TimeUnit.SECONDS));
                     snackBar.close();
-                    if (generated) {
-                        this.addStatusSnackBar(headUtils, image, textureName);
-                    }
+                    this.completeSnackBar(response, generated, image);
+                    this.setDelay(TimeUnit.MILLISECONDS.toSeconds(FzmmClient.MINESKIN_API.getWaitMillis()));
                 });
             });
         });
     }
 
-    private void addStatusSnackBar(HeadUtils headUtils, BufferedImage image, String textureName) {
-        SnackBarBuilder snackBar = BaseSnackBarComponent.builder(SnackBarManager.HEAD_GENERATOR_ID);
-        if (headUtils.isSkinGenerated()) {
-            snackBar.title(Text.translatable("fzmm.gui.headGenerator.snack_bar.success"))
-                    .lowTimer()
-                    .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
-                    .startTimer();
-        } else if (headUtils.getHttpResponseCode() == 403) {
-            snackBar.title(Text.translatable("fzmm.snack_bar.mineskin.error.invalidApiKey"))
-                    .details(Text.translatable("fzmm.snack_bar.mineskin.error.invalidApiKey.description"))
-                    .backgroundColor(EStyles.ALERT_ERROR_COLOR)
-                    .keepOnLimit()
-                    .button(iSnackBarComponent -> Components.button(Text.translatable("fzmm.gui.title.configs.icon"),
-                            buttonComponent -> this.setScreen(ConfigScreen.create(FzmmClient.CONFIG, this))))
-                    .highTimer()
-                    .closeButton();
-        } else {
-            String translationKey = headUtils.getHttpResponseCode() / 500 == 5 ? "external" : "internal";
+    private boolean giveItem(@Nullable ApiResponse<MSQueue> response, Throwable throwable, String headName) {
+        if (throwable != null || response == null) return false;
 
-            snackBar.title(Text.translatable("fzmm.gui.headGenerator.snack_bar.error." + translationKey))
-                    .details(Text.translatable("fzmm.gui.headGenerator.snack_bar.error." + translationKey + ".description", headUtils.getHttpResponseCode()))
-                    .backgroundColor(EStyles.ALERT_ERROR_COLOR)
-                    .keepOnLimit()
-                    .button(iSnackBarComponent -> Components.button(Text.translatable("fzmm.gui.headGenerator.snack_bar.error.button.retry"), buttonComponent -> {
-                        this.giveHead(image, textureName);
-                        iSnackBarComponent.close();
-                    }))
-                    .highTimer()
-                    .closeButton();
+        Optional<MSQueue> queueOptional = response.data();
+        if (queueOptional.isEmpty()) return false;
+
+        Optional<MSSkin> skinOptional = queueOptional.get().skin();
+        if (skinOptional.isEmpty()) return false;
+
+        HeadBuilder builder = skinOptional.get().builder();
+        if (!headName.isBlank()) {
+            builder.headName(headName);
         }
 
-        this.addSnackBar(snackBar.build());
+        return ItemUtils.give(builder.get()) && response.isSuccess();
+    }
+
+    private void completeSnackBar(@Nullable ApiResponse<MSQueue> response, boolean generated, BufferedImage originalImage) {
+        if (generated) {
+            this.addSnackBar(BaseSnackBarComponent.builder(SnackBarManager.HEAD_GENERATOR_ID)
+                    .title(Text.translatable("fzmm.gui.headGenerator.snack_bar.success"))
+                    .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
+                    .lowTimer()
+                    .startTimer()
+                    .build()
+            );
+        } else {
+            Optional<SnackBarBuilder> builder = FzmmClient.MINESKIN_API.statusCodeAlert(response);
+            if (builder.isEmpty()) return;
+            // replace snack bar but with the retry button
+            this.addSnackBar(builder.get()
+                    .button(snackBar -> EComponents.button(Text.translatable("fzmm.gui.mineskin.snack_bar.error.button.retry"))
+                            .onPress(button -> {
+                                this.giveHead(originalImage);
+                                snackBar.close();
+                            })
+                    ).build()
+            );
+        }
     }
 
     public void setUndefinedDelay() {
@@ -517,13 +518,18 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
         this.updateButton(waitMessage, false);
     }
 
-    public void setDelay(int seconds) {
+    public void setDelay(long millis) {
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        if (seconds > 6000) {
+            throw new IllegalArgumentException("[HeadGeneratorScreen] Delay too long ( " + millis + " ms)");
+        }
+
         for (int i = 0; i != seconds; i++) {
             Text message = Text.translatable("fzmm.gui.headGenerator.wait_seconds", seconds - i);
             CompletableFuture.delayedExecutor(i, TimeUnit.SECONDS).execute(() -> this.updateButton(message, false));
         }
 
-        CompletableFuture.delayedExecutor(seconds, TimeUnit.SECONDS)
+        CompletableFuture.delayedExecutor(millis, TimeUnit.MILLISECONDS)
                 .execute(() -> this.updateButton(HeadComponentOverlay.GIVE_BUTTON_TEXT, true));
     }
 

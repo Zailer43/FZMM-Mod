@@ -1,6 +1,7 @@
 package fzmm.zailer.me.utils;
 
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.logic.api.IApiRemote;
 import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
 import net.minecraft.client.texture.NativeImage;
 import org.apache.http.HttpEntity;
@@ -10,6 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -37,7 +39,7 @@ public class ImageUtils {
     }
 
     public static Optional<BufferedImage> getImageFromUrl(String urlLocation) throws IOException {
-        try (var httpClient = FzmmUtils.getHttpClient()) {
+        try (var httpClient = IApiRemote.getHttpClient(IApiRemote.HTTP_USER_AGENT)) {
             HttpGet httpGet = new HttpGet(urlLocation);
 
             HttpResponse response = httpClient.execute(httpGet);
@@ -60,6 +62,17 @@ public class ImageUtils {
             }
         }
         return nativeImage;
+    }
+
+    public static byte[] toByteArray(BufferedImage image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "png", baos);
+        } catch (IOException e) {
+            FzmmClient.LOGGER.error("[ImageUtils] Error writing image", e);
+            return null;
+        }
+        return baos.toByteArray();
     }
 
     public static BufferedImage withType(BufferedImage image, int type) {

@@ -7,6 +7,7 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import fzmm.zailer.me.client.logic.history.FzmmHistory;
 import fzmm.zailer.me.utils.ItemUtils;
+import fzmm.zailer.me.utils.TextUtils;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.ItemStack;
@@ -18,19 +19,15 @@ import java.util.UUID;
 
 public class HeadBuilder {
 
-    private String skinValue;
+    private String skinValue = "";
     @Nullable
-    private String headName;
-    @Nullable
-    private String signature;
-    private UUID uuid;
-    private boolean addToHeadHistory;
+    private String headName = null;
+//    @Nullable
+//    private String signature = null;
+    private UUID uuid = null;
+    private boolean addToHeadHistory = true;
 
     private HeadBuilder() {
-        this.skinValue = "";
-        this.headName = null;
-        this.addToHeadHistory = true;
-        this.uuid = UUID.randomUUID();
     }
 
     public static HeadBuilder builder() {
@@ -39,6 +36,9 @@ public class HeadBuilder {
 
     public ItemStack get() {
         ItemStack stack = Items.PLAYER_HEAD.getDefaultStack();
+        if (this.uuid == null) {
+            this.uuid = UUID.randomUUID();
+        }
 
         stack.apply(DataComponentTypes.PROFILE, null, component -> {
 
@@ -68,6 +68,19 @@ public class HeadBuilder {
         return Optional.of(headNameCopy);
     }
 
+
+    public String toSkinValue(String url) {
+        return TextUtils.encodeBase64("{\"textures\":{\"SKIN\":{\"url\":\"" + url + "\"}}}");
+    }
+
+    public String toUrl(String urlValue) {
+        return "http://textures.minecraft.net/texture/" + urlValue;
+    }
+
+    public HeadBuilder urlValue(String urlValue) {
+        return this.skinValue(this.toSkinValue(this.toUrl(urlValue)));
+    }
+
     public HeadBuilder skinValue(String skinValue) {
         this.skinValue = skinValue;
         return this;
@@ -78,10 +91,10 @@ public class HeadBuilder {
         return this;
     }
 
-    public HeadBuilder signature(@Nullable String signature) {
-        this.signature = signature;
-        return this;
-    }
+//    public HeadBuilder signature(@Nullable String signature) {
+//        this.signature = signature;
+//        return this;
+//    }
 
     public HeadBuilder id(UUID id) {
         this.uuid = id;

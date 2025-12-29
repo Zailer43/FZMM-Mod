@@ -118,7 +118,7 @@ public class HeadComponentOverlay extends EFlowLayout {
     }
 
     private void giveButtonExecute(AbstractHeadComponentEntry headComponentEntry) {
-        this.parentScreen.giveHead(headComponentEntry.getPreview(), headComponentEntry.getValue().getDisplayName().getString());
+        this.parentScreen.giveHead(headComponentEntry.getPreview());
     }
 
     public ISnackBarComponent saveSkinExecute(@Nullable BufferedImage skin) {
