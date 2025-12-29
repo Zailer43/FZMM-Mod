@@ -7,11 +7,12 @@ import fzmm.zailer.me.builders.ArmorStandBuilder;
 import fzmm.zailer.me.builders.ContainerBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
-import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.UpdatableSnackBarComponent;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
+import fzmm.zailer.me.client.gui.player_statue.tabs.PlayerStatueGenerateTab;
 import fzmm.zailer.me.client.logic.player_statue.statue_head_skin.*;
 import fzmm.zailer.me.utils.*;
 import io.wispforest.owo.ui.core.Sizing;
@@ -30,9 +31,8 @@ import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.LockSupport;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayerStatue {
     private final List<StatuePart> statueList;
@@ -43,8 +43,6 @@ public class PlayerStatue {
     private UpdatableSnackBarComponent snackBar;
     private int partsGenerated;
     private int totalToGenerate;
-    private int currentErrors;
-    private boolean isSecondTry;
 
     public PlayerStatue(BufferedImage playerSkin, String name, Vector3f pos, HorizontalDirectionOption direction) {
         this.playerSkin = playerSkin;
@@ -54,13 +52,29 @@ public class PlayerStatue {
         this.direction = direction;
     }
 
-    public PlayerStatue generateStatues() {
+    public CompletableFuture<Void> generateStatues() {
         this.statueList.clear();
 
         int scale = this.getSkinScale();
         if (FzmmClient.CONFIG.playerStatue.convertSkinWithAlexModelInSteveModel() && ImageUtils.isSlimSimpleCheck(this.playerSkin, scale))
             this.playerSkin = ImageUtils.convertInSteveModel(this.playerSkin, scale);
 
+        this.addStatueParts();
+
+        this.totalToGenerate = this.statueList.size();
+        this.partsGenerated = 0;
+        AtomicBoolean isCancelled = new AtomicBoolean(false);
+
+        Minecraft.getInstance().execute(() -> this.notifyStart(isCancelled));
+        return this.generate(isCancelled)
+                .whenComplete((unused, throwable) -> Minecraft.getInstance().execute(() -> {
+                    this.snackBar.close();
+                    if (throwable != null) return;
+                    this.notifyComplete();
+                }));
+    }
+
+    private void addStatueParts() {
         HeadModelSkin empty = new HeadModelSkin();
         HeadModelSkin bottom = new HeadModelSkin(HeadFace.HEAD_FACE.BOTTOM_FACE);
         HeadModelSkin top = new HeadModelSkin(HeadFace.HEAD_FACE.UP_FACE);
@@ -100,66 +114,58 @@ public class PlayerStatue {
         this.statueList.add(new StatuePart(StatuePartEnum.RIGHT_HEAD_FRONT, "Left top front head", 7, top, 1, 0, -1, new HeadSkinManager(true, false, false)));
         this.statueList.add(new StatuePart(StatuePartEnum.RIGHT_HEAD_BACK, "Left bottom back head", 6, bottom, 1, 0, -2, new HeadSkinManager(true, true, true)));
         this.statueList.add(new StatuePart(StatuePartEnum.RIGHT_HEAD_BACK, "Left top back head", 7, top, -2, 0, 1, new HeadSkinManager(true, false, true)));
-
-        this.totalToGenerate = this.statueList.size();
-        this.partsGenerated = 0;
-        this.currentErrors = 0;
-        this.isSecondTry = false;
-        Minecraft.getInstance().execute(() -> {
-            this.snackBar = (UpdatableSnackBarComponent) UpdatableSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
-                    .backgroundColor(EStyles.ALERT_LOADING_COLOR)
-                    .keepOnLimit()
-                    .title(Component.translatable("fzmm.snack_bar.playerStatue.loading.title"))
-                    .details(Component.translatable("fzmm.snack_bar.playerStatue.loading.details",
-                            this.partsGenerated, 0, 0, 0, this.statueList.get(0).getName()))
-                    .sizing(Sizing.fixed(220), Sizing.content())
-                    .startTimer()
-                    .build();
-
-            SnackBarManager.getInstance().add(this.snackBar);
-        });
-
-        this.generate();
-        this.isSecondTry = true;
-        this.generate();
-
-        Minecraft.getInstance().execute(() -> {
-            this.snackBar.close();
-
-            boolean success = this.currentErrors == 0;
-            ISnackBarComponent finalStatus = BaseSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
-                    .backgroundColor(success ? EStyles.ALERT_SUCCESS_COLOR : EStyles.ALERT_ERROR_COLOR)
-                    .keepOnLimit()
-                    .title(success ? Component.translatable("fzmm.snack_bar.playerStatue.successful.title") :
-                            Component.translatable("fzmm.snack_bar.playerStatue.error.title", this.currentErrors))
-                    .sizing(Sizing.fixed(220), Sizing.content())
-                    .mediumTimer()
-                    .startTimer()
-                    .build();
-
-            SnackBarManager.getInstance().add(finalStatus);
-        });
-        return this;
     }
 
-    public void generate() {
-        int delayMillis = 0;
-        for (StatuePart statuePart : this.statueList) {
-            if (statuePart.isSkinGenerated()) {
-                continue;
-            }
-            //TODO: update to ScheduledThreadPoolExecutor
-            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(delayMillis));
+    private void notifyStart(AtomicBoolean isCancelled) {
+        this.snackBar = (UpdatableSnackBarComponent) UpdatableSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
+                .backgroundColor(EStyles.ALERT_LOADING_COLOR)
+                .keepOnLimit()
+                .title(Component.translatable("fzmm.snack_bar.playerStatue.loading.title"))
+                .details(Component.translatable("fzmm.snack_bar.playerStatue.loading.details",
+                        this.partsGenerated, 0, 0, 0, this.statueList.get(0).getName()))
+                .sizing(Sizing.fixed(220), Sizing.content())
+                .startTimer()
+                .button(snackBar ->
+                        EComponents.button(Component.translatable("fzmm.gui.button.cancel"))
+                                .onPress(button -> {
+                                    isCancelled.set(true);
+                                    PlayerStatueGenerateTab.active = false;
+                                    snackBar.close();
+                                })
+                ).build();
 
-            try {
-                delayMillis = statuePart.setStatueSkin(this.playerSkin, this.getSkinScale()).get();
-            } catch (InterruptedException | ExecutionException e) {
-                FzmmClient.LOGGER.error("[PlayerStatue] The statue '{}' had an internal error generating its skin", statuePart.getName());
-                delayMillis = 6000;
-            }
+        SnackBarManager.getInstance().add(this.snackBar);
+    }
 
-            this.updateStatus(statuePart, delayMillis);
-        }
+    private void notifyComplete() {
+        SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
+                .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
+                .keepOnLimit()
+                .title(Component.translatable("fzmm.snack_bar.playerStatue.successful.title"))
+                .sizing(Sizing.fixed(220), Sizing.content())
+                .mediumTimer()
+                .startTimer()
+                .build()
+        );
+    }
+
+    public CompletableFuture<Void> generate(AtomicBoolean isCancelled) {
+        List<BufferedImage> parts = this.statueList.stream()
+                .map(statuePart -> statuePart.drawAndGet(this.playerSkin, this.getSkinScale()))
+                .toList();
+
+        return FzmmClient.MINESKIN_API.uploadSequentially(parts,
+                (skin, response) -> {
+                    this.partsGenerated++;
+                    for (var part : this.statueList) {
+                        if (part.isEquals(skin)) {
+                            part.value(response.data().orElseThrow().skin().orElseThrow().toSkinValue());
+                            this.updateStatus(part, FzmmClient.MINESKIN_API.getWaitMillis());
+                            return;
+                        }
+                    }
+                }, isCancelled
+        );
     }
 
     public static ItemStack getStatueName(Vector3f pos, String name) {
@@ -177,8 +183,9 @@ public class PlayerStatue {
                     throw new IllegalArgumentException(String.format("[PlayerStatue] 'name' is not a valid JSON string: %s", name));
                 }
             } catch (Exception ignored) {
-                if (name.length() > 100)
+                if (name.length() > 100) {
                     name = name.substring(0, 99);
+                }
                 nameText = Component.nullToEmpty(name);
             }
         }
@@ -215,11 +222,13 @@ public class PlayerStatue {
     public List<ItemStack> getStatueItems() {
         List<ItemStack> stackList = new ArrayList<>();
 
-        for (StatuePart statue : this.statueList)
+        for (StatuePart statue : this.statueList) {
             stackList.add(statue.get(this.pos, this.direction));
+        }
 
-        if (!this.name.isEmpty())
+        if (!this.name.isEmpty()) {
             stackList.add(getStatueName(this.pos, this.name));
+        }
 
         return stackList;
     }
@@ -245,9 +254,7 @@ public class PlayerStatue {
                 .addLoreToItems(Items.ARMOR_STAND, Component.translatable("fzmm.item.playerStatue.lore.2").getString(), color)
                 .getAsList();
 
-        if (containerList.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
+        if (containerList.isEmpty()) return ItemStack.EMPTY;
 
         ItemStack container = containerList.get(0);
         container = DisplayBuilder.of(container)
@@ -258,28 +265,15 @@ public class PlayerStatue {
         return container;
     }
 
-    public void updateStatus(StatuePart part, int delayMillis) {
-        String translationKey = this.isSecondTry ? "secondTry" : "loading";
-
-        if (part.isSkinGenerated()) {
-            this.partsGenerated++;
-
-            if (this.isSecondTry) {
-                this.currentErrors--;
-            }
-        } else if (!this.isSecondTry){
-            this.currentErrors++;
-        }
-
+    public void updateStatus(StatuePart part, long delayMillis) {
         Minecraft.getInstance().execute(() -> {
             float delay = delayMillis / 1000f;
-            this.snackBar.updateTitle(Component.translatable("fzmm.snack_bar.playerStatue." + translationKey + ".title"));
-            this.snackBar.updateDetails(Component.translatable("fzmm.snack_bar.playerStatue." + translationKey + ".details",
+            this.snackBar.updateTitle(Component.translatable("fzmm.snack_bar.playerStatue.loading.title"));
+            this.snackBar.updateDetails(Component.translatable("fzmm.snack_bar.playerStatue.loading.details",
+                    part.getName(),
                     this.partsGenerated,
-                    this.currentErrors,
                     this.totalToGenerate,
-                    new DecimalFormat("#,#0.0").format(delay),
-                    part.getName()
+                    new DecimalFormat("#,#0.0").format(delay)
             ));
             this.snackBar.updateTimerBar(this.partsGenerated / (float) this.totalToGenerate);
 
@@ -294,10 +288,11 @@ public class PlayerStatue {
         List<ItemStack> statueList = new ArrayList<>();
 
         for (ItemStack stack : containerItems) {
-            if (StatuePart.isStatue(stack))
+            if (StatuePart.isStatue(stack)) {
                 statueList.add(StatuePart.ofItem(stack).get(pos, direction));
-            else if (isNameTag(stack))
+            } else if (isNameTag(stack)) {
                 statueList.add(getStatueName(pos, name));
+            }
         }
 
         return getStatueInContainer(statueList, pos);
@@ -306,12 +301,10 @@ public class PlayerStatue {
     public static boolean isPlayerStatue(ItemStack container) {
         List<ItemStack> containerItems = InventoryUtils.getItemsFromContainer(container);
 
-        if (containerItems.isEmpty())
-            return false;
+        if (containerItems.isEmpty()) return false;
 
         for (ItemStack stack : containerItems) {
-            if (!StatuePart.isStatue(stack) && !isNameTag(stack))
-                return false;
+            if (!StatuePart.isStatue(stack) && !isNameTag(stack)) return false;
         }
 
         return true;

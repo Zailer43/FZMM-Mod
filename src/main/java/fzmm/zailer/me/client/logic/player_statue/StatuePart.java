@@ -2,31 +2,27 @@ package fzmm.zailer.me.client.logic.player_statue;
 
 import fzmm.zailer.me.builders.ArmorStandBuilder;
 import fzmm.zailer.me.builders.HeadBuilder;
-import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.logic.player_statue.statue_head_skin.AbstractStatueSkinManager;
 import fzmm.zailer.me.client.logic.player_statue.statue_head_skin.HeadModelSkin;
-import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.SkinPart;
 import fzmm.zailer.me.utils.TagsConstant;
 import fzmm.zailer.me.utils.position.PosF;
-import org.joml.Vector3f;
-
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.CustomData;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 public class StatuePart {
     public static final String PLAYER_STATUE_TAG = "PlayerStatue";
-    private static final String DEFAULT_SKIN_VALUE = "Error!";
     private static final float Z_FIGHT_FIX_DISTANCE = 0.00001f;
     private final HeadModelSkin headModelSkin;
     private final StatuePartEnum part;
@@ -38,8 +34,8 @@ public class StatuePart {
     private final short zFightX;
     private final short zFightY;
     private final short zFightZ;
-    private boolean skinGenerated;
-    private String skinValue;
+    @Nullable
+    private String skinValue = null;
     private final BufferedImage headSkin;
     private AbstractStatueSkinManager skinManager;
 
@@ -53,15 +49,13 @@ public class StatuePart {
         this.zFightX = (short) zFightX;
         this.zFightY = (short) zFightY;
         this.zFightZ = (short) zFightZ;
-        this.skinGenerated = false;
-        this.skinValue = DEFAULT_SKIN_VALUE;
         this.headModelSkin = HeadModelSkin.of(this.part.getDefaultHeadModel(), headModelSkin);
         this.setDirection(HorizontalDirectionOption.NORTH);
         this.headSkin = new BufferedImage(SkinPart.MAX_WIDTH, SkinPart.MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         this.skinManager = skinManager;
     }
 
-    public StatuePart(StatuePartEnum part, String name, int headHeight, int zFightX, int zFightY, int zFightZ, HorizontalDirectionOption direction, String skinValue) {
+    public StatuePart(StatuePartEnum part, String name, int headHeight, int zFightX, int zFightY, int zFightZ, HorizontalDirectionOption direction, @Nullable String skinValue) {
         this.part = part;
         this.name = name;
         this.direction = direction;
@@ -71,7 +65,6 @@ public class StatuePart {
         this.zFightX = (short) zFightX;
         this.zFightY = (short) zFightY;
         this.zFightZ = (short) zFightZ;
-        this.skinGenerated = true;
         this.skinValue = skinValue;
         this.headModelSkin = null;
         this.headSkin = null;
@@ -90,6 +83,7 @@ public class StatuePart {
         playerStatueTag.putInt("direction", this.direction.ordinal());
         playerStatueTag.putString("part", this.part.toString());
         playerStatueTag.putString("name", this.name);
+        assert this.skinValue != null;
         playerStatueTag.putString("skinValue", this.skinValue);
         playerStatueTag.put("zFight", zFight);
 
@@ -151,8 +145,7 @@ public class StatuePart {
     }
 
     public ItemStack get(Vector3f pos, HorizontalDirectionOption direction) {
-        if (!this.isSkinGenerated())
-            return new ItemStack(Items.BARRIER);
+        if (this.skinValue == null) return new ItemStack(Items.BARRIER);
 
         this.setDirection(direction);
         this.fixZFight(pos);
@@ -178,31 +171,22 @@ public class StatuePart {
         return statuePart;
     }
 
-    /**
-     * @return milliseconds left to generate another skin
-     */
-    public CompletableFuture<Integer> setStatueSkin(BufferedImage playerSkin, int scale) {
-        this.draw(playerSkin, this.headSkin, scale);
-        return new HeadUtils().uploadHead(this.headSkin, this.name)
-                .thenApply(headUtils -> {
-                    this.skinValue = headUtils.getSkinValue();
-                    this.skinGenerated = headUtils.isSkinGenerated();
-
-                    if (!this.skinGenerated) {
-                        FzmmClient.LOGGER.error("[StatuePart] The statue {} had an error generating its skin", this.name);
-                    }
-
-                    return headUtils.getDelayForNext(TimeUnit.MILLISECONDS);
-                });
+    public void value(String skinValue) {
+        this.skinValue = skinValue;
     }
-    public boolean isSkinGenerated() {
-        return this.skinGenerated;
+
+    public BufferedImage drawAndGet(BufferedImage playerSkin, int scale) {
+        this.draw(playerSkin, this.headSkin, scale);
+        return this.headSkin;
+    }
+
+    public boolean isEquals(BufferedImage skin) {
+        return this.headSkin.equals(skin);
     }
 
     private void draw(BufferedImage playerSkin, BufferedImage destinationSkin, int scale) {
         Graphics2D graphics = destinationSkin.createGraphics();
         this.headModelSkin.draw(this.skinManager, graphics, playerSkin, scale);
-
     }
 
     private void fixZFight(Vector3f pos) {

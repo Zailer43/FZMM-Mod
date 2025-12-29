@@ -2,11 +2,13 @@ package fzmm.zailer.me.utils;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.logic.api.IApiRemote;
 import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -38,15 +40,13 @@ public class ImageUtils {
         return skin;
     }
 
-    public static Optional<BufferedImage> getImageFromUrl(String urlLocation) throws IOException {
+    public static Optional<BufferedImage> getImageFromUrl(String url) throws IOException {
         try (var client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build()) {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(urlLocation))
-                    .timeout(Duration.ofSeconds(10))
-                    .header("User-Agent", FzmmClient.HTTP_USER_AGENT)
+                    .uri(URI.create(url))
+                    .header("User-Agent", IApiRemote.HTTP_USER_AGENT)
                     .GET()
                     .build();
-
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
             if (response.statusCode() == 200) {
@@ -69,6 +69,17 @@ public class ImageUtils {
             }
         }
         return nativeImage;
+    }
+
+    public static byte[] toByteArray(BufferedImage image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "png", baos);
+        } catch (IOException e) {
+            FzmmClient.LOGGER.error("[ImageUtils] Error writing image", e);
+            return null;
+        }
+        return baos.toByteArray();
     }
 
     public static BufferedImage withType(BufferedImage image, int type) {

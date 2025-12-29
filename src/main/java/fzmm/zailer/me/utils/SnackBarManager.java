@@ -8,10 +8,11 @@ import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.hud.Hud;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+
+import java.util.List;
 
 public class SnackBarManager {
     private static final Identifier SNACK_BAR_HUD = Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "snack_bar");
@@ -23,6 +24,8 @@ public class SnackBarManager {
     public static final String HEAD_GALLERY_ID = "head_gallery";
     public static final String HEAD_GENERATOR_ID = "head_generator";
     public static final String HEAD_GENERATOR_SAVE_ID = "head_generator_save";
+    public static final String MINESKIN_ID = "mineskin";
+    public static final String MINESKIN_WARNINGS_ID = "mineskin_warnings";
     public static final String IMAGE_ID = "load_image";
     public static final String IMAGETEXT_ID = "imagetext";
     public static final String INVISIBLE_ENTITY_ID = "invisible_entity";

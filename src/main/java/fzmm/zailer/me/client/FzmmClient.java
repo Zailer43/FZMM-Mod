@@ -11,6 +11,7 @@ import fzmm.zailer.me.client.gui.utils.auto_placer.AutoPlacerHud;
 import fzmm.zailer.me.client.logic.ItemTooltipAppend;
 import fzmm.zailer.me.client.logic.head_generator.HeadResourcesLoader;
 import fzmm.zailer.me.client.logic.history.FzmmHistory;
+import fzmm.zailer.me.client.logic.mineskin.MineskinApi;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.fabricmc.api.ClientModInitializer;
@@ -22,12 +23,9 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
-import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import org.lwjgl.glfw.GLFW;
@@ -46,35 +44,14 @@ public class FzmmClient implements ClientModInitializer {
     public static final int CHAT_WHITE_COLOR = 0xb7b7b7;
     public static final Identifier CUSTOM_HEAD_ENTITY = Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "custom_head");
     public static final ModelLayerLocation MODEL_CUSTOM_HEAD_LAYER = new ModelLayerLocation(CUSTOM_HEAD_ENTITY, "main");
-    public static final String HTTP_USER_AGENT = "FZMM/1.0";
-
+    public static MineskinApi MINESKIN_API;
 
     @Override
     public void onInitializeClient() {
         ClientCommandRegistrationCallback.EVENT.register(FzmmCommand::registerCommands);
         FzmmItemGroup.register();
-
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (!OPEN_MAIN_GUI_KEYBINDING.consumeClick())
-                return;
-
-            if (ScreenshotSource.hasInstance()) {
-                ScreenshotSource.getInstance().takeScreenshot();
-            } else if (AutoPlacerHud.isHudActive) {
-                AutoPlacerHud.removeHud();
-            } else {
-                FzmmUtils.setScreen(new MainScreen(client.screen));
-            }
-        });
-
-
-        FabricLoader.getInstance().getModContainer(MOD_ID)
-                .map(container -> ResourceLoader.registerBuiltinPack(
-                        Identifier.fromNamespaceAndPath(MOD_ID, "fzmm_default_heads"),
-                        container,
-                        Component.literal("FZMM: Head generator"),
-                        PackActivationType.DEFAULT_ENABLED
-                )).filter(success -> !success).ifPresent(success -> LOGGER.warn("[FzmmClient] Failed to register default heads resource pack"));
+        registerKeys();
+        HeadResourcesLoader.registerBuiltinResourcePack();
 
         CONFIG.history.subscribeToMaxItemHistory(integer -> FzmmHistory.onUpdateConfig());
         CONFIG.history.subscribeToMaxHeadHistory(integer -> FzmmHistory.onUpdateConfig());
@@ -87,5 +64,21 @@ public class FzmmClient implements ClientModInitializer {
 
         AutoPlacerHud.init();
         ItemTooltipAppend.init();
+
+        MINESKIN_API = new MineskinApi();
+    }
+
+    private static void registerKeys() {
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (!OPEN_MAIN_GUI_KEYBINDING.consumeClick()) return;
+
+            if (ScreenshotSource.hasInstance()) {
+                ScreenshotSource.getInstance().takeScreenshot();
+            } else if (AutoPlacerHud.isHudActive) {
+                AutoPlacerHud.removeHud();
+            } else {
+                FzmmUtils.setScreen(new MainScreen(client.screen));
+            }
+        });
     }
 }

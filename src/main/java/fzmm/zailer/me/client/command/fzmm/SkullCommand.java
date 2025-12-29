@@ -4,7 +4,9 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.builders.HeadBuilder;
+import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.command.ISubCommand;
+import fzmm.zailer.me.client.logic.mineskin.model.MSQueue;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.ItemUtils;
@@ -16,8 +18,11 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemStack;
+
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class SkullCommand implements ISubCommand {
@@ -87,15 +92,28 @@ public class SkullCommand implements ISubCommand {
                 .executes(ctx -> {
 
                     String skullOwner = ctx.getArgument("skull owner", String.class);
-                    CompletableFuture.runAsync(() -> HeadUtils.uploadAndGetHead(skullOwner)
-                            .ifPresent(ItemUtils::give), Util.backgroundExecutor());
+                    this.upload(skullOwner);
 
                     return 1;
                 }).build());
 
 
-
         return result;
+    }
+
+    private void upload(String playerName) {
+        Optional<BufferedImage> skinOptional = new CacheSkinGetter().getSkin(playerName);
+        if (skinOptional.isEmpty()) return;
+
+        FzmmClient.MINESKIN_API.upload(skinOptional.get()).whenComplete((response, throwable) -> {
+            Optional<MSQueue> msSkinOptional = response.data();
+            if (throwable != null || msSkinOptional.isEmpty() || msSkinOptional.get().skin().isEmpty()) {
+                FzmmClient.LOGGER.error("[SkullCommand] Error uploading head in mineskin", throwable);
+                return;
+            }
+
+            ItemUtils.give(msSkinOptional.get().skin().get().builder().headName(playerName).get());
+        });
     }
 
     private CompletableFuture<ItemStack> getHead(SkinGetterDecorator skinDecorator, String playerName) {

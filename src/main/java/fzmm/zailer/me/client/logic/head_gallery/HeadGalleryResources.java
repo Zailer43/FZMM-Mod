@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
+import fzmm.zailer.me.client.logic.api.IApiRemote;
 import fzmm.zailer.me.utils.SnackBarManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
@@ -83,7 +84,7 @@ public class HeadGalleryResources {
     private static ObjectArrayList<MinecraftHeadsData> fetchUrl(String url, String category, boolean cacheCategories) throws Exception {
         URL obj = URI.create(url).toURL();
         HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
-        conn.setRequestProperty("User-Agent", FzmmClient.HTTP_USER_AGENT);
+        conn.setRequestProperty("User-Agent", IApiRemote.HTTP_USER_AGENT);
         conn.setRequestMethod("GET");
         conn.setConnectTimeout(8000);
         conn.setReadTimeout(8000);

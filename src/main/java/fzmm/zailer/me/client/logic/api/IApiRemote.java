@@ -34,10 +34,6 @@ public interface IApiRemote extends IApiBase {
         return CompletableFuture.completedFuture(null);
     }
 
-    default <T> CompletableFuture<ApiResponse<T>> fetchUrl(String url) {
-        return this.fetchUrl(url, this.requestOf(url));
-    }
-
     default <T> CompletableFuture<ApiResponse<T>> fetchUrl(String url, HttpRequest request) {
         return this.prepare().thenApplyAsync(unused -> {
             try (var client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build()) {
@@ -74,15 +70,11 @@ public interface IApiRemote extends IApiBase {
 
     void parseSuccess(ApiResponse<?> response);
 
-    default <T> CompletableFuture<ApiResponse<T>> fetchData(Function<JsonObject, T> parser, String url) {
-        return this.<T>fetchUrl(url).thenApply(response -> this.parseModel(parser, response));
-    }
-
     default <T> CompletableFuture<ApiResponse<T>> fetchData(Function<JsonObject, T> parser, String url, HttpRequest request) {
         return this.<T>fetchUrl(url, request).thenApply(response -> this.parseModel(parser, response));
     }
 
-    HttpRequest requestOf(String url);
+    HttpRequest.Builder requestOf(String url);
 
     default JsonObject parseResponse(String body) {
         return JsonParser.parseString(body).getAsJsonObject();
