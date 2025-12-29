@@ -58,7 +58,7 @@ public class CacheSkinGetter extends SkinGetterDecorator {
     }
 
     @Override
-    protected Optional<GameProfile> getProfile(String playerName) {
+    public Optional<GameProfile> getProfile(String playerName) {
         assert MinecraftClient.getInstance().getNetworkHandler() != null;
         PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getCaseInsensitivePlayerInfo(playerName);
 
