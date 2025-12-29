@@ -35,10 +35,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 import org.w3c.dom.Element;
-
-import java.util.Optional;
 
 @SuppressWarnings("UnstableApiUsage")
 public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> implements ISnackBarScreen {
@@ -73,15 +70,14 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     @Override
     protected void init() {
         super.init();
-        Optional<EFlowLayout> root = this.getRoot();
-        if (root.isEmpty()) return;
+        EFlowLayout root = this.root();
 
         if (FzmmClient.CONFIG.history.automaticallyRecoverScreens() && this instanceof IMemento memento) {
             FzmmHistory.restoreScreen(memento);
         }
 
-        if (root.get().focusHandler() != null) {
-            this.initFocus(root.get().focusHandler());
+        if (root.focusHandler() != null) {
+            this.initFocus(root.focusHandler());
         }
     }
 
@@ -134,8 +130,13 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     }
 
     @Override
+    public EFlowLayout root() {
+        return this.uiAdapter.rootComponent;
+    }
+
+    @Override
     public boolean keyPressed(KeyInput input) {
-        if (input.key() == GLFW.GLFW_KEY_ESCAPE) {
+        if (input.isEscape()) {
             if (this.symbolChatCompat.symbol().isMounted()) {
                 this.symbolChatCompat.symbol().remove();
                 this.symbolChatCompat.selectedComponent(null);
@@ -209,12 +210,5 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
 
     public UIModel getModel() {
         return this.model;
-    }
-
-    public Optional<EFlowLayout> getRoot() {
-        if (this.uiAdapter == null) {
-            return Optional.empty();
-        }
-        return Optional.of(this.uiAdapter.rootComponent);
     }
 }

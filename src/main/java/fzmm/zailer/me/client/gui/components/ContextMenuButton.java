@@ -37,8 +37,8 @@ public class ContextMenuButton extends EButtonComponent {
             return;
         }
 
-        if ((this.contextMenu == null || !this.contextMenu.hasParent()) && baseScreen.getRoot().isPresent()) {
-            DropdownComponent.openContextMenu(baseScreen, baseScreen.getRoot().get(), FlowLayout::child,
+        if ((this.contextMenu == null || !this.contextMenu.hasParent())) {
+            DropdownComponent.openContextMenu(baseScreen, baseScreen.root(), FlowLayout::child,
                     this.x(), this.y(), contextMenu -> {
                         this.contextMenu = contextMenu;
                         this.contextMenuOptionsConsumer.accept(contextMenu);
@@ -60,7 +60,7 @@ public class ContextMenuButton extends EButtonComponent {
 
                         contextMenu.mouseDown().subscribe((contextInput, doubled) -> {
                             if (contextInput.y() < contextMenuY) {
-                                baseScreen.getRoot().get().removeChild(contextMenu);
+                                baseScreen.root().removeChild(contextMenu);
                                 UISounds.playButtonSound();
                             }
 

@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 public interface ISnackBarScreen {
 
+    ParentComponent root();
+
     FlowLayout getSnackBarLayout();
 
     default void addSnackBar(ISnackBarComponent snackBar) {
@@ -36,7 +38,7 @@ public interface ISnackBarScreen {
      */
     default void addOverlay(Component overlay) {
         FlowLayout snackBarLayout = this.getSnackBarLayout();
-        ParentComponent root = this.getSnackBarLayout().root();
+        ParentComponent root = this.root();
 
         if (root instanceof FlowLayout rootLayout) {
             rootLayout.child(overlay);

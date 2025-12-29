@@ -22,6 +22,8 @@ public class SnackBarManager {
     public static final String ENCRYPTOR_SAVE_ID = "encryptor_save";
     public static final String GIVE_ID = "give";
     public static final String HEAD_GALLERY_ID = "head_gallery";
+    public static final String HEAD_GALLERY_NEW_HEADS_ID = "head_gallery_new_heads";
+    public static final String HEAD_GALLERY_WARNING_ID = "head_gallery_warning";
     public static final String HEAD_GENERATOR_ID = "head_generator";
     public static final String HEAD_GENERATOR_SAVE_ID = "head_generator_save";
     public static final String MINESKIN_ID = "mineskin";

@@ -216,10 +216,10 @@ public class SelectItemScreen extends BaseFzmmScreen {
 
         this.itemLayout.clearChildren();
         List<Component> resultList = new ArrayList<>();
-        String search = this.searchField.getText().toLowerCase();
+        String search = this.searchField.getText().toLowerCase(Locale.ROOT);
 
         for (var itemComponent : this.itemComponentList) {
-            if (itemComponent.stack().getName().getString().toLowerCase().contains(search))
+            if (itemComponent.stack().getName().getString().toLowerCase(Locale.ROOT).contains(search))
                 resultList.add(itemComponent);
         }
 

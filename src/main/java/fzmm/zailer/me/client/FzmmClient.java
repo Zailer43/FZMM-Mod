@@ -10,6 +10,7 @@ import fzmm.zailer.me.client.gui.utils.auto_placer.AutoPlacerHud;
 import fzmm.zailer.me.client.logic.ItemTooltipAppend;
 import fzmm.zailer.me.client.logic.head_generator.HeadResourcesLoader;
 import fzmm.zailer.me.client.logic.history.FzmmHistory;
+import fzmm.zailer.me.client.logic.minecraft_heads.MinecraftHeadsResources;
 import fzmm.zailer.me.client.logic.mineskin.MineskinApi;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
@@ -45,6 +46,8 @@ public class FzmmClient implements ClientModInitializer {
     public static final Identifier CUSTOM_HEAD_ENTITY = Identifier.of(FzmmClient.MOD_ID, "custom_head");
     public static final EntityModelLayer MODEL_CUSTOM_HEAD_LAYER = new EntityModelLayer(CUSTOM_HEAD_ENTITY, "main");
     public static MineskinApi MINESKIN_API;
+    public static MinecraftHeadsResources MCH_RESOURCES;
+
 
     @Override
     public void onInitializeClient() {
@@ -66,6 +69,7 @@ public class FzmmClient implements ClientModInitializer {
         ItemTooltipAppend.init();
 
         MINESKIN_API = new MineskinApi();
+        MCH_RESOURCES = new MinecraftHeadsResources();
     }
 
     private static void registerKeys() {

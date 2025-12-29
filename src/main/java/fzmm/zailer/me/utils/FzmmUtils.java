@@ -17,10 +17,7 @@ import net.minecraft.text.*;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -36,7 +33,7 @@ public class FzmmUtils {
                     .toList();
 
             for (String playerName : playerNamesList) {
-                if (playerName.toLowerCase().contains(playerInput))
+                if (playerName.toLowerCase(Locale.ROOT).contains(playerInput))
                     builder.suggest(playerName);
             }
         }

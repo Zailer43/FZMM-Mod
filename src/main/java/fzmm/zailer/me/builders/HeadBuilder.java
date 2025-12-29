@@ -24,6 +24,7 @@ public class HeadBuilder {
     private String headName = null;
 //    @Nullable
 //    private String signature = null;
+    @Nullable
     private UUID uuid = null;
     private boolean addToHeadHistory = true;
 
@@ -68,17 +69,20 @@ public class HeadBuilder {
         return Optional.of(headNameCopy);
     }
 
-
-    public String toSkinValue(String url) {
+    public static String toSkinValue(String url) {
         return TextUtils.encodeBase64("{\"textures\":{\"SKIN\":{\"url\":\"" + url + "\"}}}");
     }
 
-    public String toUrl(String urlValue) {
+    public static String toUrl(String urlValue) {
         return "http://textures.minecraft.net/texture/" + urlValue;
     }
 
+    public static String urlValueToSkinValue(String urlValue) {
+        return toSkinValue(toUrl(urlValue));
+    }
+
     public HeadBuilder urlValue(String urlValue) {
-        return this.skinValue(this.toSkinValue(this.toUrl(urlValue)));
+        return this.skinValue(urlValueToSkinValue(urlValue));
     }
 
     public HeadBuilder skinValue(String skinValue) {

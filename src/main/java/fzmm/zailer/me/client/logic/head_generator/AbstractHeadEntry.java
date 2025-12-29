@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.logic.head_generator;
 import net.minecraft.text.Text;
 
 import java.awt.image.BufferedImage;
+import java.util.Locale;
 
 public abstract class AbstractHeadEntry {
 
@@ -14,7 +15,7 @@ public abstract class AbstractHeadEntry {
         String displayNameStr = this.toDisplayName(path);
         this.displayName = Text.literal(displayNameStr);
         this.path = path;
-        this.filterValue = displayNameStr.toLowerCase();
+        this.filterValue = displayNameStr.toLowerCase(Locale.ROOT);
     }
 
     private String toDisplayName(String path) {
