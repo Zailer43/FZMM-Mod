@@ -1,11 +1,11 @@
 package fzmm.zailer.me.utils.skin;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
-import net.minecraft.world.item.ItemStack;
 
 public abstract class SkinGetterDecorator {
     private final SkinGetterDecorator next;
@@ -24,9 +24,7 @@ public abstract class SkinGetterDecorator {
      * @param playerName the name of the player to get the skin of
      */
     public Optional<BufferedImage> getSkin(String playerName) {
-        if (this.next == null) {
-            return Optional.empty();
-        }
+        if (this.next == null) return Optional.empty();
 
         return this.next.getSkin(playerName);
     }
@@ -37,9 +35,7 @@ public abstract class SkinGetterDecorator {
      * @param playerName the name of the player to get the head of
      */
     public Optional<ItemStack> getHead(String playerName) {
-        if (this.next == null) {
-            return Optional.empty();
-        }
+        if (this.next == null) return Optional.empty();
 
         return this.next.getHead(playerName);
     }
@@ -47,5 +43,9 @@ public abstract class SkinGetterDecorator {
     /**
      * @param playerName the name of the player to get the profile of
      */
-    protected abstract Optional<GameProfile> getProfile(String playerName);
+    public Optional<GameProfile> getProfile(String playerName) {
+        if (this.next == null) return Optional.empty();
+
+        return this.next.getProfile(playerName);
+    }
 }
