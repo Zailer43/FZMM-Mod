@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.utils.text_filter;
 
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.TextBoxComponent;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.core.Sizing;
 
 import java.util.Optional;
@@ -20,7 +20,7 @@ public class TextFilterString<O> extends AbstractTextFilter<String, O> {
 
     @Override
     public TextBoxComponent toInputComponent() {
-        TextBoxComponent result = Components.textBox(Sizing.fixed(100));
+        TextBoxComponent result = UIComponents.textBox(Sizing.fixed(100));
         result.setMaxLength(256);
         return result;
     }

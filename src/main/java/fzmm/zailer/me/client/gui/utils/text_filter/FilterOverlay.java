@@ -9,8 +9,8 @@ import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.*;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -45,12 +45,12 @@ public class FilterOverlay extends OverlayContainer<EFlowLayout> {
         this.child.padding(Insets.of(6));
         this.child.surface(this.child.styledPanel());
 
-        this.child.child(EComponents.label(Text.translatable("fzmm.gui.search.advanced.label")));
+        this.child.child(EComponents.label(Component.translatable("fzmm.gui.search.advanced.label")));
         this.child.child(this.buildFilterWrapper());
         this.child.child(this.buildBottomButtons());
     }
 
-    protected Component buildFilterWrapper() {
+    protected UIComponent buildFilterWrapper() {
         EFlowLayout result = EContainers.verticalFlow(Sizing.expand(100), Sizing.content());
 
         this.buildFilterLayout(result);
@@ -64,18 +64,18 @@ public class FilterOverlay extends OverlayContainer<EFlowLayout> {
         parent.child(EContainers.verticalScroll(Sizing.expand(100), Sizing.expand(100), this.filtersLayout, false));
     }
 
-    protected Component buildBottomButtons() {
+    protected UIComponent buildBottomButtons() {
         // Fixed size to fix owo-lib #348 (340 - 12 = parent width - padding)
         EFlowLayout result = EContainers.horizontalFlow(Sizing.fixed(340 - 12), Sizing.fixed(16));
         result.child(
-                EComponents.button(Text.translatable("gui.done"))
+                EComponents.button(Component.translatable("gui.done"))
                         .onPress(button -> this.execute())
                         .verticalSizing(Sizing.fixed(16))
                         .positioning(Positioning.relative(0, 100))
         );
 
         result.child(
-                EComponents.button(Text.translatable("fzmm.gui.button.cancel"))
+                EComponents.button(Component.translatable("fzmm.gui.button.cancel"))
                         .onPress(button -> this.remove())
                         .verticalSizing(Sizing.fixed(16))
                         .positioning(Positioning.relative(100, 100))
@@ -84,7 +84,7 @@ public class FilterOverlay extends OverlayContainer<EFlowLayout> {
         return result;
     }
 
-    protected Component toFilterRow(AbstractTextFilter<?, ?> filter) {
+    protected UIComponent toFilterRow(AbstractTextFilter<?, ?> filter) {
         boolean isActive = this.isActive(filter);
         EFlowLayout result = EContainers.horizontalFlow(Sizing.expand(100), Sizing.content());
 
@@ -103,22 +103,22 @@ public class FilterOverlay extends OverlayContainer<EFlowLayout> {
         return true;
     }
 
-    protected Component toFilterLabel(AbstractTextFilter<?, ?> filter, boolean active) {
-        ELabelComponent result = EComponents.label(Text.empty());
-        result.tooltip(Text.translatable("fzmm.gui.search.advanced.key", filter.key()));
+    protected UIComponent toFilterLabel(AbstractTextFilter<?, ?> filter, boolean active) {
+        ELabelComponent result = EComponents.label(Component.empty());
+        result.tooltip(Component.translatable("fzmm.gui.search.advanced.key", filter.key()));
         this.filterText(filter, result, active);
 
         return result.horizontalSizing(Sizing.fixed(115));
     }
 
     protected void filterText(AbstractTextFilter<?, ?> filter, ELabelComponent label, boolean active) {
-        label.text(Text.translatable(this.translationKey + filter.key()));
+        label.text(Component.translatable(this.translationKey + filter.key()));
     }
 
-    protected Component toFilterIncludeButton(AbstractTextFilter<?, ?> filter, boolean active) {
+    protected UIComponent toFilterIncludeButton(AbstractTextFilter<?, ?> filter, boolean active) {
         EBooleanButton result = new EBooleanButton(
-                Text.translatable("fzmm.gui.search.include.enabled").formatted(Formatting.GREEN),
-                Text.translatable("fzmm.gui.search.include.disabled").formatted(Formatting.RED)
+                Component.translatable("fzmm.gui.search.include.enabled").withStyle(ChatFormatting.GREEN),
+                Component.translatable("fzmm.gui.search.include.disabled").withStyle(ChatFormatting.RED)
         );
         result.enabled(filter.isIncluded());
         result.active(active);
@@ -141,7 +141,7 @@ public class FilterOverlay extends OverlayContainer<EFlowLayout> {
         this.remove();
     }
 
-    protected <T> Component toFilterInput(AbstractTextFilter<T, ?> filter, boolean active) {
+    protected <T> UIComponent toFilterInput(AbstractTextFilter<T, ?> filter, boolean active) {
         TextBoxComponent result = filter.toInputComponent();
         result.text(filter.serializeValue());
         result.onChanged().subscribe(s -> filter.value(filter.parseValue(s).orElse(null)));
@@ -149,7 +149,7 @@ public class FilterOverlay extends OverlayContainer<EFlowLayout> {
 
         result.horizontalSizing(Sizing.expand(100));
         result.keyPress().subscribe(input -> {
-            if (input.isEnter()) {
+            if (input.isConfirmation()) {
                 this.execute();
                 return true;
             }

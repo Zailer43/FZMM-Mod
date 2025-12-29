@@ -1,5 +1,8 @@
 package fzmm.zailer.me.utils;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -52,5 +55,19 @@ public class TextUtils {
     public static String encodeBase64(String message) {
         byte[] messageByte = message.getBytes(StandardCharsets.UTF_8);
         return Base64.getEncoder().encodeToString(messageByte);
+    }
+
+    public static Component mergeText(List<Component> text) {
+        MutableComponent result = Component.empty();
+
+        int size = text.size();
+        for (int i = 0; i != size; i++) {
+            result.append(text.get(i));
+            if (i != size - 1) {
+                result.append("\n");
+            }
+        }
+
+        return result;
     }
 }

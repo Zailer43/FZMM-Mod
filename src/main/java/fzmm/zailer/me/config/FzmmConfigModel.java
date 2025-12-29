@@ -1,5 +1,6 @@
 package fzmm.zailer.me.config;
 
+import blue.endless.jankson.Comment;
 import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
 import fzmm.zailer.me.client.logic.enycrpt_book.TranslationEncryptProfile;
 import fzmm.zailer.me.client.logic.mineskin.model.MSVisibility;
@@ -28,7 +29,7 @@ public class FzmmConfigModel {
     @SectionHeader("externalAPIs")
     public MineskinNest mineskin = new MineskinNest();
     @Nest
-    public HeadGalleryNest headGallery = new HeadGalleryNest();
+    public MinecraftHeadsNest minecraftHeads = new MinecraftHeadsNest();
 
     @SectionHeader("gui")
     @Nest
@@ -41,6 +42,8 @@ public class FzmmConfigModel {
     public EncryptbookNest encryptbook = new EncryptbookNest();
     @Nest
     public HeadGeneratorNest headGenerator = new HeadGeneratorNest();
+    @Nest
+    public HeadGalleryNest headGallery = new HeadGalleryNest();
     @Nest
     public HistoryNest history = new HistoryNest();
     @Nest
@@ -134,19 +137,42 @@ public class FzmmConfigModel {
         public Color playerStatue = Color.ofRgb(0xCB347D);
         public Color usefulBlockStates = Color.ofRgb(0x66F5B7);
         public Color headGalleryName = Color.ofRgb(0x50AF70);
-        public Color headGalleryTags = Color.ofRgb(0x74D02F);
+        public Color headGalleryLore = Color.ofRgb(0x74D02F);
         @ExcludeFromScreen // owo-lib won't let me make Color lists
         public List<Color> favoriteColors = new ArrayList<>();
     }
 
-    public static class HeadGalleryNest {
+    public static class MinecraftHeadsNest {
+        @ExcludeFromScreen
+        public boolean askForApiKey = true;
+        @ExcludeFromScreen
+        @Comment("Used to notify to user about new heads")
+        public int lastHeadId = -1;
+//        @ExcludeFromScreen
+//        public List<String> savedUsersWithCollections = new ArrayList<>();
+//        @ExcludeFromScreen
+//        public List<String> savedSearchFilters = new ArrayList<>();
+
         @RestartRequired
-        public boolean cacheCategories = true;
-        public boolean setStyleToHeads = true;
-        @RangeConstraint(min = 1, max = 2500)
-        public int maxHeadsPerPage = 300;
+        public String apiKey = "";
+        public boolean fetchHeadsAutomatically = false;
+        public boolean useMchTranslations = true;
+    }
+
+    public static class HeadGalleryNest {
         @RangeConstraint(min = 1, max = 3, decimalPlaces = 1)
         public double itemScale = 1.5d;
+        @RangeConstraint(min = 1, max = 2500)
+        public int maxHeadsPerPage = 300;
+        @Nest
+        public HeadGalleryDisplay display = new HeadGalleryDisplay();
+    }
+
+    public static class HeadGalleryDisplay {
+        public boolean enabled = true;
+        public boolean tags = true;
+        public boolean publishedAt = false;
+        public boolean id = true;
     }
 
     public static class HeadGeneratorNest {

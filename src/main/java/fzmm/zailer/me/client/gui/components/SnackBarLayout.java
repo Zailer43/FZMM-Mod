@@ -3,10 +3,7 @@ package fzmm.zailer.me.client.gui.components;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.HorizontalAlignment;
-import io.wispforest.owo.ui.core.Insets;
-import io.wispforest.owo.ui.core.Positioning;
-import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.*;
 
 public class SnackBarLayout extends EFlowLayout implements ISnackBarScreen {
     public SnackBarLayout(Sizing horizontalSizing, Sizing verticalSizing) {
@@ -19,5 +16,10 @@ public class SnackBarLayout extends EFlowLayout implements ISnackBarScreen {
     @Override
     public FlowLayout getSnackBarLayout() {
         return this;
+    }
+
+    @Override
+    public ParentUIComponent root() {
+        return super.root();
     }
 }

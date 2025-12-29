@@ -14,19 +14,19 @@ import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.util.FocusHandler;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
-import java.util.function.Predicate;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.function.Predicate;
 
 public class SelectItemScreen extends BaseFzmmScreen {
     private final HashMap<RequestedItem, ItemComponent> requestedItems;
@@ -212,10 +212,10 @@ public class SelectItemScreen extends BaseFzmmScreen {
 
         this.itemLayout.clearChildren();
         List<UIComponent> resultList = new ArrayList<>();
-        String search = this.searchField.getValue().toLowerCase();
+        String search = this.searchField.getValue().toLowerCase(Locale.ROOT);
 
         for (var itemComponent : this.itemComponentList) {
-            if (itemComponent.stack().getHoverName().getString().toLowerCase().contains(search))
+            if (itemComponent.stack().getHoverName().getString().toLowerCase(Locale.ROOT).contains(search))
                 resultList.add(itemComponent);
         }
 

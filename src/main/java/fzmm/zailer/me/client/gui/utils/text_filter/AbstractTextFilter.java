@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.gui.utils.text_filter;
 
 import io.wispforest.owo.ui.component.TextBoxComponent;
-import net.minecraft.util.Pair;
 import org.jetbrains.annotations.Nullable;
+import oshi.util.tuples.Pair;
 
 import java.util.*;
 import java.util.function.BiPredicate;
@@ -27,7 +27,7 @@ public abstract class AbstractTextFilter<T, O> {
         }
 
         Pair<String, List<String>> parsedSearch = parseSearch(searchText);
-        List<String> filterSearchList = parsedSearch.getRight();
+        List<String> filterSearchList = parsedSearch.getB();
         if (filterSearchList.isEmpty()) {
             return searchText;
         }
@@ -36,7 +36,7 @@ public abstract class AbstractTextFilter<T, O> {
             updateFilter(search, filterList);
         }
 
-        return parsedSearch.getLeft();
+        return parsedSearch.getA();
     }
 
     private static <O> void updateFilter(String search, Collection<AbstractTextFilter<?, O>> filterList) {
@@ -83,7 +83,7 @@ public abstract class AbstractTextFilter<T, O> {
     }
 
     public static String removeFilters(String searchText) {
-        return parseSearch(searchText).getLeft();
+        return parseSearch(searchText).getA();
     }
 
     public String key() {

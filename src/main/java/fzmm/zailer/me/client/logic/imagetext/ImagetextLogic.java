@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.logic.imagetext;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.utils.FzmmUtils;
+import fzmm.zailer.me.utils.TextUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -79,18 +80,7 @@ public class ImagetextLogic {
     }
 
     public Component mergeText() {
-        MutableComponent result = Component.empty();
-        List<Component> imagetext = this.text();
-
-        int size = imagetext.size();
-        for (int i = 0; i != size; i++) {
-            result.append(imagetext.get(i));
-            if (i != size - 1) {
-                result.append("\n");
-            }
-        }
-
-        return result;
+        return TextUtils.mergeText(this.text());
     }
 
     public boolean isEmpty() {
