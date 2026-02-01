@@ -3,7 +3,6 @@ package fzmm.zailer.me.client.logic.api;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
-import io.wispforest.owo.Owo;
 import net.minecraft.util.Util;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -55,9 +54,9 @@ public interface IApiRemote extends IApiBase {
                     this.logWarnings(url.substring(this.baseApiUrl().length()), response);
                     this.parseSuccess(response);
 
-                    if (Owo.DEBUG) {
-                        FzmmClient.LOGGER.info("[IApiRemote] [DEBUG] Raw response: {}", response.json());
-                    }
+//                    if (Owo.DEBUG) {
+//                        FzmmClient.LOGGER.info("[IApiRemote] [DEBUG] Raw response: {}", response.json());
+//                    }
 
                     if (response.json().isEmpty() || response.statusType() == 5) {
                         response.success(false);
