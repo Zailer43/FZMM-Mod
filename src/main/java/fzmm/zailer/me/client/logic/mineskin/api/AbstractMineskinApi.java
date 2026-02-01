@@ -75,9 +75,7 @@ public abstract class AbstractMineskinApi implements IApiRemote, IApiRateLimited
 
     private Optional<SnackBarBuilder> responseWarningsAlert(ApiResponse<?> response) {
         MutableComponent warnings = Component.empty();
-        this.warningsToMessage(this.extractWarnings(response, this::parseMessage, "errors")).ifPresent(s -> {
-            warnings.append(Component.literal(s));
-        });
+        this.warningsToMessage(this.extractWarnings(response, this::parseMessage, "errors")).ifPresent(warnings::append);
         this.warningsToMessage(this.extractWarnings(response, this::parseMessage, "warnings")).ifPresent(s -> {
             if (!warnings.getString().isEmpty()) {
                 warnings.append(Component.literal("\n"));

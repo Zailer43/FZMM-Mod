@@ -94,30 +94,31 @@ public abstract class AbstractMchApi implements IApiRemote, IApiRateLimited {
 
     @Override
     public void logWarnings(String route, ApiResponse<?> response) {
-        MutableComponent warnings = Component.empty();
+        MutableComponent warningMsg = Component.empty();
+        Optional<String> apiWarnings = this.warningsToMessage(this.extractWarnings(response, this::parseMessage, "warnings"));
+        apiWarnings.ifPresent(s -> FzmmClient.LOGGER.warn("[AbstractMchApi] API Warning(s): {}", s));
+
         if (!response.isSuccess() || response.statusType() != 2) {
             response.json().ifPresent(jsonObject -> {
                 if (jsonObject.has("error")) {
-                    warnings.append(Component.literal(jsonObject.get("error").getAsString()));
+                    FzmmClient.LOGGER.warn("[AbstractMchApi] API Error: {}", jsonObject.get("error").getAsString());
+                    warningMsg.append(Component.literal(jsonObject.get("error").getAsString()));
                 }
             });
         } else {
-            this.warningsToMessage(this.extractWarnings(response, this::parseMessage, "warnings"))
-                    .ifPresent(s -> warnings.append(Component.literal(s)));
-
-            if (FzmmClient.CONFIG.minecraftHeads.apiKey().isBlank()) {
-                FzmmClient.LOGGER.warn("[MchApi] Missing API Key, skipping snack bar of warnings: {}", warnings.getString());
-                return;
-            }
+            apiWarnings.ifPresent(warningMsg::append);
         }
 
-        if (warnings.getString().isEmpty()) return;
+        if (FzmmClient.CONFIG.minecraftHeads.apiKey().isBlank()) {
+            FzmmClient.LOGGER.warn("[AbstractMchApi] Missing API Key");
+            return;
+        }
 
-        FzmmClient.LOGGER.warn("[MchApi] API Warning(s): {}", warnings.getString());
+        if (warningMsg.getString().isEmpty()) return;
         Minecraft.getInstance().execute(() -> SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.HEAD_GALLERY_WARNING_ID)
                 .backgroundColor(EStyles.ALERT_WARNING_COLOR)
                 .title(Component.translatable("fzmm.gui.headGallery.snack_bar.warnings.title"))
-                .details(warnings)
+                .details(warningMsg)
                 .expandDetails()
                 .closeButton()
                 .sizing(Sizing.fixed(200), Sizing.content())
