@@ -18,13 +18,12 @@ import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.util.Observable;
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
-import oshi.util.tuples.Pair;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -282,20 +281,18 @@ public class MinecraftHeadsResources {
         return result;
     }
 
-    public Pair<Integer, List<MchHead>> searchNewHeads() {
-        List<MchHead> result = new ArrayList<>();
-        int greatestId = -1;
+    public List<MchHead> sinceId(int id) {
+        List<MchHead> result = new ObjectArrayList<>();
 
         for (var head : this.heads.get().sequencedValues()) {
             if (head.id() == null) continue;
 
-            if (head.id() > greatestId) {
+            if (head.id() > id) {
                 result.add(head);
-                greatestId = head.id();
             }
         }
 
-        return new Pair<>(greatestId, result);
+        return result;
     }
 
     /**

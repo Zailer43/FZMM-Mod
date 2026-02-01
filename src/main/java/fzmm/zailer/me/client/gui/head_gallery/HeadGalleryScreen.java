@@ -13,7 +13,6 @@ import fzmm.zailer.me.client.gui.head_gallery.controller.GalleryContentControlle
 import fzmm.zailer.me.client.gui.head_gallery.controller.GalleryFilterController;
 import fzmm.zailer.me.client.gui.head_gallery.controller.GalleryTagController;
 import fzmm.zailer.me.client.logic.history.IMemento;
-import fzmm.zailer.me.client.logic.minecraft_heads.MinecraftHeadsResources;
 import fzmm.zailer.me.client.logic.minecraft_heads.api.AbstractMchApi;
 import fzmm.zailer.me.client.logic.minecraft_heads.model.MchHead;
 import fzmm.zailer.me.client.logic.minecraft_heads.model.MchTier;
@@ -41,7 +40,6 @@ import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
-import oshi.util.tuples.Pair;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -220,7 +218,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         MCH_RESOURCES.fetchEssential().whenComplete((ignored, throwable) -> this.minecraft.execute(() -> {
             this.updateContentWithFilters();
             this.updateEssential();
-            this.notifyNewHeads();
+            this.processNewHeads();
         }));
     }
 
@@ -236,37 +234,38 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         this.filter.init();
     }
 
-    private void notifyNewHeads() {
+    private void processNewHeads() {
         if (MCH_RESOURCES.heads().isEmpty()) return;
-
-        Pair<Integer, List<MchHead>> newHeads = MCH_RESOURCES.searchNewHeads();
-        int lastIdSaved = FzmmClient.CONFIG.minecraftHeads.lastHeadId();
-        int size = newHeads.getB().size();
-        if (size == 0 && !MinecraftHeadsResources.isDebug()) return;
-
-        if (lastIdSaved != newHeads.getA()) {
-            FzmmClient.CONFIG.minecraftHeads.lastHeadId(newHeads.getA());
-            FzmmClient.CONFIG.save();
-
-            // -1 is default value, so is equivalent to never checked before
-            if (lastIdSaved == -1 && !MinecraftHeadsResources.isDebug()) return;
+        if (!MCH_RESOURCES.licenseDetected().hasPermission(MchTier.HEADS_BASIC_DATA)) {
+            FzmmClient.LOGGER.warn("[HeadGalleryScreen] Not enough permissions to check for new heads");
+            return;
         }
+        int lastIdSaved = FzmmClient.CONFIG.minecraftHeads.lastHeadId();
+        List<MchHead> newHeadsList = MCH_RESOURCES.sinceId(lastIdSaved);
+        int lastId = newHeadsList.stream().mapToInt(MchHead::id).max().orElse(lastIdSaved);
+        if (newHeadsList.isEmpty() || lastId == lastIdSaved) return;
 
+        FzmmClient.CONFIG.minecraftHeads.lastHeadId(lastId);
+        FzmmClient.CONFIG.save();
+
+        // -1 is default value, so is equivalent to never checked before
+        if (lastIdSaved == -1) return;
+        this.notifyNewHeads(newHeadsList.size(), lastIdSaved);
+    }
+
+    private void notifyNewHeads(int amount, int lastIdSaved) {
         String baseKey = "fzmm.gui.headGallery.snack_bar.newHeads.";
-
         SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.HEAD_GALLERY_NEW_HEADS_ID)
                 .title(Component.translatable(baseKey + "title"))
-                .details(Component.translatable(baseKey + "message", Component.literal(String.valueOf(size)).withStyle(ChatFormatting.BOLD)))
+                .details(Component.translatable(baseKey + "message", Component.literal(String.valueOf(amount)).withStyle(ChatFormatting.BOLD)))
                 .button(snackBar -> {
                     EButtonComponent button = EComponents.button(Component.translatable(baseKey + "button"));
 
-                    button.onPress(buttonComponent -> {
+                    return button.onPress(buttonComponent -> {
                         GalleryFilterController.ID_GREATER_FILTER.value(lastIdSaved).serialize()
                                 .ifPresent(s -> this.filter.searchTextBox().text(s));
                         snackBar.close();
                     });
-
-                    return button;
                 }).backgroundColor(EStyles.ALERT_TIP_COLOR)
                 .expandDetails()
                 .closeButton()
