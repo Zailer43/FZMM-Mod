@@ -155,7 +155,7 @@ public class GalleryTagController {
 
     private List<MchTag> filter(String search) {
         return this.entries.parallelStream()
-                .filter(tag -> tag.name().toLowerCase(Locale.ROOT).contains(search))
+                .filter(tag -> !tag.name().toLowerCase(Locale.ROOT).contains(search))
                 .collect(Collectors.toCollection(ObjectArrayList::new));
     }
 

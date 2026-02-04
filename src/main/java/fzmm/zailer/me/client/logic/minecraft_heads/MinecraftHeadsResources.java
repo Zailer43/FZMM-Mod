@@ -49,10 +49,14 @@ public class MinecraftHeadsResources {
     public void license(JsonObject jsonResponse) {
         if (!jsonResponse.has("meta") || !jsonResponse.get("meta").isJsonObject()) return;
 
-        MchTier license = MchTier.parse(jsonResponse.get("meta").getAsJsonObject().get("license").getAsString());
+        JsonObject meta = jsonResponse.get("meta").getAsJsonObject();
+        MchTier license = MchTier.parse(meta.get("license").getAsString());
         if (this.license != license) {
             this.license = license;
-            FzmmClient.LOGGER.info("[MinecraftHeadsResources] Detected license '{}'", license.message().getString());
+            String apiVersion = meta.has("api_version") ? meta.get("api_version").getAsString() : "unknown";
+            FzmmClient.LOGGER.info("[MinecraftHeadsResources] API Version '{}' and detected license '{}'",
+                    apiVersion, license.message().getString()
+            );
         }
     }
 
