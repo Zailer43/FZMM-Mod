@@ -289,7 +289,6 @@
                     </margins>
                 </fzmm.flow-layout>
 
-
                 <!-- Footer (license at left) -->
                 <fzmm.label id="license-label">
                     <text translate="true">fzmm.gui.headGallery.label.license</text>
@@ -420,6 +419,11 @@
                         </children>
 
                         <gap>4</gap>
+
+                        <sizing>
+                            <horizontal method="expand">100</horizontal>
+                            <vertical method="expand">100</vertical>
+                        </sizing>
                     </fzmm.flow-layout>
                 </children>
 
