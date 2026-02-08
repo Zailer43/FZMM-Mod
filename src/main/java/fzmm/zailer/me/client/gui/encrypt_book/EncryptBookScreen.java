@@ -21,18 +21,17 @@ import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.component.TextAreaComponent;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Surface;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.util.FocusHandler;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.screen.ConfirmLinkScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.input.MouseInput;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.component.type.WrittenBookContentComponent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.component.WrittenBookContent;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -60,8 +59,7 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     protected void setup(EFlowLayout rootComponent) {
-        assert this.client != null;
-        assert this.client.player != null;
+        assert this.minecraft.player != null;
 
         FzmmConfig.Encryptbook config = FzmmClient.CONFIG.encryptbook;
         // message
@@ -69,8 +67,8 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
         this.messageTextArea.text(config.defaultBookMessage());
 
         // book options
-        this.authorField = TextBoxRow.setup(rootComponent, "author", this.client.player.getName().getString(), 512);
-        this.titleField = TextBoxRow.setup(rootComponent, "title", config.defaultBookTitle(), WrittenBookContentComponent.MAX_TITLE_LENGTH);
+        this.authorField = TextBoxRow.setup(rootComponent, "author", this.minecraft.player.getName().getString(), 512);
+        this.titleField = TextBoxRow.setup(rootComponent, "title", config.defaultBookTitle(), WrittenBookContent.TITLE_MAX_LENGTH);
 
         // encryptbook options
         String configPadding = config.padding();
@@ -104,20 +102,20 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     protected void initFocus(FocusHandler focusHandler) {
-        focusHandler.focus(this.messageTextArea, Component.FocusSource.MOUSE_CLICK);
+        focusHandler.focus(this.messageTextArea, UIComponent.FocusSource.MOUSE_CLICK);
     }
 
     private void updateDecryptorProfileList() {
         List<TranslationEncryptProfile> decryptorProfiles = getProfiles();
 
-        List<Component> componentList = new ArrayList<>();
+        List<UIComponent> componentList = new ArrayList<>();
         for (int i = 0; i < decryptorProfiles.size(); i++) {
             TranslationEncryptProfile profile = decryptorProfiles.get(i);
             int finalI = i;
             EFlowLayout component = this.getModel().expandTemplate(EFlowLayout.class, "profile-option", Map.of()).configure(layout -> {
                 ELabelComponent label = layout.childByIdOrThrow(ELabelComponent.class, "label");
 
-                label.text(Text.translatable("fzmm.gui.encryptbook.label.profile",
+                label.text(net.minecraft.network.chat.Component.translatable("fzmm.gui.encryptbook.label.profile",
                         profile.translationKey(),
                         profile.length(),
                         profile.isAsymmetric(),
@@ -130,7 +128,7 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
 
                 //noinspection CodeBlock2Expr
                 removeButton.onPress(button -> {
-                    this.addOverlay(new ConfirmOverlay(Text.translatable("fzmm.gui.encryptbook.label.removeDecryptor"), aBoolean -> {
+                    this.addOverlay(new ConfirmOverlay(net.minecraft.network.chat.Component.translatable("fzmm.gui.encryptbook.label.removeDecryptor"), aBoolean -> {
                         if (aBoolean) {
                             FzmmClient.CONFIG.encryptbook.profiles().remove(profile.toModel());
                             FzmmClient.CONFIG.save();
@@ -154,21 +152,19 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
         this.selectedProfileIndex = index;
 
         for (var child : this.decryptorProfileLayout.children()) {
-            if (!(child instanceof FlowLayout childLayout)) {
-                continue;
-            }
+            if (!(child instanceof FlowLayout childLayout)) continue;
 
             Surface surface = Surface.flat(childLayout == profileLayout ? EStyles.SELECTED_COLOR : EStyles.UNSELECTED_COLOR);
             childLayout.surface(surface);
         }
 
         this.updateDecryptorStatus(profile);
-        this.messageTextArea.setMaxLength(profile.length());
+        this.messageTextArea.setCharacterLimit(profile.length());
 
         return true;
     }
 
-    public void addProfileOverlay(ButtonWidget buttonWidget) {
+    public void addProfileOverlay(Button buttonWidget) {
         this.addOverlay(new AddEncryptProfileOverlay(profile -> {
             FzmmClient.CONFIG.encryptbook.profiles().add(profile.toModel());
             FzmmClient.CONFIG.save();
@@ -184,28 +180,26 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
     }
 
     public void selectProfile(int index) {
-        List<Component> profileLayout = this.decryptorProfileLayout.children();
-        if (profileLayout.isEmpty()) {
-            return;
-        }
+        List<UIComponent> profileLayout = this.decryptorProfileLayout.children();
+        if (profileLayout.isEmpty()) return;
         int selectedProfileIndex = index < profileLayout.size() ? index : 0;
-        profileLayout.get(selectedProfileIndex).onMouseDown(new Click(0, 0, new MouseInput(0, 0)), false);
+        profileLayout.get(selectedProfileIndex).onMouseDown(new MouseButtonEvent(0, 0, new MouseButtonInfo(0, 0)), false);
     }
 
     public void updateDecryptorStatus(@Nullable TranslationEncryptProfile profile) {
-        Text result;
+        net.minecraft.network.chat.Component result;
         boolean isValid = false;
 
         String translationValue = "fzmm.gui.encryptbook.label.profile.";
 
-        if (profile != null && I18n.hasTranslation(profile.translationKey())) {
-            String decryptString = Text.translatable(profile.translationKey()).getString();
+        if (profile != null && I18n.exists(profile.translationKey())) {
+            String decryptString = net.minecraft.network.chat.Component.translatable(profile.translationKey()).getString();
 
             isValid = decryptString.equals(profile.decryptorValue());
             String status = isValid ? "loaded" : "outdated";
-            result = Text.translatable(translationValue + status);
+            result = net.minecraft.network.chat.Component.translatable(translationValue + status);
         } else {
-            result = Text.translatable(translationValue + "notFound");
+            result = net.minecraft.network.chat.Component.translatable(translationValue + "notFound");
         }
 
         result = result.copy().setStyle(Style.EMPTY
@@ -215,31 +209,28 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void giveBook(boolean isAddPage) {
-        if (this.selectedProfile == null) {
-            return;
-        }
+        if (this.selectedProfile == null) return;
         FzmmConfig.Encryptbook config = FzmmClient.CONFIG.encryptbook;
 
-        String message = this.messageTextArea.getText();
+        String message = this.messageTextArea.getValue();
         if (message.isEmpty()) {
             message = config.defaultBookMessage();
         }
 
-        String paddingChars = this.paddingCharactersField.getText();
+        String paddingChars = this.paddingCharactersField.getValue();
         if (paddingChars.isEmpty()) {
             paddingChars = " ";
         }
 
-        String author = this.authorField.getText();
-        String title = this.titleField.getText();
+        String author = this.authorField.getValue();
+        String title = this.titleField.getValue();
 
         EncryptbookLogic.give(message, author, paddingChars, title, this.selectedProfile, isAddPage);
     }
 
-    private void faqExecute(ButtonWidget buttonWidget) {
-        assert this.client != null;
-
-        ConfirmLinkScreen.open(client.currentScreen, FzmmWikiConstants.ENCRYPT_BOOK_WIKI_LINK, true);
+    private void faqExecute(Button buttonWidget) {
+        assert this.minecraft.screen != null;
+        ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, FzmmWikiConstants.ENCRYPT_BOOK_WIKI_LINK, true);
     }
 
     public static List<TranslationEncryptProfile> getProfiles() {
@@ -248,10 +239,10 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     public void backup(ObjectOutputStream output) throws IOException {
-        output.writeObject(this.messageTextArea.getText());
-        output.writeObject(this.authorField.getText());
-        output.writeObject(this.titleField.getText());
-        output.writeObject(this.paddingCharactersField.getText());
+        output.writeObject(this.messageTextArea.getValue());
+        output.writeObject(this.authorField.getValue());
+        output.writeObject(this.titleField.getValue());
+        output.writeObject(this.paddingCharactersField.getValue());
         output.writeInt(this.selectedProfileIndex);
     }
 

@@ -10,15 +10,14 @@ import fzmm.zailer.me.client.logic.head_generator.model.HeadModelEntry;
 import fzmm.zailer.me.utils.ImageUtils;
 import fzmm.zailer.me.utils.SkinPart;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.Util;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-
 import java.util.function.Predicate;
 
 public class HeadGeneratorTest {
@@ -41,7 +40,7 @@ public class HeadGeneratorTest {
 
     public static void time(int loops) {
         new ImageFileDialogSource().execute(skin -> {
-            var start = Util.getMeasuringTimeMs();
+            var start = Util.getMillis();
 
             var sum = 0L;
             var modelList = HeadResourcesLoader.getLoaded();
@@ -49,17 +48,17 @@ public class HeadGeneratorTest {
             boolean hasUnusedPixels = ImageUtils.hasUnusedPixel(skin);
 
             for (int i = 0; i != loops; i++) {
-                var loopStart = Util.getMeasuringTimeMs();
+                var loopStart = Util.getMillis();
                 for (var model : modelList) {
                     long modelTime = System.nanoTime();
                     var result = getHead(model, skin, hasUnusedPixels);
                     result.flush();
                     hashMap.addTo(model.getKey(), System.nanoTime() - modelTime);
                 }
-                sum += Util.getMeasuringTimeMs() - loopStart;
+                sum += Util.getMillis() - loopStart;
             }
 
-            long totalTime = Util.getMeasuringTimeMs() - start;
+            long totalTime = Util.getMillis() - start;
             String message = "Time: " + "total " + totalTime + "ms / avg " + (sum / (float) loops) + "ms";
 
             var topEntries = hashMap.object2LongEntrySet()
@@ -74,10 +73,10 @@ public class HeadGeneratorTest {
                     .toList();
 
             String tooltip = String.join("\n", topEntries);
-            MinecraftClient.getInstance().inGameHud.getChatHud()
-                    .addMessage(Text.literal(message)
+            Minecraft.getInstance().gui.getChat()
+                    .addMessage(Component.literal(message)
                             .setStyle(Style.EMPTY.withHoverEvent(
-                                            new HoverEvent.ShowText(Text.literal(tooltip))
+                                            new HoverEvent.ShowText(Component.literal(tooltip))
                                     )
                             )
                     );
@@ -122,8 +121,8 @@ public class HeadGeneratorTest {
                 totalCount -= missingBodyCount;
             }
 
-            MinecraftClient.getInstance().inGameHud.getChatHud()
-                    .addMessage(Text.literal("Correct: " + correctCount + "/" + totalCount
+            Minecraft.getInstance().gui.getChat()
+                    .addMessage(Component.literal("Correct: " + correctCount + "/" + totalCount
                             + " - Missing body: " + missingBodyCount + "/" + count
                     ));
         });

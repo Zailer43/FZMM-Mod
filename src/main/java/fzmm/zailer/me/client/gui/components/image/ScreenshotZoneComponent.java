@@ -1,13 +1,13 @@
 package fzmm.zailer.me.client.gui.components.image;
 
-import io.wispforest.owo.ui.base.BaseComponent;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
+import io.wispforest.owo.ui.base.BaseUIComponent;
+import io.wispforest.owo.ui.core.OwoUIGraphics;
 
-public class ScreenshotZoneComponent extends BaseComponent {
+public class ScreenshotZoneComponent extends BaseUIComponent {
     public static final int PADDING = 25;
 
     @Override
-    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
+    public void draw(OwoUIGraphics graphics, int mouseX, int mouseY, float partialTicks, float delta) {
         int smallerSide = Math.min(this.width, this.height);
         int halfLongerSide = smallerSide / 2;
         // The coordinates of the top left corner of the image
@@ -19,12 +19,12 @@ public class ScreenshotZoneComponent extends BaseComponent {
         int topOfBottomLine = y + smallerSide - PADDING;
 
         //right
-        context.fill(0, bottomOfTopLine, x + PADDING, topOfBottomLine, color);
+        graphics.fill(0, bottomOfTopLine, x + PADDING, topOfBottomLine, color);
         //left
-        context.fill( x + smallerSide - PADDING, bottomOfTopLine, this.width, topOfBottomLine, color);
+        graphics.fill( x + smallerSide - PADDING, bottomOfTopLine, this.width, topOfBottomLine, color);
         //top
-        context.fill( 0, 0, this.width, bottomOfTopLine, color);
+        graphics.fill( 0, 0, this.width, bottomOfTopLine, color);
         //bottom
-        context.fill(0, topOfBottomLine, this.width, this.height, color);
+        graphics.fill(0, topOfBottomLine, this.width, this.height, color);
     }
 }

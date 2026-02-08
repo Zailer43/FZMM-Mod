@@ -5,17 +5,16 @@ import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 public class SnackBarBuilder {
     private final ISnackBarComponent snackBar;
@@ -39,14 +38,14 @@ public class SnackBarBuilder {
     }
 
     public static SnackBarBuilder builder(ISnackBarComponent snackBar, String id) {
-        return builder(snackBar, EComponents.label(Text.empty()), null, id);
+        return builder(snackBar, EComponents.label(Component.empty()), null, id);
     }
 
     public static SnackBarBuilder builder(ISnackBarComponent snackBar, LabelComponent title, LabelComponent details, String id) {
         return new SnackBarBuilder(snackBar, title, details).id(id);
     }
 
-    public SnackBarBuilder title(Text text) {
+    public SnackBarBuilder title(Component text) {
         this.title.text(text);
         return this;
     }
@@ -56,9 +55,9 @@ public class SnackBarBuilder {
         return this;
     }
 
-    public SnackBarBuilder details(Text details) {
+    public SnackBarBuilder details(Component details) {
         if (this.details == null) {
-            this.details = EComponents.label(Text.empty());
+            this.details = EComponents.label(Component.empty());
         }
 
         this.details.text(details);
@@ -178,7 +177,7 @@ public class SnackBarBuilder {
         // first row content
         firstRow.child(this.title.margins(Insets.vertical(2)));
         if (this.closeButton) {
-            ButtonComponent button = Components.button(Text.translatable("fzmm.snack_bar.close"), buttonComponent -> result.close());
+            ButtonComponent button = UIComponents.button(Component.translatable("fzmm.snack_bar.close"), buttonComponent -> result.close());
             button.sizing(Sizing.fixed(14));
             button.positioning(Positioning.relative(100, 0));
             button.renderer(ButtonComponent.Renderer.flat(0x00000000, EStyles.UNSELECTED_COLOR, 0x00000000));
@@ -189,7 +188,7 @@ public class SnackBarBuilder {
         }
 
         if (this.horizontalSizing.isContent()) {
-            int width = MinecraftClient.getInstance().textRenderer.getWidth(this.title.text());
+            int width = Minecraft.getInstance().font.width(this.title.text());
             int firstRowChildrenSize = firstRow.children().size() - 1;
             width += 14 * firstRowChildrenSize;
             width += firstRow.gap() * firstRowChildrenSize;
@@ -220,8 +219,8 @@ public class SnackBarBuilder {
     private EBooleanButton getDetailsButton(FlowLayout detailsLayout) {
         //TODO: animate collapsing button
         EBooleanButton button = new EBooleanButton(
-                Text.translatable("fzmm.snack_bar.expand.expanded"),
-                Text.translatable("fzmm.snack_bar.expand.collapsed")
+                Component.translatable("fzmm.snack_bar.expand.expanded"),
+                Component.translatable("fzmm.snack_bar.expand.collapsed")
         );
         button.renderer(ButtonComponent.Renderer.flat(0x00000000, EStyles.UNSELECTED_COLOR, 0x00000000));
         button.sizing(Sizing.fixed(14));

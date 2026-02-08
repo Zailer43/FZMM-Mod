@@ -4,43 +4,43 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.argument.NbtPathArgumentType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.commands.arguments.NbtPathArgument;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.StringNbtReader;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagParser;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-public class ComponentArgumentType implements ArgumentType<NbtCompound> {
-    private static final int MAX_DEPTH = NbtCompound.MAX_DEPTH - 2;
+public class ComponentArgumentType implements ArgumentType<CompoundTag> {
+    private static final int MAX_DEPTH = CompoundTag.MAX_DEPTH - 2;
     private static final Collection<String> EXAMPLES = Arrays.asList("{}", "{foo:'bar'}", "[foo='bar']");
 
     public static ComponentArgumentType component() {
         return new ComponentArgumentType();
     }
 
-    public static <S> NbtCompound getNbtCompound(CommandContext<S> context, String name) {
-        return context.getArgument(name, NbtCompound.class);
+    public static <S> CompoundTag getNbtCompound(CommandContext<S> context, String name) {
+        return context.getArgument(name, CompoundTag.class);
     }
 
     @Override
-    public NbtCompound parse(StringReader stringReader) throws CommandSyntaxException {
+    public CompoundTag parse(StringReader stringReader) throws CommandSyntaxException {
         if (!maxDepthCheck(stringReader)) {
-            throw NbtPathArgumentType.TOO_DEEP_EXCEPTION.createWithContext(stringReader);
+            throw NbtPathArgument.ERROR_DATA_TOO_DEEP.createWithContext(stringReader);
         }
 
-        StringNbtReader<NbtElement> nbtReader = StringNbtReader.fromOps(NbtOps.INSTANCE);
+        TagParser<Tag> nbtReader = TagParser.create(NbtOps.INSTANCE);
         if (stringReader.peek() == '[') {
             return this.parseComponent(stringReader, nbtReader);
         } else {
-            return StringNbtReader.readCompoundAsArgument(stringReader);
+            return TagParser.parseCompoundAsArgument(stringReader);
         }
     }
 
-    private NbtCompound parseComponent(StringReader stringReader, StringNbtReader<NbtElement> nbtReader) throws CommandSyntaxException {
-        NbtCompound compound = new NbtCompound();
+    private CompoundTag parseComponent(StringReader stringReader, TagParser<Tag> nbtReader) throws CommandSyntaxException {
+        CompoundTag compound = new CompoundTag();
         StringBuilder keyBuilder = new StringBuilder();
 
         stringReader.expect('[');
@@ -57,7 +57,7 @@ public class ComponentArgumentType implements ArgumentType<NbtCompound> {
                 String key = keyBuilder.toString();
                 keyBuilder = new StringBuilder();
 
-                compound.put(key, nbtReader.readAsArgument(stringReader));
+                compound.put(key, nbtReader.parseAsArgument(stringReader));
             } else if (c == ']') {
                 stringReader.setCursor(oldCursor);
                 stringReader.skip();

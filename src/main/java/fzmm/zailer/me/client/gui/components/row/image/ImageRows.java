@@ -12,10 +12,9 @@ import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.row.AbstractRow;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
+import io.wispforest.owo.ui.core.OwoUIGraphics;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.text.Text;
+import io.wispforest.owo.ui.core.UIComponent;
 import org.w3c.dom.Element;
 
 import java.util.HashMap;
@@ -39,8 +38,8 @@ public class ImageRows extends EFlowLayout {
                 new AbstractRow(baseTranslationKey, imageModeId, imageTooltipId, false, translate) {
 
                     @Override
-                    public Component[] getComponents(String id, String tooltipId) {
-                        return new Component[]{EContainers.horizontalFlow(Sizing.content(), Sizing.content()).id(imageModeId + "-layout")};
+                    public UIComponent[] getComponents(String id, String tooltipId) {
+                        return new UIComponent[]{EContainers.horizontalFlow(Sizing.content(), Sizing.content()).id(imageModeId + "-layout")};
                     }
                 }.hoveredSurface(null)
         ));
@@ -50,7 +49,7 @@ public class ImageRows extends EFlowLayout {
     }
 
     @Override
-    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
+    public void draw(OwoUIGraphics context, int mouseX, int mouseY, float partialTicks, float delta) {
         if (this.hovered)
             context.fill(this.x, this.y, this.x + this.width, this.y + this.height, 0x40000000);
 
@@ -69,7 +68,7 @@ public class ImageRows extends EFlowLayout {
         HashMap<ImageMode, EButtonComponent> imageModeButtons = new HashMap<>();
         
         for (var modeOption : ImageMode.values()) {
-            EButtonComponent modeButton = EComponents.button(Text.translatable(modeOption.getTranslationKey()));
+            EButtonComponent modeButton = EComponents.button(net.minecraft.network.chat.Component.translatable(modeOption.getTranslationKey()));
             modeButton.onPress(button -> {
                 selectedMode.set(modeOption);
 
@@ -86,7 +85,7 @@ public class ImageRows extends EFlowLayout {
                 ImageButtonRow.setupSuggestionTextBox(suggestionTextBox, imageGetter);
             });
             FlowLayout modeButtonLayout = EContainers.verticalFlow(Sizing.content(), Sizing.content());
-            modeButtonLayout.tooltip(Text.translatable(modeOption.getTranslationKey() + ".tooltip"));
+            modeButtonLayout.tooltip(net.minecraft.network.chat.Component.translatable(modeOption.getTranslationKey() + ".tooltip"));
             modeButton.horizontalSizing(Sizing.fixed(20));
             modeButtonLayout.child(modeButton);
             imageModeButtons.put(modeOption, modeButton);

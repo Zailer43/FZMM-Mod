@@ -8,7 +8,7 @@ import fzmm.zailer.me.client.gui.converters.tabs.ConverterArrayToUuidTab;
 import fzmm.zailer.me.client.gui.converters.tabs.ConverterBase64Tab;
 import fzmm.zailer.me.client.gui.converters.tabs.ConverterUuidToArrayTab;
 import fzmm.zailer.me.client.logic.history.IMemento;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;

@@ -3,10 +3,10 @@ package fzmm.zailer.me.client.logic.imagetext;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import fzmm.zailer.me.utils.FzmmUtils;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 
 public class ImagetextLine {
     public static final String DEFAULT_TEXT = "█";
@@ -16,7 +16,7 @@ public class ImagetextLine {
     private final double similarityThreshold;
     private String[] characters;
     private ImagetextLineElement element;
-    private MutableText line;
+    private MutableComponent line;
     private int elementIndex;
     private long textLength;
 
@@ -28,7 +28,7 @@ public class ImagetextLine {
 
     public void reset() {
         this.element = null;
-        this.line = Text.empty().setStyle(Style.EMPTY.withItalic(false));
+        this.line = Component.empty().setStyle(Style.EMPTY.withItalic(false));
         this.elementIndex = 0;
         this.textLength = 0L;
     }
@@ -55,7 +55,7 @@ public class ImagetextLine {
     private void nextComponent(int color) {
         if (this.element == null) return;
 
-        Text elementText = this.element.toText(this.characters, this.elementIndex);
+        Component elementText = this.element.toText(this.characters, this.elementIndex);
         this.incrementTextLength(elementText.getString());
         this.line.append(elementText);
         this.elementIndex += this.element.getRepetitions();
@@ -63,7 +63,7 @@ public class ImagetextLine {
         this.element.reset(color, this.isDefaultText);
     }
 
-    public Text build() {
+    public Component build() {
         this.nextComponent(-1);
         return this.line;
     }
@@ -84,8 +84,8 @@ public class ImagetextLine {
         return this.textLength + LINE_WRAPPER_LENGTH + 1; // 1 for line wrapper comma
     }
 
-    private static long textLength(Text text) {
-        return TextCodecs.CODEC.encodeStart(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), text)
+    private static long textLength(Component text) {
+        return ComponentSerialization.CODEC.encodeStart(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), text)
                 .result()
                 .map(JsonElement::toString)
                 .orElse(DEFAULT_TEXT)
@@ -93,8 +93,8 @@ public class ImagetextLine {
     }
 
     static {
-        Text defaultText = Text.literal(DEFAULT_TEXT).setStyle(Style.EMPTY.withColor(0x123456));
+        Component defaultText = Component.literal(DEFAULT_TEXT).setStyle(Style.EMPTY.withColor(0x123456));
         ELEMENT_LENGTH = textLength(defaultText) - 1L; // -1 for DEFAULT_TEXT
-        LINE_WRAPPER_LENGTH = textLength(Text.empty().setStyle(Style.EMPTY.withItalic(false)).append(defaultText)) - ELEMENT_LENGTH;
+        LINE_WRAPPER_LENGTH = textLength(Component.empty().setStyle(Style.EMPTY.withItalic(false)).append(defaultText)) - ELEMENT_LENGTH;
     }
 }

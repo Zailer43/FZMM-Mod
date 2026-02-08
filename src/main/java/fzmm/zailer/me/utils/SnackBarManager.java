@@ -8,14 +8,13 @@ import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.hud.Hud;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class SnackBarManager {
-    private static final Identifier SNACK_BAR_HUD = Identifier.of(FzmmClient.MOD_ID, "snack_bar");
+    private static final Identifier SNACK_BAR_HUD = Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "snack_bar");
     private static final int SNACK_BAR_LIMIT = 5;
 
     public static final String CLIPBOARD_ID = "clipboard";
@@ -103,7 +102,7 @@ public class SnackBarManager {
     }
 
     private ISnackBarScreen getSnackScreen() {
-        return MinecraftClient.getInstance().currentScreen instanceof ISnackBarScreen screen ? screen : this.hudLayout;
+        return Minecraft.getInstance().screen instanceof ISnackBarScreen screen ? screen : this.hudLayout;
     }
 
     public void moveToHud(ISnackBarScreen from) {
@@ -131,11 +130,11 @@ public class SnackBarManager {
     }
 
     public static void copyToClipboard(String text) {
-        MinecraftClient.getInstance().keyboard.setClipboard(text);
+        Minecraft.getInstance().keyboardHandler.setClipboard(text);
 
         getInstance().add(BaseSnackBarComponent.builder(CLIPBOARD_ID)
                 .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
-                .title(Text.translatable("fzmm.snack_bar.clipboard.title"))
+                .title(Component.translatable("fzmm.snack_bar.clipboard.title"))
                 .lowTimer()
                 .startTimer()
                 .build()

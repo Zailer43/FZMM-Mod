@@ -7,15 +7,15 @@ import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ItemEnchantmentsComponent;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Hand;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.arguments.ResourceArgument;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 public class EnchantCommand implements ISubCommand {
     @Override
@@ -29,10 +29,10 @@ public class EnchantCommand implements ISubCommand {
     }
 
     @Override
-    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandRegistryAccess registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        return builder.then(ClientCommandManager.argument("enchantment", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryKeys.ENCHANTMENT)).executes(ctx -> {
+    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
+        return builder.then(ClientCommandManager.argument("enchantment", ResourceArgument.resource(registryAccess, Registries.ENCHANTMENT)).executes(ctx -> {
             @SuppressWarnings("unchecked")
-            RegistryEntry.Reference<Enchantment> enchant = ctx.getArgument("enchantment", RegistryEntry.Reference.class);
+            Holder.Reference<Enchantment> enchant = ctx.getArgument("enchantment", Holder.Reference.class);
 
             this.setEnchant(enchant, (short) 1);
             return 1;
@@ -40,7 +40,7 @@ public class EnchantCommand implements ISubCommand {
         }).then(ClientCommandManager.argument("level", IntegerArgumentType.integer(0, 255)).executes(ctx -> {
 
             @SuppressWarnings("unchecked")
-            RegistryEntry.Reference<Enchantment> enchant = ctx.getArgument("enchantment", RegistryEntry.Reference.class);
+            Holder.Reference<Enchantment> enchant = ctx.getArgument("enchantment", Holder.Reference.class);
             int level = ctx.getArgument("level", int.class);
 
             this.setEnchant(enchant, (short) level);
@@ -48,14 +48,14 @@ public class EnchantCommand implements ISubCommand {
         }))).build();
     }
 
-    private void setEnchant(RegistryEntry.Reference<Enchantment> enchant, short level) {
+    private void setEnchant(Holder.Reference<Enchantment> enchant, short level) {
         //{Enchantments:[{message:"minecraft:aqua_affinity",lvl:1s}]}
-        ItemStack stack = ItemUtils.from(Hand.MAIN_HAND);
+        ItemStack stack = ItemUtils.from(InteractionHand.MAIN_HAND);
 
-        stack.apply(DataComponentTypes.ENCHANTMENTS, ItemEnchantmentsComponent.DEFAULT, component -> {
-            ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(component);
+        stack.update(DataComponents.ENCHANTMENTS, ItemEnchantments.EMPTY, component -> {
+            ItemEnchantments.Mutable builder = new ItemEnchantments.Mutable(component);
             builder.set(enchant, level);
-            return builder.build();
+            return builder.toImmutable();
         });
 
         ItemUtils.give(stack);

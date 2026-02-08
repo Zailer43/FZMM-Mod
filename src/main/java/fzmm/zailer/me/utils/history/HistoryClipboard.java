@@ -2,8 +2,8 @@ package fzmm.zailer.me.utils.history;
 
 import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import io.wispforest.owo.util.Observable;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayDeque;
@@ -32,28 +32,28 @@ public class HistoryClipboard {
     private void setupButton(EButtonComponent undoButton, EButtonComponent redoButton) {
         undoButton.onPress(buttonComponent -> this.undo());
         undoButton.tooltip(List.of(
-                Text.translatable("fzmm.gui.button.clipboard.undo"),
-                Text.empty(),
-                Text.translatable("fzmm.gui.hotkey.single"),
-                Text.translatable("fzmm.gui.hotkey.ctrl").append(" + Z") // this doesn't need to be translatable, right?
+                Component.translatable("fzmm.gui.button.clipboard.undo"),
+                Component.empty(),
+                Component.translatable("fzmm.gui.hotkey.single"),
+                Component.translatable("fzmm.gui.hotkey.ctrl").append(" + Z") // this doesn't need to be translatable, right?
         ));
 
         redoButton.onPress(buttonComponent -> this.redo());
         redoButton.tooltip(List.of(
-                Text.translatable("fzmm.gui.button.clipboard.redo"),
-                Text.empty(),
-                Text.translatable("fzmm.gui.hotkey.plural"),
-                Text.translatable("fzmm.gui.hotkey.ctrl").append(" + Y"),
-                Text.translatable("fzmm.gui.hotkey.ctrl").append(" + ").append(Text.translatable("fzmm.gui.hotkey.shift")).append(" + Z")
+                Component.translatable("fzmm.gui.button.clipboard.redo"),
+                Component.empty(),
+                Component.translatable("fzmm.gui.hotkey.plural"),
+                Component.translatable("fzmm.gui.hotkey.ctrl").append(" + Y"),
+                Component.translatable("fzmm.gui.hotkey.ctrl").append(" + ").append(Component.translatable("fzmm.gui.hotkey.shift")).append(" + Z")
         ));
     }
 
-    public boolean keyPressed(KeyInput input) {
-        if (!input.hasCtrl()) return false;
+    public boolean keyPressed(KeyEvent input) {
+        if (!input.hasControlDown()) return false;
 
-        if (input.key() == GLFW.GLFW_KEY_Z && !input.hasShift()) return this.undo();
+        if (input.key() == GLFW.GLFW_KEY_Z && !input.hasShiftDown()) return this.undo();
 
-        if ((input.key() == GLFW.GLFW_KEY_Z && input.hasShift()) || input.key() == GLFW.GLFW_KEY_Y) return this.redo();
+        if ((input.key() == GLFW.GLFW_KEY_Z && input.hasShiftDown()) || input.key() == GLFW.GLFW_KEY_Y) return this.redo();
 
         return false;
     }

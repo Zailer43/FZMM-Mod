@@ -3,8 +3,8 @@ package fzmm.zailer.me.client.gui.components.row;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.util.NumberReflection;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -18,12 +18,12 @@ public class NumberRow extends AbstractRow {
 
     @Override
     @SuppressWarnings("UnstableApiUsage")
-    public Component[] getComponents(String id, String tooltipId) {
-        Component numberField = new ConfigTextBox()
+    public UIComponent[] getComponents(String id, String tooltipId) {
+        UIComponent numberField = new ConfigTextBox()
                 .horizontalSizing(Sizing.fixed(TEXT_FIELD_WIDTH))
                 .id(getNumberFieldId(id));
 
-        return new Component[] {
+        return new UIComponent[] {
                 numberField
         };
     }

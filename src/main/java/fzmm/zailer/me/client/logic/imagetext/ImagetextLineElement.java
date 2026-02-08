@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.logic.imagetext;
 
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 import java.awt.*;
 
@@ -52,7 +52,7 @@ public final class ImagetextLineElement {
         return this.repetitions;
     }
 
-    public Text toText(String[] charactersToUse, int lineIndex) {
+    public Component toText(String[] charactersToUse, int lineIndex) {
         if (this.isEmptyText) return this.toEmptyText();
 
         StringBuilder textStrBuilder = new StringBuilder();
@@ -62,12 +62,12 @@ public final class ImagetextLineElement {
             textStrBuilder.append(this.getCharacter(charactersToUse, lineIndex++));
         }
 
-        return Text.literal(textStrBuilder.toString()).setStyle(Style.EMPTY.withColor(colorRGB));
+        return Component.literal(textStrBuilder.toString()).setStyle(Style.EMPTY.withColor(colorRGB));
     }
 
-    private Text toEmptyText() {
+    private Component toEmptyText() {
         String spaceString = " ".repeat(this.repetitions);
-        return Text.literal(spaceString + Formatting.BOLD + spaceString + Formatting.RESET);
+        return Component.literal(spaceString + ChatFormatting.BOLD + spaceString + ChatFormatting.RESET);
     }
 
     private String getCharacter(String[] charactersToUse, int index) {

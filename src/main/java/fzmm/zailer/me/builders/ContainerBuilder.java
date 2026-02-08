@@ -1,14 +1,14 @@
 package fzmm.zailer.me.builders;
 
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class ContainerBuilder {
     private ContainerBuilder() {
         this.itemList = new ArrayList<>();
         this.containerItem = Items.WHITE_SHULKER_BOX;
-        this.maxItemByContainer = ShulkerBoxBlockEntity.INVENTORY_SIZE;
+        this.maxItemByContainer = ShulkerBoxBlockEntity.CONTAINER_SIZE;
     }
 
     public static ContainerBuilder builder() {
@@ -43,8 +43,8 @@ public class ContainerBuilder {
         List<ItemStack> containerList = new ArrayList<>();
 
         for (var itemTag : itemsTagList) {
-            ItemStack stack = this.containerItem.getDefaultStack();
-            stack.apply(DataComponentTypes.CONTAINER, null, component -> ContainerComponent.fromStacks(itemTag));
+            ItemStack stack = this.containerItem.getDefaultInstance();
+            stack.update(DataComponents.CONTAINER, null, component -> ItemContainerContents.fromItems(itemTag));
             containerList.add(stack);
         }
 
@@ -75,11 +75,11 @@ public class ContainerBuilder {
     public ContainerBuilder addLoreToItems(Item itemToApply, String lore, int color) {
         for (ItemStack stack : this.itemList) {
             if (stack.getItem() == itemToApply) {
-                stack.apply(DataComponentTypes.LORE, LoreComponent.DEFAULT, component -> {
-                    List<Text> lines = new ArrayList<>(component.lines());
-                    lines.add(Text.literal(lore).setStyle(Style.EMPTY.withColor(color)));
+                stack.update(DataComponents.LORE, ItemLore.EMPTY, component -> {
+                    List<Component> lines = new ArrayList<>(component.lines());
+                    lines.add(Component.literal(lore).setStyle(Style.EMPTY.withColor(color)));
 
-                    return new LoreComponent(List.copyOf(lines));
+                    return new ItemLore(List.copyOf(lines));
                 });
             }
         }
@@ -88,7 +88,7 @@ public class ContainerBuilder {
 
     public ContainerBuilder setNameStyleToItems(Style style) {
         for (ItemStack stack : this.itemList) {
-            stack.apply(DataComponentTypes.CUSTOM_NAME, Text.empty(), component -> component.copy().setStyle(style));
+            stack.update(DataComponents.CUSTOM_NAME, Component.empty(), component -> component.copy().setStyle(style));
         }
         return this;
     }

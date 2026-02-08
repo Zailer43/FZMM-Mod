@@ -3,13 +3,13 @@ package fzmm.zailer.me.client.logic;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 
 import java.util.List;
 import java.util.WeakHashMap;
@@ -22,7 +22,7 @@ public class ItemTooltipAppend {
     }
 
 
-    private static void addNbtLength(ItemStack stack, Item.TooltipContext context, TooltipType type, List<Text> lines) {
+    private static void addNbtLength(ItemStack stack, Item.TooltipContext context, TooltipFlag type, List<Component> lines) {
         if (!FzmmClient.CONFIG.general.showItemSize() || !type.isAdvanced()) return;
         long stackSize;
 
@@ -34,13 +34,13 @@ public class ItemTooltipAppend {
             compoundHash.put(hash, stackSize);
         }
 
-        MutableText text;
+        MutableComponent text;
         if (stackSize > 1023) {
-            text = Text.translatable("fzmm.item.tooltip.size.kilobytes", ItemUtils.getLengthInKB(stackSize));
+            text = Component.translatable("fzmm.item.tooltip.size.kilobytes", ItemUtils.getLengthInKB(stackSize));
         } else {
-            text = Text.translatable("fzmm.item.tooltip.size.bytes", stackSize);
+            text = Component.translatable("fzmm.item.tooltip.size.bytes", stackSize);
         }
-        text = text.setStyle(Style.EMPTY.withColor(Formatting.DARK_GRAY));
+        text = text.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY));
 
         lines.add(text);
     }

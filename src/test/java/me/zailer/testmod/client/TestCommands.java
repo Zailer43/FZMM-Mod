@@ -8,13 +8,13 @@ import me.zailer.testmod.client.test_command.ParityComponentTest;
 import me.zailer.testmod.client.test_command.SnackBarTest;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.Component;
 
 public class TestCommands {
 
-    public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
+    public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
         var testCommand = ClientCommandManager.literal("fzmm:test");
 
         testCommand.then(ClientCommandManager.literal("head_generator:write")
@@ -26,7 +26,7 @@ public class TestCommands {
 
         testCommand.then(ClientCommandManager.literal("head_generator:check_format")
                 .executes(ctx -> {
-                    MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal("Missing arguments"));
+                    Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Missing arguments"));
                     return 0;
                 }).then(ClientCommandManager.argument("isSlim", BoolArgumentType.bool()).executes(ctx -> {
                     var isSlim = ctx.getArgument("isSlim", Boolean.class);
@@ -38,10 +38,10 @@ public class TestCommands {
 
         testCommand.then(ClientCommandManager.literal("head_generator:check_pixel")
                 .executes(ctx -> {
-                    MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal("Missing arguments"));
+                    Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Missing arguments"));
                     return 0;
                 }).then(ClientCommandManager.argument("x", IntegerArgumentType.integer(0, 63)).executes(ctx -> {
-                    MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal("Missing arguments"));
+                    Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Missing arguments"));
 
                     return 0;
                 }).then(ClientCommandManager.argument("y", IntegerArgumentType.integer(0, 63)).executes(ctx -> {
@@ -55,7 +55,7 @@ public class TestCommands {
 
         testCommand.then(ClientCommandManager.literal("head_generator:time")
                 .executes(context -> {
-                    MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal("Missing arguments"));
+                    Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Missing arguments"));
                     return 0;
                 }).then(ClientCommandManager.argument("loops", IntegerArgumentType.integer(1)).executes(ctx -> {
 

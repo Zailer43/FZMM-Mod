@@ -8,7 +8,7 @@ import fzmm.zailer.me.utils.ImageUtils;
 import fzmm.zailer.me.utils.skin.CacheSkinGetter;
 import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
 import fzmm.zailer.me.utils.skin.VanillaSkinGetter;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
@@ -66,8 +66,8 @@ public class ImagePlayerNameSource implements IImageLoaderFromText, IImageSugges
 
     private boolean predicateOnlinePlayer(String value) {
         // supports users that are not allowed by the regex, as long as that player is online
-        assert MinecraftClient.getInstance().getNetworkHandler() != null;
-        return MinecraftClient.getInstance().getNetworkHandler().getCaseInsensitivePlayerInfo(value) != null;
+        assert Minecraft.getInstance().getConnection() != null;
+        return Minecraft.getInstance().getConnection().getPlayerInfoIgnoreCase(value) != null;
     }
 
     @Override

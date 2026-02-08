@@ -21,10 +21,9 @@ import io.wispforest.owo.config.ui.ConfigScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.StackLayout;
-import io.wispforest.owo.ui.core.Component;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -60,10 +59,10 @@ public class MainScreen extends BaseFzmmScreen {
     @SuppressWarnings("ConstantConditions")
     protected void setup(EFlowLayout rootComponent) {
         rootComponent.childByIdOrThrow(ButtonComponent.class, "config-button")
-                .onPress(button -> this.client.setScreen(ConfigScreen.create(FzmmClient.CONFIG, this)));
+                .onPress(button -> this.minecraft.setScreen(ConfigScreen.create(FzmmClient.CONFIG, this)));
 
         this.hoveredLabel = rootComponent.childByIdOrThrow(ELabelComponent.class, "hovered");
-        List<Component> entryLayoutList = new ArrayList<>();
+        List<UIComponent> entryLayoutList = new ArrayList<>();
 
         for (var id : this.entries.keySet()) {
             ButtonData entry = this.entries.get(id);
@@ -98,12 +97,12 @@ public class MainScreen extends BaseFzmmScreen {
 
     private void unselectEntry(EButtonComponent button) {
         if (this.hoveredLabel.text().equals(this.buttonText(button.id()))) {
-            this.hoveredLabel.text(Text.empty());
+            this.hoveredLabel.text(net.minecraft.network.chat.Component.empty());
         }
     }
 
-    private Text buttonText(String id) {
-        return Text.translatable("fzmm.gui.title." + id);
+    private net.minecraft.network.chat.Component buttonText(String id) {
+        return net.minecraft.network.chat.Component.translatable("fzmm.gui.title." + id);
     }
 
     private ButtonComponent.Renderer buttonRenderer() {
@@ -115,7 +114,7 @@ public class MainScreen extends BaseFzmmScreen {
         return (context, button, delta) -> {
             boolean isHovered = button.isHovered() && button.active();
             double progress = animationState.update(isHovered);
-            int alpha = MathHelper.clamp((int) (progress * 255), 128, 255);
+            int alpha = Mth.clamp((int) (progress * 255), 128, 255);
             int borderColor = isHovered ? 0xFFFFFFFF : 0xFF466647;
 
             if (button.active()) {

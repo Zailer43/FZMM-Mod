@@ -4,8 +4,8 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.UIComponent;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
@@ -20,13 +20,13 @@ public class ConfigTextBoxRow extends AbstractRow {
 
     @Override
     @SuppressWarnings("UnstableApiUsage")
-    public Component[] getComponents(String id, String tooltipId) {
-        Component configTextBox = new ConfigTextBox()
+    public UIComponent[] getComponents(String id, String tooltipId) {
+        UIComponent configTextBox = new ConfigTextBox()
                 .horizontalSizing(Sizing.fixed(TEXT_FIELD_WIDTH))
                 .id(getConfigTextBoxId(id));
 
 
-        return new Component[] {
+        return new UIComponent[] {
             configTextBox
         };
     }

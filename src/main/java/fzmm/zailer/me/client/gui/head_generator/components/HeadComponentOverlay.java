@@ -32,15 +32,18 @@ import fzmm.zailer.me.utils.ImageUtils;
 import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.itemgroup.Icon;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.EntityComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.*;
-import net.minecraft.client.util.ScreenshotRecorder;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.text.Text;
+import io.wispforest.owo.ui.core.CursorStyle;
+import io.wispforest.owo.ui.core.HorizontalAlignment;
+import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.VerticalAlignment;
+import net.minecraft.client.Screenshot;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
 import javax.imageio.ImageIO;
@@ -55,8 +58,8 @@ import java.util.function.Consumer;
 
 public class HeadComponentOverlay extends EFlowLayout {
     private static final int OVERLAY_WIDGETS_WIDTH = 75;
-    public static final Text GIVE_BUTTON_TEXT = Text.translatable("fzmm.gui.button.giveHead");
-    public static final Text GIVE_WAITING_UNDEFINED_TEXT = Text.translatable("fzmm.gui.headGenerator.wait");
+    public static final Component GIVE_BUTTON_TEXT = Component.translatable("fzmm.gui.button.giveHead");
+    public static final Component GIVE_WAITING_UNDEFINED_TEXT = Component.translatable("fzmm.gui.headGenerator.wait");
     public static final String GIVE_WAITING_SECONDS_KEY = "fzmm.gui.headGenerator.wait_seconds";
     private final HeadGeneratorScreen parentScreen;
     private final EntityComponent<LivingEntity> previewEntity;
@@ -79,7 +82,7 @@ public class HeadComponentOverlay extends EFlowLayout {
             panel.mouseDown().subscribe((input, doubled) -> true);
             int giveButtonWidth = FzmmUtils.getMaxWidth(List.of(GIVE_BUTTON_TEXT,
                     GIVE_WAITING_UNDEFINED_TEXT,
-                    Text.translatable(GIVE_WAITING_SECONDS_KEY, 1))
+                    Component.translatable(GIVE_WAITING_SECONDS_KEY, 1))
             ) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
 
             FlowLayout previewLayout = panel.childByIdOrThrow(FlowLayout.class, "preview");
@@ -127,7 +130,7 @@ public class HeadComponentOverlay extends EFlowLayout {
             FzmmClient.LOGGER.info("[HeadComponentOverlay] Skin save folder created");
         }
 
-        return saveSkin(skin, ScreenshotRecorder.getScreenshotFilename(skinFolder));
+        return saveSkin(skin, Screenshot.getFile(skinFolder));
     }
 
     public static ISnackBarComponent saveSkin(@Nullable BufferedImage skin, File file) {
@@ -137,7 +140,7 @@ public class HeadComponentOverlay extends EFlowLayout {
         if (skin == null) {
             return builder
                     .backgroundColor(EStyles.ALERT_ERROR_COLOR)
-                    .title(Text.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.thereIsNoSkin"))
+                    .title(Component.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.thereIsNoSkin"))
                     .keepOnLimit()
                     .build();
         }
@@ -146,17 +149,17 @@ public class HeadComponentOverlay extends EFlowLayout {
             ImageIO.write(skin, "png", file);
             FzmmClient.LOGGER.info("[HeadComponentOverlay] Saved skin to file: {}", file.toPath());
             builder.backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
-                    .title(Text.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.saved"))
-                    .button(iSnackBarComponent -> Components.button(Text.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.button.openFolder"), buttonComponent ->
-                            Util.getOperatingSystem().open(HeadGeneratorScreen.SKIN_SAVE_FOLDER_PATH.toFile())))
-                    .button(iSnackBarComponent -> Components.button(Text.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.button.openSkin"), buttonComponent ->
-                            Util.getOperatingSystem().open(file)))
+                    .title(Component.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.saved"))
+                    .button(iSnackBarComponent -> UIComponents.button(Component.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.button.openFolder"), buttonComponent ->
+                            Util.getPlatform().openFile(HeadGeneratorScreen.SKIN_SAVE_FOLDER_PATH.toFile())))
+                    .button(iSnackBarComponent -> UIComponents.button(Component.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.button.openSkin"), buttonComponent ->
+                            Util.getPlatform().openFile(file)))
                     .sizing(Sizing.fixed(180), Sizing.content())
                     .mediumTimer();
         } catch (IOException e) {
             FzmmClient.LOGGER.error("[HeadComponentOverlay] Unexpected error saving the skin", e);
             builder.backgroundColor(EStyles.ALERT_ERROR_COLOR)
-                    .title(Text.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.saveError"))
+                    .title(Component.translatable("fzmm.gui.headGenerator.snack_bar.saveSkin.saveError"))
                     .keepOnLimit();
         }
         return builder.startTimer().build();
@@ -165,7 +168,7 @@ public class HeadComponentOverlay extends EFlowLayout {
     private void addParameters(EFlowLayout panel, BaseFzmmScreen parent, INestedParameters parametersEntry, AbstractHeadComponentEntry headComponentEntry) {
         EFlowLayout parametersLayout = panel.childByIdOrThrow(EFlowLayout.class, "parameters");
         if (parametersEntry.hasRequestedParameters()) {
-            LabelComponent parametersLabel = EComponents.label(Text.translatable("fzmm.gui.headGenerator.label.parameters"));
+            LabelComponent parametersLabel = EComponents.label(Component.translatable("fzmm.gui.headGenerator.label.parameters"));
             parametersLayout.child(parametersLabel);
 
             String baseTranslation = parent.getBaseScreenTranslationKey();
@@ -249,7 +252,7 @@ public class HeadComponentOverlay extends EFlowLayout {
 
     private EButtonComponent getModelButton(AbstractHeadComponentEntry headComponentEntry, HeadModelEntry modelEntry,
                                            int amount, Icon icon, @Nullable Consumer<EButtonComponent> callback) {
-        EButtonComponent result = EComponents.button(Text.empty());
+        EButtonComponent result = EComponents.button(Component.empty());
         result.onPress(button -> {
             BufferedImage preview = headComponentEntry.getPreview();
             for (int i = 0; i < amount; i++) {
@@ -277,7 +280,7 @@ public class HeadComponentOverlay extends EFlowLayout {
         FlowLayout result = EContainers.verticalFlow(Sizing.content(), Sizing.content());
         result.horizontalAlignment(HorizontalAlignment.CENTER);
         result.gap(4);
-        LabelComponent label = EComponents.label(Text.translatable("fzmm.gui.headGenerator.option.overlayDefault." + id));
+        LabelComponent label = EComponents.label(Component.translatable("fzmm.gui.headGenerator.option.overlayDefault." + id));
 
         result.child(label);
 
@@ -353,7 +356,7 @@ public class HeadComponentOverlay extends EFlowLayout {
         skinFormatRow.gap(4);
 
         List<EButtonComponent> buttons = new ArrayList<>();
-        List<Component> optionsList = new ArrayList<>();
+        List<UIComponent> optionsList = new ArrayList<>();
 
         EButtonComponent slim = this.getModelButton(headComponentEntry, InternalModels.WIDE_TO_SLIM, 1, FzmmIcons.MODEL_SLIM,
                 modelButton -> this.skinFormatCallback(buttons, modelButton, true));
@@ -362,11 +365,11 @@ public class HeadComponentOverlay extends EFlowLayout {
 
         optionsList.add(EContainers.horizontalFlow(Sizing.content(), Sizing.content())
                 .child(wide)
-                .tooltip(Text.translatable("fzmm.gui.headGenerator.option.overlayDefault.skinFormat.wide"))
+                .tooltip(Component.translatable("fzmm.gui.headGenerator.option.overlayDefault.skinFormat.wide"))
         );
         optionsList.add(EContainers.horizontalFlow(Sizing.content(), Sizing.content())
                 .child(slim)
-                .tooltip(Text.translatable("fzmm.gui.headGenerator.option.overlayDefault.skinFormat.slim"))
+                .tooltip(Component.translatable("fzmm.gui.headGenerator.option.overlayDefault.skinFormat.slim"))
         );
 
         buttons.add(wide);

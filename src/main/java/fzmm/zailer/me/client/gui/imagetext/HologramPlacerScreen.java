@@ -6,10 +6,10 @@ import fzmm.zailer.me.client.gui.imagetext.tabs.ImagetextHologramTab;
 import fzmm.zailer.me.client.gui.utils.auto_placer.AbstractAutoPlacer;
 import fzmm.zailer.me.client.gui.utils.auto_placer.AutoPlacerHud;
 import fzmm.zailer.me.utils.InventoryUtils;
-import io.wispforest.owo.ui.core.Component;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.BaseEntityBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,17 +33,17 @@ public class HologramPlacerScreen extends AbstractAutoPlacer {
     public static AutoPlacerHud.Activation getActivation() {
         Predicate<ItemStack> predicate = itemStack -> !HologramPlacerScreen.isActive &&
                 itemStack.getItem() instanceof BlockItem blockItem &&
-                blockItem.getBlock() instanceof BlockWithEntity &&
+                blockItem.getBlock() instanceof BaseEntityBlock &&
                 HologramPlacerScreen.isHologram(itemStack);
 
         return new AutoPlacerHud.Activation(predicate, HologramPlacerScreen::new, new ArrayList<>());
     }
 
     @Override
-    protected List<Component> getInfoLabels() {
-        List<Component> labelList = new ArrayList<>();
+    protected List<UIComponent> getInfoLabels() {
+        List<UIComponent> labelList = new ArrayList<>();
 
-        labelList.add(EComponents.label(this.hologramStack.getName()));
+        labelList.add(EComponents.label(this.hologramStack.getHoverName()));
 
         for (var text : DisplayBuilder.of(this.hologramStack).getLoreText()) {
             labelList.add(EComponents.label(text));

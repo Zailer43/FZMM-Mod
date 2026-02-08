@@ -11,13 +11,13 @@ import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,7 +36,7 @@ public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip, IMeme
     @Override
     public void execute(ImagetextLogic logic) {
         ItemStack stack = this.getStack(this.loreMode);
-        List<Text> imagetext = logic.text();
+        List<Component> imagetext = logic.text();
 
         DisplayBuilder display = DisplayBuilder.of(stack);
         display.addLore(imagetext).get();
@@ -54,7 +54,7 @@ public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip, IMeme
         this.loreModeButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "loreMode");
         this.loreModeButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : LoreOption.values()) {
-                dropdownComponent.button(Text.translatable(option.getTranslationKey()), dropdownButton -> {
+                dropdownComponent.button(Component.translatable(option.getTranslationKey()), dropdownButton -> {
                     this.updateLoreMode(option);
                     dropdownButton.remove();
                 });
@@ -65,36 +65,36 @@ public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip, IMeme
 
     private void updateLoreMode(LoreOption mode) {
         this.loreMode = mode;
-        this.loreModeButton.setMessage(Text.translatable(this.loreMode.getTranslationKey()));
+        this.loreModeButton.setMessage(Component.translatable(this.loreMode.getTranslationKey()));
     }
 
 
     @Override
-    public Text getTooltip(ImagetextLogic logic) {
+    public Component getTooltip(ImagetextLogic logic) {
         ItemStack stack = this.getStack(this.loreMode);
         int loreSize = stack.getComponents()
-                .getOrDefault(DataComponentTypes.LORE, LoreComponent.DEFAULT).lines().size() + logic.height();
+                .getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines().size() + logic.height();
 
-        MutableText currentLore = Text.literal(String.valueOf(loreSize));
-        if (loreSize > LoreComponent.MAX_LORES) {
+        MutableComponent currentLore = Component.literal(String.valueOf(loreSize));
+        if (loreSize > ItemLore.MAX_LINES) {
            currentLore.setStyle(currentLore.getStyle().withColor(EStyles.TEXT_ERROR_COLOR.rgb()));
         }
 
-        return Text.translatable("fzmm.gui.imagetext.tab.lore.tooltip", currentLore, LoreComponent.MAX_LORES);
+        return Component.translatable("fzmm.gui.imagetext.tab.lore.tooltip", currentLore, ItemLore.MAX_LINES);
     }
 
     private ItemStack getStack(LoreOption option) {
-        assert MinecraftClient.getInstance().player != null;
-        ItemStack stack = ItemUtils.from(Hand.MAIN_HAND);
+        assert Minecraft.getInstance().player != null;
+        ItemStack stack = ItemUtils.from(InteractionHand.MAIN_HAND);
 
         if (stack.isEmpty()) {
-            stack = ItemUtils.from(FzmmClient.CONFIG.imagetext.defaultItem()).getDefaultStack();
+            stack = ItemUtils.from(FzmmClient.CONFIG.imagetext.defaultItem()).getDefaultInstance();
         }
 
         return switch (option) {
             case ADD -> stack;
             case REPLACE -> {
-                stack.apply(DataComponentTypes.LORE, null, component -> new LoreComponent(List.of()));
+                stack.update(DataComponents.LORE, null, component -> new ItemLore(List.of()));
                 yield stack;
             }
         };

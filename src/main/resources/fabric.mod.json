@@ -37,8 +37,8 @@
   "depends": {
     "fabricloader": ">=0.17.0",
     "fabric": ">=0.131.0",
-    "minecraft": ">=1.21.9 <=1.21.10",
-    "owo": ">=0.12.24 <0.13.0"
+    "minecraft": "1.21.11",
+    "owo": ">=0.13.0 <0.14.0"
   },
   "custom": {
     "modmenu": {

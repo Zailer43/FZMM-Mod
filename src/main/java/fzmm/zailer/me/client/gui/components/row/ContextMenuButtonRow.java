@@ -2,10 +2,9 @@ package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.client.Minecraft;
 import org.w3c.dom.Element;
 
 
@@ -15,14 +14,14 @@ public class ContextMenuButtonRow extends AbstractRow {
     }
 
     @Override
-    public Component[] getComponents(String id, String tooltipId) {
-        int width = NORMAL_WIDTH + BaseFzmmScreen.COMPONENT_DISTANCE + MinecraftClient.getInstance().textRenderer
-                .getWidth(Text.translatable("fzmm.gui.button.reset").getString()) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
-        Component button = new ContextMenuButton(Text.empty())
+    public UIComponent[] getComponents(String id, String tooltipId) {
+        int width = NORMAL_WIDTH + BaseFzmmScreen.COMPONENT_DISTANCE + Minecraft.getInstance().font
+                .width(net.minecraft.network.chat.Component.translatable("fzmm.gui.button.reset").getString()) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
+        UIComponent button = new ContextMenuButton(net.minecraft.network.chat.Component.empty())
                 .horizontalSizing(Sizing.fixed(width))
                 .id(getButtonId(id));
 
-        return new Component[] {
+        return new UIComponent[] {
                 button
         };
     }

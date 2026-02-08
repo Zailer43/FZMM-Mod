@@ -6,18 +6,18 @@ import fzmm.zailer.me.compat.symbol_chat.components.FontTextBoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.parsing.UIParsing;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
 
 public class TextBoxRow extends AbstractRow {
 
@@ -30,11 +30,11 @@ public class TextBoxRow extends AbstractRow {
     }
 
     @Override
-    public Component[] getComponents(String id, String tooltipId) {
-        Component textBox = new FontTextBoxComponent(Sizing.fixed(TEXT_FIELD_WIDTH))
+    public UIComponent[] getComponents(String id, String tooltipId) {
+        UIComponent textBox = new FontTextBoxComponent(Sizing.fixed(TEXT_FIELD_WIDTH))
                 .id(getTextBoxId(id));
 
-        return new Component[]{
+        return new UIComponent[]{
                 textBox
         };
     }
@@ -54,7 +54,7 @@ public class TextBoxRow extends AbstractRow {
 
         textBox.onChanged().subscribe(text -> {
             if (resetButton != null)
-                resetButton.active = !textBox.getText().equals(defaultValue);
+                resetButton.active = !textBox.getValue().equals(defaultValue);
             if (changedListener != null)
                 changedListener.accept(text);
         });
@@ -87,7 +87,7 @@ public class TextBoxRow extends AbstractRow {
             row.removeResetButton();
 
         TextBoxComponent textBox = row.childById(TextBoxComponent.class, getTextBoxId(id));
-        Screen screen = MinecraftClient.getInstance().currentScreen;
+        Screen screen = Minecraft.getInstance().screen;
 
         if (symbolChatButtons && screen instanceof BaseFzmmScreen baseFzmmScreen && textBox != null)
             row.addSymbolChatButtons(baseFzmmScreen, textBox);
@@ -95,8 +95,8 @@ public class TextBoxRow extends AbstractRow {
     }
 
 
-    public void addSymbolChatButtons(BaseFzmmScreen screen, TextFieldWidget textFieldWidget) {
-        List<Component> symbolChatButtons = screen.getSymbolChatCompat().getButtons(screen, textFieldWidget);
+    public void addSymbolChatButtons(BaseFzmmScreen screen, EditBox textFieldWidget) {
+        List<UIComponent> symbolChatButtons = screen.getSymbolChatCompat().getButtons(screen, textFieldWidget);
         if (symbolChatButtons.isEmpty()) {
             return;
         }
@@ -107,7 +107,7 @@ public class TextBoxRow extends AbstractRow {
         }
 
         FlowLayout rightLayout = rightLayoutOptional.get();
-        List<Component> componentList = List.copyOf(rightLayout.children());
+        List<UIComponent> componentList = List.copyOf(rightLayout.children());
 
         // sort symbol chat buttons at left and original buttons at right
         rightLayout.clearChildren();

@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.components.tabs;
 
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public interface ITab {
 
@@ -11,7 +11,7 @@ public interface ITab {
 
     String getTranslationKey();
 
-    default Text getButtonText() {
-        return Text.translatable(this.getTranslationKey());
+    default Component getButtonText() {
+        return Component.translatable(this.getTranslationKey());
     }
 }

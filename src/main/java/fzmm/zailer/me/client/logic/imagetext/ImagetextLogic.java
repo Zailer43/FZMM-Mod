@@ -3,15 +3,15 @@ package fzmm.zailer.me.client.logic.imagetext;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.utils.FzmmUtils;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ImagetextLogic {
-    private List<Text> imagetext = new ArrayList<>();
+    private List<Component> imagetext = new ArrayList<>();
     private long textLength = 0L;
     private int width = 0;
     private int height = 0;
@@ -23,10 +23,10 @@ public class ImagetextLogic {
         this.imagetext = this.build(algorithm, data);
     }
 
-    public List<Text> build(IImagetextAlgorithm algorithm, ImagetextData data) {
+    public List<Component> build(IImagetextAlgorithm algorithm, ImagetextData data) {
         algorithm.tryUpdateCache(data);
         algorithm.build();
-        List<Text> result = new ArrayList<>(data.height());
+        List<Component> result = new ArrayList<>(data.height());
 
         ImagetextLine line = new ImagetextLine(data.similarityThreshold());
         for (int y = 0; y != data.height(); y++) {
@@ -56,9 +56,9 @@ public class ImagetextLogic {
     }
 
     public void addResolution() {
-        String message = Text.translatable("fzmm.item.imagetext.resolution", this.width, this.height).getString();
+        String message = Component.translatable("fzmm.item.imagetext.resolution", this.width, this.height).getString();
         int color = FzmmClient.CONFIG.colors.imagetextMessages().rgb();
-        MutableText text = Text.translatable(message).setStyle(Style.EMPTY.withColor(color));
+        MutableComponent text = Component.translatable(message).setStyle(Style.EMPTY.withColor(color));
         this.imagetext.add(FzmmUtils.disableItalicConfig(text, true));
     }
 
@@ -70,7 +70,7 @@ public class ImagetextLogic {
         return this.height;
     }
 
-    public List<Text> text() {
+    public List<Component> text() {
         return this.imagetext;
     }
 
@@ -78,9 +78,9 @@ public class ImagetextLogic {
         return this.textLength;
     }
 
-    public Text mergeText() {
-        MutableText result = Text.empty();
-        List<Text> imagetext = this.text();
+    public Component mergeText() {
+        MutableComponent result = Component.empty();
+        List<Component> imagetext = this.text();
 
         int size = imagetext.size();
         for (int i = 0; i != size; i++) {

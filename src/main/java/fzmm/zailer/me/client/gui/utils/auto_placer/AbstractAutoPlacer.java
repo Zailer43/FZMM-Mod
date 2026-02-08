@@ -7,12 +7,11 @@ import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.option.SimpleOption;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -33,16 +32,16 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
 
     @Override
     protected void setup(EFlowLayout rootComponent) {
-        assert this.client != null;
-        assert this.client.player != null;
+        assert this.minecraft != null;
+        assert this.minecraft.player != null;
 
         rootComponent.childByIdOrThrow(FlowLayout.class, "main-layout");
 
         ButtonComponent executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "execute");
-        executeButton.setMessage(Text.translatable(BaseFzmmScreen.getOptionBaseTranslationKey(this.baseScreenTranslationKey) + "execute"));
+        executeButton.setMessage(net.minecraft.network.chat.Component.translatable(BaseFzmmScreen.getOptionBaseTranslationKey(this.baseScreenTranslationKey) + "execute"));
 
         this.cancelButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "cancel");
-        this.cancelButton.onPress(buttonComponent -> this.close());
+        this.cancelButton.onPress(buttonComponent -> this.onClose());
 
         this.loadingBarLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "loading-bar");
         this.loadingLabel = rootComponent.childByIdOrThrow(LabelComponent.class, "loading-label");
@@ -53,21 +52,20 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
         executeButton.onPress(buttonComponent -> this.execute());
     }
 
-    protected abstract List<Component> getInfoLabels();
+    protected abstract List<UIComponent> getInfoLabels();
 
     public void execute() {
-        assert this.client != null;
-        assert this.client.player != null;
-        this.client.execute(() -> {
+        assert this.minecraft.player != null;
+        this.minecraft.execute(() -> {
             //noinspection resource
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
             PlayerStatuePlacerScreen.isActive = true;
             this.cancelButton.active = false;
 
-            SimpleOption<Boolean> sneakToggled = this.client.options.getSneakToggled();
-            boolean isSneakToggled = sneakToggled.getValue();
-            sneakToggled.setValue(true);
-            this.client.options.sneakKey.setPressed(true);
+            OptionInstance<Boolean> sneakToggled = this.minecraft.options.toggleCrouch();
+            boolean isSneakToggled = sneakToggled.get();
+            sneakToggled.set(true);
+            this.minecraft.options.keyShift.setDown(true);
 
             List<ItemStack> items = new ArrayList<>(this.getItems().stream().map(this::processStack).toList());
             items.add(null);
@@ -94,12 +92,12 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
 
                 PlayerStatuePlacerScreen.isActive = false;
                 this.cancelButton.active = true;
-                Text backText = Text.translatable("fzmm.gui.button.back");
+                net.minecraft.network.chat.Component backText = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.back");
                 this.cancelButton.setMessage(backText);
-                this.cancelButton.horizontalSizing(Sizing.fixed(this.client.textRenderer.getWidth(backText) + BaseFzmmScreen.BUTTON_TEXT_PADDING));
+                this.cancelButton.horizontalSizing(Sizing.fixed(this.minecraft.font.width(backText) + BaseFzmmScreen.BUTTON_TEXT_PADDING));
 
-                sneakToggled.setValue(isSneakToggled);
-                this.client.options.sneakKey.setPressed(false);
+                sneakToggled.set(isSneakToggled);
+                this.minecraft.options.keyShift.setDown(false);
             }, (containerItemsSize + 2) * (long) DELAY_IN_MILLISECONDS, TimeUnit.MILLISECONDS);
 
             scheduler.shutdown();
@@ -107,9 +105,7 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
     }
 
     private void execute(@Nullable ItemStack itemStack, int index, int containerItemsSize) {
-        assert this.client != null;
-
-        this.client.doItemUse();
+        this.minecraft.startUseItem();
         if (itemStack != null) {
             ItemUtils.updateHand(itemStack);
         }
@@ -120,7 +116,7 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
     protected void updateLoadingBar(int index, int maxIndex) {
         int percent = (int) (((index + 1) / (float) maxIndex) * 100);
         this.loadingBarLayout.horizontalSizing(Sizing.fill(percent));
-        this.loadingLabel.text(Text.literal(percent + "%"));
+        this.loadingLabel.text(net.minecraft.network.chat.Component.literal(percent + "%"));
     }
 
     protected abstract ItemStack getFinalStack();
@@ -132,7 +128,7 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
     protected abstract boolean isActive();
 
     @Override
-    public boolean shouldPause() {
+    public boolean isPauseScreen() {
         return false;
     }
 

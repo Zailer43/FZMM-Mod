@@ -9,12 +9,15 @@ import fzmm.zailer.me.utils.list.IListEntry;
 import fzmm.zailer.me.utils.list.ListUtils;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.*;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.random.Random;
+import io.wispforest.owo.ui.core.Color;
+import io.wispforest.owo.ui.core.HorizontalAlignment;
+import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.VerticalAlignment;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -23,27 +26,27 @@ import java.util.function.Consumer;
 
 public class ColorListContainer extends FlowLayout {
     public static final int MINIMUM_SIZE = 2;
-    public static final Text ADD_COLOR_TEXT = Text.translatable("fzmm.gui.button.colorList.add");
+    public static final Component ADD_COLOR_TEXT = Component.translatable("fzmm.gui.button.colorList.add");
     public static final String COLOR_AMOUNT_TRANSLATION_KEY = "fzmm.gui.button.colorList.amount";
     private final FlowLayout colorsLayout;
     private final LabelComponent colorAmountLabel;
-    private final Random random;
+    private final RandomSource random;
     private Consumer<String> callback;
 
     public ColorListContainer(String id, String tooltipId, String baseTranslationKey) {
         super(Sizing.fill(100), Sizing.content(), Algorithm.VERTICAL);
-        this.random = Random.create();
+        this.random = RandomSource.create();
         this.callback = s -> {};
         this.id(id);
         this.gap(BaseFzmmScreen.COMPONENT_DISTANCE);
 
         FlowLayout topLayout = EContainers.horizontalFlow(Sizing.fill(100), Sizing.fixed(AbstractRow.TOTAL_HEIGHT));
         topLayout.alignment(HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
-        Component labelComponent = AbstractRow.getLabel(id, tooltipId, BaseFzmmScreen.getOptionBaseTranslationKey(baseTranslationKey), true);
+        UIComponent labelComponent = AbstractRow.getLabel(id, tooltipId, BaseFzmmScreen.getOptionBaseTranslationKey(baseTranslationKey), true);
         this.colorsLayout = EContainers.verticalFlow(Sizing.fill(100), Sizing.content());
-        this.colorAmountLabel = EComponents.label(Text.translatable(COLOR_AMOUNT_TRANSLATION_KEY, this.colorsLayout.children().size()));
+        this.colorAmountLabel = EComponents.label(Component.translatable(COLOR_AMOUNT_TRANSLATION_KEY, this.colorsLayout.children().size()));
 
-        ButtonComponent addButton = Components.button(ADD_COLOR_TEXT, buttonComponent -> this.addEntry());
+        ButtonComponent addButton = UIComponents.button(ADD_COLOR_TEXT, buttonComponent -> this.addEntry());
 
         topLayout.child(labelComponent);
         topLayout.child(addButton);
@@ -152,7 +155,7 @@ public class ColorListContainer extends FlowLayout {
     public void updateDisplay() {
         this.updateMoveButtons();
         this.updateRemoveButton();
-        this.colorAmountLabel.text(Text.translatable(COLOR_AMOUNT_TRANSLATION_KEY, this.colorsLayout.children().size()));
+        this.colorAmountLabel.text(Component.translatable(COLOR_AMOUNT_TRANSLATION_KEY, this.colorsLayout.children().size()));
     }
 
     public void updateRemoveButton() {
@@ -185,7 +188,7 @@ public class ColorListContainer extends FlowLayout {
     }
 
     public void setColors(List<Color> colors) {
-        List<Component> colorLayoutChildren = this.colorsLayout.children();
+        List<UIComponent> colorLayoutChildren = this.colorsLayout.children();
         while (colors.size() > colorLayoutChildren.size()) {
             this.addEntry();
         }

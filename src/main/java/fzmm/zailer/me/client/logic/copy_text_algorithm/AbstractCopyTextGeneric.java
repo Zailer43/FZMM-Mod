@@ -1,14 +1,14 @@
 package fzmm.zailer.me.client.logic.copy_text_algorithm;
 
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 import java.util.List;
 
 public abstract class AbstractCopyTextGeneric extends AbstractCopyTextAlgorithm {
 
-    protected void getStringRecursive(StringBuilder stringBuilder, Style baseStyle, List<Text> siblings) {
+    protected void getStringRecursive(StringBuilder stringBuilder, Style baseStyle, List<Component> siblings) {
         for (var value : siblings) {
             stringBuilder.append(this.getColor(value.getStyle()))
                     .append(this.getBold(baseStyle))
@@ -16,7 +16,7 @@ public abstract class AbstractCopyTextGeneric extends AbstractCopyTextAlgorithm 
                     .append(this.getUnderline(baseStyle))
                     .append(this.getStrikethrough(baseStyle))
                     .append(this.getObfuscated(baseStyle))
-                    .append(value.copyContentOnly().getString());
+                    .append(value.plainCopy().getString());
 
             if (!value.getSiblings().isEmpty())
                 this.getStringRecursive(stringBuilder, baseStyle, value.getSiblings());
@@ -30,22 +30,22 @@ public abstract class AbstractCopyTextGeneric extends AbstractCopyTextAlgorithm 
     }
 
     public String getBold(Style style) {
-        return style.isBold() ? this.colorCharacter() + Formatting.BOLD.getCode() : "";
+        return style.isBold() ? this.colorCharacter() + ChatFormatting.BOLD.getChar() : "";
     }
 
     public String getItalic(Style style) {
-        return style.isItalic() ? this.colorCharacter() + Formatting.ITALIC.getCode() : "";
+        return style.isItalic() ? this.colorCharacter() + ChatFormatting.ITALIC.getChar() : "";
     }
 
     public String getUnderline(Style style) {
-        return style.isUnderlined() ? this.colorCharacter() + Formatting.UNDERLINE.getCode() : "";
+        return style.isUnderlined() ? this.colorCharacter() + ChatFormatting.UNDERLINE.getChar() : "";
     }
 
     public String getStrikethrough(Style style) {
-        return style.isStrikethrough() ? this.colorCharacter() + Formatting.STRIKETHROUGH.getCode() : "";
+        return style.isStrikethrough() ? this.colorCharacter() + ChatFormatting.STRIKETHROUGH.getChar() : "";
     }
 
     public String getObfuscated(Style style) {
-        return style.isObfuscated() ? this.colorCharacter() + Formatting.OBFUSCATED.getCode() : "";
+        return style.isObfuscated() ? this.colorCharacter() + ChatFormatting.OBFUSCATED.getChar() : "";
     }
 }

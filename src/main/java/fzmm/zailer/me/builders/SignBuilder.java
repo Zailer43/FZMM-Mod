@@ -3,22 +3,21 @@ package fzmm.zailer.me.builders;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.TagsConstant;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.TypedEntityData;
-import net.minecraft.item.HangingSignItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
-
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.HangingSignItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.TypedEntityData;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,18 +26,18 @@ public class SignBuilder {
 
     public static final int MAX_ROWS = 4;
     private ItemStack stack;
-    private final List<Text> frontTextList;
-    private final NbtCompound frontCompound;
-    private final List<Text> backTextList;
-    private final NbtCompound backCompound;
+    private final List<Component> frontTextList;
+    private final CompoundTag frontCompound;
+    private final List<Component> backTextList;
+    private final CompoundTag backCompound;
     private boolean isWaxed;
 
     private SignBuilder() {
-        this.stack = Items.OAK_SIGN.getDefaultStack();
+        this.stack = Items.OAK_SIGN.getDefaultInstance();
         this.frontTextList = new ArrayList<>();
-        this.frontCompound = new NbtCompound();
+        this.frontCompound = new CompoundTag();
         this.backTextList = new ArrayList<>();
-        this.backCompound = new NbtCompound();
+        this.backCompound = new CompoundTag();
         this.isWaxed = false;
     }
 
@@ -48,30 +47,30 @@ public class SignBuilder {
 
 
     public SignBuilder item(Item item) {
-        this.stack = item.getDefaultStack();
+        this.stack = item.getDefaultInstance();
         return this;
     }
 
-    public SignBuilder addFrontLine(Text text, int expectedWidth) {
+    public SignBuilder addFrontLine(Component text, int expectedWidth) {
         return this.addLine(this.frontTextList, text, expectedWidth);
     }
 
-    public SignBuilder addBackLine(Text text, int expectedWidth) {
+    public SignBuilder addBackLine(Component text, int expectedWidth) {
         return this.addLine(this.backTextList, text, expectedWidth);
     }
 
-    private SignBuilder addLine(List<Text> list, Text text, int expectedWidth) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    private SignBuilder addLine(List<Component> list, Component text, int expectedWidth) {
+        Font textRenderer = Minecraft.getInstance().font;
 
-        assert MinecraftClient.getInstance().player != null;
+        assert Minecraft.getInstance().player != null;
         if (text == null) {
             return this;
         }
 
-        MutableText textCopy = text.copy();
+        MutableComponent textCopy = text.copy();
 
         int spaceCount = 0;
-        while (textRenderer.getWidth(textCopy) < expectedWidth) {
+        while (textRenderer.width(textCopy) < expectedWidth) {
             textCopy.append(" ");
             spaceCount++;
         }
@@ -89,7 +88,7 @@ public class SignBuilder {
         return this.glowing(this.backCompound);
     }
 
-    private SignBuilder glowing(NbtCompound compound) {
+    private SignBuilder glowing(CompoundTag compound) {
         compound.putBoolean(TagsConstant.SIGN_GLOWING_TEXT, true);
         return this;
     }
@@ -102,7 +101,7 @@ public class SignBuilder {
         return this.color(this.backCompound, color);
     }
 
-    private SignBuilder color(NbtCompound compound, String color) {
+    private SignBuilder color(CompoundTag compound, String color) {
         compound.putString(TagsConstant.SIGN_COLOR, color);
         return this;
     }
@@ -113,15 +112,15 @@ public class SignBuilder {
     }
 
     public ItemStack get() {
-        this.stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, TypedEntityData.create(BlockEntityType.SIGN, new NbtCompound()), entityData -> {
-            NbtCompound result = entityData.copyNbtWithoutId();
+        this.stack.update(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(BlockEntityType.SIGN, new CompoundTag()), entityData -> {
+            CompoundTag result = entityData.copyTagWithoutId();
 
             this.addSignMessage(this.frontTextList, this.frontCompound, result, TagsConstant.SIGN_FRONT_TEXT);
             this.addSignMessage(this.backTextList, this.backCompound, result, TagsConstant.SIGN_BACK_TEXT);
 
             result.putBoolean(TagsConstant.SIGN_IS_WAXED, this.isWaxed);
 
-            return TypedEntityData.create(BlockEntityType.SIGN, result);
+            return TypedEntityData.of(BlockEntityType.SIGN, result);
         });
         return this.stack;
     }
@@ -130,19 +129,19 @@ public class SignBuilder {
         return this.stack.getItem() instanceof HangingSignItem;
     }
 
-    private void addSignMessage(List<Text> list, NbtCompound compound, NbtCompound blockEntityTag, String key) {
+    private void addSignMessage(List<Component> list, CompoundTag compound, CompoundTag blockEntityTag, String key) {
         if (list.isEmpty()) {
             return;
         }
 
         while (list.size() < 4) {
-            list.add(Text.empty());
+            list.add(Component.empty());
         }
 
-        NbtList listTag = new NbtList();
+        ListTag listTag = new ListTag();
         listTag.addAll(
                 list.stream()
-                        .map(text -> TextCodecs.CODEC.encodeStart(FzmmUtils.getRegistryOps(NbtOps.INSTANCE), text).result())
+                        .map(text -> ComponentSerialization.CODEC.encodeStart(FzmmUtils.getRegistryOps(NbtOps.INSTANCE), text).result())
                         .filter(nbtOptional -> {
                             if (nbtOptional.isEmpty()) {
                                 FzmmClient.LOGGER.warn("[SignBuilder] Failed to encode text");

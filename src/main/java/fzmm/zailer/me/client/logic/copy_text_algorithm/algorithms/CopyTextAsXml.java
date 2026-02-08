@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.logic.copy_text_algorithm.algorithms;
 
 import fzmm.zailer.me.client.logic.copy_text_algorithm.AbstractCopyTextAlgorithm;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class CopyTextAsXml extends AbstractCopyTextAlgorithm {
         return "xml";
     }
 
-    protected void getStringRecursive(StringBuilder stringBuilder, Style baseStyle, List<Text> siblings) {
+    protected void getStringRecursive(StringBuilder stringBuilder, Style baseStyle, List<Component> siblings) {
         for (var value : siblings) {
             stringBuilder.append(this.getColor(value.getStyle(), false))
                     .append(this.getBold(baseStyle, false))
@@ -36,7 +36,7 @@ public class CopyTextAsXml extends AbstractCopyTextAlgorithm {
     public String getColor(Style style, boolean close) {
         if (style.getColor() == null)
             return "";
-        return close ? ("<" + this.closeCharacter() + "color>") : ("<color:" + style.getColor().getHexCode() + ">");
+        return close ? ("<" + this.closeCharacter() + "color>") : ("<color:" + style.getColor().formatValue() + ">");
     }
 
     public String closeCharacter() {

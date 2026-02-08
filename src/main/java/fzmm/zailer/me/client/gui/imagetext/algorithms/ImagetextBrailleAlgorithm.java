@@ -8,9 +8,9 @@ import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.network.chat.Component;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -33,9 +33,9 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
     private final float widthRatio;
 
     public ImagetextBrailleAlgorithm() {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        int defaultWidth = textRenderer.getWidth(ImagetextLine.DEFAULT_TEXT);
-        int brailleWidth = textRenderer.getWidth(BRAILLE_CHARACTERS[BRAILLE_CHARACTERS.length - 1]);
+        Font textRenderer = Minecraft.getInstance().font;
+        int defaultWidth = textRenderer.width(ImagetextLine.DEFAULT_TEXT);
+        int brailleWidth = textRenderer.width(BRAILLE_CHARACTERS[BRAILLE_CHARACTERS.length - 1]);
 
         // Maybe they could become 0 with some resource pack?
         if (brailleWidth == 0 || defaultWidth == 0) {
@@ -88,7 +88,7 @@ public class ImagetextBrailleAlgorithm implements IImagetextAlgorithm {
         this.edgeThresholdSlider = SliderRow.setup(rootComponent, "edgeThreshold", 30, 1, 255, Integer.class, 0, 5, null);
         this.edgeThresholdSlider.message(s -> {
             double percentage = this.edgeThresholdSlider.discreteValue() / 255f * 100;
-            return Text.literal(new DecimalFormat("#,##0.0").format(percentage) + "%");
+            return Component.literal(new DecimalFormat("#,##0.0").format(percentage) + "%");
         });
 
         this.edgeDistanceSlider = SliderRow.setup(rootComponent, "edgeDistance", 2, 1, 5, Integer.class, 0, 1, null);

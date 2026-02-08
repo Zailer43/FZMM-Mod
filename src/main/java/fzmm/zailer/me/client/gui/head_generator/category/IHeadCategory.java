@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.head_generator.category;
 
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.io.Serializable;
 
@@ -20,7 +20,7 @@ public interface IHeadCategory extends Serializable {
 
     boolean isCategory(AbstractHeadEntry entry, String categoryId);
 
-    Text getText();
+    Component getText();
 
     boolean isModel();
 

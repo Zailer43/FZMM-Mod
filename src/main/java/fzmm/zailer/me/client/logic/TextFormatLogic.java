@@ -2,13 +2,12 @@ package fzmm.zailer.me.client.logic;
 
 import fzmm.zailer.me.utils.TextUtils;
 import io.wispforest.owo.ui.core.Color;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 
 public record TextFormatLogic(String message, boolean obfuscated, boolean bold, boolean strikethrough,
                               boolean underline, boolean italic) {
@@ -22,14 +21,14 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
         if (this.strikethrough)
             style = style.withStrikethrough(true);
         if (this.underline)
-            style = style.withUnderline(true);
+            style = style.withUnderlined(true);
 
         return style;
     }
 
-    public MutableText getGradient(List<Color> colors) {
+    public MutableComponent getGradient(List<Color> colors) {
         if (colors.isEmpty())
-            return Text.empty();
+            return Component.empty();
 
         int messageLength = TextUtils.splitMessage(this.message).size();
         int[][] colorComponents = this.getColorComponents(colors);
@@ -85,20 +84,20 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
                 .toArray();
     }
 
-    private MutableText applyColors(List<String> characters, int[] colors) {
-        MutableText text = Text.empty().setStyle(this.getStyle());
+    private MutableComponent applyColors(List<String> characters, int[] colors) {
+        MutableComponent text = Component.empty().setStyle(this.getStyle());
 
         for (int i = 0; i != characters.size(); i++) {
             int color = 0;
             if (colors.length > i)
                 color = colors[i];
-            text.append(Text.literal(characters.get(i)).setStyle(Style.EMPTY.withColor(color)));
+            text.append(Component.literal(characters.get(i)).setStyle(Style.EMPTY.withColor(color)));
         }
 
         return text;
     }
 
-    public Text getRainbow(float hue, float saturation, float brightness, float hueStep) {
+    public Component getRainbow(float hue, float saturation, float brightness, float hueStep) {
         List<String> characters = TextUtils.splitMessage(this.message);
         int messageLength = characters.size();
         int[] colors = new int[messageLength];
@@ -111,11 +110,11 @@ public record TextFormatLogic(String message, boolean obfuscated, boolean bold, 
         return this.applyColors(characters, colors);
     }
 
-    public Text getWithColor(int color) {
-        return Text.literal(this.message).setStyle(this.getStyle().withColor(color));
+    public Component getWithColor(int color) {
+        return Component.literal(this.message).setStyle(this.getStyle().withColor(color));
     }
 
-    public Text getInterleaved(List<Color> colors, int distance) {
+    public Component getInterleaved(List<Color> colors, int distance) {
         List<String> characters = TextUtils.splitMessage(this.message);
 
         List<String> messageSplit = new ArrayList<>();

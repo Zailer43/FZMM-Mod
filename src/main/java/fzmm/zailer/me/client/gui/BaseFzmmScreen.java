@@ -22,18 +22,17 @@ import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.FocusHandler;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.w3c.dom.Element;
@@ -51,7 +50,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     protected final FlowLayout snackBarLayout;
 
     public BaseFzmmScreen(String screenPath, String baseScreenTranslationKey, @Nullable Screen parent) {
-        super(EFlowLayout.class, DataSource.asset(Identifier.of(FzmmClient.MOD_ID, screenPath)));
+        super(EFlowLayout.class, DataSource.asset(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, screenPath)));
         this.baseScreenTranslationKey = baseScreenTranslationKey;
         this.parent = parent;
         this.symbolChatCompat = new SymbolChatCompat();
@@ -60,10 +59,10 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
 
     @Override
     protected void build(EFlowLayout rootComponent) {
-        assert this.client != null;
+        assert this.minecraft != null;
         ButtonComponent backButton = rootComponent.childById(ButtonComponent.class, "back-button");
         if (backButton != null) {
-            backButton.onPress(button -> this.close());
+            backButton.onPress(button -> this.onClose());
         }
 
         this.setup(rootComponent);
@@ -103,7 +102,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         this.setScreen(this.parent);
     }
 
@@ -112,7 +111,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     }
 
     public static String getBaseTranslationKey(Element element) {
-        Screen currentScreen = MinecraftClient.getInstance().currentScreen;
+        Screen currentScreen = Minecraft.getInstance().screen;
         return currentScreen instanceof BaseFzmmScreen baseFzmmScreen ? baseFzmmScreen.getBaseScreenTranslationKey() : element.getAttribute("baseScreenTranslationKey");
     }
 
@@ -124,7 +123,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
         return getBaseTranslationKey(baseScreenTranslationKey) + ".option.";
     }
 
-    public void child(Component child) {
+    public void child(UIComponent child) {
         this.uiAdapter.rootComponent.child(child);
     }
 
@@ -134,7 +133,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (input.key() == GLFW.GLFW_KEY_ESCAPE) {
             if (this.symbolChatCompat.symbol().isMounted()) {
                 this.symbolChatCompat.symbol().remove();
@@ -155,14 +154,14 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     }
 
     @Override
-    public boolean charTyped(CharInput input) {
+    public boolean charTyped(CharacterEvent input) {
         if (super.charTyped(input)) return true;
 
         return this.symbolChatCompat.charTyped(input);
     }
 
     @Override
-    public boolean shouldPause() {
+    public boolean isPauseScreen() {
         return false;
     }
 
@@ -173,37 +172,37 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     static {
         // rows
         //TODO: replace rows with better UI components
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "button-row"), ButtonRow::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "color-row"), ColorRow::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "predicate-text-box-row"), ConfigTextBoxRow::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "context-menu-button-row"), ContextMenuButtonRow::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "image-rows"), ImageRows::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "number-row"), NumberRow::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "slider-row"), SliderRow::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "text-box-row"), TextBoxRow::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "button-row"), ButtonRow::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "color-row"), ColorRow::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "predicate-text-box-row"), ConfigTextBoxRow::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "context-menu-button-row"), ContextMenuButtonRow::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "image-rows"), ImageRows::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "number-row"), NumberRow::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "slider-row"), SliderRow::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "text-box-row"), TextBoxRow::parse);
 
         // extended components
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "boolean-button"), EBooleanButton::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "button"), element -> EComponents.button(Text.empty()));
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "item"), element -> EComponents.item(ItemStack.EMPTY));
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "label"), element -> EComponents.label(Text.empty()));
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "texture"), ETextureComponent::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "boolean-button"), EBooleanButton::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "button"), element -> EComponents.button(net.minecraft.network.chat.Component.empty()));
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "item"), element -> EComponents.item(ItemStack.EMPTY));
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "label"), element -> EComponents.label(net.minecraft.network.chat.Component.empty()));
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "texture"), ETextureComponent::parse);
 
         // extended containers
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "flow-layout"), EFlowLayout::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "scroll"), EScrollContainer::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "tab-container"), TabContainer::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "flow-layout"), EFlowLayout::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "scroll"), EScrollContainer::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "tab-container"), TabContainer::parse);
 
         // these are necessary in case you want to create the fields manually with XML
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "book"), element -> new BookComponent());
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "context-menu-button"), element -> new ContextMenuButton(Text.empty()));
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "number-slider"), element -> new SliderWidget());
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "text-option"), element -> new ConfigTextBox());
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "suggest-text-option"), element -> new SuggestionTextBox());
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "image-option"), element -> new ImageButtonComponent());
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "screenshot-zone"), element -> new ScreenshotZoneComponent());
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "color-list"), ColorListContainer::parse);
-        UIParsing.registerFactory(Identifier.of(FzmmClient.MOD_ID, "font-text-box"), element -> new FontTextBoxComponent(Sizing.fixed(100)));
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "book"), element -> new BookComponent());
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "context-menu-button"), element -> new ContextMenuButton(net.minecraft.network.chat.Component.empty()));
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "number-slider"), element -> new SliderWidget());
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "text-option"), element -> new ConfigTextBox());
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "suggest-text-option"), element -> new SuggestionTextBox());
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "image-option"), element -> new ImageButtonComponent());
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "screenshot-zone"), element -> new ScreenshotZoneComponent());
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "color-list"), ColorListContainer::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "font-text-box"), element -> new FontTextBoxComponent(Sizing.fixed(100)));
 
     }
 

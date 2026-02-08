@@ -4,14 +4,14 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.BookComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.BookEditScreen;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.component.type.WritableBookContentComponent;
-import net.minecraft.item.Items;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.BookEditScreen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.WritableBookContent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class ParityComponentTest {
     }
 
     private static void assertText(String label, List<String> customWrappedText, List<String> vanillaWrappedText) {
-        var chatHud = MinecraftClient.getInstance().inGameHud.getChatHud();
+        var chatHud = Minecraft.getInstance().gui.getChat();
         var isEqual = true;
 
         if (customWrappedText.size() != vanillaWrappedText.size()) {
@@ -49,7 +49,7 @@ public class ParityComponentTest {
             }
         }
 
-        chatHud.addMessage(Text.literal(label + ": " + (isEqual ? "equals" : "not equals")).formatted(isEqual ? Formatting.GRAY : Formatting.RED));
+        chatHud.addMessage(Component.literal(label + ": " + (isEqual ? "equals" : "not equals")).withStyle(isEqual ? ChatFormatting.GRAY : ChatFormatting.RED));
     }
 
     private static void assertBookText(String label, String message) {
@@ -77,19 +77,20 @@ public class ParityComponentTest {
     }
 
     private static List<String> testBookVanilla(String testStr) {
-        var bookEditScreen = new BookEditScreen(MinecraftClient.getInstance().player,
-                Items.WRITABLE_BOOK.getDefaultStack(),
-                Hand.MAIN_HAND,
-                new WritableBookContentComponent(new ArrayList<>())
+        assert Minecraft.getInstance().player != null;
+        var bookEditScreen = new BookEditScreen(Minecraft.getInstance().player,
+                Items.WRITABLE_BOOK.getDefaultInstance(),
+                InteractionHand.MAIN_HAND,
+                new WritableBookContent(new ArrayList<>())
         );
         // text renderer is initialised in setScreen
-        MinecraftClient.getInstance().setScreen(bookEditScreen);
+        Minecraft.getInstance().setScreen(bookEditScreen);
 
         for (int i = 0; i < testStr.length(); i++) {
-            bookEditScreen.keyPressed(new KeyInput(testStr.charAt(i), 0, 0));
+            bookEditScreen.keyPressed(new KeyEvent(testStr.charAt(i), 0, 0));
         }
 
-        MinecraftClient.getInstance().setScreen(null);
+        Minecraft.getInstance().setScreen(null);
         return new ArrayList<>(bookEditScreen.pages);
     }
 
@@ -105,14 +106,14 @@ public class ParityComponentTest {
                 component.setFocused(true);
             }
         };
-        MinecraftClient.getInstance().setScreen(screen);
+        Minecraft.getInstance().setScreen(screen);
 
         for (int i = 0; i < testStr.length(); i++) {
             component.setFocused(true);
-            component.keyPressed(new KeyInput(testStr.charAt(i), 0, 0));
+            component.keyPressed(new KeyEvent(testStr.charAt(i), 0, 0));
         }
 
-        MinecraftClient.getInstance().setScreen(null);
+        Minecraft.getInstance().setScreen(null);
         return component.getWrappedText();
     }
 }

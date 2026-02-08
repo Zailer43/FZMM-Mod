@@ -19,18 +19,13 @@ import fzmm.zailer.me.utils.history.HistoryClipboard;
 import fzmm.zailer.me.utils.history.IClipboardState;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.ItemComponent;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.item.BannerItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.ShieldItem;
-import net.minecraft.text.Text;
-import net.minecraft.util.DyeColor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.world.item.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -53,7 +48,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
     protected void setup(EFlowLayout rootComponent) {
         //preview
         this.bannerPreview = rootComponent.childByIdOrThrow(ItemComponent.class, "banner-preview");
-        this.bannerBuilder = BannerBuilder.of(Items.WHITE_BANNER.getDefaultStack());
+        this.bannerBuilder = BannerBuilder.of(Items.WHITE_BANNER.getDefaultInstance());
 
         //left buttons
         rootComponent.childByIdOrThrow(ButtonComponent.class, "give-button").onPress(button -> ItemUtils.give(this.bannerBuilder.get()));
@@ -68,10 +63,10 @@ public class BannerEditorScreen extends BaseFzmmScreen {
 
         //content
         FlowLayout colorLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "color-layout");
-        List<Component> colorList = new ArrayList<>();
+        List<UIComponent> colorList = new ArrayList<>();
         DyeColor[] dyeColorsInOrder = FzmmUtils.getDyeColorsInOrder();
         for (var dyeColor : dyeColorsInOrder) {
-            BoxComponent colorBox = Components.box(Sizing.fixed(16), Sizing.fixed(16));
+            BoxComponent colorBox = UIComponents.box(Sizing.fixed(16), Sizing.fixed(16));
             colorBox.margins(Insets.of(1));
             colorBox.color(Color.ofDye(dyeColor));
             colorBox.fill(true);
@@ -136,9 +131,9 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         List<ItemStack> defaultItems = new ArrayList<>();
 
         for (var dye : FzmmUtils.getDyeColorsInOrder())
-            defaultItems.add(BannerBuilder.getBannerByDye(dye).getDefaultStack());
+            defaultItems.add(BannerBuilder.getBannerByDye(dye).getDefaultInstance());
 
-        defaultItems.add(Items.SHIELD.getDefaultStack());
+        defaultItems.add(Items.SHIELD.getDefaultInstance());
 
         RequestedItem requestedItem = new RequestedItem(
                 itemStack -> itemStack.getItem() instanceof ShieldItem || itemStack.getItem() instanceof BannerItem,
@@ -158,11 +153,11 @@ public class BannerEditorScreen extends BaseFzmmScreen {
                 },
                 defaultItems,
                 this.bannerBuilder.get(),
-                Text.translatable("fzmm.gui.bannerEditor.option.select.title"),
+                net.minecraft.network.chat.Component.translatable("fzmm.gui.bannerEditor.option.select.title"),
                 true
         );
 
-        assert this.client != null;
+        assert this.minecraft != null;
         this.setScreen(new SelectItemScreen(this, requestedItem));
     }
 
@@ -175,7 +170,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
     private void updatePreview(BannerBuilder builder) {
         this.bannerBuilder = builder;
         this.bannerPreview.stack(builder.get());
-        List<Component> banners = selectedTab.update(this.clipboard, builder, this.selectedColor);
+        List<UIComponent> banners = selectedTab.update(this.clipboard, builder, this.selectedColor);
         this.contentLayout.<EFlowLayout>configure(layout -> {
             layout.clearChildren();
             layout.children(banners);
@@ -183,7 +178,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (this.clipboard.keyPressed(input)) return true;
 
         return super.keyPressed(input);

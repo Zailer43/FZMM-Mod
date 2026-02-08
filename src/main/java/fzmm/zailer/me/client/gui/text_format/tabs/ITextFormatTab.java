@@ -2,12 +2,12 @@ package fzmm.zailer.me.client.gui.text_format.tabs;
 
 import fzmm.zailer.me.client.gui.components.tabs.ITab;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
 
 public interface ITextFormatTab extends ITab {
-    Text getText(TextFormatLogic logic);
+    Component getText(TextFormatLogic logic);
 
     void setRandomValues();
 

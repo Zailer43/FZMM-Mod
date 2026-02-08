@@ -1,13 +1,13 @@
 package fzmm.zailer.me.client.gui.components.snack_bar;
 
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.core.Component;
-import io.wispforest.owo.ui.core.ParentComponent;
+import io.wispforest.owo.ui.core.ParentUIComponent;
+import io.wispforest.owo.ui.core.UIComponent;
 
 import java.util.List;
 
 
-public interface ISnackBarComponent extends ParentComponent {
+public interface ISnackBarComponent extends ParentUIComponent {
 
     void setTimer(long timerMillis);
     
@@ -22,13 +22,13 @@ public interface ISnackBarComponent extends ParentComponent {
     void removeOnLimit(boolean value);
 
     default void close() {
-        ParentComponent parent = this.parent();
+        ParentUIComponent parent = this.parent();
         if (parent != null) {
             parent.removeChild(this);
         }
     }
 
-    void add(Component snackBar);
+    void add(UIComponent snackBar);
 
     void setButtons(List<ButtonComponent> buttons);
 

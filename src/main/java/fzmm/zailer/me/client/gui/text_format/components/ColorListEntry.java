@@ -4,21 +4,20 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.row.AbstractRow;
 import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.text.Text;
+import io.wispforest.owo.ui.core.UIComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class ColorListEntry extends ColorRow {
-    private static final Text REMOVE_TEXT = Text.translatable("fzmm.gui.button.remove");
-    private static final Text UP_ARROW_TEXT = Text.translatable("fzmm.gui.button.arrow.up");
-    private static final Text DOWN_ARROW_TEXT = Text.translatable("fzmm.gui.button.arrow.down");
+    private static final net.minecraft.network.chat.Component REMOVE_TEXT = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.remove");
+    private static final net.minecraft.network.chat.Component UP_ARROW_TEXT = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.arrow.up");
+    private static final net.minecraft.network.chat.Component DOWN_ARROW_TEXT = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.arrow.down");
     private final ColorListContainer parent;
     private final ButtonComponent moveUpButton;
     private final ButtonComponent moveDownButton;
@@ -27,10 +26,10 @@ public class ColorListEntry extends ColorRow {
     public ColorListEntry(ColorListContainer parent, int id) {
         super(String.valueOf(id), String.valueOf(id), String.valueOf(id));
         this.parent = parent;
-        this.moveUpButton = Components.button(UP_ARROW_TEXT, this::upArrowExecute);
+        this.moveUpButton = UIComponents.button(UP_ARROW_TEXT, this::upArrowExecute);
         this.moveUpButton.sizing(Sizing.fixed(20), Sizing.fixed(20));
 
-        this.moveDownButton = Components.button(DOWN_ARROW_TEXT, this::downArrowExecute);
+        this.moveDownButton = UIComponents.button(DOWN_ARROW_TEXT, this::downArrowExecute);
         this.moveDownButton.sizing(Sizing.fixed(20), Sizing.fixed(20));
 
         this.setButtons();
@@ -43,12 +42,12 @@ public class ColorListEntry extends ColorRow {
 
         String labelId = AbstractRow.getLabelId(this.getId());
         FlowLayout rowContainer = rowContainerOptional.get().gap(BaseFzmmScreen.COMPONENT_DISTANCE);
-        List<Component> componentList = new ArrayList<>(List.copyOf(rowContainer.children()));
+        List<UIComponent> componentList = new ArrayList<>(List.copyOf(rowContainer.children()));
         componentList.removeIf(component -> labelId.equals(component.id()));
 
         rowContainer.clearChildren();
 
-        this.removeButton = Components.button(REMOVE_TEXT, buttonComponent -> this.parent.removeColorEntry(this));
+        this.removeButton = UIComponents.button(REMOVE_TEXT, buttonComponent -> this.parent.removeColorEntry(this));
         this.removeButton.sizing(Sizing.fixed(20), Sizing.fixed(20));
         this.removeButton.margins(Insets.left(15));
         rowContainer.child(this.removeButton);

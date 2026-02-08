@@ -8,12 +8,12 @@ import io.wispforest.owo.config.ui.OptionComponentFactory;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ColorPickerComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.core.Color;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.MinecraftClient;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
@@ -31,17 +31,17 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
     }
 
     @Override
-    public Component[] getComponents(String id, String tooltipId) {
+    public UIComponent[] getComponents(String id, String tooltipId) {
         ConfigTextBox colorField = (ConfigTextBox) new ConfigTextBox()
                 .horizontalSizing(Sizing.fixed(TEXT_FIELD_WIDTH))
                 .id(getColorFieldId(id));
 
-        Component box = Components.box(Sizing.fixed(15), Sizing.fixed(15))
+        UIComponent box = UIComponents.box(Sizing.fixed(15), Sizing.fixed(15))
                 .fill(true)
                 .cursorStyle(CursorStyle.HAND)
                 .id(getColorPreviewId(id));
 
-        return new Component[]{
+        return new UIComponent[]{
                 box,
                 colorField
         };
@@ -82,7 +82,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
                 (picker) -> colorField.text(picker.selectedColor().asHexString(withAlpha)));
 
         colorField.onChanged().subscribe(value -> colorPreview.color(valueGetter.get()));
-        colorField.setCursorToStart(false);
+        colorField.moveCursorToStart(false);
 
         return colorField;
     }
@@ -97,7 +97,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
         colorPreview.mouseDown().subscribe((input, doubled) -> {
             ColorOverlay colorOverlay = new ColorOverlay(valueGetter.get(), withAlpha, onPress, colorPreview);
 
-            if (MinecraftClient.getInstance().currentScreen instanceof BaseFzmmScreen screen) {
+            if (Minecraft.getInstance().screen instanceof BaseFzmmScreen screen) {
                 screen.addOverlay(colorOverlay);
             }
 

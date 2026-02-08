@@ -1,17 +1,18 @@
 package fzmm.zailer.me.utils;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
-import net.minecraft.client.texture.NativeImage;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Optional;
 
 public class ImageUtils {
@@ -20,7 +21,7 @@ public class ImageUtils {
         int width = nativeImage.getWidth();
         int height = nativeImage.getHeight();
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        bufferedImage.getRaster().setDataElements(0, 0, width, height, nativeImage.copyPixelsArgb());
+        bufferedImage.getRaster().setDataElements(0, 0, width, height, nativeImage.getPixels());
 
         return bufferedImage;
     }
@@ -37,18 +38,25 @@ public class ImageUtils {
     }
 
     public static Optional<BufferedImage> getImageFromUrl(String urlLocation) throws IOException {
-        try (var httpClient = FzmmUtils.getHttpClient()) {
-            HttpGet httpGet = new HttpGet(urlLocation);
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(urlLocation))
+                    .timeout(Duration.ofSeconds(10))
+                    .header("User-Agent", FzmmClient.HTTP_USER_AGENT)
+                    .GET()
+                    .build();
 
-            HttpResponse response = httpClient.execute(httpGet);
-            HttpEntity resEntity = response.getEntity();
-            if (resEntity != null) {
-                try (InputStream inputStream = resEntity.getContent()) {
-                    BufferedImage image = ImageIO.read(inputStream);
-                    return Optional.ofNullable(image);
+            HttpResponse<InputStream> response = FzmmUtils.getHttpClient().send(request, HttpResponse.BodyHandlers.ofInputStream());
+
+            if (response.statusCode() == 200) {
+                try (InputStream is = response.body()) {
+                    return Optional.ofNullable(ImageIO.read(is));
                 }
             }
+        } catch (Exception e) {
+            FzmmClient.LOGGER.warn("[ImageUtils] Failed to get image", e);
         }
+
         return Optional.empty();
     }
 
@@ -56,7 +64,7 @@ public class ImageUtils {
         NativeImage nativeImage = new NativeImage(NativeImage.Format.RGBA, image.getWidth(), image.getHeight(), false);
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
-                nativeImage.setColorArgb(x, y, image.getRGB(x, y));
+                nativeImage.setPixel(x, y, image.getRGB(x, y));
             }
         }
         return nativeImage;

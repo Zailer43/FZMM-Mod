@@ -41,7 +41,7 @@ public class ConverterUuidToArrayTab implements ITab {
             if (!uuidField.isValid())
                 return;
 
-            String stringOfUuidArray = this.stringOfUUIDtoArray(uuidField.getText());
+            String stringOfUuidArray = this.stringOfUUIDtoArray(uuidField.getValue());
             SnackBarManager.copyToClipboard(stringOfUuidArray);
         });
     }

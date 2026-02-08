@@ -4,8 +4,8 @@ import fzmm.zailer.me.builders.BannerBuilder;
 import fzmm.zailer.me.utils.history.HistoryClipboard;
 import io.wispforest.owo.ui.component.ItemComponent;
 import io.wispforest.owo.ui.util.UISounds;
-import net.minecraft.component.type.BannerPatternsComponent;
-import net.minecraft.util.DyeColor;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
 import org.jetbrains.annotations.Nullable;
 
 public class RemovePatternTab extends AbstractModifyPatternTab {
@@ -22,7 +22,7 @@ public class RemovePatternTab extends AbstractModifyPatternTab {
 
     @Override
     protected void onItemComponentCreated(HistoryClipboard clipboard, ItemComponent itemComponent,
-                                          @Nullable BannerPatternsComponent.Layer componentLayer,
+                                          @Nullable BannerPatternLayers.Layer componentLayer,
                                           BannerBuilder currentBanner, DyeColor selectedColor) {
         if (componentLayer == null) {
             return;

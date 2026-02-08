@@ -1,43 +1,38 @@
 package fzmm.zailer.me.client.gui.components.extend.component;
 
-import io.wispforest.owo.mixin.ui.ClickableWidgetMixin;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.core.Color;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.input.MouseInput;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import io.wispforest.owo.ui.core.OwoUIGraphics;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class EButtonComponent extends ButtonComponent {
-    private Function<Text, Text> messageProvider = message -> message;
+    private Function<Component, Component> messageProvider = message -> message;
 
-    public EButtonComponent(Text message, Consumer<ButtonComponent> onPress) {
+    public EButtonComponent(Component message, Consumer<ButtonComponent> onPress) {
         super(message, onPress);
     }
 
     /**
-     * Copy of {@link ButtonComponent#renderWidget(DrawContext, int, int, float)} but with {@link PressableWidget#drawScrollableText}
+     * Copy of {@link ButtonComponent#renderContents(GuiGraphics, int, int, float)} but with {@link AbstractButton#renderScrollingStringOverContents}
      */
     @Override
-    public void renderWidget(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-        OwoUIDrawContext context = (OwoUIDrawContext) drawContext;
-        this.renderer.draw(context, this, delta);
-
-        var textRenderer = MinecraftClient.getInstance().textRenderer;
+    public void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+        OwoUIGraphics graphics = (OwoUIGraphics) guiGraphics;
+        this.renderer.draw(graphics, this, delta);
 
         // drawScrollableText
-        this.drawMessage(context, textRenderer, Color.ofFormatting(this.active() ? Formatting.WHITE : Formatting.GRAY).argb());
+        this.renderScrollingStringOverContents(graphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE), this.getMessage(), 2);
     }
 
     /**
-     * Copy of {@link ButtonComponent#shouldDrawTooltip(double, double)}, to avoid {@link ClickableWidgetMixin#shouldDrawTooltip(double, double)}
+     * Copy of {@link ButtonComponent#shouldDrawTooltip(double, double)}, to avoid {@link Button#shouldDrawTooltip(double, double)}
      * <p/>
      * Renders the tooltip even if {@link EButtonComponent#active()} is false
      */
@@ -48,15 +43,15 @@ public class EButtonComponent extends ButtonComponent {
     }
 
     @Override
-    public void setMessage(Text message) {
+    public void setMessage(Component message) {
         super.setMessage(this.messageProvider.apply(message));
     }
 
-    public void setMessageProvider(Function<Text, Text> messageProvider) {
+    public void setMessageProvider(Function<Component, Component> messageProvider) {
         this.messageProvider = messageProvider;
     }
 
     public void onPress() {
-        this.onPress(new Click(0, 0, new MouseInput(0, 0)));
+        this.onPress(new MouseButtonEvent(0, 0, new MouseButtonInfo(0, 0)));
     }
 }

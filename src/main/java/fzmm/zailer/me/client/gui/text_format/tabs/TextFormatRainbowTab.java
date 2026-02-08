@@ -7,14 +7,13 @@ import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.config.FzmmConfig;
-import net.minecraft.text.Text;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Date;
 import java.util.Random;
 import java.util.function.Consumer;
+import net.minecraft.network.chat.Component;
 
 public class TextFormatRainbowTab implements ITextFormatTab, IMemento {
     private SliderWidget hue;
@@ -29,7 +28,7 @@ public class TextFormatRainbowTab implements ITextFormatTab, IMemento {
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
-    public Text getText(TextFormatLogic logic) {
+    public Component getText(TextFormatLogic logic) {
         float hue = (float) this.hue.parsedValue();
         float saturation = (float) this.saturation.parsedValue();
         float brightness = (float) this.brightness.parsedValue();

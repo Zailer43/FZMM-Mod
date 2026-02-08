@@ -19,23 +19,22 @@ import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.util.FocusHandler;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 
 public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
-    public static final Text EMPTY_COLOR_TEXT = Text.translatable("fzmm.gui.textFormat.error.emptyColor").setStyle(Style.EMPTY.withColor(EStyles.TEXT_ERROR_COLOR.rgb()));
+    public static final net.minecraft.network.chat.Component EMPTY_COLOR_TEXT = net.minecraft.network.chat.Component.translatable("fzmm.gui.textFormat.error.emptyColor").setStyle(Style.EMPTY.withColor(EStyles.TEXT_ERROR_COLOR.rgb()));
     private LabelComponent messagePreviewLabel;
     private TextBoxComponent messageTextField;
     private EBooleanButton boldToggle;
@@ -44,7 +43,7 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
     private EBooleanButton strikethroughToggle;
     private EBooleanButton underlineToggle;
     private FlowLayout stylesLayout;
-    private List<ButtonWidget> executeButtons;
+    private List<Button> executeButtons;
     private TabContainer tabContainer;
     private boolean initialized;
 
@@ -85,7 +84,7 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     protected void initFocus(FocusHandler focusHandler) {
-        focusHandler.focus(this.messageTextField, Component.FocusSource.MOUSE_CLICK);
+        focusHandler.focus(this.messageTextField, UIComponent.FocusSource.MOUSE_CLICK);
     }
 
     private void onSelectTab(ITab tab) {
@@ -98,19 +97,18 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void setupBottomButtons(EFlowLayout rootComponent) {
-        assert this.client != null;
-        assert client.player != null;
+        assert minecraft.player != null;
         FzmmConfig.TextFormat config = FzmmClient.CONFIG.textFormat;
 
-        boolean executeButtonsActive = this.messageTextField.getText().length() > 1;
+        boolean executeButtonsActive = this.messageTextField.getValue().length() > 1;
         ButtonComponent addLoreButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "add-lore-button");
         addLoreButton.active(executeButtonsActive);
         addLoreButton.onPress(button -> {
-            ItemStack handItem = ItemUtils.from(Hand.MAIN_HAND);
-            Text text = this.messagePreviewLabel.text();
+            ItemStack handItem = ItemUtils.from(InteractionHand.MAIN_HAND);
+            net.minecraft.network.chat.Component text = this.messagePreviewLabel.text();
 
             DisplayBuilder builder = DisplayBuilder.of(handItem.isEmpty() ?
-                    ItemUtils.from(config.defaultItem()).getDefaultStack() : handItem
+                    ItemUtils.from(config.defaultItem()).getDefaultInstance() : handItem
             ).addLore(text);
 
             ItemUtils.give(builder.get());
@@ -118,11 +116,11 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
         ButtonComponent setNameButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "set-name-button");
         setNameButton.active(executeButtonsActive);
         setNameButton.onPress(button -> {
-            ItemStack handItem = ItemUtils.from(Hand.MAIN_HAND);
-            Text text = this.messagePreviewLabel.text();
+            ItemStack handItem = ItemUtils.from(InteractionHand.MAIN_HAND);
+            net.minecraft.network.chat.Component text = this.messagePreviewLabel.text();
 
             DisplayBuilder builder = DisplayBuilder.of(handItem.isEmpty() ?
-                    ItemUtils.from(config.defaultItem()).getDefaultStack() : handItem
+                    ItemUtils.from(config.defaultItem()).getDefaultInstance() : handItem
             ).setName(text.copy());
 
             ItemUtils.give(builder.get());
@@ -140,10 +138,10 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
 
     public void updateMessagePreview() {
         if (!this.initialized) return;
-        String message = this.messageTextField.getText();
+        String message = this.messageTextField.getValue();
         if (message.length() < 2) {
             this.toggleExecuteButtons(false);
-            this.messagePreviewLabel.text(Text.translatable("fzmm.gui.textFormat.error.messageLength")
+            this.messagePreviewLabel.text(net.minecraft.network.chat.Component.translatable("fzmm.gui.textFormat.error.messageLength")
                     .setStyle(Style.EMPTY.withColor(0x913144)));
         }
         this.toggleExecuteButtons(true);
@@ -155,7 +153,7 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
         boolean italic = this.italicToggle.enabled();
 
         TextFormatLogic logic = new TextFormatLogic(message, obfuscated, bold, strikethrough, underline, italic);
-        Text messagePreview = ((ITextFormatTab) this.tabContainer.selectedTab()).getText(logic);
+        net.minecraft.network.chat.Component messagePreview = ((ITextFormatTab) this.tabContainer.selectedTab()).getText(logic);
         this.messagePreviewLabel.text(messagePreview);
     }
 
@@ -174,7 +172,7 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     public void backup(ObjectOutputStream output) throws IOException {
-        output.writeObject(this.messageTextField.getText());
+        output.writeObject(this.messageTextField.getValue());
         output.writeBoolean(this.obfuscatedToggle.enabled());
         output.writeBoolean(this.boldToggle.enabled());
         output.writeBoolean(this.strikethroughToggle.enabled());

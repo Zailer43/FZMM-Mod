@@ -1,9 +1,9 @@
 package fzmm.zailer.me.client.gui.imagetext.tabs;
 
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public interface IImagetextTooltip {
 
-    Text getTooltip(ImagetextLogic logic);
+    Component getTooltip(ImagetextLogic logic);
 }

@@ -16,25 +16,24 @@ import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.HeadUtils;
 import io.wispforest.owo.ui.component.*;
-import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.container.ScrollContainer;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.container.UIContainers;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.util.FocusHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.screen.ConfirmLinkScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.input.MouseInput;
-import net.minecraft.entity.player.SkinTextures;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
@@ -59,7 +58,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
     private TextBoxComponent contentSearchField;
     private ButtonComponent tagButton;
     private ButtonComponent clearTagsButton;
-    private List<Component> categoryButtonList;
+    private List<UIComponent> categoryButtonList;
     private Set<String> selectedTags;
     private Set<String> availableTags;
     private LabelComponent errorLabel;
@@ -80,7 +79,6 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         this.page = 1;
         this.selectedTags = new HashSet<>();
         this.availableTags = new HashSet<>();
-        assert this.client != null;
 
         // content
         this.contentLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "content");
@@ -92,18 +90,18 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
 
         ButtonComponent previousPageButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "previous-page-button");
         previousPageButton.onPress(buttonComponent -> this.setPage(this.page - 1));
-        previousPageButton.tooltip(List.of(Text.translatable("fzmm.gui.hotkey.single"), Text.translatable("key.keyboard.left")));
+        previousPageButton.tooltip(List.of(net.minecraft.network.chat.Component.translatable("fzmm.gui.hotkey.single"), net.minecraft.network.chat.Component.translatable("key.keyboard.left")));
 
         ButtonComponent nextPageButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "next-page-button");
         nextPageButton.onPress(buttonComponent -> this.setPage(this.page + 1));
-        nextPageButton.tooltip(List.of(Text.translatable("fzmm.gui.hotkey.single"), Text.translatable("key.keyboard.right")));
+        nextPageButton.tooltip(List.of(net.minecraft.network.chat.Component.translatable("fzmm.gui.hotkey.single"), net.minecraft.network.chat.Component.translatable("key.keyboard.right")));
 
         // categories - left options bottom
         EFlowLayout categoryList = rootComponent.childByIdOrThrow(EFlowLayout.class, "minecraft-heads-category-list");
 
 
         this.categoryButtonList = HeadGalleryResources.CATEGORY_LIST.stream()
-                .map(category -> Components.button(Text.translatable("fzmm.gui.headGallery.button.category." + category),
+                .map(category -> UIComponents.button(net.minecraft.network.chat.Component.translatable("fzmm.gui.headGallery.button.category." + category),
                                 buttonComponent -> this.categoryButtonExecute(buttonComponent, category, null))
                         .renderer(EStyles.DEFAULT_FLAT_BUTTON)
                         .sizing(Sizing.fill(100), Sizing.fixed(16))
@@ -135,7 +133,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         //noinspection UnstableApiUsage
         scaleSlider.min(1).max(3).decimalPlaces(1).setFromDiscreteValue(this.itemScale)
                 .scrollStep(1.0 / (scaleSlider.max() + scaleSlider.min())); // 0.5 step
-        scaleSlider.message(s -> Text.translatable("fzmm.gui.headGallery.option.itemScale", s));
+        scaleSlider.message(s -> net.minecraft.network.chat.Component.translatable("fzmm.gui.headGallery.option.itemScale", s));
         scaleSlider.onChanged().subscribe(value -> {
             this.itemScale = value;
             this.setPage(this.page);
@@ -149,12 +147,12 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
 
         // right preview
         FlowLayout previewLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "preview-layout");
-        this.frontEntityPreview = new CustomHeadEntity(this.client.world);
-        this.backEntityPreview = new CustomHeadEntity(this.client.world);
+        this.frontEntityPreview = new CustomHeadEntity(this.minecraft.level);
+        this.backEntityPreview = new CustomHeadEntity(this.minecraft.level);
 
         EntityComponent<CustomHeadEntity> backEntityPreview = EComponents.entity(Sizing.fixed(48), this.backEntityPreview)
                 .allowMouseRotation(true);
-        backEntityPreview.onMouseDrag(new Click(0, 0, new MouseInput(GLFW.GLFW_MOUSE_BUTTON_LEFT, 0)), 160, 0);
+        backEntityPreview.onMouseDrag(new MouseButtonEvent(0, 0, new MouseButtonInfo(GLFW.GLFW_MOUSE_BUTTON_LEFT, 0)), 160, 0);
         backEntityPreview.allowMouseRotation(false);
 
         previewLayout.child(EComponents.entity(Sizing.fixed(48), this.frontEntityPreview));
@@ -166,11 +164,11 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     protected void initFocus(FocusHandler focusHandler) {
-        focusHandler.focus(this.contentSearchField, Component.FocusSource.MOUSE_CLICK);
+        focusHandler.focus(this.contentSearchField, UIComponent.FocusSource.MOUSE_CLICK);
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (super.keyPressed(input)) return true;
 
         if (input.isLeft()) {
@@ -185,22 +183,20 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void categoryButtonExecute(ButtonComponent selectedButton, String category, @Nullable Runnable callback) {
-        assert this.client != null;
-
         for (var component : this.categoryButtonList) {
-            if (component instanceof ButtonWidget button)
+            if (component instanceof Button button)
                 button.active = false;
         }
         this.tagButton.active = false;
 
         HeadGalleryResources.getCategory(category).thenAccept(categoryData ->
-                this.client.execute(() -> {
+                this.minecraft.execute(() -> {
                     this.selectedCategory = category;
                     this.categoryHeads.clear();
                     this.categoryHeads.addAll(categoryData);
 
                     for (var component : this.categoryButtonList) {
-                        if (component instanceof ButtonWidget button)
+                        if (component instanceof Button button)
                             button.active = true;
                     }
                     selectedButton.active = false;
@@ -215,9 +211,9 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
                         callback.run();
                     }
                 })
-        ).whenComplete((unused, throwable) -> this.client.execute(() -> {
+        ).whenComplete((unused, throwable) -> this.minecraft.execute(() -> {
             if (throwable == null) {
-                this.errorLabel.text(Text.empty());
+                this.errorLabel.text(net.minecraft.network.chat.Component.empty());
                 return;
             }
 
@@ -225,12 +221,12 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
             this.applyFilters();
             this.setPage(1);
 
-            this.errorLabel.text(Text.translatable("fzmm.gui.headGallery.label.error", category)
+            this.errorLabel.text(net.minecraft.network.chat.Component.translatable("fzmm.gui.headGallery.label.error", category)
                     .setStyle(Style.EMPTY.withColor(EStyles.TEXT_ERROR_COLOR.rgb())));
             FzmmClient.LOGGER.error("[HeadGalleryScreen] Error while fetching category '{}'", category, throwable);
 
             for (var component : this.categoryButtonList) {
-                if (component instanceof ButtonWidget button)
+                if (component instanceof Button button)
                     button.active = true;
             }
         }));
@@ -259,11 +255,11 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
 
             tagsOverlayLabel.text(this.getTagLabelText());
 
-            List<Component> buttonList = this.availableTags.stream()
+            List<UIComponent> buttonList = this.availableTags.stream()
                     .sorted()
                     .map(tag -> {
-                        Text text = this.selectedTags.contains(tag) ? this.getSelectedTagText(tag) : Text.literal(tag);
-                        return Components.button(text, button -> {
+                        net.minecraft.network.chat.Component text = this.selectedTags.contains(tag) ? this.getSelectedTagText(tag) : net.minecraft.network.chat.Component.literal(tag);
+                        return UIComponents.button(text, button -> {
                             this.updateTag(button);
                             this.tagOverlayUpdateLabels(tagsOverlayLabel);
                         }).horizontalSizing(Sizing.fixed(200));
@@ -283,7 +279,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
             TextBoxComponent tagSearchBox = layout.childByIdOrThrow(TextBoxComponent.class, "tag-search");
 
             tagSearchBox.onChanged().subscribe(value -> {
-                List<Component> buttonListCopy = new ArrayList<>(buttonList);
+                List<UIComponent> buttonListCopy = new ArrayList<>(buttonList);
 
                 String valueToLowerCase = value.toLowerCase();
                 buttonListCopy.removeIf(tagComponent -> {
@@ -304,7 +300,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         });
 
         tagSelectPanel.mouseDown().subscribe((input, doubled) -> true);
-        OverlayContainer<FlowLayout> tagOverlay = Containers.overlay(tagSelectPanel);
+        OverlayContainer<FlowLayout> tagOverlay = UIContainers.overlay(tagSelectPanel);
         this.addOverlay(tagOverlay);
     }
 
@@ -312,7 +308,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         String value = selectedButton.getMessage().getString();
         if (this.selectedTags.contains(value)) {
             this.selectedTags.remove(value);
-            selectedButton.setMessage(Text.literal(value));
+            selectedButton.setMessage(net.minecraft.network.chat.Component.literal(value));
         } else {
             this.selectedTags.add(value);
             selectedButton.setMessage(this.getSelectedTagText(value));
@@ -349,12 +345,10 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         }
 
         this.page = page;
-        this.currentPageLabel.text(Text.translatable("fzmm.gui.headGallery.label.page", page, lastPage));
+        this.currentPageLabel.text(net.minecraft.network.chat.Component.translatable("fzmm.gui.headGallery.label.page", page, lastPage));
 
         int lastElementIndex = Math.min((page) * maxHeadsPerPage, this.categoryHeadsWithFilter.size());
         List<EItemComponent> currentPageHeads = this.getPageItems(firstElementIndex, lastElementIndex);
-
-        assert this.client != null;
 
         for (var component : currentPageHeads) {
             component.mouseEnter().subscribe(() -> {
@@ -364,7 +358,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
             });
         }
 
-        this.client.execute(() -> this.contentScroll.configure(component -> {
+        this.minecraft.execute(() -> this.contentScroll.configure(component -> {
             this.contentLayout.clearChildren();
             this.contentLayout.children(currentPageHeads);
         }));
@@ -386,20 +380,20 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
 
 
             EItemComponent itemComponent;
-            if (this.styleCheckbox.isChecked()) {
+            if (this.styleCheckbox.selected()) {
                 DisplayBuilder builder = DisplayBuilder.of(head);
-                builder.setName(Text.translatable("fzmm.item.headGallery.heads.name", minecraftHeadsData.name()).getString(), nameColor)
-                        .addLore(Text.translatable("fzmm.item.headGallery.heads.tags.title").getString(), tagsColor);
+                builder.setName(net.minecraft.network.chat.Component.translatable("fzmm.item.headGallery.heads.name", minecraftHeadsData.name()).getString(), nameColor)
+                        .addLore(net.minecraft.network.chat.Component.translatable("fzmm.item.headGallery.heads.tags.title").getString(), tagsColor);
 
                 for (var tag : minecraftHeadsData.tags()) {
-                    builder.addLore(Text.translatable("fzmm.item.headGallery.heads.tags.tag", tag).getString(), tagsColor);
+                    builder.addLore(net.minecraft.network.chat.Component.translatable("fzmm.item.headGallery.heads.tags.tag", tag).getString(), tagsColor);
                 }
 
                 itemComponent = EComponents.itemGive(builder.get());
             } else {
                 itemComponent = EComponents.itemGive(head);
                 itemComponent.setTooltipFromStack(false);
-                itemComponent.tooltip(Text.literal(minecraftHeadsData.name()));
+                itemComponent.tooltip(net.minecraft.network.chat.Component.literal(minecraftHeadsData.name()));
             }
 
             itemComponent.sizing(Sizing.fixed((int) (this.itemScale * 16.0d)));
@@ -416,27 +410,26 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         this.categoryHeadsWithFilter.clear();
         this.categoryHeadsWithFilter.addAll(this.categoryHeads);
 
-        String search = this.contentSearchField.getText().toLowerCase();
+        String search = this.contentSearchField.getValue().toLowerCase();
         this.categoryHeadsWithFilter.removeIf(itemComponent -> !itemComponent.filter(this.selectedTags, search));
         this.clearTagsButton.active(!this.selectedTags.isEmpty());
     }
 
     private void minecraftHeadsExecute(ButtonComponent button) {
-        assert this.client != null;
-
-        ConfirmLinkScreen.open(this.client.currentScreen, HeadGalleryResources.MINECRAFT_HEADS_URL, true);
+        assert this.minecraft.screen != null;
+        ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, HeadGalleryResources.MINECRAFT_HEADS_URL, true);
     }
 
-    private Text getTagButtonText() {
-        return Text.translatable(TAG_BUTTON_TEXT, this.selectedTags.size());
+    private net.minecraft.network.chat.Component getTagButtonText() {
+        return net.minecraft.network.chat.Component.translatable(TAG_BUTTON_TEXT, this.selectedTags.size());
     }
 
-    private Text getTagLabelText() {
-        return Text.translatable(TAG_LABEL_TEXT, this.selectedTags.size(), this.availableTags.size(), this.categoryHeadsWithFilter.size());
+    private net.minecraft.network.chat.Component getTagLabelText() {
+        return net.minecraft.network.chat.Component.translatable(TAG_LABEL_TEXT, this.selectedTags.size(), this.availableTags.size(), this.categoryHeadsWithFilter.size());
     }
 
-    private Text getSelectedTagText(String value) {
-        return Text.literal(value).setStyle(Style.EMPTY.withBold(true).withUnderline(true).withColor(SELECTED_TAG_COLOR));
+    private net.minecraft.network.chat.Component getSelectedTagText(String value) {
+        return net.minecraft.network.chat.Component.literal(value).setStyle(Style.EMPTY.withBold(true).withUnderlined(true).withColor(SELECTED_TAG_COLOR));
     }
 
     private void updatePreview(ItemStack stack) {
@@ -447,7 +440,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         });
     }
 
-    private void updatePreview(SkinTextures textures) {
+    private void updatePreview(PlayerSkin textures) {
         this.frontEntityPreview.skin(textures);
         this.backEntityPreview.skin(textures);
     }
@@ -455,8 +448,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
     @Override
     public void backup(ObjectOutputStream output) throws IOException {
         output.writeObject(this.selectedCategory);
-        output.writeObject(this.contentSearchField.getText());
-        output.writeBoolean(this.styleCheckbox.isChecked());
+        output.writeObject(this.contentSearchField.getValue());
+        output.writeBoolean(this.styleCheckbox.selected());
         output.writeObject(this.selectedTags);
         output.writeInt(this.page);
     }
@@ -469,7 +462,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         this.styleCheckbox.checked(input.readBoolean());
         if (this.selectedCategory == null) return;
 
-        List<Component> categoryList = new ArrayList<>(this.categoryButtonList);
+        List<UIComponent> categoryList = new ArrayList<>(this.categoryButtonList);
         categoryList.removeIf(component -> !this.selectedCategory.equals(component.id()));
         categoryList.stream().findAny().ifPresent(component -> this.categoryButtonExecute((ButtonComponent) component, this.selectedCategory, () -> {
 

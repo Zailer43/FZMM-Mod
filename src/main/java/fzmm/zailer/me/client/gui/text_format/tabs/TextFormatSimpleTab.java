@@ -7,13 +7,12 @@ import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.core.Color;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.random.Random;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.function.Consumer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 
 @SuppressWarnings("UnstableApiUsage")
 public class TextFormatSimpleTab implements ITextFormatTab, IMemento {
@@ -25,7 +24,7 @@ public class TextFormatSimpleTab implements ITextFormatTab, IMemento {
     }
 
     @Override
-    public Text getText(TextFormatLogic logic) {
+    public Component getText(TextFormatLogic logic) {
         if (!this.color.isValid()) return TextFormatScreen.EMPTY_COLOR_TEXT;
         Color color = (Color) this.color.parsedValue();
 
@@ -40,7 +39,7 @@ public class TextFormatSimpleTab implements ITextFormatTab, IMemento {
 
     @Override
     public void setRandomValues() {
-        Color color = Color.ofRgb(Random.create().nextInt(0xFFFFFF));
+        Color color = Color.ofRgb(RandomSource.create().nextInt(0xFFFFFF));
         this.color.text(color.asHexString(false));
     }
 
@@ -56,7 +55,7 @@ public class TextFormatSimpleTab implements ITextFormatTab, IMemento {
 
     @Override
     public void backup(ObjectOutputStream output) throws IOException {
-        output.writeObject(this.color.getText());
+        output.writeObject(this.color.getValue());
     }
 
     @Override

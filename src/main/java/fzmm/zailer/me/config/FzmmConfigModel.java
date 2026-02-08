@@ -4,9 +4,9 @@ import fzmm.zailer.me.client.gui.imagetext.ImagetextScreen;
 import fzmm.zailer.me.client.logic.enycrpt_book.TranslationEncryptProfile;
 import io.wispforest.owo.config.annotation.*;
 import io.wispforest.owo.ui.core.Color;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Items;
 
 import java.util.*;
 
@@ -191,6 +191,6 @@ public class FzmmConfigModel {
 
     @SuppressWarnings("unused")
     public static boolean predicateItem(String value) {
-        return Registries.ITEM.getEntry(Identifier.of(value)).isPresent();
+        return BuiltInRegistries.ITEM.get(Identifier.parse(value)).isPresent();
     }
 }

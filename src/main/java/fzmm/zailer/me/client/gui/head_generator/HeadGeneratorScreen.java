@@ -31,19 +31,17 @@ import fzmm.zailer.me.utils.*;
 import fzmm.zailer.me.utils.list.ListUtils;
 import io.wispforest.owo.config.ui.ConfigScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.TextBoxComponent;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.util.FocusHandler;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.screen.ConfirmLinkScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
@@ -120,7 +118,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
 
         //bottom buttons
         ButtonComponent openSkinFolderButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "open-folder-button");
-        openSkinFolderButton.onPress(button -> Util.getOperatingSystem().open(SKIN_SAVE_FOLDER_PATH.toFile()));
+        openSkinFolderButton.onPress(button -> Util.getPlatform().openFile(SKIN_SAVE_FOLDER_PATH.toFile()));
 
         // nav var
         this.searchField = TextBoxRow.setup(rootComponent, "search", "", 128, s -> this.applyFilters());
@@ -148,7 +146,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
         this.headCategoryButton.horizontalSizing(Sizing.fixed(maxCategoryHorizontalSizing));
         this.headCategoryButton.setContextMenuOptions(contextMenu -> {
             for (var category : IHeadCategory.NATURAL_CATEGORIES) {
-                contextMenu.button(Text.translatable(category.getTranslationKey()), dropdown -> this.updateCategory(category));
+                contextMenu.button(net.minecraft.network.chat.Component.translatable(category.getTranslationKey()), dropdown -> this.updateCategory(category));
             }
         });
 
@@ -168,7 +166,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     protected void initFocus(FocusHandler focusHandler) {
-        focusHandler.focus(this.skinElements.valueField(), Component.FocusSource.MOUSE_CLICK);
+        focusHandler.focus(this.skinElements.valueField(), UIComponent.FocusSource.MOUSE_CLICK);
     }
 
     private void updateCategory(IHeadCategory category) {
@@ -193,8 +191,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     }
 
     @SuppressWarnings("All")
-    private MutableText getCategoryText(IHeadCategory category) {
-        return Text.translatable("fzmm.gui.headGenerator.label.category", Text.translatable(category.getTranslationKey()));
+    private MutableComponent getCategoryText(IHeadCategory category) {
+        return net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.label.category", net.minecraft.network.chat.Component.translatable(category.getTranslationKey()));
     }
 
     private void skinCallback(BufferedImage skinBase) {
@@ -234,7 +232,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
 
     private void addNoResultsMessage(EFlowLayout parent) {
         FzmmClient.LOGGER.warn("[HeadGeneratorScreen] No head entries found");
-        Component label = EComponents.label(Text.translatable("fzmm.gui.headGenerator.label.noResults")
+        UIComponent label = EComponents.label(net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.label.noResults")
                         .setStyle(Style.EMPTY.withColor(EStyles.TEXT_ERROR_COLOR.rgb())))
                 .horizontalTextAlignment(HorizontalAlignment.CENTER)
                 .sizing(Sizing.expand(100), Sizing.content())
@@ -245,8 +243,6 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
 
 
     public void updateContentPreviews() {
-        assert this.client != null;
-
         //noinspection resource
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         boolean editingBody = this.isEditingBody();
@@ -266,7 +262,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
 
             scheduler.schedule(() -> {
                 // components must be updated in the client thread otherwise it may cause a crash
-                this.client.execute(() -> {
+                this.minecraft.execute(() -> {
                     BufferedImage baseTexture;
                     if (forcePreEditNone && entry.getValue() instanceof HeadModelEntry) {
                         baseTexture = nonePreEdit;
@@ -392,9 +388,9 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     public void setupPreEditButton(FlowLayout preEditLayout, SkinPreEditOption preEditOption,
                                    HashMap<SkinPreEditOption, EButtonComponent> skinPreEditButtons,
                                    Consumer<SkinPreEditOption> selectPreEditCallback) {
-        preEditLayout.tooltip(Text.translatable(preEditOption.getTranslationKey() + ".tooltip"));
+        preEditLayout.tooltip(net.minecraft.network.chat.Component.translatable(preEditOption.getTranslationKey() + ".tooltip"));
 
-        EButtonComponent preEditButton = EComponents.button(Text.empty());
+        EButtonComponent preEditButton = EComponents.button(net.minecraft.network.chat.Component.empty());
         preEditButton.onPress(button -> {
             selectPreEditCallback.accept(preEditOption);
 
@@ -415,11 +411,9 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void closeTextures() {
-        if (this.contentLayout == null)
-            return;
+        if (this.contentLayout == null) return;
 
-        assert this.client != null;
-        this.client.execute(() -> {
+        this.minecraft.execute(() -> {
             this.closeTextures(this.headComponentEntries);
             this.closeTextures(this.compoundEntries);
         });
@@ -434,26 +428,25 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     private void applyFilters() {
         if (this.searchField == null)
             return;
-        String searchValue = this.searchField.getText().toLowerCase();
+        String searchValue = this.searchField.getValue().toLowerCase();
 
         for (var entry : this.headComponentEntries) {
             entry.filter(searchValue, this.showFavorites, this.selectedCategory);
         }
 
-        List<Component> newResults = new ArrayList<>(this.headComponentEntries);
+        List<UIComponent> newResults = new ArrayList<>(this.headComponentEntries);
         newResults.removeIf(component -> component instanceof HeadComponentEntry entry && entry.isHide());
         this.contentLayout.clearChildren();
         this.contentLayout.children(newResults);
     }
 
     public void giveHead(BufferedImage image, String textureName) {
-        assert this.client != null;
-        this.client.execute(() -> {
+        this.minecraft.execute(() -> {
             this.setUndefinedDelay();
             String headName = this.getHeadName();
 
             ISnackBarComponent snackBar = BaseSnackBarComponent.builder(SnackBarManager.HEAD_GENERATOR_ID)
-                    .title(Text.translatable("fzmm.gui.headGenerator.snack_bar.loading"))
+                    .title(net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.snack_bar.loading"))
                     .backgroundColor(EStyles.ALERT_LOADING_COLOR)
                     .keepOnLimit()
                     .build();
@@ -467,7 +460,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
 
                 boolean generated = ItemUtils.give(builder.get());
 
-                this.client.execute(() -> {
+                this.minecraft.execute(() -> {
                     this.setDelay(headUtils.getDelayForNext(TimeUnit.SECONDS));
                     snackBar.close();
                     if (generated) {
@@ -481,27 +474,27 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     private void addStatusSnackBar(HeadUtils headUtils, BufferedImage image, String textureName) {
         SnackBarBuilder snackBar = BaseSnackBarComponent.builder(SnackBarManager.HEAD_GENERATOR_ID);
         if (headUtils.isSkinGenerated()) {
-            snackBar.title(Text.translatable("fzmm.gui.headGenerator.snack_bar.success"))
+            snackBar.title(net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.snack_bar.success"))
                     .lowTimer()
                     .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
                     .startTimer();
         } else if (headUtils.getHttpResponseCode() == 403) {
-            snackBar.title(Text.translatable("fzmm.snack_bar.mineskin.error.invalidApiKey"))
-                    .details(Text.translatable("fzmm.snack_bar.mineskin.error.invalidApiKey.description"))
+            snackBar.title(net.minecraft.network.chat.Component.translatable("fzmm.snack_bar.mineskin.error.invalidApiKey"))
+                    .details(net.minecraft.network.chat.Component.translatable("fzmm.snack_bar.mineskin.error.invalidApiKey.description"))
                     .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                     .keepOnLimit()
-                    .button(iSnackBarComponent -> Components.button(Text.translatable("fzmm.gui.title.configs.icon"),
+                    .button(iSnackBarComponent -> UIComponents.button(net.minecraft.network.chat.Component.translatable("fzmm.gui.title.configs.icon"),
                             buttonComponent -> this.setScreen(ConfigScreen.create(FzmmClient.CONFIG, this))))
                     .highTimer()
                     .closeButton();
         } else {
             String translationKey = headUtils.getHttpResponseCode() / 500 == 5 ? "external" : "internal";
 
-            snackBar.title(Text.translatable("fzmm.gui.headGenerator.snack_bar.error." + translationKey))
-                    .details(Text.translatable("fzmm.gui.headGenerator.snack_bar.error." + translationKey + ".description", headUtils.getHttpResponseCode()))
+            snackBar.title(net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.snack_bar.error." + translationKey))
+                    .details(net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.snack_bar.error." + translationKey + ".description", headUtils.getHttpResponseCode()))
                     .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                     .keepOnLimit()
-                    .button(iSnackBarComponent -> Components.button(Text.translatable("fzmm.gui.headGenerator.snack_bar.error.button.retry"), buttonComponent -> {
+                    .button(iSnackBarComponent -> UIComponents.button(net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.snack_bar.error.button.retry"), buttonComponent -> {
                         this.giveHead(image, textureName);
                         iSnackBarComponent.close();
                     }))
@@ -513,13 +506,13 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     }
 
     public void setUndefinedDelay() {
-        Text waitMessage = Text.translatable("fzmm.gui.headGenerator.wait");
+        net.minecraft.network.chat.Component waitMessage = net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.wait");
         this.updateButton(waitMessage, false);
     }
 
     public void setDelay(int seconds) {
         for (int i = 0; i != seconds; i++) {
-            Text message = Text.translatable("fzmm.gui.headGenerator.wait_seconds", seconds - i);
+            net.minecraft.network.chat.Component message = net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.wait_seconds", seconds - i);
             CompletableFuture.delayedExecutor(i, TimeUnit.SECONDS).execute(() -> this.updateButton(message, false));
         }
 
@@ -527,7 +520,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
                 .execute(() -> this.updateButton(HeadComponentOverlay.GIVE_BUTTON_TEXT, true));
     }
 
-    public void updateButton(Text message, boolean active) {
+    public void updateButton(net.minecraft.network.chat.Component message, boolean active) {
         if (this.giveButton != null) {
             this.giveButton.setMessage(message);
             this.giveButton.active = active;
@@ -536,7 +529,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
 
     public void setCurrentGiveButton(ButtonComponent currentGiveButton) {
         if (this.giveButton != null) {
-            Text message = this.giveButton.getMessage();
+            net.minecraft.network.chat.Component message = this.giveButton.getMessage();
             boolean active = this.giveButton.active;
             this.giveButton = currentGiveButton;
             this.updateButton(message, active);
@@ -546,13 +539,11 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     }
 
     public String getHeadName() {
-        return this.headNameField.getText();
+        return this.headNameField.getValue();
     }
 
     public void addCompound(AbstractHeadEntry headData, BufferedImage currentPreview) {
-        assert this.client != null;
-
-        List<Component> compoundHeads = this.compoundHeadsLayout.children();
+        List<UIComponent> compoundHeads = this.compoundHeadsLayout.children();
         if (compoundHeads.isEmpty()) {
             this.compoundExpandAnimation.forwards();
             this.compoundHeadsLayout.surface(this.compoundHeadsLayout.styledPanel());
@@ -592,9 +583,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void wikiExecute() {
-        assert this.client != null;
-
-        ConfirmLinkScreen.open(this.client.currentScreen, FzmmWikiConstants.HEAD_GENERATOR_WIKI_LINK, true);
+        assert this.minecraft.screen != null;
+        ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, FzmmWikiConstants.HEAD_GENERATOR_WIKI_LINK, true);
     }
 
     public SkinPreEditOption skinPreEdit() {
@@ -622,8 +612,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     }
 
     @Override
-    public void close() {
-        super.close();
+    public void onClose() {
+        super.onClose();
         this.closeTextures();
     }
 
@@ -639,7 +629,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     private void onChangeSkinField(String value) {
         AtomicReference<ImageMode> mode = this.skinElements.mode();
 
-        if (mode.get().isHeadName() && this.headNameField.getText().equals(this.previousSkinName)) {
+        if (mode.get().isHeadName() && this.headNameField.getValue().equals(this.previousSkinName)) {
             this.headNameField.text(value);
         }
 
@@ -649,12 +639,12 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     @Override
     public void backup(ObjectOutputStream output) throws IOException {
         output.writeObject(this.skinElements.mode().get());
-        output.writeObject(this.skinElements.valueField().getText());
-        output.writeObject(this.headNameField.getText());
+        output.writeObject(this.skinElements.valueField().getValue());
+        output.writeObject(this.headNameField.getValue());
         output.writeBoolean(this.showFavorites);
         output.writeObject(this.skinPreEdit());
         output.writeObject(this.selectedCategory);
-        output.writeObject(this.searchField.getText());
+        output.writeObject(this.searchField.getValue());
     }
 
     @Override

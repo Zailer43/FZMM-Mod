@@ -6,12 +6,11 @@ import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.*;
 import io.wispforest.owo.ui.parsing.UIParsing;
-import net.minecraft.text.Text;
 import org.w3c.dom.Element;
 
 import java.util.List;
@@ -44,7 +43,7 @@ public abstract class AbstractRow extends EFlowLayout {
         this.id = id;
         this.translate = translate;
         this.hoveredSurface(EStyles.DEFAULT_HOVERED);
-        Component[] components = this.getComponents(id, tooltipId);
+        UIComponent[] components = this.getComponents(id, tooltipId);
 
         FlowLayout rowLayout = (FlowLayout) EContainers
                 .horizontalFlow(Sizing.fill(100), Sizing.fixed(ROW_HEIGHT))
@@ -68,33 +67,32 @@ public abstract class AbstractRow extends EFlowLayout {
         if (hasResetButton)
             rightComponentsLayout.child(this.getResetButton(id));
 
-        List<Component> rightComponents = rightComponentsLayout.children();
+        List<UIComponent> rightComponents = rightComponentsLayout.children();
         if (!rightComponents.isEmpty())
             rightComponents.get(rightComponents.size() - 1).margins(Insets.right(20));
 
         this.child(rowLayout.child(rightComponentsLayout));
     }
 
-    public abstract Component[] getComponents(String id, String tooltipId);
+    public abstract UIComponent[] getComponents(String id, String tooltipId);
 
-    public Component getResetButton(String id) {
-        return Components
-                .button(Text.translatable("fzmm.gui.button.reset"), buttonComponent -> {
-                })
-                .id(getResetButtonId(id));
+    public UIComponent getResetButton(String id) {
+        return UIComponents
+                .button(net.minecraft.network.chat.Component.translatable("fzmm.gui.button.reset"), buttonComponent -> {
+                }).id(getResetButtonId(id));
     }
 
-    public Component getLabel(String id, String tooltipId) {
+    public UIComponent getLabel(String id, String tooltipId) {
         return getLabel(id, tooltipId, BaseFzmmScreen.getOptionBaseTranslationKey(this.baseTranslationKey), this.translate);
     }
 
-    public static Component getLabel(String id, String tooltipId, String baseTranslationKey, boolean translate) {
-        LabelComponent label = (LabelComponent) EComponents.label(translate ? Text.translatable(baseTranslationKey + id) : Text.literal(id))
+    public static UIComponent getLabel(String id, String tooltipId, String baseTranslationKey, boolean translate) {
+        LabelComponent label = (LabelComponent) EComponents.label(translate ? net.minecraft.network.chat.Component.translatable(baseTranslationKey + id) : net.minecraft.network.chat.Component.literal(id))
                 .margins(Insets.left(20))
                 .id(getLabelId(id));
 
         if (translate)
-            label.tooltip(Text.translatable(baseTranslationKey + tooltipId + ".tooltip"));
+            label.tooltip(net.minecraft.network.chat.Component.translatable(baseTranslationKey + tooltipId + ".tooltip"));
 
         return label;
     }
@@ -148,8 +146,8 @@ public abstract class AbstractRow extends EFlowLayout {
     public void removeHorizontalMargins() {
         Optional<FlowLayout> rightLayoutOptional = this.getRightLayout();
         if (rightLayoutOptional.isPresent() && !rightLayoutOptional.get().children().isEmpty()) {
-            List<Component> rightLayoutChildren = rightLayoutOptional.get().children();
-            Component lastElement = rightLayoutChildren.get(rightLayoutChildren.size() - 1);
+            List<UIComponent> rightLayoutChildren = rightLayoutOptional.get().children();
+            UIComponent lastElement = rightLayoutChildren.get(rightLayoutChildren.size() - 1);
             Insets previousMargins = lastElement.margins().get();
             lastElement.margins(previousMargins.withRight(0));
         }

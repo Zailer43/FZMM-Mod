@@ -3,10 +3,10 @@ package fzmm.zailer.me.compat.symbol_chat.components;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.compat.CompatMods;
 import io.wispforest.owo.ui.component.VanillaWidgetComponent;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
+import io.wispforest.owo.ui.core.OwoUIGraphics;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.replaceitem.symbolchat.gui.container.ScrollableGridContainer;
 import net.replaceitem.symbolchat.gui.widget.DropDownWidget;
 import net.replaceitem.symbolchat.resource.FontProcessor;
@@ -53,7 +53,7 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
         this.widget.setHeight(this.expandedHeight);
     }
 
-    public void processFont(TextFieldWidget widget, String text, Consumer<String> writeConsumer) {
+    public void processFont(EditBox widget, String text, Consumer<String> writeConsumer) {
         try {
             FontProcessor selectedFont = this.widget.getSelection();
 
@@ -61,9 +61,9 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
             writeConsumer.accept(text);
 
             if (selectedFont.isReverseDirection()) {
-                int pos = widget.getCursor() - text.length();
-                widget.setSelectionStart(pos);
-                widget.setSelectionEnd(pos);
+                int pos = widget.getCursorPosition() - text.length();
+                widget.setCursorPosition(pos);
+                widget.setHighlightPos(pos);
             }
         } catch (NoClassDefFoundError | NoSuchMethodError e) {
             CompatMods.SYMBOL_CHAT_PRESENT = false;
@@ -83,11 +83,11 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
     }
 
     @Override
-    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
+    public void draw(OwoUIGraphics graphics, int mouseX, int mouseY, float partialTicks, float delta) {
         // fix scroll with smooth as it depends on the render
         // It is not being called because the custom implementation
         // of NonScrollableContainerWidget in Symbol Chat is not compatible with owo-lib by default
-        this.widget.renderWidget(context, mouseX, mouseY, delta);
+        this.widget.renderWidget(graphics, mouseX, mouseY, delta);
     }
 
     public static class CustomDropDownWidget extends DropDownWidget<FontProcessor> {
@@ -97,7 +97,7 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
         }
 
         @Override
-        public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
             super.renderWidget(context, mouseX, mouseY, delta);
         }
     }

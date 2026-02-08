@@ -3,10 +3,10 @@ package fzmm.zailer.me.client.logic.history;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class FzmmHistory {
-    private static final ArrayDeque<NbtCompound> GENERATED_ITEMS = new ArrayDeque<>();
-    private static final ArrayDeque<NbtCompound> GENERATED_HEADS = new ArrayDeque<>();
+    private static final ArrayDeque<CompoundTag> GENERATED_ITEMS = new ArrayDeque<>();
+    private static final ArrayDeque<CompoundTag> GENERATED_HEADS = new ArrayDeque<>();
     private static final UniqueMementoCaretaker SCREEN_CARETAKER = new UniqueMementoCaretaker();
 
     public static void onUpdateConfig() {
@@ -32,7 +32,7 @@ public class FzmmHistory {
         return parseNbt(GENERATED_HEADS);
     }
 
-    private static List<ItemStack> parseNbt(ArrayDeque<NbtCompound> compounds) {
+    private static List<ItemStack> parseNbt(ArrayDeque<CompoundTag> compounds) {
         return compounds.stream().map(FzmmHistory::parseNbt)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -55,16 +55,16 @@ public class FzmmHistory {
         add(stack, GENERATED_HEADS, FzmmClient.CONFIG.history.maxHeadHistory());
     }
 
-    public static void add(ItemStack stack, ArrayDeque<NbtCompound> compounds, int max) {
+    public static void add(ItemStack stack, ArrayDeque<CompoundTag> compounds, int max) {
         if (stack.isEmpty()) {
             return;
         }
 
-        Optional<NbtElement> stackNbtOptional = ItemUtils.encodeToNbt(stack).resultOrPartial();
+        Optional<Tag> stackNbtOptional = ItemUtils.encodeToNbt(stack).resultOrPartial();
         if (stackNbtOptional.isEmpty()) {
             return;
         }
-        NbtCompound stackCompound = (NbtCompound) stackNbtOptional.get();
+        CompoundTag stackCompound = (CompoundTag) stackNbtOptional.get();
 
         for (var compoundsFromHistory : compounds) {
             if (compoundsFromHistory.equals(stackCompound)) {
@@ -76,7 +76,7 @@ public class FzmmHistory {
         removeExcess(compounds, max);
     }
 
-    public static void removeExcess(ArrayDeque<NbtCompound> compounds, int max) {
+    public static void removeExcess(ArrayDeque<CompoundTag> compounds, int max) {
         if (max < 1) {
             compounds.clear();
             return;
@@ -116,7 +116,7 @@ public class FzmmHistory {
      * and then you go to another world with a different registry,
      * it will cause a codec error
      */
-    private static Optional<ItemStack> parseNbt(NbtCompound nbt) {
+    private static Optional<ItemStack> parseNbt(CompoundTag nbt) {
         return ItemUtils.decodeFromNbt(nbt).result();
     }
 }

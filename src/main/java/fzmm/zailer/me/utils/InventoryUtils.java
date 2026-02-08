@@ -1,10 +1,10 @@
 package fzmm.zailer.me.utils;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 public class InventoryUtils {
 
     public static List<ItemStack> getItemsFromContainer(ItemStack container) {
-        ContainerComponent result = container.getOrDefault(DataComponentTypes.CONTAINER, ContainerComponent.fromStacks(new ArrayList<>()));
+        ItemContainerContents result = container.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.fromItems(new ArrayList<>()));
 
         return result.stream().toList();
     }
@@ -26,23 +26,23 @@ public class InventoryUtils {
     }
 
     public static List<ItemStack> getEquipmentStacks() {
-        List<ItemStack> result = new ArrayList<>(PlayerInventory.EQUIPMENT_SLOTS.size());
+        List<ItemStack> result = new ArrayList<>(Inventory.EQUIPMENT_SLOT_MAPPING.size());
 
-        assert MinecraftClient.getInstance().player != null;
-        PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
+        assert Minecraft.getInstance().player != null;
+        Inventory inventory = Minecraft.getInstance().player.getInventory();
 
-        for (int i = 0; i != PlayerInventory.EQUIPMENT_SLOTS.size(); i++) {
-            result.add(inventory.getStack(PlayerInventory.MAIN_SIZE + i));
+        for (int i = 0; i != Inventory.EQUIPMENT_SLOT_MAPPING.size(); i++) {
+            result.add(inventory.getItem(Inventory.INVENTORY_SIZE + i));
         }
 
         return result;
     }
 
     public static List<ItemStack> getCombinedInventory() {
-        assert MinecraftClient.getInstance().player != null;
-        PlayerInventory inventory = MinecraftClient.getInstance().player.getInventory();
+        assert Minecraft.getInstance().player != null;
+        Inventory inventory = Minecraft.getInstance().player.getInventory();
 
-        List<ItemStack> stackList = new ArrayList<>(inventory.getMainStacks());
+        List<ItemStack> stackList = new ArrayList<>(inventory.getNonEquipmentItems());
         stackList.addAll(InventoryUtils.getEquipmentStacks());
 
         return stackList;

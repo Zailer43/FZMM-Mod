@@ -1,11 +1,11 @@
 package fzmm.zailer.me.client;
 
 import io.wispforest.owo.itemgroup.Icon;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 @SuppressWarnings("UnusedAssignment")
 public class FzmmIcons {
-    public static final Identifier TEXTURE = Identifier.of(FzmmClient.MOD_ID, "textures/gui/widgets.png");
+    public static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "textures/gui/widgets.png");
 
     // Main Screen, Icon don't have U and V getter :(
     // U and V are needed for texture in 32x32 instead of 16x16

@@ -4,10 +4,10 @@ import com.mojang.serialization.JsonOps;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.logic.copy_text_algorithm.AbstractCopyTextAlgorithm;
 import fzmm.zailer.me.utils.FzmmUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.chat.Style;
 
 import java.util.List;
 
@@ -19,17 +19,17 @@ public class CopyTextAsJson extends AbstractCopyTextAlgorithm {
 
 
     @Override
-    protected void getStringRecursive(StringBuilder stringBuilder, Style baseStyle, List<Text> siblings) {
-        Text text;
+    protected void getStringRecursive(StringBuilder stringBuilder, Style baseStyle, List<Component> siblings) {
+        Component text;
         if (siblings.size() == 1) {
             text = siblings.get(0);
         } else {
-            text = Text.empty().setStyle(baseStyle);
+            text = Component.empty().setStyle(baseStyle);
             text.getSiblings().addAll(siblings);
         }
 
-        assert MinecraftClient.getInstance().player != null;
-        TextCodecs.CODEC.encodeStart(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), text).result().ifPresentOrElse(stringBuilder::append, () ->
+        assert Minecraft.getInstance().player != null;
+        ComponentSerialization.CODEC.encodeStart(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), text).result().ifPresentOrElse(stringBuilder::append, () ->
                 FzmmClient.LOGGER.warn("[CopyTextAsJson] Failed to encode text to json")
         );
     }

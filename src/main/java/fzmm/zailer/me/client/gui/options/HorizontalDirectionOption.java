@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.gui.options;
 
 import fzmm.zailer.me.client.gui.components.IMode;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Direction;
 
 public enum HorizontalDirectionOption implements IMode {
     EAST("east"),
@@ -22,8 +22,8 @@ public enum HorizontalDirectionOption implements IMode {
     }
 
     public static HorizontalDirectionOption getPlayerHorizontalDirection() {
-        assert MinecraftClient.getInstance().player != null;
-        Direction direction = MinecraftClient.getInstance().player.getHorizontalFacing();
+        assert Minecraft.getInstance().player != null;
+        Direction direction = Minecraft.getInstance().player.getDirection();
 
         return switch (direction) {
             case EAST -> EAST;

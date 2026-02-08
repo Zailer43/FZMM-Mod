@@ -1,42 +1,42 @@
 package fzmm.zailer.me.client.entity.custom_skin;
 
 import fzmm.zailer.me.client.FzmmClient;
-import net.minecraft.client.util.DefaultSkinHelper;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.SkinTextures;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.world.World;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.level.Level;
 
-public class CustomHeadEntity extends MobEntity implements ISkinMutable {
+public class CustomHeadEntity extends Mob implements ISkinMutable {
     public static final EntityType<CustomHeadEntity> CUSTOM_HEAD_ENTITY_TYPE = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             FzmmClient.CUSTOM_HEAD_ENTITY,
-            EntityType.Builder.<CustomHeadEntity>create((type, world) -> new CustomHeadEntity(world), SpawnGroup.MISC)
-                    .disableSaving()
-                    .disableSummon()
-                    .dimensions(0.8f, 0.8f)
-                    .maxTrackingRange(32)
-                    .build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, FzmmClient.CUSTOM_HEAD_ENTITY))
+            EntityType.Builder.<CustomHeadEntity>of((type, world) -> new CustomHeadEntity(world), MobCategory.MISC)
+                    .noSave()
+                    .noSummon()
+                    .sized(0.8f, 0.8f)
+                    .clientTrackingRange(32)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, FzmmClient.CUSTOM_HEAD_ENTITY))
     );
 
-    private SkinTextures textures = DefaultSkinHelper.getSteve();
+    private PlayerSkin textures = DefaultPlayerSkin.getDefaultSkin();
 
-    public CustomHeadEntity(World world) {
+    public CustomHeadEntity(Level world) {
         super(CUSTOM_HEAD_ENTITY_TYPE, world);
     }
 
     @Override
-    public SkinTextures skin() {
+    public PlayerSkin skin() {
         return this.textures;
     }
 
     @Override
-    public void skin(SkinTextures textures) {
+    public void skin(PlayerSkin textures) {
         this.textures = textures;
     }
 }

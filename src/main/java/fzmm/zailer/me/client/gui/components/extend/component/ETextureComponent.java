@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui.components.extend.component;
 
 import io.wispforest.owo.ui.component.TextureComponent;
 import io.wispforest.owo.ui.parsing.UIParsing;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 import org.w3c.dom.Element;
 
 public class ETextureComponent extends TextureComponent {

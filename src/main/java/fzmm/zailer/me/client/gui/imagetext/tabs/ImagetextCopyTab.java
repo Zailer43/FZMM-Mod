@@ -6,7 +6,7 @@ import fzmm.zailer.me.client.gui.utils.CopyTextScreen;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.FzmmUtils;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 public class ImagetextCopyTab implements IImagetextTab {
     @Override
@@ -16,8 +16,8 @@ public class ImagetextCopyTab implements IImagetextTab {
 
     @Override
     public void execute(ImagetextLogic logic) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        client.execute(() -> FzmmUtils.setScreen(new CopyTextScreen(client.currentScreen, logic.mergeText())));
+        Minecraft client = Minecraft.getInstance();
+        client.execute(() -> FzmmUtils.setScreen(new CopyTextScreen(client.screen, logic.mergeText())));
     }
 
     @Override

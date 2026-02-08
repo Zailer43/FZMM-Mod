@@ -1,5 +1,7 @@
 package fzmm.zailer.me.client.gui.components.image.source;
 
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.Window;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
@@ -17,12 +19,10 @@ import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.VerticalAlignment;
 import io.wispforest.owo.ui.hud.Hud;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.Framebuffer;
-import net.minecraft.client.util.ScreenshotRecorder;
-import net.minecraft.client.util.Window;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Screenshot;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 
 import java.awt.*;
@@ -32,7 +32,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class ScreenshotSource implements IInteractiveImageLoader {
-    private static final Identifier HUD_CAPTURE_SCREENSHOT = Identifier.of(FzmmClient.MOD_ID, "screenshot_capture");
+    private static final Identifier HUD_CAPTURE_SCREENSHOT = Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "screenshot_capture");
     private static ScreenshotSource instance;
     private BufferedImage image;
     private Consumer<BufferedImage> consumer;
@@ -54,9 +54,9 @@ public class ScreenshotSource implements IInteractiveImageLoader {
     public void execute(Consumer<BufferedImage> consumer) {
         this.image = null;
         this.consumer = consumer;
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
 
-        this.previousScreen = client.currentScreen instanceof BaseFzmmScreen baseScreen ? baseScreen : null;
+        this.previousScreen = client.screen instanceof BaseFzmmScreen baseScreen ? baseScreen : null;
         SnackBarManager.getInstance().moveToHud(this.previousScreen);
         client.setScreen(null);
         Hud.add(HUD_CAPTURE_SCREENSHOT, this::getHud);
@@ -90,8 +90,8 @@ public class ScreenshotSource implements IInteractiveImageLoader {
                 .alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
                 .positioning(Positioning.absolute(0, 0));
 
-        Text keyTranslation = FzmmClient.OPEN_MAIN_GUI_KEYBINDING.getBoundKeyLocalizedText();
-        LabelComponent labelComponent = EComponents.label(Text.translatable("fzmm.gui.option.image.screenshot.message", keyTranslation.getString()));
+        Component keyTranslation = FzmmClient.OPEN_MAIN_GUI_KEYBINDING.getTranslatedKeyMessage();
+        LabelComponent labelComponent = EComponents.label(Component.translatable("fzmm.gui.option.image.screenshot.message", keyTranslation.getString()));
 
         labelLayout.child(labelComponent);
         hudLayout.child(screenshotZoneComponent);
@@ -101,11 +101,11 @@ public class ScreenshotSource implements IInteractiveImageLoader {
     }
 
     public void takeScreenshot() {
-        Framebuffer framebuffer = MinecraftClient.getInstance().getFramebuffer();
+        RenderTarget framebuffer = Minecraft.getInstance().getMainRenderTarget();
         try {
-            ScreenshotRecorder.takeScreenshot(framebuffer, screenshot -> {
-                screenshot.copyPixelsArgb();
-                this.processScreenshot(screenshot.copyPixelsArgb());
+            Screenshot.takeScreenshot(framebuffer, screenshot -> {
+                screenshot.getPixels();
+                this.processScreenshot(screenshot.getPixels());
             });
         } catch (Exception e) {
             this.complete(null, e);
@@ -118,9 +118,9 @@ public class ScreenshotSource implements IInteractiveImageLoader {
                 return null;
             }
 
-            Window window = MinecraftClient.getInstance().getWindow();
-            int width = window.getWidth();
-            int height = window.getHeight();
+            Window window = Minecraft.getInstance().getWindow();
+            int width = window.getScreenWidth();
+            int height = window.getScreenHeight();
             BufferedImage screenshot = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
             screenshot.getRaster().setDataElements(0, 0, width, height, pixelArray);
             int smallerSide = Math.min(width, height);
@@ -133,7 +133,7 @@ public class ScreenshotSource implements IInteractiveImageLoader {
             scaled.flush();
 
             return finalImage;
-        }, Util.getMainWorkerExecutor()).whenComplete(this::complete);
+        }, Util.backgroundExecutor()).whenComplete(this::complete);
     }
 
     private void complete(BufferedImage image, Throwable throwable) {
@@ -143,15 +143,15 @@ public class ScreenshotSource implements IInteractiveImageLoader {
         if (throwable != null || image == null) {
             FzmmClient.LOGGER.error("[ScreenshotSource] Unexpected error while taking screenshot", throwable);
             snackBar = BaseSnackBarComponent.builder(SnackBarManager.IMAGE_ID)
-                    .title(Text.translatable("fzmm.snack_bar.image.error.title"))
-                    .details(Text.translatable("fzmm.snack_bar.image.error.details.unexpectedError"))
+                    .title(Component.translatable("fzmm.snack_bar.image.error.title"))
+                    .details(Component.translatable("fzmm.snack_bar.image.error.details.unexpectedError"))
                     .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                     .closeButton()
                     .build();
         }
 
         ISnackBarComponent finalSnackBar = snackBar;
-        MinecraftClient.getInstance().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
             SnackBarManager manager = SnackBarManager.getInstance();
             Hud.remove(HUD_CAPTURE_SCREENSHOT);
             if (finalSnackBar != null) {
@@ -166,7 +166,7 @@ public class ScreenshotSource implements IInteractiveImageLoader {
 
     private BufferedImage removePadding(BufferedImage image) {
         // all minecraft rendering varies depending on the gui scale, so it is necessary to adjust the padding value
-        int padding = ScreenshotZoneComponent.PADDING * MinecraftClient.getInstance().options.getGuiScale().getValue();
+        int padding = ScreenshotZoneComponent.PADDING * Minecraft.getInstance().options.guiScale().get();
 
         BufferedImage paddedScreenshot = new BufferedImage(image.getWidth() - 2 * padding, image.getHeight() - 2 * padding, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = paddedScreenshot.createGraphics();

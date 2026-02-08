@@ -1,20 +1,20 @@
 package fzmm.zailer.me.client.gui.encrypt_book.components;
 
-import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.encrypt_book.EncryptBookScreen;
 import fzmm.zailer.me.client.logic.enycrpt_book.TranslationEncryptProfile;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.*;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class AddEncryptProfileOverlay extends OverlayContainer<EFlowLayout> {
     @SuppressWarnings("UnstableApiUsage")
     protected void addComponents(Consumer<TranslationEncryptProfile> onAdd) {
         //title
-        LabelComponent label = EComponents.label(Text.translatable("fzmm.gui.encryptbook.addProfile.title"));
+        LabelComponent label = EComponents.label(Component.translatable("fzmm.gui.encryptbook.addProfile.title"));
         label.horizontalSizing(Sizing.expand(100));
 
         // options
@@ -50,11 +50,11 @@ public class AddEncryptProfileOverlay extends OverlayContainer<EFlowLayout> {
         ConfigTextBox asymmetricComponent = new ConfigTextBox();
         EBooleanButton oldAlgorithmComponent = new EBooleanButton();
 
-        LabelComponent duplicatedKeyLabel = EComponents.label(Text.empty());
-        Text duplicateKeyText = Text.translatable("fzmm.gui.encryptbook.addProfile.key.duplicated");
+        LabelComponent duplicatedKeyLabel = EComponents.label(Component.empty());
+        Component duplicateKeyText = Component.translatable("fzmm.gui.encryptbook.addProfile.key.duplicated");
 
-        ButtonComponent randomAsymmetric = Components.button(Text.translatable("fzmm.gui.button.random"), buttonComponent -> {
-            int value = new Random(Util.getEpochTimeMs()).nextInt();
+        ButtonComponent randomAsymmetric = UIComponents.button(Component.translatable("fzmm.gui.button.random"), buttonComponent -> {
+            int value = new Random(Util.getEpochMillis()).nextInt();
             asymmetricComponent.text(String.valueOf(value));
         });
 
@@ -72,12 +72,12 @@ public class AddEncryptProfileOverlay extends OverlayContainer<EFlowLayout> {
         seedComponent.configureForNumber(Integer.class);
         seedComponent.text(String.valueOf(defaultSeed));
         seedComponent.onChanged().subscribe(value -> {
-            if (this.isDuplicatedKey(profiles, (int) seedComponent.parsedValue(), keyComponent.getText())) {
+            if (this.isDuplicatedKey(profiles, (int) seedComponent.parsedValue(), keyComponent.getValue())) {
                 duplicatedKeyLabel.text(duplicateKeyText);
-                keyComponent.setEditableColor(keyComponent.invalidColor());
+                keyComponent.setTextColor(keyComponent.invalidColor());
             } else {
-                duplicatedKeyLabel.text(Text.empty());
-                keyComponent.setEditableColor(keyComponent.validColor());
+                duplicatedKeyLabel.text(Component.empty());
+                keyComponent.setTextColor(keyComponent.validColor());
             }
         });
 
@@ -85,7 +85,7 @@ public class AddEncryptProfileOverlay extends OverlayContainer<EFlowLayout> {
             int seed = (int) seedComponent.parsedValue();
             boolean isDuplicated = this.isDuplicatedKey(profiles, seed, key);
 
-            duplicatedKeyLabel.text(isDuplicated ? duplicateKeyText : Text.empty());
+            duplicatedKeyLabel.text(isDuplicated ? duplicateKeyText : Component.empty());
 
             return !isDuplicated;
         });
@@ -118,11 +118,11 @@ public class AddEncryptProfileOverlay extends OverlayContainer<EFlowLayout> {
         // bottom buttons
         FlowLayout buttonLayout = EContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(20));
 
-        buttonLayout.child(Components.button(Text.translatable("fzmm.gui.encryptbook.addProfile.done"), buttonComponent -> {
+        buttonLayout.child(UIComponents.button(Component.translatable("fzmm.gui.encryptbook.addProfile.done"), buttonComponent -> {
                     TranslationEncryptProfile profile = new TranslationEncryptProfile(
                             (int) seedComponent.parsedValue(),
                             (int) lengthComponent.parsedValue(),
-                            keyComponent.getText(),
+                            keyComponent.getValue(),
                             (int) asymmetricComponent.parsedValue(),
                             oldAlgorithmComponent.enabled() ? 1 : TranslationEncryptProfile.ALGORITHM_VERSION
                     );
@@ -131,7 +131,7 @@ public class AddEncryptProfileOverlay extends OverlayContainer<EFlowLayout> {
                 }).positioning(Positioning.relative(0, 0))
                 .horizontalSizing(Sizing.fixed(100)));
 
-        buttonLayout.child(Components.button(Text.translatable("fzmm.gui.button.cancel"), buttonComponent -> this.remove())
+        buttonLayout.child(UIComponents.button(Component.translatable("fzmm.gui.button.cancel"), buttonComponent -> this.remove())
                 .positioning(Positioning.relative(100, 0))
                 .horizontalSizing(Sizing.fixed(100))
         );
@@ -141,12 +141,12 @@ public class AddEncryptProfileOverlay extends OverlayContainer<EFlowLayout> {
         this.child.child(buttonLayout);
     }
 
-    private Component getRow(String translationKey, Component... components) {
+    private UIComponent getRow(String translationKey, UIComponent... components) {
         components[0].horizontalSizing(Sizing.fixed(100));
-        List<Component> componentList = new ArrayList<>();
-        componentList.add(EComponents.label(Text.translatable(translationKey))
+        List<UIComponent> componentList = new ArrayList<>();
+        componentList.add(EComponents.label(Component.translatable(translationKey))
                 .horizontalSizing(Sizing.fixed(100))
-                .tooltip(Text.translatable(translationKey + ".tooltip"))
+                .tooltip(Component.translatable(translationKey + ".tooltip"))
         );
         componentList.addAll(List.of(components));
 

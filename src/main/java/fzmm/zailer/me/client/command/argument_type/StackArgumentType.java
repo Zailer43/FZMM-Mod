@@ -5,35 +5,34 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.ItemStackArgument;
-import net.minecraft.command.argument.ItemStackArgumentType;
-import net.minecraft.command.argument.NbtPathArgumentType;
-
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.arguments.NbtPathArgument;
+import net.minecraft.commands.arguments.item.ItemArgument;
+import net.minecraft.commands.arguments.item.ItemInput;
 
-public class StackArgumentType extends ItemStackArgumentType {
+public class StackArgumentType extends ItemArgument {
 
-    public StackArgumentType(CommandRegistryAccess commandRegistryAccess) {
+    public StackArgumentType(CommandBuildContext commandRegistryAccess) {
         super(commandRegistryAccess);
     }
 
-    public static StackArgumentType itemStack(CommandRegistryAccess commandRegistryAccess) {
+    public static StackArgumentType item(CommandBuildContext commandRegistryAccess) {
         return new StackArgumentType(commandRegistryAccess);
     }
 
     @Override
-    public ItemStackArgument parse(StringReader stringReader) throws CommandSyntaxException {
+    public ItemInput parse(StringReader stringReader) throws CommandSyntaxException {
         if (!ComponentArgumentType.maxDepthCheck(stringReader)) {
-            throw NbtPathArgumentType.TOO_DEEP_EXCEPTION.createWithContext(stringReader);
+            throw NbtPathArgument.ERROR_DATA_TOO_DEEP.createWithContext(stringReader);
         }
         return super.parse(stringReader);
     }
 
     @Override
-    public <S> ItemStackArgument parse(StringReader stringReader, S source) throws CommandSyntaxException {
+    public <S> ItemInput parse(StringReader stringReader, S source) throws CommandSyntaxException {
         if (!ComponentArgumentType.maxDepthCheck(stringReader)) {
-            throw NbtPathArgumentType.TOO_DEEP_EXCEPTION.createWithContext(stringReader);
+            throw NbtPathArgument.ERROR_DATA_TOO_DEEP.createWithContext(stringReader);
         }
         return super.parse(stringReader, source);
     }

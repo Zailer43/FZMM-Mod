@@ -19,18 +19,18 @@ import fzmm.zailer.me.utils.FzmmWikiConstants;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.TextBoxComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ConfirmLinkScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 
 @SuppressWarnings("UnstableApiUsage")
 public class PlayerStatueScreen extends BaseFzmmScreen implements IMemento {
@@ -48,28 +48,28 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     protected void setup(EFlowLayout rootComponent) {
-        PlayerEntity player = MinecraftClient.getInstance().player;
+        Player player = Minecraft.getInstance().player;
         assert player != null;
         //buttons
         rootComponent.childByIdOrThrow(ButtonComponent.class, "faq-button").onPress(this::faqExecute);
         ButtonComponent executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, EXECUTE_ID).onPress(this::execute);
 
         rootComponent.childByIdOrThrow(ButtonComponent.class, "difficult-to-remove-entity-button").onPress(buttonComponent ->
-                InvisibleEntityWarning.addOverlay(true, true, Text.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG)
+                InvisibleEntityWarning.addOverlay(true, true, Component.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG)
         );
         //general
         ContextMenuButton directionButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "horizontal-direction-context-menu-option");
         directionButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : HorizontalDirectionOption.values()) {
-                dropdownComponent.button(Text.translatable(option.getTranslationKey()), dropdownButton -> {
+                dropdownComponent.button(Component.translatable(option.getTranslationKey()), dropdownButton -> {
                     this.direction = option;
-                    directionButton.setMessage(Text.translatable(option.getTranslationKey()));
+                    directionButton.setMessage(Component.translatable(option.getTranslationKey()));
                     dropdownButton.remove();
                 });
             }
         });
         this.direction = HorizontalDirectionOption.getPlayerHorizontalDirection();
-        directionButton.setMessage(Text.translatable(this.direction.getTranslationKey()));
+        directionButton.setMessage(Component.translatable(this.direction.getTranslationKey()));
         this.posX = NumberRow.setup(rootComponent, "posX", player.getBlockX(), Float.class);
         this.posY = NumberRow.setup(rootComponent, "posY", player.getY(), Float.class);
         this.posZ = NumberRow.setup(rootComponent, "posZ", player.getBlockZ(), Float.class);
@@ -83,23 +83,23 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMemento {
                 .selectTab();
     }
 
-    private void faqExecute(ButtonWidget buttonWidget) {
-        assert this.client != null;
-        ConfirmLinkScreen.open(this.client.currentScreen, FzmmWikiConstants.PLAYER_STATUE_WIKI_LINK, true);
+    private void faqExecute(Button buttonWidget) {
+        assert this.minecraft != null;
+        ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, FzmmWikiConstants.PLAYER_STATUE_WIKI_LINK, true);
     }
 
-    private void execute(ButtonWidget buttonWidget) {
+    private void execute(Button buttonWidget) {
         float x = (float) this.posX.parsedValue();
         float y = (float) this.posY.parsedValue();
         float z = (float) this.posZ.parsedValue();
-        String name = this.nameField.getText();
+        String name = this.nameField.getValue();
 
         this.tabContainer.<IPlayerStatueTab>selectedTab().execute(this.direction, x, y, z, name);
     }
 
     @Override
     public void backup(ObjectOutputStream output) throws IOException {
-        output.writeObject(this.nameField.getText());
+        output.writeObject(this.nameField.getValue());
         this.tabContainer.backup(output);
     }
 

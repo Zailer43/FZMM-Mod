@@ -7,17 +7,16 @@ import fzmm.zailer.me.client.logic.history.FzmmHistory;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class HistoryScreen extends BaseFzmmScreen {
 
-    private static final Text GENERATED_ITEMS_EMPTY_TEXT = Text.translatable("fzmm.gui.history.label.generatedWithFzmm.empty");
+    private static final net.minecraft.network.chat.Component GENERATED_ITEMS_EMPTY_TEXT = net.minecraft.network.chat.Component.translatable("fzmm.gui.history.label.generatedWithFzmm.empty");
     private EButtonComponent itemGenerated;
     private EButtonComponent headGenerated;
     private FlowLayout contentLayout;
@@ -59,8 +58,8 @@ public class HistoryScreen extends BaseFzmmScreen {
 
     private void addItems(List<ItemStack> stackList) {
         this.contentLayout.clearChildren();
-        this.contentLayout.children(stackList.stream().map(itemStack -> (Component) EComponents.itemGive(itemStack)).toList());
-        this.labelError.text(stackList.isEmpty() ? GENERATED_ITEMS_EMPTY_TEXT : Text.empty());
+        this.contentLayout.children(stackList.stream().map(itemStack -> (UIComponent) EComponents.itemGive(itemStack)).toList());
+        this.labelError.text(stackList.isEmpty() ? GENERATED_ITEMS_EMPTY_TEXT : net.minecraft.network.chat.Component.empty());
     }
 
 

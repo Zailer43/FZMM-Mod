@@ -8,10 +8,9 @@ import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.utils.SnackBarManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
-import org.apache.http.client.HttpResponseException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -55,9 +54,9 @@ public class HeadGalleryResources {
             future.complete(cache.get(category));
             return future;
         }
-        MinecraftClient.getInstance().execute(() -> SnackBarManager.getInstance()
+        Minecraft.getInstance().execute(() -> SnackBarManager.getInstance()
                 .add(BaseSnackBarComponent.builder(SnackBarManager.HEAD_GALLERY_ID)
-                        .title(Text.translatable("fzmm.gui.headGallery.snack_bar.loading", category))
+                        .title(Component.translatable("fzmm.gui.headGallery.snack_bar.loading", category))
                         .backgroundColor(EStyles.ALERT_LOADING_COLOR)
                         .build()
         ));
@@ -70,9 +69,9 @@ public class HeadGalleryResources {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             } finally {
-                MinecraftClient.getInstance().execute(() -> SnackBarManager.getInstance().remove(SnackBarManager.HEAD_GALLERY_ID));
+                Minecraft.getInstance().execute(() -> SnackBarManager.getInstance().remove(SnackBarManager.HEAD_GALLERY_ID));
             }
-        }, Util.getDownloadWorkerExecutor());
+        }, Util.nonCriticalIoPool());
 
         return future;
     }
@@ -108,9 +107,7 @@ public class HeadGalleryResources {
 
             return headsData;
         } else {
-            String errorReason = conn.getResponseMessage();
-            String message = "HTTP Error " + responseCode + " (" + (errorReason == null ? "Unknown reason" : errorReason) + ")";
-            throw new HttpResponseException(responseCode, message);
+            throw new Exception("HTTP Error " + responseCode + " (" + conn.getResponseMessage() + ")");
         }
     }
 

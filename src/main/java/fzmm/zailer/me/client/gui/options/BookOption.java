@@ -3,19 +3,19 @@ package fzmm.zailer.me.client.gui.options;
 import fzmm.zailer.me.builders.BookBuilder;
 import fzmm.zailer.me.client.gui.components.IMode;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 
 import java.util.function.Supplier;
 
 public enum BookOption implements IMode {
-    CREATE_BOOK("createBook", () -> BookBuilder.builder().title(Text.translatable("fzmm.item.imagetext.book.title").getString())),
+    CREATE_BOOK("createBook", () -> BookBuilder.builder().title(Component.translatable("fzmm.item.imagetext.book.title").getString())),
     ADD_PAGE("addPage", () -> {
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         assert client.player != null;
 
-        return BookBuilder.of(ItemUtils.from(Hand.MAIN_HAND)).orElse(CREATE_BOOK.bookBuilderSupplier.get());
+        return BookBuilder.of(ItemUtils.from(InteractionHand.MAIN_HAND)).orElse(CREATE_BOOK.bookBuilderSupplier.get());
     });
 
 

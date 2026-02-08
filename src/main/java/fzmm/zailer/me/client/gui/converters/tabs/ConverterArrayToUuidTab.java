@@ -7,7 +7,7 @@ import fzmm.zailer.me.client.gui.converters.ConvertersScreen;
 import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.util.RandomSource;
 
 import java.util.UUID;
 
@@ -34,7 +34,7 @@ public class ConverterArrayToUuidTab implements ITab {
             this.textBoxArray[i] = NumberRow.setup(rootComponent, this.getArrayId(i), 0, Integer.class);
 
         rootComponent.childByIdOrThrow(ButtonComponent.class, "arrayToUuid.random-button").onPress(button -> {
-            Random random = Random.create();
+            RandomSource random = RandomSource.create();
             for (var element : this.textBoxArray) {
                 element.text(String.valueOf(random.nextInt()));
             }

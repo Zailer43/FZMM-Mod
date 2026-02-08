@@ -5,16 +5,16 @@ import fzmm.zailer.me.utils.ItemUtils;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.util.UISounds;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Extended components of the owo-lib components
  */
 public class EComponents {
-    public static EButtonComponent button(Text text) {
+    public static EButtonComponent button(Component text) {
         return new EButtonComponent(text, buttonComponent -> {});
     }
 
@@ -22,7 +22,7 @@ public class EComponents {
         return new EItemComponent(stack);
     }
 
-    public static ELabelComponent label(Text text) {
+    public static ELabelComponent label(Component text) {
         return new ELabelComponent(text);
     }
 

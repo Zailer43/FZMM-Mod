@@ -6,9 +6,9 @@ import fzmm.zailer.me.client.gui.utils.select_item.SelectItemScreen;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.skin.CacheSkinGetter;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
@@ -33,13 +33,13 @@ public class PlayerHeadSource implements IInteractiveImageLoader {
         }
         this.image = null;
         this.consumer = consumer;
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
 
-        this.previousScreen = client.currentScreen instanceof BaseFzmmScreen baseScreen ? baseScreen : null;
+        this.previousScreen = client.screen instanceof BaseFzmmScreen baseScreen ? baseScreen : null;
         RequestedItem requestedItem = new RequestedItem(
                 itemStack -> itemStack.getItem() == Items.PLAYER_HEAD,
                 this::setImage,
-                List.of(Items.PLAYER_HEAD.getDefaultStack()),
+                List.of(Items.PLAYER_HEAD.getDefaultInstance()),
                 Items.PLAYER_HEAD.getName(),
                 false
         );
@@ -62,7 +62,7 @@ public class PlayerHeadSource implements IInteractiveImageLoader {
             return;
         }
 
-        HeadUtils.getSkinTextures(head).whenComplete((skinOptional, throwable) -> MinecraftClient.getInstance().execute(() -> {
+        HeadUtils.getSkinTextures(head).whenComplete((skinOptional, throwable) -> Minecraft.getInstance().execute(() -> {
             if (throwable != null || skinOptional.isEmpty()) {
                 this.setImage((BufferedImage) null);
             } else {

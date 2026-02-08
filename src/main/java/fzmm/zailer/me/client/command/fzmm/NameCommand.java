@@ -6,9 +6,9 @@ import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.command.ISubCommand;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.TextArgumentType;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.arguments.ComponentArgument;
+import net.minecraft.network.chat.Component;
 
 public class NameCommand implements ISubCommand {
     @Override
@@ -22,11 +22,11 @@ public class NameCommand implements ISubCommand {
     }
 
     @Override
-    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandRegistryAccess registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        return builder.then(ClientCommandManager.argument("name", TextArgumentType.text(registryAccess))
+    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
+        return builder.then(ClientCommandManager.argument("name", ComponentArgument.textComponent(registryAccess))
                 .executes(ctx -> {
 
-                    Text name = ctx.getArgument("name", Text.class);
+                    Component name = ctx.getArgument("name", Component.class);
 
                     DisplayBuilder.renameHandItem(name.copy());
                     return 1;

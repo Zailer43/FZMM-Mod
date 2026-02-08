@@ -4,15 +4,14 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import io.wispforest.owo.ui.component.DropdownComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.util.UISounds;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.input.AbstractInput;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.InputWithModifiers;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -24,15 +23,15 @@ public class ContextMenuButton extends EButtonComponent {
     private Consumer<DropdownComponent> contextMenuOptionsConsumer = dropdownComponent -> {
     };
 
-    public ContextMenuButton(Text text) {
+    public ContextMenuButton(net.minecraft.network.chat.Component text) {
         super(text, button -> {
         });
         this.verticalSizing(Sizing.fixed(20));
     }
 
     @Override
-    public void onPress(AbstractInput input) {
-        Screen screen = MinecraftClient.getInstance().currentScreen;
+    public void onPress(InputWithModifiers input) {
+        Screen screen = Minecraft.getInstance().screen;
         if (!(screen instanceof BaseFzmmScreen baseScreen)) {
             return;
         }
@@ -43,7 +42,7 @@ public class ContextMenuButton extends EButtonComponent {
                         this.contextMenu = contextMenu;
                         this.contextMenuOptionsConsumer.accept(contextMenu);
 
-                        List<Component> dropdownChildren = contextMenu.children();
+                        List<UIComponent> dropdownChildren = contextMenu.children();
 
 
                         // workaround, since there is no dismount event in owo-lib,

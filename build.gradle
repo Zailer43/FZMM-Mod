@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.11-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
     id 'maven-publish'
 }
 
@@ -11,13 +11,17 @@ base {
 }
 
 repositories {
+    // modmenu
     maven {
         name = "TerraformersMC"
         url = "https://maven.terraformersmc.com/releases/"
     }
 
+    // owo-lib
     maven { url = 'https://maven.wispforest.io' }
+    maven { url 'https://jitpack.io' }
 
+    // others
     maven { url = "https://api.modrinth.com/maven" }
 
 }
@@ -28,12 +32,12 @@ loom {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Dependencies
     // Fabric API
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
     def fabricDependencies = [
             'fabric-command-api-v2',
@@ -47,7 +51,7 @@ dependencies {
     ]
 
     fabricDependencies.forEach {
-        modImplementation(fabricApi.module(it, project.fabric_version))
+        modImplementation(fabricApi.module(it, project.fabric_api_version))
     }
 
     // owo lib

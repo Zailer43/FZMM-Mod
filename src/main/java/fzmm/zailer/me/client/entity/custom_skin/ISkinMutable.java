@@ -1,17 +1,17 @@
 package fzmm.zailer.me.client.entity.custom_skin;
 
-import net.minecraft.entity.player.PlayerSkinType;
-import net.minecraft.entity.player.SkinTextures;
-import net.minecraft.util.AssetInfo;
+import net.minecraft.core.ClientAsset;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.entity.player.PlayerSkin;
 
 public interface ISkinMutable {
 
-    SkinTextures skin();
+    PlayerSkin skin();
 
-    void skin(SkinTextures textures);
+    void skin(PlayerSkin textures);
 
-    default void skin(AssetInfo.TextureAsset body, PlayerSkinType type) {
-        skin(new SkinTextures(body,
+    default void skin(ClientAsset.Texture body, PlayerModelType type) {
+        skin(new PlayerSkin(body,
                 null,
                 null,
                 type,
@@ -19,11 +19,11 @@ public interface ISkinMutable {
         ));
     }
 
-    default void texture(AssetInfo.TextureAsset body) {
+    default void texture(ClientAsset.Texture body) {
         this.skin(body, this.skin().model());
     }
 
     default void model(boolean isSlim) {
-        this.skin(this.skin().body(), isSlim ? PlayerSkinType.SLIM : PlayerSkinType.WIDE);
+        this.skin(this.skin().body(), isSlim ? PlayerModelType.SLIM : PlayerModelType.WIDE);
     }
 }

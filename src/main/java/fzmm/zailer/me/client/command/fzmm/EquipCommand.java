@@ -7,14 +7,14 @@ import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,12 +31,12 @@ public class EquipCommand implements ISubCommand {
     }
 
     @Override
-    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandRegistryAccess registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
+    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
         return builder.build();
     }
 
     @Override
-    public List<LiteralCommandNode<FabricClientCommandSource>> getSubCommands(CommandRegistryAccess registryAccess) {
+    public List<LiteralCommandNode<FabricClientCommandSource>> getSubCommands(CommandBuildContext registryAccess) {
         List<LiteralCommandNode<FabricClientCommandSource>> result = new ArrayList<>();
 
         result.add(ClientCommandManager.literal("head").executes(ctx -> {
@@ -63,29 +63,29 @@ public class EquipCommand implements ISubCommand {
     }
 
     private void swapItemWithHand(EquipmentSlot slot) {
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         assert client.player != null;
-        assert client.interactionManager != null;
-        ClientPlayerEntity player = client.player;
+        assert client.gameMode != null;
+        LocalPlayer player = client.player;
 
         if (ItemUtils.isNotAllowedToGive()) {
             FzmmClient.LOGGER.warn("[FzmmCommand] Creative mode is necessary to swap items");
-            client.inGameHud.getChatHud().addMessage(Text.translatable("fzmm.item.error.actionNotAllowed").setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
+            client.gui.getChat().addMessage(Component.translatable("fzmm.item.error.actionNotAllowed").setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
             return;
         }
 
-        PlayerInventory inventory = player.getInventory();
-        ItemStack handStack = player.getMainHandStack();
-        ItemStack armorStack = player.getEquippedStack(slot);
+        Inventory inventory = player.getInventory();
+        ItemStack handStack = player.getMainHandItem();
+        ItemStack armorStack = player.getItemBySlot(slot);
         // I don't know why but at least with ClientPlayerInteractionManager#clickCreativeStack
         // they are placed in the reverse order
         // 5 = crafting slot + crafting result slot
-        int armorSlotId = Math.abs(slot.getOffsetEntitySlotId(-3)) + 5;
+        int armorSlotId = Math.abs(slot.getIndex(-3)) + 5;
 
-        client.interactionManager.clickCreativeStack(handStack, armorSlotId);
-        inventory.setStack(slot.getOffsetEntitySlotId(PlayerInventory.MAIN_SIZE), handStack);
+        client.gameMode.handleCreativeModeItemAdd(handStack, armorSlotId);
+        inventory.setItem(slot.getIndex(Inventory.INVENTORY_SIZE), handStack);
 
-        client.interactionManager.clickCreativeStack(armorStack, PlayerInventory.MAIN_SIZE + inventory.getSelectedSlot());
-        inventory.setStack(inventory.getSelectedSlot(), armorStack);
+        client.gameMode.handleCreativeModeItemAdd(armorStack, Inventory.INVENTORY_SIZE + inventory.getSelectedSlot());
+        inventory.setItem(inventory.getSelectedSlot(), armorStack);
     }
 }

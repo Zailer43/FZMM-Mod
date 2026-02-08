@@ -13,10 +13,9 @@ import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
 import fzmm.zailer.me.utils.skin.VanillaSkinGetter;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.item.ItemStack;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.util.Util;
-
+import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +32,7 @@ public class SkullCommand implements ISubCommand {
     }
 
     @Override
-    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandRegistryAccess registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
+    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
         var argument = ClientCommandManager.argument("skull owner", StringArgumentType.word())
                 .suggests(FzmmUtils.SUGGESTION_PLAYER)
                 .executes(ctx -> {
@@ -89,7 +88,7 @@ public class SkullCommand implements ISubCommand {
 
                     String skullOwner = ctx.getArgument("skull owner", String.class);
                     CompletableFuture.runAsync(() -> HeadUtils.uploadAndGetHead(skullOwner)
-                            .ifPresent(ItemUtils::give), Util.getMainWorkerExecutor());
+                            .ifPresent(ItemUtils::give), Util.backgroundExecutor());
 
                     return 1;
                 }).build());
@@ -102,7 +101,7 @@ public class SkullCommand implements ISubCommand {
     private CompletableFuture<ItemStack> getHead(SkinGetterDecorator skinDecorator, String playerName) {
         return CompletableFuture.supplyAsync(() -> skinDecorator.getHead(playerName)
                         .orElseGet(() -> HeadBuilder.of(playerName)),
-                Util.getMainWorkerExecutor()
+                Util.backgroundExecutor()
         );
     }
 }

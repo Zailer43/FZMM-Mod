@@ -3,10 +3,10 @@ package fzmm.zailer.me.client.gui.components.extend.container;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
+import io.wispforest.owo.ui.core.OwoUIGraphics;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.Surface;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +69,7 @@ public class EFlowLayout extends FlowLayout {
         return this;
     }
 
-    public <T extends Component> T childByIdOrThrow(@NotNull Class<T> expectedClass, @NotNull String id) {
+    public <T extends UIComponent> T childByIdOrThrow(@NotNull Class<T> expectedClass, @NotNull String id) {
         T result = this.childById(expectedClass, id);
         if (result == null) {
             throw new NullPointerException(String.format("No '%s' found with component id '%s'", expectedClass.getSimpleName(), id));
@@ -85,14 +85,14 @@ public class EFlowLayout extends FlowLayout {
     }
 
     @Override
-    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
-        this.surface.draw(context, this);
+    public void draw(OwoUIGraphics graphics, int mouseX, int mouseY, float partialTicks, float delta) {
+        this.surface.draw(graphics, this);
 
         if (this.hoveredSurface != null && (this.isInBoundingBox(mouseX, mouseY) || this.isFocused)) {
-            this.hoveredSurface.draw(context, this);
+            this.hoveredSurface.draw(graphics, this);
         }
 
-        this.drawChildren(context, mouseX, mouseY, partialTicks, delta, this.children);
+        this.drawChildren(graphics, mouseX, mouseY, partialTicks, delta, this.children);
     }
 
     @Override

@@ -1,35 +1,35 @@
 package fzmm.zailer.me.client.entity.custom_skin;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.network.OtherClientPlayerEntity;
-import net.minecraft.client.util.DefaultSkinHelper;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.PlayerSkinType;
-import net.minecraft.entity.player.SkinTextures;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.RemotePlayer;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.entity.player.PlayerSkin;
 
 import java.util.UUID;
 
-public class CustomPlayerSkinEntity extends OtherClientPlayerEntity implements ISkinMutable {
+public class CustomPlayerSkinEntity extends RemotePlayer implements ISkinMutable {
 
-    private SkinTextures textures = new SkinTextures(DefaultSkinHelper.getSteve().body(), null, null, PlayerSkinType.WIDE, false);
+    private PlayerSkin textures = new PlayerSkin(DefaultPlayerSkin.getDefaultSkin().body(), null, null, PlayerModelType.WIDE, false);
     
-    public CustomPlayerSkinEntity(ClientWorld world) {
+    public CustomPlayerSkinEntity(ClientLevel world) {
         super(world, new GameProfile(UUID.randomUUID(), ""));
-        this.getDataTracker().set(PLAYER_MODE_CUSTOMIZATION_ID, Byte.MAX_VALUE);
+        this.getEntityData().set(DATA_PLAYER_MODE_CUSTOMISATION, Byte.MAX_VALUE);
     }
 
     @Override
-    public SkinTextures getSkin() {
+    public PlayerSkin getSkin() {
         return this.textures;
     }
 
     @Override
-    public SkinTextures skin() {
+    public PlayerSkin skin() {
         return this.textures;
     }
 
     @Override
-    public void skin(SkinTextures textures) {
+    public void skin(PlayerSkin textures) {
         this.textures = textures;
     }
 }

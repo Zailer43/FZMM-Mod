@@ -1,14 +1,14 @@
 package fzmm.zailer.me.client.gui.components.extend.component;
 
+import com.mojang.math.Axis;
 import io.wispforest.owo.ui.component.EntityComponent;
-import io.wispforest.owo.ui.core.OwoUIDrawContext;
+import io.wispforest.owo.ui.core.OwoUIGraphics;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.renderstate.EntityElementRenderState;
-import net.minecraft.client.gui.ScreenRect;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.world.entity.LivingEntity;
 import org.joml.Matrix4f;
 
 public class EEntityComponent<T extends LivingEntity> extends EntityComponent<T> {
@@ -18,10 +18,10 @@ public class EEntityComponent<T extends LivingEntity> extends EntityComponent<T>
     }
 
     /**
-     * Copy of {@link EntityComponent#draw(OwoUIDrawContext, int, int, float, float)} with workaround to owo-lib in 1.21.6 - 1.21.8
+     * Copy of {@link EntityComponent#draw(OwoUIGraphics, int, int, float, float)} with workaround to owo-lib in 1.21.6 - 1.21.8
      */
     @Override
-    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
+    public void draw(OwoUIGraphics context, int mouseX, int mouseY, float partialTicks, float delta) {
         var matrix = new Matrix4f();
         float scale = this.scale * 0.95f;
         matrix.scale(75 * scale * this.width / 64f, -75 * scale * this.height / 64f, -75 * scale);
@@ -32,18 +32,18 @@ public class EEntityComponent<T extends LivingEntity> extends EntityComponent<T>
         this.transform.accept(matrix);
 
         // remove lookAtMouse, is not needed
-        matrix.rotate(RotationAxis.POSITIVE_X.rotationDegrees(35));
-        matrix.rotate(RotationAxis.POSITIVE_Y.rotationDegrees(-45 + this.mouseRotation));
+        matrix.rotate(Axis.XP.rotationDegrees(35));
+        matrix.rotate(Axis.YP.rotationDegrees(-45 + this.mouseRotation));
 
         EntityRenderState entityState = this.manager.getRenderer(this.entity).createRenderState();
 
         // replace partialTicks to 0f to fix shaking
-        ((EntityRenderer) this.manager.getRenderer(this.entity)).updateRenderState(this.entity, entityState, 0f);
-        context.state.addSpecialElement(new EntityElementRenderState(
+        ((EntityRenderer) this.manager.getRenderer(this.entity)).extractRenderState(this.entity, entityState, 0f);
+        context.guiRenderState.submitPicturesInPictureState(new EntityElementRenderState(
                 entityState,
                 matrix,
-                new ScreenRect(this.x, this.y, this.width, this.height),
-                context.scissorStack.peekLast()
+                new ScreenRectangle(this.x, this.y, this.width, this.height),
+                context.scissorStack.peek()
         ));
     }
 }

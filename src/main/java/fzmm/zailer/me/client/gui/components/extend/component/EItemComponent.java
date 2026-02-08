@@ -1,7 +1,7 @@
 package fzmm.zailer.me.client.gui.components.extend.component;
 
 import io.wispforest.owo.ui.component.ItemComponent;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Add lazy-loading of tooltips, because generate a grid of items with tooltip is expensive

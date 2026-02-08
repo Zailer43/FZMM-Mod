@@ -14,21 +14,21 @@ import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TextUtils;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.HangingSignBlock;
-import net.minecraft.block.SignBlock;
-import net.minecraft.block.WoodType;
-import net.minecraft.block.entity.HangingSignBlockEntity;
-import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CeilingHangingSignBlock;
+import net.minecraft.world.level.block.StandingSignBlock;
+import net.minecraft.world.level.block.entity.HangingSignBlockEntity;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.state.properties.WoodType;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -65,7 +65,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
                         DisplayBuilder.builder()
                                 .item(Items.PAPER)
                                 .setName(
-                                        Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "details.name",
+                                        Component.translatable(BASE_ITEMS_TRANSLATION_KEY + "details.name",
                                                 this.horizontalSignsOf(logic.text()),
                                                 this.verticalSignsOf(logic.height())
                                         ), color)
@@ -74,8 +74,8 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
                 .getAsList().get(0);
 
         signMainContainer = DisplayBuilder.of(signMainContainer)
-                .setName(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "container.name"), color)
-                .addLore(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "container.lore.1", logic.width(), logic.height()), color)
+                .setName(Component.translatable(BASE_ITEMS_TRANSLATION_KEY + "container.name"), color)
+                .addLore(Component.translatable(BASE_ITEMS_TRANSLATION_KEY + "container.lore.1", logic.width(), logic.height()), color)
                 .get();
 
         ItemUtils.give(signMainContainer);
@@ -85,7 +85,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
     public void setupComponents(EFlowLayout rootComponent) {
         this.signTypeButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "signType");
         this.signTypeButton.setContextMenuOptions(dropdownComponent -> {
-            List<WoodType> optionList = WoodType.stream()
+            List<WoodType> optionList = WoodType.values()
                     .sorted(Comparator.comparing(woodType1 -> this.getSignText(woodType1).getString()))
                     .toList();
             for (var option : optionList) {
@@ -110,14 +110,14 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
         return "sign";
     }
 
-    private Text getSignText(WoodType type) {
-        return Text.translatable("block.minecraft." + type.name() + "_sign");
+    private Component getSignText(WoodType type) {
+        return Component.translatable("block.minecraft." + type.name() + "_sign");
     }
 
     public List<ItemStack> signItemsOf(ImagetextLogic logic) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        Font textRenderer = Minecraft.getInstance().font;
         List<SignBuilder> signBuilders = new ArrayList<>();
-        List<Text> imagetext = logic.text();
+        List<Component> imagetext = logic.text();
         int height = logic.height();
 
         int horizontalSigns = this.horizontalSignsOf(imagetext);
@@ -125,9 +125,9 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
         int maxTextWidth = this.getMaxTextWidth();
         Item item = this.getItem();
 
-        OrderedText[][] imagetextWrapped = new OrderedText[imagetext.size()][horizontalSigns];
+        FormattedCharSequence[][] imagetextWrapped = new FormattedCharSequence[imagetext.size()][horizontalSigns];
         for (int i = 0; i != imagetext.size(); i++) {
-            imagetextWrapped[i] = textRenderer.wrapLines(imagetext.get(i), maxTextWidth).toArray(OrderedText[]::new);
+            imagetextWrapped[i] = textRenderer.split(imagetext.get(i), maxTextWidth).toArray(FormattedCharSequence[]::new);
         }
 
         for (int y = 0; y != verticalSigns; y++) {
@@ -145,10 +145,10 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
         return this.formatSignItems(signBuilders, horizontalSigns);
     }
 
-    public int horizontalSignsOf(List<Text> imagetext) {
+    public int horizontalSignsOf(List<Component> imagetext) {
         if (imagetext.isEmpty()) return 0;
         int maxWidth = this.getMaxTextWidth() - 1;
-        return MinecraftClient.getInstance().textRenderer.wrapLines(imagetext.get(0), maxWidth).size();
+        return Minecraft.getInstance().font.split(imagetext.get(0), maxWidth).size();
     }
 
     public int verticalSignsOf(int height) {
@@ -157,7 +157,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
         return (int) Math.floor(height / (double) SignBuilder.MAX_ROWS);
     }
 
-    public void addSignLines(int x, int y, SignBuilder builder, OrderedText[][] imagetextWrapped, int maxTextWidth) {
+    public void addSignLines(int x, int y, SignBuilder builder, FormattedCharSequence[][] imagetextWrapped, int maxTextWidth) {
         for (int i = 0; i != SignBuilder.MAX_ROWS; i++) {
             int index = y * SignBuilder.MAX_ROWS + i;
             if (index < imagetextWrapped.length && x < imagetextWrapped[index].length) {
@@ -167,7 +167,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
     }
 
     // why exist OrderedText and no a method to convert it to Text ???
-    private Text orderedTextToText(OrderedText text) {
+    private Component orderedTextToText(FormattedCharSequence text) {
         ImagetextLine line = new ImagetextLine(0d);
         StringBuilder characters = new StringBuilder();
         text.accept((index, style, codePoint) -> {
@@ -179,7 +179,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
 
         text.accept((index, characterStyle, c) -> {
             if (characterStyle.getColor() != null) {
-                line.add(characterStyle.getColor().getRgb());
+                line.add(characterStyle.getColor().getValue());
             }
             return true;
         });
@@ -204,19 +204,19 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
 
     public int getMaxTextWidth() {
         SignBlockEntity signBlockEntity = this.isHangingSignButton.checked() ?
-                new HangingSignBlockEntity(new BlockPos(0, 0, 0), Blocks.OAK_HANGING_SIGN.getDefaultState()) :
-                new SignBlockEntity(new BlockPos(0, 0, 0), Blocks.OAK_SIGN.getDefaultState());
+                new HangingSignBlockEntity(new BlockPos(0, 0, 0), Blocks.OAK_HANGING_SIGN.defaultBlockState()) :
+                new SignBlockEntity(new BlockPos(0, 0, 0), Blocks.OAK_SIGN.defaultBlockState());
 
-        return signBlockEntity.getMaxTextWidth();
+        return signBlockEntity.getMaxTextLineWidth();
     }
 
     public Item getItem() {
         boolean isHangingSign = this.isHangingSignButton.checked();
 
-        for (var block : Registries.BLOCK.stream().toList()) {
-            if (isHangingSign && block instanceof HangingSignBlock hangingSignBlock && hangingSignBlock.getWoodType() == this.woodType) {
+        for (var block : BuiltInRegistries.BLOCK.stream().toList()) {
+            if (isHangingSign && block instanceof CeilingHangingSignBlock hangingSignBlock && hangingSignBlock.type() == this.woodType) {
                 return hangingSignBlock.asItem();
-            } else if (!isHangingSign && block instanceof SignBlock signBlock && signBlock.getWoodType() == this.woodType) {
+            } else if (!isHangingSign && block instanceof StandingSignBlock signBlock && signBlock.type() == this.woodType) {
                 return signBlock.asItem();
             }
         }
@@ -233,7 +233,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
     @Override
     public void restore(ObjectInputStream input) throws IOException, ClassNotFoundException {
         String woodName = (String) input.readObject();
-        WoodType woodType = WoodType.stream()
+        WoodType woodType = WoodType.values()
                 .filter(woodType1 -> woodType1.name().equals(woodName))
                 .findFirst()
                 .orElse(WoodType.OAK);
@@ -242,10 +242,10 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
     }
 
     @Override
-    public Text getTooltip(ImagetextLogic logic) {
+    public Component getTooltip(ImagetextLogic logic) {
         int horizontalSigns = this.horizontalSignsOf(logic.text());
         int verticalSigns = this.verticalSignsOf(logic.height());
-        return Text.translatable("fzmm.gui.imagetext.tab.sign.tooltip", horizontalSigns, verticalSigns);
+        return Component.translatable("fzmm.gui.imagetext.tab.sign.tooltip", horizontalSigns, verticalSigns);
     }
 
 }

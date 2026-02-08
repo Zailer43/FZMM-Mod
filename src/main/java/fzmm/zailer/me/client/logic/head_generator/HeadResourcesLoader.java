@@ -17,13 +17,13 @@ import fzmm.zailer.me.client.logic.head_generator.model.steps.select.ModelSelect
 import fzmm.zailer.me.client.logic.head_generator.texture.HeadTextureEntry;
 import fzmm.zailer.me.utils.ImageUtils;
 import io.wispforest.owo.ui.core.Color;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.SynchronousResourceReloader;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -33,7 +33,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.Function;
 
-public class HeadResourcesLoader implements SynchronousResourceReloader {
+public class HeadResourcesLoader implements ResourceManagerReloadListener {
 
     private static ImmutableList<AbstractHeadEntry> LOADED_RESOURCES = ImmutableList.<AbstractHeadEntry>builder().build();
     private static ImmutableMap<String, BufferedImage> LOADED_MODEL_TEXTURES = ImmutableMap.<String, BufferedImage>builder().build();
@@ -67,7 +67,7 @@ public class HeadResourcesLoader implements SynchronousResourceReloader {
     }
 
     @Override
-    public void reload(ResourceManager manager) {
+    public void onResourceManagerReload(ResourceManager manager) {
         try {
             List<AbstractHeadEntry> builder = new ArrayList<>();
 
@@ -125,10 +125,10 @@ public class HeadResourcesLoader implements SynchronousResourceReloader {
     private static Set<HeadTextureEntry> loadHeadsTextures(ResourceManager manager) {
         Set<HeadTextureEntry> entries = new HashSet<>();
 
-        manager.findResources(HEADS_TEXTURES_FOLDER, identifier -> identifier.getPath().endsWith(".png")).forEach(((identifier, resource) -> {
+        manager.listResources(HEADS_TEXTURES_FOLDER, identifier -> identifier.getPath().endsWith(".png")).forEach(((identifier, resource) -> {
             InputStream inputStream = null;
             try {
-                inputStream = resource.getInputStream();
+                inputStream = resource.open();
                 BufferedImage bufferedImage = ImageUtils.withType(ImageIO.read(inputStream), BufferedImage.TYPE_INT_ARGB);
                 String path = identifier.getPath();
                 String fileName = path.substring(HEADS_TEXTURES_FOLDER.length() + 1, path.length() - ".png".length());
@@ -156,7 +156,7 @@ public class HeadResourcesLoader implements SynchronousResourceReloader {
             manager.getResource(modelTextureIdentifier).ifPresentOrElse(resource -> {
                 InputStream inputStream = null;
                 try {
-                    inputStream = resource.getInputStream();
+                    inputStream = resource.open();
                     BufferedImage bufferedImage = ImageUtils.withType(ImageIO.read(inputStream), BufferedImage.TYPE_INT_ARGB);
 
                     entries.put(modelTextureIdentifier.toString(), bufferedImage);
@@ -227,10 +227,10 @@ public class HeadResourcesLoader implements SynchronousResourceReloader {
         Set<HeadModelEntry> entries = new HashSet<>();
 
 
-        manager.findResources(path, identifier -> identifier.getPath().endsWith(".json")).forEach(((identifier, resource) -> {
+        manager.listResources(path, identifier -> identifier.getPath().endsWith(".json")).forEach(((identifier, resource) -> {
             InputStream inputStream = null;
             try {
-                inputStream = resource.getInputStream();
+                inputStream = resource.open();
                 entries.add(getHeadModel(path, identifier, inputStream));
             } catch (Exception e) {
                 FzmmClient.LOGGER.error("[HeadResourcesLoader] Error loading head generator model: {}", identifier.getPath(), e);
@@ -384,14 +384,14 @@ public class HeadResourcesLoader implements SynchronousResourceReloader {
     }
 
     private static void addChatMessageError(Exception e, String path) {
-        if (MinecraftClient.getInstance().player != null) {
-            Text message = Text.translatable("fzmm.gui.headGenerator.model.error.loadingModel", path)
+        if (Minecraft.getInstance().player != null) {
+            Component message = Component.translatable("fzmm.gui.headGenerator.model.error.loadingModel", path)
                     .setStyle(Style.EMPTY
                             .withColor(FzmmClient.CHAT_BASE_COLOR)
-                            .withHoverEvent(new HoverEvent.ShowText(Text.literal(e.getMessage())))
+                            .withHoverEvent(new HoverEvent.ShowText(Component.literal(e.getMessage())))
                     );
 
-            MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(message);
+            Minecraft.getInstance().gui.getChat().addMessage(message);
         }
     }
 }

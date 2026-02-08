@@ -15,15 +15,15 @@ import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.logic.player_statue.statue_head_skin.*;
 import fzmm.zailer.me.utils.*;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import org.joml.Vector3f;
 
 import java.awt.image.BufferedImage;
@@ -105,12 +105,12 @@ public class PlayerStatue {
         this.partsGenerated = 0;
         this.currentErrors = 0;
         this.isSecondTry = false;
-        MinecraftClient.getInstance().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
             this.snackBar = (UpdatableSnackBarComponent) UpdatableSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
                     .backgroundColor(EStyles.ALERT_LOADING_COLOR)
                     .keepOnLimit()
-                    .title(Text.translatable("fzmm.snack_bar.playerStatue.loading.title"))
-                    .details(Text.translatable("fzmm.snack_bar.playerStatue.loading.details",
+                    .title(Component.translatable("fzmm.snack_bar.playerStatue.loading.title"))
+                    .details(Component.translatable("fzmm.snack_bar.playerStatue.loading.details",
                             this.partsGenerated, 0, 0, 0, this.statueList.get(0).getName()))
                     .sizing(Sizing.fixed(220), Sizing.content())
                     .startTimer()
@@ -123,15 +123,15 @@ public class PlayerStatue {
         this.isSecondTry = true;
         this.generate();
 
-        MinecraftClient.getInstance().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
             this.snackBar.close();
 
             boolean success = this.currentErrors == 0;
             ISnackBarComponent finalStatus = BaseSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
                     .backgroundColor(success ? EStyles.ALERT_SUCCESS_COLOR : EStyles.ALERT_ERROR_COLOR)
                     .keepOnLimit()
-                    .title(success ? Text.translatable("fzmm.snack_bar.playerStatue.successful.title") :
-                            Text.translatable("fzmm.snack_bar.playerStatue.error.title", this.currentErrors))
+                    .title(success ? Component.translatable("fzmm.snack_bar.playerStatue.successful.title") :
+                            Component.translatable("fzmm.snack_bar.playerStatue.error.title", this.currentErrors))
                     .sizing(Sizing.fixed(220), Sizing.content())
                     .mediumTimer()
                     .startTimer()
@@ -167,11 +167,11 @@ public class PlayerStatue {
         float y = pos.y() - 0.1f;
         float z = pos.z() + 0.5f;
 
-        Text nameText = Text.of(name);
+        Component nameText = Component.nullToEmpty(name);
         if (name != null && !name.isEmpty()) {
             try {
                 // if serialization fails, it throws an exception
-                nameText = TextCodecs.CODEC.decode(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), JsonParser.parseString(name)).map(Pair::getFirst).getOrThrow();
+                nameText = ComponentSerialization.CODEC.decode(FzmmUtils.getRegistryOps(JsonOps.INSTANCE), JsonParser.parseString(name)).map(Pair::getFirst).getOrThrow();
 
                 if (nameText == null) {
                     throw new IllegalArgumentException(String.format("[PlayerStatue] 'name' is not a valid JSON string: %s", name));
@@ -179,7 +179,7 @@ public class PlayerStatue {
             } catch (Exception ignored) {
                 if (name.length() > 100)
                     name = name.substring(0, 99);
-                nameText = Text.of(name);
+                nameText = Component.nullToEmpty(name);
             }
         }
 
@@ -189,25 +189,25 @@ public class PlayerStatue {
                 .setTags(StatuePart.PLAYER_STATUE_TAG)
                 .getItem("Name tag");
 
-        nameTagStack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(new NbtCompound()), component -> {
-            NbtCompound result = component.copyNbt();
-            NbtCompound fzmmTag = new NbtCompound();
-            NbtCompound playerStatueTag = new NbtCompound();
+        nameTagStack.update(DataComponents.CUSTOM_DATA, CustomData.of(new CompoundTag()), component -> {
+            CompoundTag result = component.copyTag();
+            CompoundTag fzmmTag = new CompoundTag();
+            CompoundTag playerStatueTag = new CompoundTag();
 
             playerStatueTag.putByte(StatuePart.PlayerStatueTags.NAME_TAG, (byte) 1);
             fzmmTag.put(TagsConstant.FZMM_PLAYER_STATUE, playerStatueTag);
             result.put(TagsConstant.FZMM, fzmmTag);
 
-            return NbtComponent.of(result);
+            return CustomData.of(result);
         });
 
         return nameTagStack;
     }
 
     public static boolean isNameTag(ItemStack stack) {
-        NbtCompound customData = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(new NbtCompound())).copyNbt();
-        NbtCompound fzmmTag = customData.getCompoundOrEmpty(TagsConstant.FZMM);
-        NbtCompound playerStatueTag = fzmmTag.getCompoundOrEmpty(TagsConstant.FZMM_PLAYER_STATUE);
+        CompoundTag customData = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.of(new CompoundTag())).copyTag();
+        CompoundTag fzmmTag = customData.getCompoundOrEmpty(TagsConstant.FZMM);
+        CompoundTag playerStatueTag = fzmmTag.getCompoundOrEmpty(TagsConstant.FZMM_PLAYER_STATUE);
 
         return playerStatueTag.getByte(StatuePart.PlayerStatueTags.NAME_TAG).isPresent();
     }
@@ -241,8 +241,8 @@ public class PlayerStatue {
                 //.maxItemByContainer(FzmmClient.CONFIG.playerStatue.defaultContainer())//todo
                 .addAll(statueList)
                 .setNameStyleToItems(colorStyle)
-                .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.item.playerStatue.lore.1").getString(), color)
-                .addLoreToItems(Items.ARMOR_STAND, Text.translatable("fzmm.item.playerStatue.lore.2").getString(), color)
+                .addLoreToItems(Items.ARMOR_STAND, Component.translatable("fzmm.item.playerStatue.lore.1").getString(), color)
+                .addLoreToItems(Items.ARMOR_STAND, Component.translatable("fzmm.item.playerStatue.lore.2").getString(), color)
                 .getAsList();
 
         if (containerList.isEmpty()) {
@@ -251,8 +251,8 @@ public class PlayerStatue {
 
         ItemStack container = containerList.get(0);
         container = DisplayBuilder.of(container)
-                .setName(Text.literal(Text.translatable("fzmm.item.playerStatue.container.name").getString()).setStyle(colorStyle.withBold(true)))
-                .addLore(Text.translatable("fzmm.item.playerStatue.container.lore.1", x, y, z), color)
+                .setName(Component.literal(Component.translatable("fzmm.item.playerStatue.container.name").getString()).setStyle(colorStyle.withBold(true)))
+                .addLore(Component.translatable("fzmm.item.playerStatue.container.lore.1", x, y, z), color)
                 .get();
 
         return container;
@@ -271,10 +271,10 @@ public class PlayerStatue {
             this.currentErrors++;
         }
 
-        MinecraftClient.getInstance().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
             float delay = delayMillis / 1000f;
-            this.snackBar.updateTitle(Text.translatable("fzmm.snack_bar.playerStatue." + translationKey + ".title"));
-            this.snackBar.updateDetails(Text.translatable("fzmm.snack_bar.playerStatue." + translationKey + ".details",
+            this.snackBar.updateTitle(Component.translatable("fzmm.snack_bar.playerStatue." + translationKey + ".title"));
+            this.snackBar.updateDetails(Component.translatable("fzmm.snack_bar.playerStatue." + translationKey + ".details",
                     this.partsGenerated,
                     this.currentErrors,
                     this.totalToGenerate,

@@ -2,15 +2,15 @@ package fzmm.zailer.me.builders;
 
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ItemLore;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -19,12 +19,12 @@ import java.util.List;
 
 public class DisplayBuilder {
     private ItemStack stack;
-    private List<Text> lore = new ArrayList<>();
+    private List<Component> lore = new ArrayList<>();
     @Nullable
-    private Text customName = null;
+    private Component customName = null;
 
     public DisplayBuilder() {
-        this.stack = Items.STONE.getDefaultStack();
+        this.stack = Items.STONE.getDefaultInstance();
     }
 
     public static DisplayBuilder builder() {
@@ -35,33 +35,33 @@ public class DisplayBuilder {
         return builder().stack(stack.copy());
     }
 
-    public static void addLoreToHandItem(MutableText text) {
-        ItemStack stack = ItemUtils.from(Hand.MAIN_HAND);
+    public static void addLoreToHandItem(MutableComponent text) {
+        ItemStack stack = ItemUtils.from(InteractionHand.MAIN_HAND);
 
-        stack.apply(DataComponentTypes.LORE, LoreComponent.DEFAULT, loreComponent -> {
-            List<Text> loreList = new ArrayList<>(loreComponent.lines());
+        stack.update(DataComponents.LORE, ItemLore.EMPTY, loreComponent -> {
+            List<Component> loreList = new ArrayList<>(loreComponent.lines());
             loreList.add(FzmmUtils.disableItalicConfig(text));
-            return new LoreComponent(loreList);
+            return new ItemLore(loreList);
         });
 
         ItemUtils.give(stack);
     }
 
-    public static void renameHandItem(MutableText text) {
-        ItemStack stack = ItemUtils.from(Hand.MAIN_HAND);
+    public static void renameHandItem(MutableComponent text) {
+        ItemStack stack = ItemUtils.from(InteractionHand.MAIN_HAND);
 
-        stack.apply(DataComponentTypes.CUSTOM_NAME, null, component -> FzmmUtils.disableItalicConfig(text));
+        stack.update(DataComponents.CUSTOM_NAME, null, component -> FzmmUtils.disableItalicConfig(text));
         ItemUtils.give(stack);
     }
 
     public DisplayBuilder item(Item item) {
-        return this.stack(item.getDefaultStack());
+        return this.stack(item.getDefaultInstance());
     }
 
     public DisplayBuilder stack(ItemStack stack) {
         this.stack = stack.copy();
-        this.lore = new ArrayList<>(stack.getComponents().getOrDefault(DataComponentTypes.LORE, LoreComponent.DEFAULT).lines());
-        this.customName = stack.getComponents().getOrDefault(DataComponentTypes.CUSTOM_NAME, null);
+        this.lore = new ArrayList<>(stack.getComponents().getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines());
+        this.customName = stack.getComponents().getOrDefault(DataComponents.CUSTOM_NAME, null);
 
         if (this.customName != null) {
             this.customName = this.customName.copy();
@@ -70,38 +70,38 @@ public class DisplayBuilder {
         return this;
     }
 
-    public Text getName() {
-        return this.customName == null ? Text.empty() : this.customName;
+    public Component getName() {
+        return this.customName == null ? Component.empty() : this.customName;
     }
 
-    public List<Text> getLoreText() {
-        List<Text> result = this.stack.getComponents().getOrDefault(DataComponentTypes.LORE, LoreComponent.DEFAULT).lines();
+    public List<Component> getLoreText() {
+        List<Component> result = this.stack.getComponents().getOrDefault(DataComponents.LORE, ItemLore.EMPTY).lines();
 
         return new ArrayList<>(result);
     }
 
     public ItemStack get() {
         if (!this.lore.isEmpty()) {
-            if (this.lore.size() > LoreComponent.MAX_LORES) {
-                this.lore = this.lore.subList(0, LoreComponent.MAX_LORES);
+            if (this.lore.size() > ItemLore.MAX_LINES) {
+                this.lore = this.lore.subList(0, ItemLore.MAX_LINES);
             }
 
-            this.stack.apply(DataComponentTypes.LORE, null, component -> new LoreComponent(List.copyOf(this.lore)));
+            this.stack.update(DataComponents.LORE, null, component -> new ItemLore(List.copyOf(this.lore)));
         }
 
         if (this.customName != null) {
-            this.stack.apply(DataComponentTypes.CUSTOM_NAME, null, component -> this.customName.copy());
+            this.stack.update(DataComponents.CUSTOM_NAME, null, component -> this.customName.copy());
         }
 
         return this.stack;
     }
 
-    public DisplayBuilder setLore(List<Text> lore) {
+    public DisplayBuilder setLore(List<Component> lore) {
         this.lore = lore;
         return this;
     }
 
-    public DisplayBuilder setName(MutableText name) {
+    public DisplayBuilder setName(MutableComponent name) {
         this.customName = FzmmUtils.disableItalicConfig(name, true);
         return this;
     }
@@ -114,41 +114,41 @@ public class DisplayBuilder {
         return this.setName(FzmmUtils.disableItalicConfig(name, useDisableItalicConfig));
     }
 
-    public DisplayBuilder setName(Text name, int color) {
+    public DisplayBuilder setName(Component name, int color) {
         return this.setName(name.getString(), color);
     }
 
     public DisplayBuilder setName(String name, int color) {
-        return this.setName(Text.literal(name).setStyle(Style.EMPTY.withColor(color)));
+        return this.setName(Component.literal(name).setStyle(Style.EMPTY.withColor(color)));
     }
 
-    public DisplayBuilder addLore(List<Text> lore) {
+    public DisplayBuilder addLore(List<Component> lore) {
         this.lore.addAll(lore);
         return this;
     }
 
     public DisplayBuilder addLore(String[] loreArr) {
-        List<Text> loreList = Arrays.stream(loreArr)
-                .map(loreLine -> (Text) FzmmUtils.disableItalicConfig(loreLine, true))
+        List<Component> loreList = Arrays.stream(loreArr)
+                .map(loreLine -> (Component) FzmmUtils.disableItalicConfig(loreLine, true))
                 .toList();
 
         return this.addLore(loreList);
     }
 
     public DisplayBuilder addLore(String lore) {
-        return this.addLore(Text.literal(lore));
+        return this.addLore(Component.literal(lore));
     }
 
-    public DisplayBuilder addLore(Text lore) {
+    public DisplayBuilder addLore(Component lore) {
         this.lore.add(lore);
         return this;
     }
 
-    public DisplayBuilder addLore(Text lore, int messageColor) {
+    public DisplayBuilder addLore(Component lore, int messageColor) {
         return this.addLore(lore.copy().setStyle(Style.EMPTY.withColor(messageColor)));
     }
 
     public DisplayBuilder addLore(String message, int messageColor) {
-        return this.addLore(Text.literal(message).setStyle(Style.EMPTY.withColor(messageColor)));
+        return this.addLore(Component.literal(message).setStyle(Style.EMPTY.withColor(messageColor)));
     }
 }

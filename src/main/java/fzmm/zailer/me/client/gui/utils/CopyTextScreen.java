@@ -5,14 +5,14 @@ import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.logic.copy_text_algorithm.CopyText;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 public class CopyTextScreen extends BaseFzmmScreen {
-    private final Text textToCopy;
+    private final Component textToCopy;
 
-    public CopyTextScreen(@Nullable Screen parent, Text textToCopy) {
+    public CopyTextScreen(@Nullable Screen parent, Component textToCopy) {
         super("utils/copy_text", "copyText", parent);
         this.textToCopy = textToCopy;
     }

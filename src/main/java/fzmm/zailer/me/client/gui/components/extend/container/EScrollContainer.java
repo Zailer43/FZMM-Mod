@@ -3,18 +3,21 @@ package fzmm.zailer.me.client.gui.components.extend.container;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import io.wispforest.owo.ui.container.ScrollContainer;
-import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.core.Color;
+import io.wispforest.owo.ui.core.Easing;
+import io.wispforest.owo.ui.core.Insets;
+import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
 import io.wispforest.owo.ui.util.NinePatchTexture;
-import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
 import org.w3c.dom.Element;
 
 import java.util.Map;
 
-public class EScrollContainer<C extends Component> extends ScrollContainer<C> {
+public class EScrollContainer<C extends UIComponent> extends ScrollContainer<C> {
     public static final int SCROLLBAR_THICCNESS = 5;
     protected boolean preventShiftScroll = false;
     protected boolean flipScroll = false;
@@ -64,8 +67,8 @@ public class EScrollContainer<C extends Component> extends ScrollContainer<C> {
     }
 
     @Override
-    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
-        super.draw(context, mouseX, mouseY, partialTicks, delta);
+    public void draw(OwoUIGraphics graphics, int mouseX, int mouseY, float partialTicks, float delta) {
+        super.draw(graphics, mouseX, mouseY, partialTicks, delta);
 
         this.scrollbarOffset = this.direction == ScrollDirection.VERTICAL ?
                 this.getScrollbarX(this.flipScroll, this.scrollbarOffset) :
@@ -85,8 +88,8 @@ public class EScrollContainer<C extends Component> extends ScrollContainer<C> {
     }
 
     @Override
-    public boolean onKeyPress(KeyInput input) {
-        this.isShiftDown = input.hasShift();
+    public boolean onKeyPress(KeyEvent input) {
+        this.isShiftDown = input.hasShiftDown();
         return super.onKeyPress(input);
     }
 
@@ -121,7 +124,7 @@ public class EScrollContainer<C extends Component> extends ScrollContainer<C> {
                 x = this.getScrollbarX(flipScroll, x);
             }
 
-            final var progress = Easing.SINE.apply(MathHelper.clamp(lastInteractTime - Util.getEpochTimeMs(), 0, 750) / 750f);
+            final var progress = Easing.SINE.apply(Mth.clamp(lastInteractTime - Util.getEpochMillis(), 0, 750) / 750f);
             int alpha = (int) (progress * (scrollbarColor >>> 24));
 
             context.fill(

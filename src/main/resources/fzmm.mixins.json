@@ -4,14 +4,14 @@
   "package": "fzmm.zailer.me.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "component.book.EditBoxAccessor",
-    "component.book.EditBoxWidgetMixin",
-    "entity.force_invisible_item_frame.ItemFrameEntityRendererMixin",
-    "item_group.fix_translations_update.ItemGroupDisplayContextMixin",
+    "component.book.MultiLineEditBoxMixin",
+    "component.book.MultilineTextFieldAccessor",
+    "entity.force_invisible_item_frame.ItemFrameRendererMixin",
+    "item_group.fix_translations_update.ItemDisplayParametersMixin",
     "item_group.operator_utilities_no_op.CreativeInventoryScreenMixin",
-    "modify_fzmm_command.allow_paragraphs_symbol.TextFieldWidgetMixin",
+    "modify_fzmm_command.allow_paragraphs_symbol.EditBoxMixin",
     "modify_fzmm_command.modify_chat.ChatScreenMixin",
-    "screenshot_hud.ChatHudMixin",
+    "screenshot_hud.ChatComponentMixin",
     "screenshot_hud.GameRendererMixin"
   ],
   "injectors": {

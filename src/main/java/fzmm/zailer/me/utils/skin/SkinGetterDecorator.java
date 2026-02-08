@@ -1,11 +1,11 @@
 package fzmm.zailer.me.utils.skin;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
+import net.minecraft.world.item.ItemStack;
 
 public abstract class SkinGetterDecorator {
     private final SkinGetterDecorator next;

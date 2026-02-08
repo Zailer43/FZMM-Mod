@@ -5,11 +5,11 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TextUtils;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.*;
 
@@ -22,7 +22,7 @@ public class EncryptbookLogic {
 
         BookBuilder bookBuilder = null;
         if (addPage) {
-            Optional<BookBuilder> builder = BookBuilder.of(ItemUtils.from(Hand.MAIN_HAND));
+            Optional<BookBuilder> builder = BookBuilder.of(ItemUtils.from(InteractionHand.MAIN_HAND));
             if (builder.isPresent()) {
                 bookBuilder = builder.get();
             }
@@ -73,12 +73,12 @@ public class EncryptbookLogic {
         String translationKey = profile.translationKey();
         String encryptMessage = String.join("", encryptMessageSplit);
 
-        Text encryptMessageTooltip = Text.literal(
-                Text.translatable("fzmm.item.encryptbook.encryptMessage.tooltip", translationKey, profile.isAsymmetric()).getString()
+        Component encryptMessageTooltip = Component.literal(
+                Component.translatable("fzmm.item.encryptbook.encryptMessage.tooltip", translationKey, profile.isAsymmetric()).getString()
         );
 
         builder.addPage(
-                Text.translatableWithFallback(translationKey, encryptMessage, encryptMessageSplit.toArray())
+                Component.translatableWithFallback(translationKey, encryptMessage, encryptMessageSplit.toArray())
                         .setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(encryptMessageTooltip)))
         );
 

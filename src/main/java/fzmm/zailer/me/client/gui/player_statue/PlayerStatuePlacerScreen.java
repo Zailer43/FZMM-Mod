@@ -7,20 +7,18 @@ import fzmm.zailer.me.client.gui.utils.auto_placer.AutoPlacerHud;
 import fzmm.zailer.me.client.logic.player_statue.PlayerStatue;
 import fzmm.zailer.me.utils.InventoryUtils;
 import fzmm.zailer.me.utils.TagsConstant;
-import io.wispforest.owo.ui.core.Component;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
-
+import io.wispforest.owo.ui.core.UIComponent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.block.BaseEntityBlock;
 
 public class PlayerStatuePlacerScreen extends AbstractAutoPlacer {
     public static boolean isActive = false;
@@ -36,26 +34,26 @@ public class PlayerStatuePlacerScreen extends AbstractAutoPlacer {
     public static AutoPlacerHud.Activation getActivation() {
         Predicate<ItemStack> predicate = itemStack -> !PlayerStatuePlacerScreen.isActive &&
                 itemStack.getItem() instanceof BlockItem blockItem &&
-                blockItem.getBlock() instanceof BlockWithEntity &&
+                blockItem.getBlock() instanceof BaseEntityBlock &&
                 PlayerStatue.isPlayerStatue(itemStack);
 
         List<AutoPlacerHud.Requirement> requirements = new ArrayList<>();
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         assert client.player != null;
 
         requirements.add(new AutoPlacerHud.Requirement(() -> {
-            float yaw = MathHelper.wrapDegrees(client.player.getYaw());
+            float yaw = Mth.wrapDegrees(client.player.getYRot());
             return yaw > 80 && yaw < 110;
-        }, Text.translatable("fzmm.gui.playerStatuePlacer.label.requirement.invalidYaw")));
+        }, net.minecraft.network.chat.Component.translatable("fzmm.gui.playerStatuePlacer.label.requirement.invalidYaw")));
 
         return new AutoPlacerHud.Activation(predicate, PlayerStatuePlacerScreen::new, requirements);
     }
 
     @Override
-    protected List<Component> getInfoLabels() {
-        List<Component> labelList = new ArrayList<>();
+    protected List<UIComponent> getInfoLabels() {
+        List<UIComponent> labelList = new ArrayList<>();
 
-        labelList.add(EComponents.label(this.playerStatueStack.getName()));
+        labelList.add(EComponents.label(this.playerStatueStack.getHoverName()));
 
         for (var text : DisplayBuilder.of(this.playerStatueStack).getLoreText()) {
             labelList.add(EComponents.label(text));
@@ -67,18 +65,16 @@ public class PlayerStatuePlacerScreen extends AbstractAutoPlacer {
     @Override
     protected ItemStack processStack(ItemStack stack) {
         // armor stand does not need a custom name
-        stack.remove(DataComponentTypes.CUSTOM_NAME);
+        stack.remove(DataComponents.CUSTOM_NAME);
 
         // since 1.21.5 custom data are transferred to the entity
-        stack.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, component -> {
-            if (component.isEmpty()) {
-                return null;
-            }
+        stack.update(DataComponents.CUSTOM_DATA, CustomData.EMPTY, component -> {
+            if (component.isEmpty()) return component;
 
-            NbtCompound result = component.copyNbt();
+            CompoundTag result = component.copyTag();
             result.remove(TagsConstant.FZMM);
 
-            return NbtComponent.of(result);
+            return CustomData.of(result);
         });
 
         return stack;

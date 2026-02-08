@@ -5,29 +5,28 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.compat.CompatMods;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.component.VanillaWidgetComponent;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Supplier;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 
 public class SymbolChatComponentHandler<T extends VanillaWidgetComponent> {
     @Nullable
     private T component;
-    private final Text buttonText;
-    private final Text buttonTooltip;
-    private final Text notAvailableTooltip;
+    private final net.minecraft.network.chat.Component buttonText;
+    private final net.minecraft.network.chat.Component buttonTooltip;
+    private final net.minecraft.network.chat.Component notAvailableTooltip;
     private final SymbolChatCompat compat;
 
-    public SymbolChatComponentHandler(SymbolChatCompat compat, Text buttonText, Text buttonTooltip, Text notAvailableTooltip) {
+    public SymbolChatComponentHandler(SymbolChatCompat compat, net.minecraft.network.chat.Component buttonText, net.minecraft.network.chat.Component buttonTooltip, net.minecraft.network.chat.Component notAvailableTooltip) {
         this.compat = compat;
 
         this.buttonText = buttonText;
@@ -35,8 +34,8 @@ public class SymbolChatComponentHandler<T extends VanillaWidgetComponent> {
         this.notAvailableTooltip = buttonTooltip.copy().append("\n\n").append(notAvailableTooltip);
     }
 
-    public Component initButton(BaseFzmmScreen screen, TextFieldWidget selectedComponent, Supplier<T> componentSupplier) {
-        Component result = Components.button(this.buttonText, button -> this.buttonExecute(screen, selectedComponent, componentSupplier));
+    public UIComponent initButton(BaseFzmmScreen screen, EditBox selectedComponent, Supplier<T> componentSupplier) {
+        UIComponent result = UIComponents.button(this.buttonText, button -> this.buttonExecute(screen, selectedComponent, componentSupplier));
         result.sizing(Sizing.fixed(20));
 
         ((ButtonComponent) result).active = CompatMods.SYMBOL_CHAT_PRESENT;
@@ -52,14 +51,14 @@ public class SymbolChatComponentHandler<T extends VanillaWidgetComponent> {
         return result;
     }
 
-    protected void buttonExecute(BaseFzmmScreen screen, TextFieldWidget selectedComponent, Supplier<T> componentSupplier) {
+    protected void buttonExecute(BaseFzmmScreen screen, EditBox selectedComponent, Supplier<T> componentSupplier) {
         if (!CompatMods.SYMBOL_CHAT_PRESENT) {
             return;
         }
 
         try {
             if (this.isMounted()) {
-                TextFieldWidget newSelected = selectedComponent;
+                EditBox newSelected = selectedComponent;
 
                 if (this.compat.selectedComponent() == newSelected) {
                     this.remove();
@@ -100,11 +99,11 @@ public class SymbolChatComponentHandler<T extends VanillaWidgetComponent> {
         this.component = null;
     }
 
-    public boolean charTyped(CharInput input) {
+    public boolean charTyped(CharacterEvent input) {
         return this.component != null && this.component.onCharTyped(input);
     }
 
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         return this.component != null && this.component.onKeyPress(input);
     }
     

@@ -2,11 +2,11 @@ package fzmm.zailer.me.client.gui.components.extend.component;
 
 import fzmm.zailer.me.client.FzmmClient;
 import io.wispforest.owo.ui.component.LabelComponent;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class ELabelComponent extends LabelComponent {
 
-    public ELabelComponent(Text text) {
+    public ELabelComponent(Component text) {
         super(text);
 
         // improves text readability with translucent background
@@ -16,7 +16,7 @@ public class ELabelComponent extends LabelComponent {
         }
     }
 
-    private Text applyStyle(Text text) {
+    private Component applyStyle(Component text) {
 //        if (!text.getStyle().isEmpty()) {
 //            return text;
 //        }
@@ -30,7 +30,7 @@ public class ELabelComponent extends LabelComponent {
     }
 
     @Override
-    public LabelComponent text(Text text) {
+    public LabelComponent text(Component text) {
         return super.text(this.applyStyle(text));
     }
 

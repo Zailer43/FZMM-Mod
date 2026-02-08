@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.gui.head_generator.category;
 
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 public class HeadPaintableCategory implements IHeadCategory {
     public static final String CATEGORY_ID = "paintable";
@@ -17,8 +17,8 @@ public class HeadPaintableCategory implements IHeadCategory {
     }
 
     @Override
-    public Text getText() {
-        return Text.translatable(this.getTranslationKey()).setStyle(Style.EMPTY.withColor(0xE6A419));
+    public Component getText() {
+        return Component.translatable(this.getTranslationKey()).setStyle(Style.EMPTY.withColor(0xE6A419));
     }
 
     @Override

@@ -1,16 +1,16 @@
 accessWidener v1 named
 
-accessible class net/minecraft/client/gui/EditBox$Substring
+accessible class net/minecraft/client/gui/components/MultilineTextField$StringView
 
-accessible method net/minecraft/client/gui/widget/TextFieldWidget getMaxLength ()I
-accessible method net/minecraft/client/util/ScreenshotRecorder getScreenshotFilename (Ljava/io/File;)Ljava/io/File;
-accessible method net/minecraft/client/MinecraftClient doItemUse ()V
-accessible method net/minecraft/component/type/WrittenBookContentComponent exceedsSerializedLengthLimit (Lnet/minecraft/text/Text;Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;)Z
+accessible method net/minecraft/client/gui/components/EditBox getMaxLength ()I
+accessible method net/minecraft/client/Screenshot getFile (Ljava/io/File;)Ljava/io/File;
+accessible method net/minecraft/client/Minecraft startUseItem ()V
+accessible method net/minecraft/world/item/component/WrittenBookContent isPageTooLarge (Lnet/minecraft/network/chat/Component;Lnet/minecraft/core/HolderLookup$Provider;)Z
 
-accessible field net/minecraft/client/gui/screen/ingame/BookScreen MAX_TEXT_WIDTH I
-accessible field net/minecraft/client/gui/screen/ingame/BookScreen MAX_TEXT_HEIGHT I
-accessible field net/minecraft/client/gui/screen/ingame/BookScreen WIDTH I
-accessible field net/minecraft/client/gui/screen/ingame/BookScreen HEIGHT I
+accessible field net/minecraft/client/gui/screens/inventory/BookViewScreen TEXT_WIDTH I
+accessible field net/minecraft/client/gui/screens/inventory/BookViewScreen TEXT_HEIGHT I
+accessible field net/minecraft/client/gui/screens/inventory/BookViewScreen IMAGE_WIDTH I
+accessible field net/minecraft/client/gui/screens/inventory/BookViewScreen IMAGE_HEIGHT I
 
 # Test
-accessible field net/minecraft/client/gui/screen/ingame/BookEditScreen pages Ljava/util/List;
+accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen pages Ljava/util/List;

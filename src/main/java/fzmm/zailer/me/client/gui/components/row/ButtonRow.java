@@ -1,13 +1,12 @@
 package fzmm.zailer.me.client.gui.components.row;
 
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
-import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
 import org.w3c.dom.Element;
 
 public class ButtonRow extends AbstractRow {
@@ -16,16 +15,16 @@ public class ButtonRow extends AbstractRow {
     }
 
     @Override
-    public Component[] getComponents(String id, String tooltipId) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
-        ButtonWidget resetButton = (ButtonWidget) getResetButton("");
+    public UIComponent[] getComponents(String id, String tooltipId) {
+        Font textRenderer = Minecraft.getInstance().font;
+        Button resetButton = (Button) getResetButton("");
 
-        Component button = Components.button(Text.translatable(BaseFzmmScreen.getOptionBaseTranslationKey(this.baseTranslationKey) + id + ".button"),
+        UIComponent button = UIComponents.button(net.minecraft.network.chat.Component.translatable(BaseFzmmScreen.getOptionBaseTranslationKey(this.baseTranslationKey) + id + ".button"),
                         buttonComponent -> {})
-                .horizontalSizing(Sizing.fixed(NORMAL_WIDTH + textRenderer.getWidth(resetButton.getMessage()) + BaseFzmmScreen.COMPONENT_DISTANCE + BaseFzmmScreen.BUTTON_TEXT_PADDING))
+                .horizontalSizing(Sizing.fixed(NORMAL_WIDTH + textRenderer.width(resetButton.getMessage()) + BaseFzmmScreen.COMPONENT_DISTANCE + BaseFzmmScreen.BUTTON_TEXT_PADDING))
                 .id(id + "-button");
 
-        return new Component[] {
+        return new UIComponent[] {
                 button
         };
     }

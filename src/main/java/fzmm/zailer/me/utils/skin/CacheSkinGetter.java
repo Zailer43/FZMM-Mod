@@ -1,15 +1,15 @@
 package fzmm.zailer.me.utils.skin;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.platform.NativeImage;
 import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.utils.ImageUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.entity.player.SkinTextures;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.item.ItemStack;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
@@ -27,24 +27,24 @@ public class CacheSkinGetter extends SkinGetterDecorator {
     @Override
     public Optional<BufferedImage> getSkin(String playerName) {
         // obtains the player's skin, if server plugin/mod modifies it, this will obtain that one, which may be convenient
-        assert MinecraftClient.getInstance().getNetworkHandler() != null;
-        PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getCaseInsensitivePlayerInfo(playerName);
+        assert Minecraft.getInstance().getConnection() != null;
+        PlayerInfo playerListEntry = Minecraft.getInstance().getConnection().getPlayerInfoIgnoreCase(playerName);
         if (playerListEntry == null) return super.getSkin(playerName);
 
-        Optional<BufferedImage> cacheSkin = this.getSkin(playerListEntry.getSkinTextures());
+        Optional<BufferedImage> cacheSkin = this.getSkin(playerListEntry.getSkin());
         return cacheSkin.isPresent() ? cacheSkin : super.getSkin(playerName);
     }
 
-    public Optional<BufferedImage> getSkin(SkinTextures textures) {
+    public Optional<BufferedImage> getSkin(PlayerSkin textures) {
         AbstractTexture texture;
         try {
-            texture = MinecraftClient.getInstance().getTextureManager().getTexture(textures.body().texturePath());
+            texture = Minecraft.getInstance().getTextureManager().getTexture(textures.body().texturePath());
         } catch (Exception e) {
             texture = null;
         }
-        if (!(texture instanceof NativeImageBackedTexture nativeTexture)) return Optional.empty();
+        if (!(texture instanceof DynamicTexture nativeTexture)) return Optional.empty();
 
-        NativeImage nativeImage = nativeTexture.getImage();
+        NativeImage nativeImage = nativeTexture.getPixels();
         if (nativeImage == null) return Optional.empty();
 
         return Optional.of(ImageUtils.getBufferedImgFromNativeImg(nativeImage));
@@ -59,8 +59,8 @@ public class CacheSkinGetter extends SkinGetterDecorator {
 
     @Override
     protected Optional<GameProfile> getProfile(String playerName) {
-        assert MinecraftClient.getInstance().getNetworkHandler() != null;
-        PlayerListEntry playerListEntry = MinecraftClient.getInstance().getNetworkHandler().getCaseInsensitivePlayerInfo(playerName);
+        assert Minecraft.getInstance().getConnection() != null;
+        PlayerInfo playerListEntry = Minecraft.getInstance().getConnection().getPlayerInfoIgnoreCase(playerName);
 
         return Optional.ofNullable(playerListEntry == null ? null : playerListEntry.getProfile());
     }

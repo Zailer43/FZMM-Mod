@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.logic.copy_text_algorithm.algorithms;
 
 import fzmm.zailer.me.client.logic.copy_text_algorithm.AbstractCopyTextAlgorithm;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class CopyTextAsString extends AbstractCopyTextAlgorithm {
     }
 
     @Override
-    protected void getStringRecursive(StringBuilder stringBuilder, Style baseStyle, List<Text> siblings) {
+    protected void getStringRecursive(StringBuilder stringBuilder, Style baseStyle, List<Component> siblings) {
         for (var value : siblings)
             stringBuilder.append(value.getString());
     }

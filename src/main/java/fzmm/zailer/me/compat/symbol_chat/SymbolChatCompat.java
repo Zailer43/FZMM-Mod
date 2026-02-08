@@ -5,12 +5,11 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.compat.CompatMods;
 import fzmm.zailer.me.compat.symbol_chat.components.FontComponentAdapter;
 import fzmm.zailer.me.compat.symbol_chat.components.SymbolComponentAdapter;
-import io.wispforest.owo.ui.core.Component;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.CharInput;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Style;
 import net.replaceitem.symbolchat.SymbolChat;
 import net.replaceitem.symbolchat.gui.SymbolSelectionPanel;
 import org.jetbrains.annotations.Nullable;
@@ -21,15 +20,15 @@ import java.util.function.Consumer;
 
 public class SymbolChatCompat {
 
-    private static final Text SYMBOL_CHAT_NOT_AVAILABLE_TEXT_TOOLTIP = Text.translatable("fzmm.gui.button.symbolChat.notAvailable.tooltip").setStyle(Style.EMPTY.withColor(0xF2200D));
+    private static final net.minecraft.network.chat.Component SYMBOL_CHAT_NOT_AVAILABLE_TEXT_TOOLTIP = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.symbolChat.notAvailable.tooltip").setStyle(Style.EMPTY.withColor(0xF2200D));
 
-    private static final Text SYMBOL_BUTTON_TEXT = Text.translatable("fzmm.gui.button.symbolChat.symbol");
-    private static final Text SYMBOL_BUTTON_TEXT_TOOLTIP = Text.translatable("fzmm.gui.button.symbolChat.symbol.tooltip");
+    private static final net.minecraft.network.chat.Component SYMBOL_BUTTON_TEXT = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.symbolChat.symbol");
+    private static final net.minecraft.network.chat.Component SYMBOL_BUTTON_TEXT_TOOLTIP = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.symbolChat.symbol.tooltip");
 
-    private static final Text FONT_BUTTON_TEXT = Text.translatable("fzmm.gui.button.symbolChat.font");
-    private static final Text FONT_BUTTON_TEXT_TOOLTIP = Text.translatable("fzmm.gui.button.symbolChat.font.tooltip");
+    private static final net.minecraft.network.chat.Component FONT_BUTTON_TEXT = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.symbolChat.font");
+    private static final net.minecraft.network.chat.Component FONT_BUTTON_TEXT_TOOLTIP = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.symbolChat.font.tooltip");
 
-    private TextFieldWidget selectedComponent = null;
+    private EditBox selectedComponent = null;
     private final SymbolChatComponentHandler<SymbolComponentAdapter> symbolHandler;
     private final SymbolChatComponentHandler<FontComponentAdapter> fontHandler;
 
@@ -48,8 +47,8 @@ public class SymbolChatCompat {
     /**
      * @return empty list if config general.showSymbolButton is false
      */
-    public List<Component> getButtons(BaseFzmmScreen screen, TextFieldWidget selectedComponent) {
-        List<Component> result = new ArrayList<>();
+    public List<UIComponent> getButtons(BaseFzmmScreen screen, EditBox selectedComponent) {
+        List<UIComponent> result = new ArrayList<>();
 
         if (FzmmClient.CONFIG.general.showSymbolButton()) {
             result.add(this.fontHandler.initButton(screen, selectedComponent, this::getFontComponent));
@@ -62,7 +61,7 @@ public class SymbolChatCompat {
     private SymbolComponentAdapter getSymbolComponent() {
         return new SymbolComponentAdapter(new SymbolSelectionPanel(0, 0, SymbolChat.config.symbolPanelHeight.get(), s -> {
             if (this.selectedComponent != null) {
-                this.selectedComponent.write(s);
+                this.selectedComponent.insertText(s);
             }
         }));
     }
@@ -75,7 +74,7 @@ public class SymbolChatCompat {
         return new FontComponentAdapter(widget, expandedHeight);
     }
 
-    public TextFieldWidget selectedComponent() {
+    public EditBox selectedComponent() {
         return this.selectedComponent;
     }
 
@@ -87,23 +86,23 @@ public class SymbolChatCompat {
         return this.fontHandler;
     }
 
-    public void selectedComponent(@Nullable TextFieldWidget selectedComponent) {
+    public void selectedComponent(@Nullable EditBox selectedComponent) {
         this.selectedComponent = selectedComponent;
     }
 
-    public boolean charTyped(CharInput input) {
+    public boolean charTyped(CharacterEvent input) {
         if (!CompatMods.SYMBOL_CHAT_PRESENT) return false;
 
         return this.symbolHandler.charTyped(input) || this.fontHandler.charTyped(input);
     }
 
-    public boolean keyPressed(KeyInput input) {
+    public boolean keyPressed(KeyEvent input) {
         if (!CompatMods.SYMBOL_CHAT_PRESENT) return false;
 
         return this.symbolHandler.keyPressed(input) || this.fontHandler.keyPressed(input);
     }
 
-    public void processFont(TextFieldWidget widget, String text, Consumer<String> writeConsumer) {
+    public void processFont(EditBox widget, String text, Consumer<String> writeConsumer) {
         if (!CompatMods.SYMBOL_CHAT_PRESENT || this.selectedComponent != widget || !this.fontHandler.isMounted()) {
             writeConsumer.accept(text);
             return;

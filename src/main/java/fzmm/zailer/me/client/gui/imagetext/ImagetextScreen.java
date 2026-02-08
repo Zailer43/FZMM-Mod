@@ -25,18 +25,20 @@ import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
-import io.wispforest.owo.ui.core.*;
+import io.wispforest.owo.ui.core.Animation;
+import io.wispforest.owo.ui.core.Easing;
+import io.wispforest.owo.ui.core.Insets;
+import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.util.FocusHandler;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
@@ -88,14 +90,14 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
         imageTextBoxLayout.child(this.imageElements.valueField().sizing(Sizing.expand(100), Sizing.fixed(16)));
 
         FlowLayout imageButtonLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "image-buttons");
-        List<Component> imageButtonList = new ArrayList<>();
+        List<UIComponent> imageButtonList = new ArrayList<>();
 
         for (var value : ImageMode.values()) {
             ButtonComponent modeButton = this.imageElements.imageModeButtons().get(value);
             modeButton.sizing(Sizing.fixed(16));
             imageButtonList.add(modeButton);
         }
-        imageButtonList.add(Components.spacer().verticalSizing(Sizing.fixed(1)));
+        imageButtonList.add(UIComponents.spacer().verticalSizing(Sizing.fixed(1)));
         imageButtonList.add(this.imageElements.imageButton().verticalSizing(Sizing.fixed(16)).margins(Insets.none()));
 
         ImageButtonComponent imageButton = this.imageElements.imageButton();
@@ -117,7 +119,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
                 config.defaultSimilarityThreshold(), 0d, MAX_SIMILARITY_THRESHOLD, Double.class,
                 1, 0.1d, null
         );
-        this.similarityThreshold.message(s -> Text.literal(s + "%"));
+        this.similarityThreshold.message(s -> net.minecraft.network.chat.Component.literal(s + "%"));
 
         imageButtonLayout.children(imageButtonList);
 
@@ -218,10 +220,10 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
         expandPreviewButton.onPress(buttonComponent -> {
             if (isExpanded.getAndSet(!isExpanded.get())) {
                 leftOptionsAnimation.reverse();
-                expandPreviewButton.setMessage(Text.translatable("fzmm.gui.button.arrow2.left"));
+                expandPreviewButton.setMessage(net.minecraft.network.chat.Component.translatable("fzmm.gui.button.arrow2.left"));
             } else {
                 leftOptionsAnimation.forwards();
-                expandPreviewButton.setMessage(Text.translatable("fzmm.gui.button.arrow2.right"));
+                expandPreviewButton.setMessage(net.minecraft.network.chat.Component.translatable("fzmm.gui.button.arrow2.right"));
             }
         });
 
@@ -230,12 +232,12 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     protected void initFocus(FocusHandler focusHandler) {
-        focusHandler.focus(this.imageElements.valueField(), Component.FocusSource.MOUSE_CLICK);
+        focusHandler.focus(this.imageElements.valueField(), UIComponent.FocusSource.MOUSE_CLICK);
     }
 
     @Override
-    public void resize(MinecraftClient client, int width, int height) {
-        super.resize(client, width, height);
+    public void resize(int width, int height) {
+        super.resize(width, height);
         this.setSmallGuiAnimation(width);
     }
 
@@ -252,12 +254,12 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
         }
     }
 
-    private Text getAlgorithmText() {
-        return Text.translatable("fzmm.gui.imagetext.tab.algorithm", this.algorithmTabContainer.selectedTab().getButtonText());
+    private net.minecraft.network.chat.Component getAlgorithmText() {
+        return net.minecraft.network.chat.Component.translatable("fzmm.gui.imagetext.tab.algorithm", this.algorithmTabContainer.selectedTab().getButtonText());
     }
 
-    private Text getModeText() {
-        return Text.translatable("fzmm.gui.imagetext.tab.mode", this.modeTabContainer.selectedTab().getButtonText());
+    private net.minecraft.network.chat.Component getModeText() {
+        return net.minecraft.network.chat.Component.translatable("fzmm.gui.imagetext.tab.mode", this.modeTabContainer.selectedTab().getButtonText());
     }
 
     private void onResolutionChanged(SliderWidget config, SliderWidget configToChange, boolean isWidth) {
@@ -306,9 +308,9 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
         }).handle((unused, throwable) -> {
             if (throwable != null) {
                 FzmmClient.LOGGER.error("[ImagetextScreen] Error in imagetext give", throwable);
-                MinecraftClient.getInstance().execute(() -> SnackBarManager.getInstance().add(
+                Minecraft.getInstance().execute(() -> SnackBarManager.getInstance().add(
                         BaseSnackBarComponent.builder(SnackBarManager.IMAGETEXT_ID)
-                                .title(Text.literal("fzmm.giveItem.error"))
+                                .title(net.minecraft.network.chat.Component.literal("fzmm.giveItem.error"))
                                 .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                                 .closeButton()
                                 .build()
@@ -337,18 +339,18 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
         if (image.isEmpty()) return;
 
         this.buildImagetext(image.get(), isExecute);
-        List<Text> imagetext = this.imagetextLogic.text();
+        List<net.minecraft.network.chat.Component> imagetext = this.imagetextLogic.text();
 
-        MutableText tooltipText = Text.empty().setStyle(Style.EMPTY.withColor(Formatting.GRAY));
-        tooltipText.append(Text.translatable("fzmm.gui.imagetext.label.textLength", this.imagetextLogic.textLength()));
+        MutableComponent tooltipText = net.minecraft.network.chat.Component.empty().setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
+        tooltipText.append(net.minecraft.network.chat.Component.translatable("fzmm.gui.imagetext.label.textLength", this.imagetextLogic.textLength()));
 
         if (this.modeTabContainer.selectedTab() instanceof IImagetextTooltip metadata) {
             tooltipText.append("\n");
             tooltipText.append(metadata.getTooltip(this.imagetextLogic));
         }
 
-        assert this.client != null;
-        this.client.execute(() -> this.previewLayout.<EFlowLayout>configure(layout -> {
+        assert this.minecraft != null;
+        this.minecraft.execute(() -> this.previewLayout.<EFlowLayout>configure(layout -> {
             // Wrapping text is very expensive in memory allocation because (reasons) and (more reasons)
             // updatePreview is a hot spot, so it is better to avoid wrapping
             //
@@ -390,7 +392,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     public void backup(ObjectOutputStream output) throws IOException {
-        output.writeObject(this.imageElements.valueField().getText());
+        output.writeObject(this.imageElements.valueField().getValue());
         output.writeObject(this.imageElements.mode().get());
         output.writeInt((int) this.widthSlider.parsedValue());
         output.writeInt((int) this.heightSlider.parsedValue());

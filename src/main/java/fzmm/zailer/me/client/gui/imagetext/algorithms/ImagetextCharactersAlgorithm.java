@@ -8,9 +8,9 @@ import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.utils.TextUtils;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.MinecraftClient;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.client.Minecraft;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
     }
 
     private void updatePalette() {
-        String palette = this.sanitize(this.charactersTextField.getText());
+        String palette = this.sanitize(this.charactersTextField.getValue());
         this.palette = TextUtils.splitMessage(palette).toArray(new String[0]);
     }
 
@@ -61,7 +61,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
 
     @Override
     public String pixelExample() {
-        return this.sanitize(this.charactersTextField.getText());
+        return this.sanitize(this.charactersTextField.getValue());
     }
 
     @Override
@@ -82,7 +82,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
     @Override
     public void setupComponents(EFlowLayout rootComponent) {
         this.charactersTextField = (SuggestionTextBox) TextBoxRow.setup(rootComponent, CHARACTERS_ID, ImagetextLine.DEFAULT_TEXT, FzmmClient.CONFIG.imagetext.maxResolution());
-        this.charactersTextField.setCursorToStart(false);
+        this.charactersTextField.moveCursorToStart(false);
         this.charactersTextField.setSuggestionProvider((nul, builder) -> {
             if (builder.getInput().isBlank()) {
                 List<String> suggestions = List.of(ImagetextLine.DEFAULT_TEXT, "▎", "▋", "☐", "🌑");
@@ -96,10 +96,10 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
         this.charactersTextField.enableFontProcess(true);
 
         FlowLayout parentLayout = rootComponent.childByIdOrThrow(FlowLayout.class, TextBoxRow.getTextBoxId(CHARACTERS_ID) + "-parent");
-        if (MinecraftClient.getInstance().currentScreen instanceof BaseFzmmScreen baseScreen) {
+        if (Minecraft.getInstance().screen instanceof BaseFzmmScreen baseScreen) {
             parentLayout.removeChild(this.charactersTextField);
 
-            List<Component> buttons = baseScreen.getSymbolChatCompat().getButtons(baseScreen, this.charactersTextField);
+            List<UIComponent> buttons = baseScreen.getSymbolChatCompat().getButtons(baseScreen, this.charactersTextField);
             for (var button : buttons) {
                 button.sizing(Sizing.fixed(16));
             }
@@ -111,7 +111,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
 
     @Override
     public void backup(ObjectOutputStream output) throws IOException {
-        output.writeObject(this.charactersTextField.getText());
+        output.writeObject(this.charactersTextField.getValue());
     }
 
     @Override

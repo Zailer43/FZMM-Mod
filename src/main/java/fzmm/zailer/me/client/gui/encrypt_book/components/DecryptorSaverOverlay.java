@@ -13,13 +13,13 @@ import fzmm.zailer.me.client.gui.encrypt_book.translation_file_saver.Translation
 import fzmm.zailer.me.client.gui.encrypt_book.translation_file_saver.TranslationWriteLang;
 import fzmm.zailer.me.client.logic.enycrpt_book.TranslationEncryptProfile;
 import fzmm.zailer.me.utils.SnackBarManager;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.OverlayContainer;
 import io.wispforest.owo.ui.core.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class DecryptorSaverOverlay extends OverlayContainer<EFlowLayout> {
     //TODO: get all config profiles checkbox
     protected void addComponents(TranslationEncryptProfile selectedProfile) {
         //title
-        LabelComponent label = EComponents.label(Text.translatable("fzmm.gui.encryptbook.getDecryptor.title"));
+        LabelComponent label = EComponents.label(Component.translatable("fzmm.gui.encryptbook.getDecryptor.title"));
         label.horizontalSizing(Sizing.expand(100));
 
         // options
@@ -71,13 +71,13 @@ public class DecryptorSaverOverlay extends OverlayContainer<EFlowLayout> {
         // bottom buttons
         FlowLayout buttonLayout = EContainers.horizontalFlow(Sizing.expand(100), Sizing.fixed(20));
 
-        buttonLayout.child(Components.button(Text.translatable("gui.done"), buttonComponent -> {
+        buttonLayout.child(UIComponents.button(Component.translatable("gui.done"), buttonComponent -> {
                     this.execute(selectedSaver, selectedProfile);
                     this.remove();
                 }).positioning(Positioning.relative(0, 0))
                 .horizontalSizing(Sizing.fixed(100)));
 
-        buttonLayout.child(Components.button(Text.translatable("fzmm.gui.button.cancel"), buttonComponent -> this.remove())
+        buttonLayout.child(UIComponents.button(Component.translatable("fzmm.gui.button.cancel"), buttonComponent -> this.remove())
                 .positioning(Positioning.relative(100, 0))
                 .horizontalSizing(Sizing.fixed(100))
         );
@@ -90,14 +90,14 @@ public class DecryptorSaverOverlay extends OverlayContainer<EFlowLayout> {
     protected void execute(ITranslationFileSaver translationFileSaver, TranslationEncryptProfile profile) {
         translationFileSaver.save(profile)
                 .exceptionally(throwable -> {
-                    MinecraftClient.getInstance().execute(() -> {
+                    Minecraft.getInstance().execute(() -> {
                         FzmmClient.LOGGER.error("[GetDecryptorOverlay] Failed to get decryptor", throwable);
 
                         SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.ENCRYPTOR_SAVE_ID)
                                 .keepOnLimit()
                                 .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                                 .mediumTimer()
-                                .title(Text.translatable("fzmm.gui.encryptbook.getDecryptor.snack_bar.error"))
+                                .title(Component.translatable("fzmm.gui.encryptbook.getDecryptor.snack_bar.error"))
                                 .startTimer()
                                 .build()
                         );
@@ -111,7 +111,7 @@ public class DecryptorSaverOverlay extends OverlayContainer<EFlowLayout> {
                     SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.ENCRYPTOR_SAVE_ID)
                             .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
                             .mediumTimer()
-                            .title(Text.translatable("fzmm.gui.encryptbook.getDecryptor.snack_bar.success"))
+                            .title(Component.translatable("fzmm.gui.encryptbook.getDecryptor.snack_bar.success"))
                             .startTimer()
                             .build()
                     );

@@ -6,13 +6,12 @@ import fzmm.zailer.me.client.gui.text_format.components.ColorListContainer;
 import fzmm.zailer.me.client.logic.TextFormatLogic;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import io.wispforest.owo.ui.core.Color;
-import net.minecraft.text.Text;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.function.Consumer;
+import net.minecraft.network.chat.Component;
 
 public class TextFormatGradientTab implements ITextFormatTab, IMemento {
     private ColorListContainer colorListContainer;
@@ -23,7 +22,7 @@ public class TextFormatGradientTab implements ITextFormatTab, IMemento {
     }
 
     @Override
-    public Text getText(TextFormatLogic logic) {
+    public Component getText(TextFormatLogic logic) {
         if (!this.colorListContainer.isValid())
             return TextFormatScreen.EMPTY_COLOR_TEXT;
         List<Color> colorList = this.colorListContainer.getColors();

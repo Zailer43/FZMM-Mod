@@ -2,10 +2,10 @@ package fzmm.zailer.me.client.gui.components.snack_bar;
 
 import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.Component;
-import io.wispforest.owo.ui.core.ParentComponent;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
+import io.wispforest.owo.ui.core.ParentUIComponent;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -34,9 +34,9 @@ public interface ISnackBarScreen {
     /**
      * Add the overlay below the snack bar
      */
-    default void addOverlay(Component overlay) {
+    default void addOverlay(UIComponent overlay) {
         FlowLayout snackBarLayout = this.getSnackBarLayout();
-        ParentComponent root = this.getSnackBarLayout().root();
+        ParentUIComponent root = this.getSnackBarLayout().root();
 
         if (root instanceof FlowLayout rootLayout) {
             rootLayout.child(overlay);
@@ -59,9 +59,9 @@ public interface ISnackBarScreen {
     }
 
     default void setScreen(@Nullable Screen screen) {
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
 
-        if (screen == null && client.currentScreen == null) {
+        if (screen == null && client.screen == null) {
             return;
         }
 
@@ -69,7 +69,7 @@ public interface ISnackBarScreen {
 
         if (!(screen instanceof ISnackBarScreen snackBarScreen)) {
             manager.moveToHud(this);
-        } else if (client.currentScreen == null) {
+        } else if (client.screen == null) {
             manager.moveToScreen(snackBarScreen);
         } else {
             manager.move(this, snackBarScreen);

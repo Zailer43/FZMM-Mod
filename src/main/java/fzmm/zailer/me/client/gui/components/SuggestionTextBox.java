@@ -13,21 +13,20 @@ import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.client.input.MouseInput;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.network.chat.Style;
 
 // TODO: Refactor this spaghetti
 public class SuggestionTextBox extends FontTextBoxComponent {
@@ -60,8 +59,8 @@ public class SuggestionTextBox extends FontTextBoxComponent {
     }
 
     private void openContextMenu() {
-        Screen screen = MinecraftClient.getInstance().currentScreen;
-        ParentComponent root = this.root();
+        Screen screen = Minecraft.getInstance().screen;
+        ParentUIComponent root = this.root();
         if (this.contextMenuIsOpen() || screen == null || !(root instanceof FlowLayout rootLayout)) {
             return;
         }
@@ -91,7 +90,7 @@ public class SuggestionTextBox extends FontTextBoxComponent {
             suggestionDropdown.child(this.suggestionsContainer);
         });
 
-        this.updateSuggestions(this.getText());
+        this.updateSuggestions(this.getValue());
     }
 
     private void closeContextMenu() {
@@ -124,7 +123,7 @@ public class SuggestionTextBox extends FontTextBoxComponent {
             return false;
         }
 
-        List<Component> children = this.suggestionsLayout.children();
+        List<UIComponent> children = this.suggestionsLayout.children();
         int childrenSize = children.size();
 
         if (currentIndex >= 0 && childrenSize > currentIndex) {
@@ -139,7 +138,7 @@ public class SuggestionTextBox extends FontTextBoxComponent {
         }
 
         if (childrenSize > newIndex) {
-            Component selectedComponent = children.get(newIndex);
+            UIComponent selectedComponent = children.get(newIndex);
             selectedComponent.onFocusGained(FocusSource.KEYBOARD_CYCLE);
             this.suggestionsContainer.scrollTo(selectedComponent);
         }
@@ -165,7 +164,7 @@ public class SuggestionTextBox extends FontTextBoxComponent {
             int matchIndex = suggestion.toLowerCase().indexOf(newMessageToLowerCase);
 
             if (matchIndex >= 0 && this.suggestionsLayout != null) {
-                Text suggestionMessage = this.getSuggestionMessage(suggestion, newMessageToLowerCase, matchIndex, maxHorizontalSizing);
+                net.minecraft.network.chat.Component suggestionMessage = this.getSuggestionMessage(suggestion, newMessageToLowerCase, matchIndex, maxHorizontalSizing);
                 this.suggestionsLayout.child(this.getSuggestionComponent(suggestion, suggestionMessage));
             }
         }
@@ -182,21 +181,21 @@ public class SuggestionTextBox extends FontTextBoxComponent {
             FzmmClient.LOGGER.error("[SuggestionTextBox] Failed to get suggestions", e);
             assert this.suggestionsLayout != null;
 
-            this.suggestionsLayout.child(EComponents.label(Text.literal("Failed to get suggestions")));
+            this.suggestionsLayout.child(EComponents.label(net.minecraft.network.chat.Component.literal("Failed to get suggestions")));
         }
 
         return new ArrayList<>();
     }
 
-    private Text getSuggestionMessage(String suggestion, String textBoxMessageToLowerCase, int matchIndex, int maxHorizontalSizing) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    private net.minecraft.network.chat.Component getSuggestionMessage(String suggestion, String textBoxMessageToLowerCase, int matchIndex, int maxHorizontalSizing) {
+        Font textRenderer = Minecraft.getInstance().font;
         int startNewColorIndex = matchIndex + textBoxMessageToLowerCase.length();
 
-        if (textRenderer.getWidth(suggestion) > maxHorizontalSizing) {
+        if (textRenderer.width(suggestion) > maxHorizontalSizing) {
             int suggestionLength = suggestion.length();
             String ellipsis = "...";
-            maxHorizontalSizing -= textRenderer.getWidth(ellipsis);
-            suggestion = ellipsis + textRenderer.trimToWidth(suggestion, maxHorizontalSizing, true);
+            maxHorizontalSizing -= textRenderer.width(ellipsis);
+            suggestion = ellipsis + textRenderer.plainSubstrByWidth(suggestion, maxHorizontalSizing, true);
             int difference = Math.abs(suggestionLength - suggestion.length());
             matchIndex -= difference;
             matchIndex = Math.max(0, matchIndex);
@@ -204,18 +203,18 @@ public class SuggestionTextBox extends FontTextBoxComponent {
             startNewColorIndex = Math.max(0, startNewColorIndex);
         }
 
-        return Text.literal(suggestion.substring(0, matchIndex))
-                .setStyle(Style.EMPTY.withColor(Formatting.GRAY))
+        return net.minecraft.network.chat.Component.literal(suggestion.substring(0, matchIndex))
+                .setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY))
                 .append(
-                        Text.literal(suggestion.substring(matchIndex, startNewColorIndex))
-                                .setStyle(Style.EMPTY.withColor(Formatting.YELLOW))
+                        net.minecraft.network.chat.Component.literal(suggestion.substring(matchIndex, startNewColorIndex))
+                                .setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW))
                 ).append(
-                        Text.literal(suggestion.substring(startNewColorIndex))
-                                .setStyle(Style.EMPTY.withColor(Formatting.GRAY))
+                        net.minecraft.network.chat.Component.literal(suggestion.substring(startNewColorIndex))
+                                .setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY))
                 );
     }
 
-    private Component getSuggestionComponent(String suggestion, Text suggestionText) {
+    private UIComponent getSuggestionComponent(String suggestion, net.minecraft.network.chat.Component suggestionText) {
         LabelComponent labelComponent = EComponents.label(suggestionText);
         EFlowLayout layout = EContainers.verticalFlow(Sizing.fill(100), Sizing.fixed(SUGGESTION_HEIGHT));
 
@@ -310,15 +309,15 @@ public class SuggestionTextBox extends FontTextBoxComponent {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
-        if (input.isTab()) {
+    public boolean keyPressed(KeyEvent input) {
+        if (input.isCycleFocus()) {
             if (!this.contextMenuIsOpen()) {
                 this.openContextMenu();
                 return true;
             }
             assert this.suggestionsLayout != null;
             if (this.suggestionsLayout.children().isEmpty()) {
-                this.updateSuggestions(this.getText());
+                this.updateSuggestions(this.getValue());
                 return !this.suggestionsLayout.children().isEmpty();
             } else {
                 return this.updateSelectedSuggestionIndex(1);
@@ -328,16 +327,16 @@ public class SuggestionTextBox extends FontTextBoxComponent {
         if (input.isDown()) return this.updateSelectedSuggestionIndex(1);
         if (input.isUp()) return this.updateSelectedSuggestionIndex(-1);
 
-        if (input.isEnter()) {
+        if (input.isConfirmation()) {
             if (this.suggestionsLayout == null) return false;
 
-            List<Component> children = this.suggestionsLayout.children();
+            List<UIComponent> children = this.suggestionsLayout.children();
             if (this.selectedSuggestionIndex >= 0 && this.selectedSuggestionIndex < children.size()) {
                 this.disableCallback = true;
-                Component selectedComponent = children.get(this.selectedSuggestionIndex);
+                UIComponent selectedComponent = children.get(this.selectedSuggestionIndex);
                 // this should be a custom component because onKeyPress can't be called
                 // in a context menu since it doesn't have a focusHandler
-                selectedComponent.onMouseDown(new Click(selectedComponent.x(), selectedComponent.y(), new MouseInput(GLFW.GLFW_MOUSE_BUTTON_1, 0)), false);
+                selectedComponent.onMouseDown(new MouseButtonEvent(selectedComponent.x(), selectedComponent.y(), new MouseButtonInfo(GLFW.GLFW_MOUSE_BUTTON_1, 0)), false);
                 this.disableCallback = false;
                 return true;
             }

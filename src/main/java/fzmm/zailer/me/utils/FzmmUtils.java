@@ -6,21 +6,23 @@ import com.mojang.serialization.DynamicOps;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.RegistryOps;
-import net.minecraft.text.*;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Formatting;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.HttpClients;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.DyeColor;
 
+import java.net.http.HttpClient;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,11 +33,11 @@ import java.util.function.Function;
 public class FzmmUtils {
 
     public static final SuggestionProvider<FabricClientCommandSource> SUGGESTION_PLAYER = (context, builder) -> {
-        ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
+        LocalPlayer clientPlayer = Minecraft.getInstance().player;
         String playerInput = builder.getRemainingLowerCase();
         if (clientPlayer != null) {
-            List<String> playerNamesList = clientPlayer.networkHandler.getPlayerList().stream()
-                    .map(PlayerListEntry::getProfile)
+            List<String> playerNamesList = clientPlayer.connection.getOnlinePlayers().stream()
+                    .map(PlayerInfo::getProfile)
                     .map(GameProfile::name)
                     .toList();
 
@@ -49,7 +51,7 @@ public class FzmmUtils {
 
     };
 
-    public static MutableText disableItalicConfig(MutableText message) {
+    public static MutableComponent disableItalicConfig(MutableComponent message) {
         Style style = message.getStyle();
 
         if (FzmmClient.CONFIG.general.disableItalic() && !style.isItalic()) {
@@ -60,18 +62,18 @@ public class FzmmUtils {
     }
 
 
-    public static MutableText disableItalicConfig(String string, boolean useDisableItalicConfig) {
-        return disableItalicConfig(Text.literal(string), useDisableItalicConfig);
+    public static MutableComponent disableItalicConfig(String string, boolean useDisableItalicConfig) {
+        return disableItalicConfig(Component.literal(string), useDisableItalicConfig);
     }
 
-    public static MutableText disableItalicConfig(MutableText text, boolean useDisableItalicConfig) {
+    public static MutableComponent disableItalicConfig(MutableComponent text, boolean useDisableItalicConfig) {
         if (useDisableItalicConfig) {
             return disableItalicConfig(text);
         }
         return text;
     }
 
-    public static int getMaxWidth(Collection<StringVisitable> collection) {
+    public static int getMaxWidth(Collection<FormattedText> collection) {
         return getMaxWidth(collection, stringVisitable -> stringVisitable);
     }
 
@@ -79,7 +81,7 @@ public class FzmmUtils {
      * @param widthGetter Object is either StringVisitable or OrderedText
      */
     public static <T> int getMaxWidth(Collection<T> collection, Function<T, Object> widthGetter) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        Font textRenderer = Minecraft.getInstance().font;
         int max = 0;
 
         for (T t : collection) {
@@ -92,10 +94,10 @@ public class FzmmUtils {
             Object text = widthGetter.apply(t);
             int width;
 
-            if (text instanceof StringVisitable) {
-                width = textRenderer.getWidth((StringVisitable) text);
+            if (text instanceof FormattedText) {
+                width = textRenderer.width((FormattedText) text);
             } else {
-                width = textRenderer.getWidth((OrderedText) text);
+                width = textRenderer.width((FormattedCharSequence) text);
             }
             max = Math.max(max, width);
         }
@@ -126,27 +128,27 @@ public class FzmmUtils {
         return addToArray(result, DyeColor.values());
     }
 
-    public static Formatting[] getFormattingColorsInOrder() {
-        Formatting[] result = new Formatting[]{
-                Formatting.WHITE,
-                Formatting.GRAY,
-                Formatting.DARK_GRAY,
-                Formatting.BLACK,
-                Formatting.DARK_RED,
-                Formatting.RED,
-                Formatting.GOLD,
-                Formatting.YELLOW,
-                Formatting.GREEN,
-                Formatting.DARK_GREEN,
-                Formatting.DARK_AQUA,
-                Formatting.AQUA,
-                Formatting.BLUE,
-                Formatting.DARK_BLUE,
-                Formatting.DARK_PURPLE,
-                Formatting.LIGHT_PURPLE,
+    public static ChatFormatting[] getFormattingColorsInOrder() {
+        ChatFormatting[] result = new ChatFormatting[]{
+                ChatFormatting.WHITE,
+                ChatFormatting.GRAY,
+                ChatFormatting.DARK_GRAY,
+                ChatFormatting.BLACK,
+                ChatFormatting.DARK_RED,
+                ChatFormatting.RED,
+                ChatFormatting.GOLD,
+                ChatFormatting.YELLOW,
+                ChatFormatting.GREEN,
+                ChatFormatting.DARK_GREEN,
+                ChatFormatting.DARK_AQUA,
+                ChatFormatting.AQUA,
+                ChatFormatting.BLUE,
+                ChatFormatting.DARK_BLUE,
+                ChatFormatting.DARK_PURPLE,
+                ChatFormatting.LIGHT_PURPLE,
         };
 
-        return addToArray(result, Formatting.values());
+        return addToArray(result, ChatFormatting.values());
     }
 
     private static <T> T[] addToArray(T[] sortedArray, T[] allArray) {
@@ -163,18 +165,18 @@ public class FzmmUtils {
         return sortedArray;
     }
 
-    public static DynamicRegistryManager getRegistryManager() {
-        assert MinecraftClient.getInstance().player != null;
-        return MinecraftClient.getInstance().player.getRegistryManager();
+    public static RegistryAccess getRegistryManager() {
+        assert Minecraft.getInstance().player != null;
+        return Minecraft.getInstance().player.registryAccess();
     }
 
     public static <T> RegistryOps<T> getRegistryOps(DynamicOps<T> registry) {
-        return getRegistryManager().getOps(registry);
+        return getRegistryManager().createSerializationContext(registry);
     }
 
     public static <T extends Screen & ISnackBarScreen> void setScreen(T screen) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.currentScreen instanceof ISnackBarScreen snackBarScreen) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.screen instanceof ISnackBarScreen snackBarScreen) {
             snackBarScreen.setScreen(screen);
         } else {
             client.setScreen(screen);
@@ -182,17 +184,9 @@ public class FzmmUtils {
         }
     }
 
-    public static CloseableHttpClient getHttpClient() {
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(3000)
-                .setSocketTimeout(3000)
-                .build();
-
-        return HttpClients.custom()
-                .setRetryHandler(new DefaultHttpRequestRetryHandler(0, false))
-                .disableAutomaticRetries()
-                .setDefaultRequestConfig(requestConfig)
-                .setUserAgent(FzmmClient.HTTP_USER_AGENT)
+    public static HttpClient getHttpClient() {
+        return HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
                 .build();
     }
 

@@ -1,9 +1,9 @@
 package fzmm.zailer.me.builders;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ChargedProjectilesComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ChargedProjectiles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class CrossbowBuilder {
     private final List<ItemStack> chargedProjectiles;
 
     private CrossbowBuilder() {
-        this.stack = Items.CROSSBOW.getDefaultStack();
+        this.stack = Items.CROSSBOW.getDefaultInstance();
         this.chargedProjectiles = new ArrayList<>();
     }
 
@@ -28,8 +28,8 @@ public class CrossbowBuilder {
     }
 
     public ItemStack get() {
-        this.stack.apply(DataComponentTypes.CHARGED_PROJECTILES, null,
-                component -> ChargedProjectilesComponent.of(new ArrayList<>(this.chargedProjectiles)));
+        this.stack.update(DataComponents.CHARGED_PROJECTILES, null,
+                component -> ChargedProjectiles.of(new ArrayList<>(this.chargedProjectiles)));
         return stack.copy();
     }
 

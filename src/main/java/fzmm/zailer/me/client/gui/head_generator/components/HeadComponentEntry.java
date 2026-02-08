@@ -9,26 +9,26 @@ import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.AssetInfo;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.core.ClientAsset;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.RandomSource;
 
 import java.util.List;
 import java.util.Set;
 
 public class HeadComponentEntry extends AbstractHeadComponentEntry {
-    private static final Text ADD_LAYER_BUTTON_TEXT = Text.translatable("fzmm.gui.button.add");
-    public static final Text FAVORITE_ENABLED_TEXT = Text.translatable("fzmm.gui.button.favorite.enabled").setStyle(Style.EMPTY.withColor(0xECC709));
-    private static final Text FAVORITE_ENABLED_EASTER_EGG_TEXT = Text.translatable("fzmm.gui.button.favorite.enabled_easter_egg").setStyle(Style.EMPTY.withColor(0xF4300B));
-    public static final Text FAVORITE_DISABLED_TEXT = Text.translatable("fzmm.gui.button.favorite.disabled").setStyle(Style.EMPTY.withColor(0xECC709));
+    private static final Component ADD_LAYER_BUTTON_TEXT = Component.translatable("fzmm.gui.button.add");
+    public static final Component FAVORITE_ENABLED_TEXT = Component.translatable("fzmm.gui.button.favorite.enabled").setStyle(Style.EMPTY.withColor(0xECC709));
+    private static final Component FAVORITE_ENABLED_EASTER_EGG_TEXT = Component.translatable("fzmm.gui.button.favorite.enabled_easter_egg").setStyle(Style.EMPTY.withColor(0xF4300B));
+    public static final Component FAVORITE_DISABLED_TEXT = Component.translatable("fzmm.gui.button.favorite.disabled").setStyle(Style.EMPTY.withColor(0xECC709));
     private static final int FAVORITE_BUTTON_WIDTH = getFavoriteButtonWidth();
     private final ButtonComponent favoriteButton;
     private boolean isFavorite;
@@ -39,7 +39,7 @@ public class HeadComponentEntry extends AbstractHeadComponentEntry {
         FzmmConfig.HeadGenerator config = FzmmClient.CONFIG.headGenerator;
         this.isFavorite = config.favoriteSkins().contains(this.entry.getKey());
 
-        this.favoriteButton = Components.button(Text.empty(), this::favoriteButtonExecute);
+        this.favoriteButton = UIComponents.button(Component.empty(), this::favoriteButtonExecute);
         this.setupFavoriteButton(this.favoriteButton);
         this.favoriteButton.positioning(Positioning.relative(100, 0));
         this.favoriteButton.verticalSizing(Sizing.fixed(16));
@@ -89,9 +89,9 @@ public class HeadComponentEntry extends AbstractHeadComponentEntry {
     }
 
     private void updateFavoriteText(ButtonComponent favoriteButton, boolean easterEgg) {
-        Text message;
+        Component message;
         if (this.isFavorite) {
-            int number = easterEgg ? Random.create().nextBetween(0, 40) : 0;
+            int number = easterEgg ? RandomSource.create().nextIntBetweenInclusive(0, 40) : 0;
             message = number == 1 ? FAVORITE_ENABLED_EASTER_EGG_TEXT : FAVORITE_ENABLED_TEXT;
         } else {
             message = FAVORITE_DISABLED_TEXT;
@@ -120,22 +120,22 @@ public class HeadComponentEntry extends AbstractHeadComponentEntry {
 
     @Override
     protected void addTopRightButtons(EFlowLayout panel, FlowLayout layout) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        Font textRenderer = Minecraft.getInstance().font;
 
-        ButtonComponent overlayFavoriteButton = Components.button(Text.empty(), buttonComponent -> {});
+        ButtonComponent overlayFavoriteButton = UIComponents.button(Component.empty(), buttonComponent -> {});
         overlayFavoriteButton.setMessage(this.favoriteButton.getMessage());
         this.setupFavoriteButton(overlayFavoriteButton);
 
-        int addLayerButtonWidth = textRenderer.getWidth(ADD_LAYER_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
-        ButtonComponent addCompoundButton = Components.button(ADD_LAYER_BUTTON_TEXT, this::addCompoundButtonExecute);
+        int addLayerButtonWidth = textRenderer.width(ADD_LAYER_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
+        ButtonComponent addCompoundButton = UIComponents.button(ADD_LAYER_BUTTON_TEXT, this::addCompoundButtonExecute);
         addCompoundButton.horizontalSizing(Sizing.fixed(Math.max(20, addLayerButtonWidth)));
 
         layout.children(List.of(overlayFavoriteButton, addCompoundButton));
     }
 
     @Override
-    protected AssetInfo.TextureAsset getTexture() {
-        return new AssetInfo.TextureAssetInfo(Identifier.of(FzmmClient.MOD_ID, "head_generator/preview/" + this.entry.getKey()));
+    protected ClientAsset.Texture getTexture() {
+        return new ClientAsset.ResourceTexture(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "head_generator/preview/" + this.entry.getKey()));
     }
 
     private void addCompoundButtonExecute(ButtonComponent button) {

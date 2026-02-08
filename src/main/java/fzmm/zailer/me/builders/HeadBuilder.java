@@ -7,10 +7,10 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import fzmm.zailer.me.client.logic.history.FzmmHistory;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ProfileComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -38,14 +38,14 @@ public class HeadBuilder {
     }
 
     public ItemStack get() {
-        ItemStack stack = Items.PLAYER_HEAD.getDefaultStack();
+        ItemStack stack = Items.PLAYER_HEAD.getDefaultInstance();
 
-        stack.apply(DataComponentTypes.PROFILE, null, component -> {
+        stack.update(DataComponents.PROFILE, null, component -> {
 
             Multimap<String, Property> properties = ImmutableMultimap.of("textures", new Property("textures", this.skinValue));
             PropertyMap propertiesMap = new PropertyMap(properties);
 
-            return ProfileComponent.ofStatic(new GameProfile(this.uuid, safeHeadName(this.headName).orElse(""), propertiesMap));
+            return ResolvableProfile.createResolved(new GameProfile(this.uuid, safeHeadName(this.headName).orElse(""), propertiesMap));
         });
         stack = ItemUtils.process(stack);
 
@@ -94,12 +94,12 @@ public class HeadBuilder {
     }
 
     public static ItemStack of(String username) {
-        ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
+        ItemStack head = Items.PLAYER_HEAD.getDefaultInstance();
         Optional<String> nameOptional = safeHeadName(username);
         if (nameOptional.isEmpty()) return head;
 
-        head.apply(DataComponentTypes.PROFILE, null, component ->
-                ProfileComponent.ofDynamic(nameOptional.get()));
+        head.update(DataComponents.PROFILE, null, component ->
+                ResolvableProfile.createUnresolved(nameOptional.get()));
         head = ItemUtils.process(head);
 
         FzmmHistory.addGeneratedHeads(head);
@@ -107,9 +107,9 @@ public class HeadBuilder {
     }
 
     public static ItemStack of(GameProfile profile) {
-        ItemStack head = Items.PLAYER_HEAD.getDefaultStack();
+        ItemStack head = Items.PLAYER_HEAD.getDefaultInstance();
 
-        head.apply(DataComponentTypes.PROFILE, null, component -> ProfileComponent.ofStatic(profile));
+        head.update(DataComponents.PROFILE, null, component -> ResolvableProfile.createResolved(profile));
         head = ItemUtils.process(head);
 
         FzmmHistory.addGeneratedHeads(head);

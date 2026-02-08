@@ -1,18 +1,18 @@
 package fzmm.zailer.me.client.logic.head_generator;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.awt.image.BufferedImage;
 
 public abstract class AbstractHeadEntry {
 
-    private final Text displayName;
+    private final Component displayName;
     private final String filterValue;
     private final String path;
 
     public AbstractHeadEntry(String path) {
         String displayNameStr = this.toDisplayName(path);
-        this.displayName = Text.literal(displayNameStr);
+        this.displayName = Component.literal(displayNameStr);
         this.path = path;
         this.filterValue = displayNameStr.toLowerCase();
     }
@@ -36,7 +36,7 @@ public abstract class AbstractHeadEntry {
         return displayName;
     }
 
-    public Text getDisplayName() {
+    public Component getDisplayName() {
         return this.displayName;
     }
 

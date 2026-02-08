@@ -1,8 +1,8 @@
 package fzmm.zailer.me.client.gui.encrypt_book.translation_file_saver;
 
 import fzmm.zailer.me.client.logic.enycrpt_book.TranslationEncryptProfile;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
@@ -14,8 +14,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class TranslationWriteLang implements ITranslationFileSaver{
     @Override
-    public Text getMessage() {
-        return Text.translatable("fzmm.gui.encryptbook.getDecryptor.option.writeLang");
+    public Component getMessage() {
+        return Component.translatable("fzmm.gui.encryptbook.getDecryptor.option.writeLang");
     }
 
     @Override
@@ -23,7 +23,7 @@ public class TranslationWriteLang implements ITranslationFileSaver{
         return CompletableFuture.supplyAsync(() -> {
             String langPath = TinyFileDialogs.tinyfd_saveFileDialog(
                     "Save language file",
-                    MinecraftClient.getInstance().getResourcePackDir().resolve("en_us.json").toString(),
+                    Minecraft.getInstance().getResourcePackDirectory().resolve("en_us.json").toString(),
                     null,
                     null
             );
@@ -38,6 +38,6 @@ public class TranslationWriteLang implements ITranslationFileSaver{
             }
 
             return cancelled;
-        }, Util.getMainWorkerExecutor());
+        }, Util.backgroundExecutor());
     }
 }

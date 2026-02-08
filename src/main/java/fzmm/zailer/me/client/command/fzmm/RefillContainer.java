@@ -7,13 +7,12 @@ import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class RefillContainer implements ISubCommand {
     }
 
     @Override
-    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandRegistryAccess registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
+    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
         return builder.then(ClientCommandManager.argument("slots to fill", IntegerArgumentType.integer(1, 27)).executes(ctx -> {
 
             this.fullContainer(ctx.getArgument("slots to fill", int.class), -1);
@@ -48,10 +47,10 @@ public class RefillContainer implements ISubCommand {
      * @param firstSlot if -1, it will fill empty slots starting at 0
      */
     private void fullContainer(int slotsToFill, int firstSlot) {
-        ItemStack containerStack = ItemUtils.from(Hand.MAIN_HAND);
-        ItemStack itemStack = ItemUtils.from(Hand.OFF_HAND);
+        ItemStack containerStack = ItemUtils.from(InteractionHand.MAIN_HAND);
+        ItemStack itemStack = ItemUtils.from(InteractionHand.OFF_HAND);
 
-        containerStack.apply(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT, component -> {
+        containerStack.update(DataComponents.CONTAINER, ItemContainerContents.EMPTY, component -> {
             List<ItemStack> stacksCopy = new ArrayList<>(component.stream().toList());
 
             if (firstSlot == -1) {
@@ -60,7 +59,7 @@ public class RefillContainer implements ISubCommand {
                 this.fullContainer(stacksCopy, itemStack, slotsToFill, firstSlot);
             }
 
-            return ContainerComponent.fromStacks(stacksCopy);
+            return ItemContainerContents.fromItems(stacksCopy);
         });
 
         ItemUtils.give(containerStack);
@@ -80,7 +79,7 @@ public class RefillContainer implements ISubCommand {
     }
 
     private void fullContainerEmptySlots(List<ItemStack> stackList, ItemStack stack, int slotsToFill) {
-        int finalSlot = Math.min(stackList.size() + slotsToFill, ShulkerBoxBlockEntity.INVENTORY_SIZE);
+        int finalSlot = Math.min(stackList.size() + slotsToFill, ShulkerBoxBlockEntity.CONTAINER_SIZE);
         if (finalSlot > stackList.size()) {
             for (int i = stackList.size(); i < finalSlot; i++) {
                 stackList.add(ItemStack.EMPTY);

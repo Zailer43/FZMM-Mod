@@ -13,16 +13,16 @@ import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.TypedEntityData;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.TypedEntityData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,18 +61,18 @@ public class ImagetextHologramTab implements IImagetextTab {
                 .getAsList().get(0);
 
         hologramMainContainer = DisplayBuilder.of(hologramMainContainer)
-                .setName(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "name"), color)
-                .addLore(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "lore.1", x, y, z), color)
-                .addLore(Text.translatable(BASE_ITEMS_TRANSLATION_KEY + "lore.2", logic.width(), logic.height()), color)
+                .setName(Component.translatable(BASE_ITEMS_TRANSLATION_KEY + "name"), color)
+                .addLore(Component.translatable(BASE_ITEMS_TRANSLATION_KEY + "lore.1", x, y, z), color)
+                .addLore(Component.translatable(BASE_ITEMS_TRANSLATION_KEY + "lore.2", logic.width(), logic.height()), color)
                 .get();
 
         ItemUtils.give(hologramMainContainer);
-        InvisibleEntityWarning.add(true, true, Text.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.hologram"), HOLOGRAM_TAG);
+        InvisibleEntityWarning.add(true, true, Component.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.hologram"), HOLOGRAM_TAG);
     }
 
     public List<ItemStack> getHologramItems(ImagetextLogic logic, int x, double y, int z) {
         List<ItemStack> hologramItems = new ArrayList<>();
-        List<Text> imagetext = logic.text();
+        List<Component> imagetext = logic.text();
         int size = imagetext.size();
 
         for (int i = 0; i != size; i++) {
@@ -91,7 +91,7 @@ public class ImagetextHologramTab implements IImagetextTab {
 
     @Override
     public void setupComponents(EFlowLayout rootComponent) {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         assert player != null;
         this.posX = NumberRow.setup(rootComponent, "hologramPosX", player.getBlockX(), Integer.class);
         this.posY = NumberRow.setup(rootComponent, "hologramPosY", player.getBlockY(), Integer.class);
@@ -104,13 +104,13 @@ public class ImagetextHologramTab implements IImagetextTab {
     }
 
     public static boolean isHologramPart(ItemStack stack) {
-        NbtCompound entityNbt = stack.getOrDefault(DataComponentTypes.ENTITY_DATA, TypedEntityData.create(EntityType.ARMOR_STAND, new NbtCompound()))
-                .copyNbtWithoutId();
+        CompoundTag entityNbt = stack.getOrDefault(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityType.ARMOR_STAND, new CompoundTag()))
+                .copyTagWithoutId();
 
-        NbtList tags = entityNbt.getListOrEmpty(TagsConstant.ENTITY_TAG_TAGS_ID);
+        ListTag tags = entityNbt.getListOrEmpty(TagsConstant.ENTITY_TAG_TAGS_ID);
 
         for (int i = 0; i < tags.size(); i++) {
-            if (tags.getString(i, "").equals(HOLOGRAM_TAG))
+            if (tags.getStringOr(i, "").equals(HOLOGRAM_TAG))
                 return true;
         }
 

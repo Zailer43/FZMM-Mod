@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.head_generator.components;
 
+import com.mojang.blaze3d.platform.NativeImage;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.entity.custom_skin.CustomHeadEntity;
 import fzmm.zailer.me.client.entity.custom_skin.CustomPlayerSkinEntity;
@@ -22,11 +23,10 @@ import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.VerticalAlignment;
 import io.wispforest.owo.ui.util.UIErrorToast;
 import io.wispforest.owo.ui.util.UISounds;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.AssetInfo;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.core.ClientAsset;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
@@ -35,9 +35,9 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     public static final int HEAD_PREVIEW_SIZE = 24;
     public static final int BODY_PREVIEW_SIZE = 12;
     protected final HeadGeneratorScreen parentScreen;
-    private final NativeImageBackedTexture previewTexture;
+    private final DynamicTexture previewTexture;
     @Nullable
-    private AssetInfo.TextureAsset texture;
+    private ClientAsset.Texture texture;
     protected AbstractHeadEntry entry;
     private EntityComponent<LivingEntity> previewComponent;
     protected OverlayContainer<FlowLayout> overlayContainer;
@@ -70,8 +70,8 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
         this.hoveredSurface(EStyles.DEFAULT_HOVERED);
 
         BufferedImage defaultPreview = entry.getHeadSkin(new BufferedImage(SkinPart.MAX_WIDTH, SkinPart.MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB), false);
-        this.previewTexture = new NativeImageBackedTexture(this.texture::toString, ImageUtils.toNativeImage(defaultPreview));
-        MinecraftClient.getInstance().getTextureManager().registerTexture(this.texture.texturePath(), this.previewTexture);
+        this.previewTexture = new DynamicTexture(this.texture::toString, ImageUtils.toNativeImage(defaultPreview));
+        Minecraft.getInstance().getTextureManager().register(this.texture.texturePath(), this.previewTexture);
     }
 
     public boolean isBodyPreview() {
@@ -86,10 +86,10 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
         float scale;
         if (isBody) {
             scale = 0.45f;
-            previewEntity = new CustomPlayerSkinEntity(MinecraftClient.getInstance().world);
+            previewEntity = new CustomPlayerSkinEntity(Minecraft.getInstance().level);
         } else {
             scale = 1f;
-            previewEntity = new CustomHeadEntity(MinecraftClient.getInstance().world);
+            previewEntity = new CustomHeadEntity(Minecraft.getInstance().level);
         }
         ((ISkinMutable) previewEntity).texture(this.texture);
 
@@ -123,7 +123,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
         if (this.texture == null)
             return;
         NativeImage nativeImage = ImageUtils.toNativeImage(previewSkin);
-        this.previewTexture.setImage(nativeImage);
+        this.previewTexture.setPixels(nativeImage);
         this.previewTexture.upload();
     }
 
@@ -141,7 +141,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     public void close() {
         if (this.texture == null) return;
 
-        MinecraftClient.getInstance().getTextureManager().destroyTexture(this.texture.texturePath());
+        Minecraft.getInstance().getTextureManager().release(this.texture.texturePath());
         this.texture = null;
     }
 
@@ -152,7 +152,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     }
 
     public BufferedImage getPreview() {
-        NativeImage nativeImage = this.previewTexture.getImage();
+        NativeImage nativeImage = this.previewTexture.getPixels();
         if (nativeImage == null) {
             FzmmClient.LOGGER.warn("[AbstractHeadListEntry] Failed to get preview image for {}", this.entry.getDisplayName().getString());
             return new BufferedImage(SkinPart.MAX_WIDTH, SkinPart.MAX_HEIGHT, BufferedImage.TYPE_INT_ARGB);
@@ -182,7 +182,7 @@ public abstract class AbstractHeadComponentEntry extends EFlowLayout implements 
     protected abstract void addTopRightButtons(EFlowLayout panel, FlowLayout layout);
 
 
-    protected abstract AssetInfo.TextureAsset getTexture();
+    protected abstract ClientAsset.Texture getTexture();
 
     @Override
     public AbstractHeadEntry getValue() {

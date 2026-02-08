@@ -19,13 +19,13 @@ import io.wispforest.owo.ui.component.TextAreaComponent;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.type.WrittenBookContentComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.WrittenBookContent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -44,12 +44,12 @@ public class ImagetextBookTooltipTab implements IImagetextTab, IMemento {
 
     @Override
     public void execute(ImagetextLogic logic) {
-        String author = this.bookTooltipAuthor.getText();
-        String bookMessage = this.bookTooltipMessage.getText();
+        String author = this.bookTooltipAuthor.getValue();
+        String bookMessage = this.bookTooltipMessage.getValue();
 
         BookBuilder bookBuilder = this.bookMode.getBookBuilder()
                 .author(author)
-                .addPage(Text.literal(Formatting.BLUE + bookMessage)
+                .addPage(Component.literal(ChatFormatting.BLUE + bookMessage)
                         .setStyle(Style.EMPTY
                                 .withHoverEvent(new HoverEvent.ShowText(logic.mergeText()))
                         )
@@ -59,10 +59,10 @@ public class ImagetextBookTooltipTab implements IImagetextTab, IMemento {
 
         int serializedLength = bookBuilder.exceedsSerializedLengthLimit();
         if (serializedLength != -1) {
-            MinecraftClient.getInstance().execute(() -> {
+            Minecraft.getInstance().execute(() -> {
                 ISnackBarComponent toast = BaseSnackBarComponent.builder(SnackBarManager.IMAGETEXT_ID)
-                        .title(Text.translatable("fzmm.snack_bar.bookTooltip.overflow.title", serializedLength, WrittenBookContentComponent.MAX_SERIALIZED_PAGE_LENGTH))
-                        .details(Text.translatable("fzmm.snack_bar.bookTooltip.overflow.details"))
+                        .title(Component.translatable("fzmm.snack_bar.bookTooltip.overflow.title", serializedLength, WrittenBookContent.PAGE_LENGTH))
+                        .details(Component.translatable("fzmm.snack_bar.bookTooltip.overflow.details"))
                         .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                         .keepOnLimit()
                         .highTimer()
@@ -79,21 +79,21 @@ public class ImagetextBookTooltipTab implements IImagetextTab, IMemento {
 
     @Override
     public void setupComponents(EFlowLayout rootComponent) {
-        assert MinecraftClient.getInstance().player != null;
+        assert Minecraft.getInstance().player != null;
         this.bookTooltipButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "bookTooltipMode");
         this.bookTooltipButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : BookOption.values()) {
-                dropdownComponent.button(Text.translatable(option.getTranslationKey()), dropdownButton -> {
+                dropdownComponent.button(Component.translatable(option.getTranslationKey()), dropdownButton -> {
                     this.updateBookTooltip(option);
                     dropdownButton.remove();
                 });
             }
         });
         this.updateBookTooltip(BookOption.ADD_PAGE);
-        this.bookTooltipAuthor = TextBoxRow.setup(rootComponent, "bookTooltipAuthor", MinecraftClient.getInstance().player.getName().getString(), 512);
+        this.bookTooltipAuthor = TextBoxRow.setup(rootComponent, "bookTooltipAuthor", Minecraft.getInstance().player.getName().getString(), 512);
         this.bookTooltipMessage = rootComponent.childByIdOrThrow(TextAreaComponent.class, "bookTooltipMessage-text-area");
         this.bookTooltipMessage.maxLines(14);
-        this.bookTooltipMessage.setMaxLength(4096);
+        this.bookTooltipMessage.setCharacterLimit(4096);
         this.bookTooltipMessage.text(FzmmClient.CONFIG.imagetext.defaultBookMessage());
 
         FlowLayout layout = rootComponent.childByIdOrThrow(FlowLayout.class, "bookTooltipMessage-text-area-parent");
@@ -102,7 +102,7 @@ public class ImagetextBookTooltipTab implements IImagetextTab, IMemento {
 
     private void updateBookTooltip(BookOption mode) {
         this.bookMode = mode;
-        this.bookTooltipButton.setMessage(Text.translatable(this.bookMode.getTranslationKey()));
+        this.bookTooltipButton.setMessage(Component.translatable(this.bookMode.getTranslationKey()));
     }
 
     @Override
@@ -112,8 +112,8 @@ public class ImagetextBookTooltipTab implements IImagetextTab, IMemento {
 
     @Override
     public void backup(ObjectOutputStream output) throws IOException {
-        output.writeObject(this.bookTooltipAuthor.getText());
-        output.writeObject(this.bookTooltipMessage.getText());
+        output.writeObject(this.bookTooltipAuthor.getValue());
+        output.writeObject(this.bookTooltipMessage.getValue());
         output.writeObject(this.bookMode);
     }
 

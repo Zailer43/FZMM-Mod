@@ -10,12 +10,6 @@ import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.SkinPart;
 import fzmm.zailer.me.utils.TagsConstant;
 import fzmm.zailer.me.utils.position.PosF;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.Direction;
 import org.joml.Vector3f;
 
 import java.awt.*;
@@ -23,6 +17,12 @@ import java.awt.image.BufferedImage;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 
 public class StatuePart {
     public static final String PLAYER_STATUE_TAG = "PlayerStatue";
@@ -79,9 +79,9 @@ public class StatuePart {
         this.setDirection(this.direction);
     }
 
-    private NbtCompound writePlayerStatueTag() {
-        NbtCompound playerStatueTag = new NbtCompound();
-        NbtCompound zFight = new NbtCompound();
+    private CompoundTag writePlayerStatueTag() {
+        CompoundTag playerStatueTag = new CompoundTag();
+        CompoundTag zFight = new CompoundTag();
         zFight.putInt("x", this.zFightX);
         zFight.putInt("y", this.zFightY);
         zFight.putInt("z", this.zFightZ);
@@ -96,52 +96,52 @@ public class StatuePart {
         return playerStatueTag;
     }
 
-    private NbtCompound writeFzmmTag() {
-        NbtCompound playerStatueTag = this.writePlayerStatueTag();
-        NbtCompound fzmmTag = new NbtCompound();
+    private CompoundTag writeFzmmTag() {
+        CompoundTag playerStatueTag = this.writePlayerStatueTag();
+        CompoundTag fzmmTag = new CompoundTag();
         fzmmTag.put(TagsConstant.FZMM_PLAYER_STATUE, playerStatueTag);
         return fzmmTag;
     }
 
     public static StatuePart ofItem(ItemStack stack) {
-        NbtCompound customDataTag = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(new NbtCompound())).copyNbt();
-        NbtCompound fzmmTag = customDataTag.getCompoundOrEmpty(TagsConstant.FZMM);
+        CompoundTag customDataTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.of(new CompoundTag())).copyTag();
+        CompoundTag fzmmTag = customDataTag.getCompoundOrEmpty(TagsConstant.FZMM);
 
-        NbtCompound playerStatueTag = fzmmTag.getCompoundOrEmpty(TagsConstant.FZMM_PLAYER_STATUE);
-        NbtCompound zFight = playerStatueTag.getCompoundOrEmpty(PlayerStatueTags.Z_FIGHT);
+        CompoundTag playerStatueTag = fzmmTag.getCompoundOrEmpty(TagsConstant.FZMM_PLAYER_STATUE);
+        CompoundTag zFight = playerStatueTag.getCompoundOrEmpty(PlayerStatueTags.Z_FIGHT);
 
-        StatuePartEnum part = StatuePartEnum.get(playerStatueTag.getString(PlayerStatueTags.PART, ""));
-        String name = playerStatueTag.getString(PlayerStatueTags.NAME, "");
-        int headHeight = playerStatueTag.getInt(PlayerStatueTags.HEAD_HEIGHT, 1);
-        HorizontalDirectionOption direction = HorizontalDirectionOption.values()[playerStatueTag.getInt(PlayerStatueTags.DIRECTION, 0)];
-        String skinValue = playerStatueTag.getString(PlayerStatueTags.SKIN_VALUE, "");
-        int x = zFight.getInt("x", 0);
-        int y = zFight.getInt("y", 0);
-        int z = zFight.getInt("z", 0);
+        StatuePartEnum part = StatuePartEnum.get(playerStatueTag.getStringOr(PlayerStatueTags.PART, ""));
+        String name = playerStatueTag.getStringOr(PlayerStatueTags.NAME, "");
+        int headHeight = playerStatueTag.getIntOr(PlayerStatueTags.HEAD_HEIGHT, 1);
+        HorizontalDirectionOption direction = HorizontalDirectionOption.values()[playerStatueTag.getIntOr(PlayerStatueTags.DIRECTION, 0)];
+        String skinValue = playerStatueTag.getStringOr(PlayerStatueTags.SKIN_VALUE, "");
+        int x = zFight.getIntOr("x", 0);
+        int y = zFight.getIntOr("y", 0);
+        int z = zFight.getIntOr("z", 0);
 
         return new StatuePart(part, name, headHeight, x, y, z, direction, skinValue);
     }
 
     public static boolean isStatue(ItemStack stack) {
-        NbtCompound customDataTag = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(new NbtCompound())).copyNbt();
-        NbtCompound fzmmTag = customDataTag.getCompoundOrEmpty(TagsConstant.FZMM);
+        CompoundTag customDataTag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.of(new CompoundTag())).copyTag();
+        CompoundTag fzmmTag = customDataTag.getCompoundOrEmpty(TagsConstant.FZMM);
 
-        Optional<NbtCompound> playerStatueTagOptional = fzmmTag.getCompound(TagsConstant.FZMM_PLAYER_STATUE);
+        Optional<CompoundTag> playerStatueTagOptional = fzmmTag.getCompound(TagsConstant.FZMM_PLAYER_STATUE);
         if (playerStatueTagOptional.isEmpty()) return false;
-        NbtCompound playerStatueTag = playerStatueTagOptional.get();
+        CompoundTag playerStatueTag = playerStatueTagOptional.get();
 
         if (playerStatueTag.getString(PlayerStatueTags.PART).isEmpty()) return false;
         if (playerStatueTag.getString(PlayerStatueTags.NAME).isEmpty()) return false;
         if (playerStatueTag.getInt(PlayerStatueTags.HEAD_HEIGHT).isEmpty()) return false;
         if (playerStatueTag.getInt(PlayerStatueTags.DIRECTION).isEmpty()) return false;
 
-        int directionOrdinal = playerStatueTag.getInt(PlayerStatueTags.DIRECTION, -1);
+        int directionOrdinal = playerStatueTag.getIntOr(PlayerStatueTags.DIRECTION, -1);
         if (Direction.values().length < directionOrdinal || directionOrdinal < 0) return false;
         if (playerStatueTag.getString(PlayerStatueTags.SKIN_VALUE).isEmpty()) return false;
 
-        Optional<NbtCompound> zFightOptional = playerStatueTag.getCompound(PlayerStatueTags.Z_FIGHT);
+        Optional<CompoundTag> zFightOptional = playerStatueTag.getCompound(PlayerStatueTags.Z_FIGHT);
         if (zFightOptional.isEmpty()) return false;
-        NbtCompound zFight = zFightOptional.get();
+        CompoundTag zFight = zFightOptional.get();
 
         return zFight.getInt("x").isPresent() && zFight.getInt("y").isPresent() && zFight.getInt("z").isPresent();
     }
@@ -168,12 +168,12 @@ public class StatuePart {
                 .setTags(PLAYER_STATUE_TAG)
                 .getItem(this.name);
 
-        statuePart.apply(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT, nbtComponent -> {
-            NbtCompound result = nbtComponent.copyNbt();
+        statuePart.update(DataComponents.CUSTOM_DATA, CustomData.EMPTY, nbtComponent -> {
+            CompoundTag result = nbtComponent.copyTag();
 
             result.put(TagsConstant.FZMM, this.writeFzmmTag());
 
-            return NbtComponent.of(result);
+            return CustomData.of(result);
         });
         return statuePart;
     }

@@ -12,12 +12,12 @@ import fzmm.zailer.me.client.logic.player_statue.StatuePart;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.SnackBarManager;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 
 public class PlayerStatueUpdateTab implements IPlayerStatueTab {
     @Override
@@ -31,7 +31,7 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
 
     @Override
     public void execute(HorizontalDirectionOption direction, float x, float y, float z, String name) {
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         assert client.player != null;
 
         RequestedItem requestedItem = new RequestedItem(
@@ -43,20 +43,20 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
 
                         SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
                                 .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
-                                .title(Text.translatable("fzmm.snack_bar.playerStatue.updated.title"))
+                                .title(Component.translatable("fzmm.snack_bar.playerStatue.updated.title"))
                                 .lowTimer()
                                 .startTimer()
                                 .build()
                         );
-                        InvisibleEntityWarning.add(true, true, Text.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG);
+                        InvisibleEntityWarning.add(true, true, Component.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG);
                     }
                 },
                 new ArrayList<>(),
-                Text.translatable("fzmm.gui.playerStatue.option.select.title"),
+                Component.translatable("fzmm.gui.playerStatue.option.select.title"),
                 true
         );
 
-        FzmmUtils.setScreen(new SelectItemScreen(client.currentScreen, requestedItem));
+        FzmmUtils.setScreen(new SelectItemScreen(client.screen, requestedItem));
     }
 
     @Override

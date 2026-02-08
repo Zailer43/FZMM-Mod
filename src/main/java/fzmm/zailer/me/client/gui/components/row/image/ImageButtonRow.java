@@ -8,14 +8,13 @@ import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
 import fzmm.zailer.me.client.gui.components.image.source.IImageSuggestion;
 import fzmm.zailer.me.client.gui.components.row.AbstractRow;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.input.MouseInput;
-import net.minecraft.text.Text;
+import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -26,33 +25,33 @@ public class ImageButtonRow extends AbstractRow {
     }
 
     @Override
-    public Component[] getComponents(String id, String tooltipId) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+    public UIComponent[] getComponents(String id, String tooltipId) {
+        Font textRenderer = Minecraft.getInstance().font;
 
-        Text loadImageButtonText = Text.translatable("fzmm.gui.button.loadImage");
+        net.minecraft.network.chat.Component loadImageButtonText = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.loadImage");
 
         ImageButtonComponent imageButton = new ImageButtonComponent();
         imageButton.setMessage(loadImageButtonText);
         imageButton.id(getImageButtonId(id));
-        ButtonWidget resetButton = (ButtonWidget) getResetButton("");
+        Button resetButton = (Button) getResetButton("");
 
         Sizing textFieldSizing = Sizing.fixed(
                 TEXT_FIELD_WIDTH -
-                        Math.abs(textRenderer.getWidth(loadImageButtonText) - textRenderer.getWidth(resetButton.getMessage()))
+                        Math.abs(textRenderer.width(loadImageButtonText) - textRenderer.width(resetButton.getMessage()))
         );
 
         SuggestionTextBox textField = new SuggestionTextBox(textFieldSizing, SuggestionTextBox.SuggestionPosition.BOTTOM, 5);
         textField.id(getImageValueFieldId(id));
         textField.keyPress().subscribe((input) -> {
-            if (input.isEnter()) {
-                imageButton.onPress(new Click(0, 0,  new MouseInput(0, 0)));
+            if (input.isConfirmation()) {
+                imageButton.onPress(new MouseButtonEvent(0, 0,  new MouseButtonInfo(0, 0)));
                 return true;
             }
 
             return false;
         });
 
-        return new Component[]{
+        return new UIComponent[]{
                 textField,
                 imageButton
         };
@@ -67,13 +66,13 @@ public class ImageButtonRow extends AbstractRow {
     }
 
     public static void setup(EFlowLayout rootComponent, String id, IImageGetter defaultMode) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        Font textRenderer = Minecraft.getInstance().font;
         ImageButtonComponent imageButtonComponent = rootComponent.childByIdOrThrow(ImageButtonComponent.class, getImageButtonId(id));
         SuggestionTextBox suggestionTextBox = rootComponent.childByIdOrThrow(SuggestionTextBox.class, getImageValueFieldId(id));
 
-        imageButtonComponent.onPress(button -> imageButtonComponent.loadImage(suggestionTextBox.getText()));
+        imageButtonComponent.onPress(button -> imageButtonComponent.loadImage(suggestionTextBox.getValue()));
         imageButtonComponent.setSourceType(defaultMode);
-        imageButtonComponent.horizontalSizing(Sizing.fixed(textRenderer.getWidth(imageButtonComponent.getMessage()) + BaseFzmmScreen.BUTTON_TEXT_PADDING));
+        imageButtonComponent.horizontalSizing(Sizing.fixed(textRenderer.width(imageButtonComponent.getMessage()) + BaseFzmmScreen.BUTTON_TEXT_PADDING));
 
         setupSuggestionTextBox(suggestionTextBox, defaultMode);
     }

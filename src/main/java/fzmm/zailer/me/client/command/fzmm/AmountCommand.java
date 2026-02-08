@@ -7,9 +7,9 @@ import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 
 public class AmountCommand implements ISubCommand {
     @Override
@@ -23,7 +23,7 @@ public class AmountCommand implements ISubCommand {
     }
 
     @Override
-    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandRegistryAccess registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
+    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
         return builder.then(ClientCommandManager.argument("value", IntegerArgumentType.integer(1, 99)).executes(ctx -> {
 
             int amount = ctx.getArgument("value", int.class);
@@ -33,7 +33,7 @@ public class AmountCommand implements ISubCommand {
     }
 
     private void amount(int amount) {
-        ItemStack stack = ItemUtils.from(Hand.MAIN_HAND);
+        ItemStack stack = ItemUtils.from(InteractionHand.MAIN_HAND);
         stack.setCount(amount);
         ItemUtils.updateHand(stack);
     }

@@ -13,13 +13,13 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.config.FzmmConfig;
 import fzmm.zailer.me.utils.skin.CacheSkinGetter;
 import io.wispforest.owo.Owo;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ProfileComponent;
-import net.minecraft.entity.player.SkinTextures;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.util.Util;
+import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.ResolvableProfile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -138,7 +138,7 @@ public class HeadUtils {
             }
 
             return this;
-        }, Util.getDownloadWorkerExecutor());
+        }, Util.nonCriticalIoPool());
     }
 
     private void readResponse(String skinName, HttpURLConnection conn) throws IOException {
@@ -186,13 +186,13 @@ public class HeadUtils {
         FzmmClient.LOGGER.error("[HeadUtils] HTTP error {}, generating skin '{}', Code: '{}', Error: '{}'", this.httpResponseCode, skinName, code, error);
     }
 
-    public static CompletableFuture<Optional<SkinTextures>> getSkinTextures(ItemStack stack) {
-        ProfileComponent profileComponent = stack.get(DataComponentTypes.PROFILE);
+    public static CompletableFuture<Optional<PlayerSkin>> getSkinTextures(ItemStack stack) {
+        ResolvableProfile profileComponent = stack.get(DataComponents.PROFILE);
         if (profileComponent == null) return CompletableFuture.completedFuture(Optional.empty());
 
-        return MinecraftClient.getInstance()
-                .getSkinProvider()
-                .fetchSkinTextures(profileComponent.getGameProfile());
+        return Minecraft.getInstance()
+                .getSkinManager()
+                .get(profileComponent.partialProfile());
     }
 
     public static Optional<ItemStack> uploadAndGetHead(String playerName) {
@@ -214,8 +214,8 @@ public class HeadUtils {
         return Optional.ofNullable(stack);
     }
 
-    public static ProfileComponent minimizeTextures(GameProfile profile) {
-        ProfileComponent profileComponent = ProfileComponent.ofStatic(profile);
+    public static ResolvableProfile minimizeTextures(GameProfile profile) {
+        ResolvableProfile profileComponent = ResolvableProfile.createResolved(profile);
         Optional<String> unwrappedUrl = unwrapUrl(profileComponent);
         if (unwrappedUrl.isEmpty()) return profileComponent;
 
@@ -224,11 +224,11 @@ public class HeadUtils {
 
         profile = new GameProfile(profile.id(), profile.name(), propertiesMap);
 
-        return ProfileComponent.ofStatic(profile);
+        return ResolvableProfile.createResolved(profile);
     }
 
-    public static Optional<String> unwrapUrl(ProfileComponent profileComponent) {
-        List<Property> texturesProperties = profileComponent.getGameProfile().properties().get("textures").stream().toList();
+    public static Optional<String> unwrapUrl(ResolvableProfile profileComponent) {
+        List<Property> texturesProperties = profileComponent.partialProfile().properties().get("textures").stream().toList();
 
         if (texturesProperties.isEmpty()) {
             return Optional.empty();
@@ -280,9 +280,9 @@ public class HeadUtils {
     }
 
     public static ItemStack dynamicHead(String name) {
-        ItemStack result = Items.PLAYER_HEAD.getDefaultStack();
+        ItemStack result = Items.PLAYER_HEAD.getDefaultInstance();
 
-        result.apply(DataComponentTypes.PROFILE, null, profileComponent -> ProfileComponent.ofDynamic(name));
+        result.update(DataComponents.PROFILE, null, profileComponent -> ResolvableProfile.createUnresolved(name));
 
         return result;
     }

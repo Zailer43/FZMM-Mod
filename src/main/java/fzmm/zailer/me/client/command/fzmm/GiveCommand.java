@@ -9,9 +9,9 @@ import fzmm.zailer.me.client.command.argument_type.StackArgumentType;
 import fzmm.zailer.me.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.ItemStackArgument;
-import net.minecraft.item.ItemStack;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.arguments.item.ItemInput;
+import net.minecraft.world.item.ItemStack;
 
 public class GiveCommand implements ISubCommand {
     @Override
@@ -25,23 +25,23 @@ public class GiveCommand implements ISubCommand {
     }
 
     @Override
-    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandRegistryAccess registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        return builder.then(ClientCommandManager.argument("item", StackArgumentType.itemStack(registryAccess)).executes((ctx) -> {
+    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
+        return builder.then(ClientCommandManager.argument("item", StackArgumentType.item(registryAccess)).executes((ctx) -> {
 
-            this.giveItem(StackArgumentType.getItemStackArgument(ctx, "item"), 1);
+            this.giveItem(StackArgumentType.getItem(ctx, "item"), 1);
             return 1;
         }).then(ClientCommandManager.argument("amount", IntegerArgumentType.integer(1, 99)).executes((ctx) -> {
 
             int amount = IntegerArgumentType.getInteger(ctx, "amount");
-            ItemStackArgument item = StackArgumentType.getItemStackArgument(ctx, "item");
+            ItemInput item = StackArgumentType.getItem(ctx, "item");
 
             this.giveItem(item, amount);
             return 1;
         }))).build();
     }
 
-    private void giveItem(ItemStackArgument item, int amount) throws CommandSyntaxException {
-        ItemStack itemStack = item.createStack(amount, false);
+    private void giveItem(ItemInput item, int amount) throws CommandSyntaxException {
+        ItemStack itemStack = item.createItemStack(amount, false);
         ItemUtils.give(ItemUtils.process(itemStack));
     }
 }

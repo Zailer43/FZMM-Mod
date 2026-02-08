@@ -3,7 +3,7 @@ package fzmm.zailer.me.compat.symbol_chat.components;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 @SuppressWarnings("UnstableApiUsage")
 public class FontTextBoxComponent extends ConfigTextBox {
@@ -20,11 +20,11 @@ public class FontTextBoxComponent extends ConfigTextBox {
     }
 
     @Override
-    public void write(String text) {
+    public void insertText(String text) {
         if (!this.fontProcessEnabled) {
-            super.write(text);
-        } else if (MinecraftClient.getInstance().currentScreen instanceof BaseFzmmScreen screen) {
-            screen.getSymbolChatCompat().processFont(this, text, super::write);
+            super.insertText(text);
+        } else if (Minecraft.getInstance().screen instanceof BaseFzmmScreen screen) {
+            screen.getSymbolChatCompat().processFont(this, text, super::insertText);
         }
     }
 

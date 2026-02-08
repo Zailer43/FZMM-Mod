@@ -3,26 +3,25 @@ package fzmm.zailer.me.builders;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TagsConstant;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.TypedEntityData;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.*;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.TypedEntityData;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 public class ArmorStandBuilder {
 
-    private final NbtCompound entityTag;
+    private final CompoundTag entityTag;
 
     private ArmorStandBuilder() {
-        this.entityTag = new NbtCompound();
-        this.entityTag.putString(TagsConstant.ENTITY_TAG_ID, Registries.ENTITY_TYPE.getId(EntityType.ARMOR_STAND).getPath());
+        this.entityTag = new CompoundTag();
+        this.entityTag.putString(TagsConstant.ENTITY_TAG_ID, BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.ARMOR_STAND).getPath());
     }
 
     public static ArmorStandBuilder builder() {
@@ -30,22 +29,22 @@ public class ArmorStandBuilder {
     }
 
     public ItemStack getItem(@Nullable String itemName) {
-        return this.getItem(itemName == null ? null : Text.of(itemName));
+        return this.getItem(itemName == null ? null : Component.nullToEmpty(itemName));
     }
 
-    public ItemStack getItem(@Nullable Text itemName) {
+    public ItemStack getItem(@Nullable Component itemName) {
         ItemStack armorStand = new ItemStack(Items.ARMOR_STAND);
 
-        armorStand.apply(DataComponentTypes.CUSTOM_NAME, null, component -> itemName);
-        armorStand.apply(DataComponentTypes.ENTITY_DATA, null, entityData ->
-                TypedEntityData.create(EntityType.ARMOR_STAND, this.entityTag)
+        armorStand.update(DataComponents.CUSTOM_NAME, null, component -> itemName);
+        armorStand.update(DataComponents.ENTITY_DATA, null, entityData ->
+                TypedEntityData.of(EntityType.ARMOR_STAND, this.entityTag)
         );
         return armorStand;
     }
 
-    public ArmorStandBuilder setAsHologram(Text name) {
+    public ArmorStandBuilder setAsHologram(Component name) {
         this.setImmutableAndInvisible();
-        this.entityTag.put("CustomName", TextCodecs.CODEC, name);
+        this.entityTag.store("CustomName", ComponentSerialization.CODEC, name);
         this.entityTag.putBoolean("CustomNameVisible", true);
         return this;
     }
@@ -58,21 +57,21 @@ public class ArmorStandBuilder {
     }
 
     public ArmorStandBuilder setPos(double x, double y, double z) {
-        NbtList coordinates = new NbtList();
-        coordinates.add(NbtDouble.of(x));
-        coordinates.add(NbtDouble.of(y));
-        coordinates.add(NbtDouble.of(z));
+        ListTag coordinates = new ListTag();
+        coordinates.add(DoubleTag.valueOf(x));
+        coordinates.add(DoubleTag.valueOf(y));
+        coordinates.add(DoubleTag.valueOf(z));
         this.setPos(coordinates);
         return this;
     }
 
-    public ArmorStandBuilder setPos(NbtList coordinates) {
+    public ArmorStandBuilder setPos(ListTag coordinates) {
         this.entityTag.put("Pos", coordinates);
         return this;
     }
 
     public ArmorStandBuilder setRightHandItem(ItemStack stack) {
-        NbtCompound equipmentTag = new NbtCompound();
+        CompoundTag equipmentTag = new CompoundTag();
         ItemUtils.encodeToNbt(stack).result().ifPresentOrElse(
                 nbtElement -> equipmentTag.put(EquipmentSlot.MAINHAND.getName(), nbtElement),
                 () -> FzmmClient.LOGGER.warn("[ArmorStandBuilder] Failed to encode item for armor stand")
@@ -83,12 +82,12 @@ public class ArmorStandBuilder {
     }
 
     public ArmorStandBuilder setRightArmPose(Vector3f pos) {
-        NbtList armPose = new NbtList();
-        NbtCompound pose = new NbtCompound();
+        ListTag armPose = new ListTag();
+        CompoundTag pose = new CompoundTag();
 
-        armPose.add(NbtFloat.of(pos.x()));
-        armPose.add(NbtFloat.of(pos.y()));
-        armPose.add(NbtFloat.of(pos.z()));
+        armPose.add(FloatTag.valueOf(pos.x()));
+        armPose.add(FloatTag.valueOf(pos.y()));
+        armPose.add(FloatTag.valueOf(pos.z()));
 
         pose.put("RightArm", armPose);
         this.entityTag.put("Pose", pose);
@@ -96,10 +95,10 @@ public class ArmorStandBuilder {
     }
 
     public ArmorStandBuilder setTags(String... tagsList) {
-        NbtList tags = new NbtList();
+        ListTag tags = new ListTag();
 
         for (String tag : tagsList) {
-            tags.add(NbtString.of(tag));
+            tags.add(StringTag.valueOf(tag));
         }
 
         this.entityTag.put(TagsConstant.ENTITY_TAG_TAGS_ID, tags);

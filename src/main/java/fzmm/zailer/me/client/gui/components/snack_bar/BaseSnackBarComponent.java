@@ -4,10 +4,13 @@ import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.*;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.MutableText;
-import net.minecraft.util.Formatting;
+import io.wispforest.owo.ui.core.Color;
+import io.wispforest.owo.ui.core.Positioning;
+import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.Surface;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +42,7 @@ public class BaseSnackBarComponent extends EFlowLayout implements ISnackBarCompo
         }
 
         this.timerEnabled = true;
-        this.startTimeMillis = Util.getMeasuringTimeMs();
+        this.startTimeMillis = Util.getMillis();
 
         return this;
     }
@@ -55,20 +58,18 @@ public class BaseSnackBarComponent extends EFlowLayout implements ISnackBarCompo
     }
 
     @Override
-    public void draw(OwoUIDrawContext context, int mouseX, int mouseY, float partialTicks, float delta) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.options.hudHidden && !(client.currentScreen instanceof ISnackBarScreen)) {
-            return;
-        }
-        super.draw(context, mouseX, mouseY, partialTicks, delta);
+    public void draw(OwoUIGraphics graphics, int mouseX, int mouseY, float partialTicks, float delta) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.options.hideGui && !(client.screen instanceof ISnackBarScreen)) return;
+        super.draw(graphics, mouseX, mouseY, partialTicks, delta);
         if (this.timerComponent != null) {
-            this.updateTimer(Util.getMeasuringTimeMs() - this.startTimeMillis);
+            this.updateTimer(Util.getMillis() - this.startTimeMillis);
         }
     }
 
     @Override
     public void setTimer(long timerMillis) {
-        double configDisplayTime = MinecraftClient.getInstance().options.getNotificationDisplayTime().getValue();
+        double configDisplayTime = Minecraft.getInstance().options.notificationDisplayTime().get();
         this.timerMillis = (long) (timerMillis * configDisplayTime);
     }
 
@@ -102,7 +103,7 @@ public class BaseSnackBarComponent extends EFlowLayout implements ISnackBarCompo
     // animations algorithms: fade, slide
 
     @Override
-    public void add(Component toast) {
+    public void add(UIComponent toast) {
         this.child(toast);
     }
 
@@ -114,10 +115,10 @@ public class BaseSnackBarComponent extends EFlowLayout implements ISnackBarCompo
     @Override
     public void buttonsEnabled(boolean value) {
         // dark_gray instead of gray because the background color of loading makes it not very visible
-        Formatting color = value ? Formatting.WHITE : Formatting.DARK_GRAY;
+        ChatFormatting color = value ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY;
         for (var button : this.buttons) {
-            MutableText text = button.getMessage().copy();
-            button.setMessage(text.setStyle(text.getStyle().withFormatting(color)));
+            MutableComponent text = button.getMessage().copy();
+            button.setMessage(text.setStyle(text.getStyle().applyFormat(color)));
             button.active = value;
         }
     }

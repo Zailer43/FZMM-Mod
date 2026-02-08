@@ -4,7 +4,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.commands.CommandBuildContext;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface ISubCommand {
 
     String syntax();
 
-    default LiteralCommandNode<FabricClientCommandSource> build(CommandRegistryAccess registryAccess) {
+    default LiteralCommandNode<FabricClientCommandSource> build(CommandBuildContext registryAccess) {
         LiteralArgumentBuilder<FabricClientCommandSource> baseCommandBuilder = ClientCommandManager.literal(this.alias())
                 .executes(ctx -> sendHelpMessage(getTranslationKey(), this.syntax()));
 
@@ -28,10 +28,10 @@ public interface ISubCommand {
         return baseCommand;
     }
 
-    LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandRegistryAccess registryAccess,
+    LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess,
                                                                  LiteralArgumentBuilder<FabricClientCommandSource> builder);
 
-    default List<LiteralCommandNode<FabricClientCommandSource>> getSubCommands(CommandRegistryAccess registryAccess) {
+    default List<LiteralCommandNode<FabricClientCommandSource>> getSubCommands(CommandBuildContext registryAccess) {
         return List.of();
     }
 

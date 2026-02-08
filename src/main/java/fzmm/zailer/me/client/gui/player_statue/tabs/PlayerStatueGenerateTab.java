@@ -15,9 +15,9 @@ import fzmm.zailer.me.client.logic.player_statue.PlayerStatue;
 import fzmm.zailer.me.client.logic.player_statue.StatuePart;
 import fzmm.zailer.me.utils.ImageUtils;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.joml.Vector3f;
 
 import java.awt.image.BufferedImage;
@@ -31,7 +31,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab, IMemento {
     private static final ImageStatus INVALID_SKIN_SIZE = new ImageStatus("error.title", "error.details.playerStatue.invalidSkinSize", true);
     private static CompletableFuture<Void> CREATE_COMPLETABLE_FUTURE = null;
     private ImageRowsElements skinElements;
-    private ButtonWidget executeButton;
+    private Button executeButton;
 
     @Override
     public String getId() {
@@ -41,7 +41,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab, IMemento {
     @Override
     public void setupComponents(EFlowLayout rootComponent) {
         this.skinElements = ImageRows.setup(rootComponent, "skin", "skin-source", ImageMode.NAME);
-        this.executeButton = rootComponent.childById(ButtonWidget.class, PlayerStatueScreen.EXECUTE_ID);
+        this.executeButton = rootComponent.childById(Button.class, PlayerStatueScreen.EXECUTE_ID);
 
         ImageButtonComponent skinButton = this.skinElements.imageButton();
         skinButton.setImageLoadedEvent(this::skinCallback);
@@ -82,7 +82,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab, IMemento {
                     .getStatueInContainer();
 
             ItemUtils.give(statueGenerated);
-            InvisibleEntityWarning.add(true, true, Text.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG);
+            InvisibleEntityWarning.add(true, true, Component.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG);
 
             this.executeButton.active = true;
             CREATE_COMPLETABLE_FUTURE = null;
@@ -110,7 +110,7 @@ public class PlayerStatueGenerateTab implements IPlayerStatueTab, IMemento {
 
     @Override
     public void backup(ObjectOutputStream output) throws IOException {
-        output.writeObject(this.skinElements.valueField().getText());
+        output.writeObject(this.skinElements.valueField().getValue());
         output.writeObject(this.skinElements.mode().get());
     }
 

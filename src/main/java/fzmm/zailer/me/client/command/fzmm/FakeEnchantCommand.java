@@ -7,18 +7,18 @@ import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.LoreComponent;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.arguments.ResourceArgument;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemLore;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,18 +35,18 @@ public class FakeEnchantCommand implements ISubCommand {
     }
 
     @Override
-    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandRegistryAccess registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        return builder.then(ClientCommandManager.argument("enchantment", RegistryEntryReferenceArgumentType.registryEntry(registryAccess, RegistryKeys.ENCHANTMENT)).executes(ctx -> {
+    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
+        return builder.then(ClientCommandManager.argument("enchantment", ResourceArgument.resource(registryAccess, Registries.ENCHANTMENT)).executes(ctx -> {
 
             @SuppressWarnings("unchecked")
-            RegistryEntry.Reference<Enchantment> enchant = ctx.getArgument("enchantment", RegistryEntry.Reference.class);
+            Holder.Reference<Enchantment> enchant = ctx.getArgument("enchantment", Holder.Reference.class);
 
             this.addFakeEnchant(enchant, 1);
             return 1;
         }).then(ClientCommandManager.argument("level", IntegerArgumentType.integer()).executes(ctx -> {
 
             @SuppressWarnings("unchecked")
-            RegistryEntry.Reference<Enchantment> enchant = ctx.getArgument("enchantment", RegistryEntry.Reference.class);
+            Holder.Reference<Enchantment> enchant = ctx.getArgument("enchantment", Holder.Reference.class);
             int level = ctx.getArgument("level", int.class);
 
             this.addFakeEnchant(enchant, level);
@@ -54,27 +54,27 @@ public class FakeEnchantCommand implements ISubCommand {
         }))).build();
     }
 
-    private void addFakeEnchant(RegistryEntry.Reference<Enchantment> enchant, int level) {
-        ItemStack stack = ItemUtils.from(Hand.MAIN_HAND);
+    private void addFakeEnchant(Holder.Reference<Enchantment> enchant, int level) {
+        ItemStack stack = ItemUtils.from(InteractionHand.MAIN_HAND);
 
-        stack.apply(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, null, component -> true);
+        stack.update(DataComponents.ENCHANTMENT_GLINT_OVERRIDE, null, component -> true);
 
-        stack.apply(DataComponentTypes.LORE, LoreComponent.DEFAULT, component -> {
-            List<Text> lines = new ArrayList<>();
+        stack.update(DataComponents.LORE, ItemLore.EMPTY, component -> {
+            List<Component> lines = new ArrayList<>();
 
-            MutableText enchantMessage = Enchantment.getName(enchant, level).copy();
-            enchantMessage = Enchantment.getName(enchant, level).copy().setStyle(enchantMessage.getStyle().withItalic(false));
+            MutableComponent enchantMessage = Enchantment.getFullname(enchant, level).copy();
+            enchantMessage = Enchantment.getFullname(enchant, level).copy().setStyle(enchantMessage.getStyle().withItalic(false));
             Style style = enchantMessage.getStyle();
 
             enchantMessage.getSiblings().forEach(text -> {
                 if (!text.getString().isBlank())
-                    ((MutableText) text).setStyle(style);
+                    ((MutableComponent) text).setStyle(style);
             });
 
             lines.add(enchantMessage);
             lines.addAll(component.lines());
 
-            return new LoreComponent(List.copyOf(lines));
+            return new ItemLore(List.copyOf(lines));
         });
 
         ItemUtils.give(stack);

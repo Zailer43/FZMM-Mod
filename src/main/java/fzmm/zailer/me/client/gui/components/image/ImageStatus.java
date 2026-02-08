@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui.components.image;
 
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import io.wispforest.owo.ui.core.Color;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 public record ImageStatus(String titleId, @Nullable String detailsId, boolean isError) {
@@ -16,16 +16,16 @@ public record ImageStatus(String titleId, @Nullable String detailsId, boolean is
     public static final ImageStatus UNEXPECTED_ERROR = new ImageStatus("error.title", "error.details.unexpectedError", true);
     public static final ImageStatus URL_HAS_NO_IMAGE = new ImageStatus("error.title", "error.details.urlHasNoImage", true);
 
-    public Text getStatusTranslation() {
-        return Text.translatable(BASE_TRANSLATION_KEY + this.titleId);
+    public Component getStatusTranslation() {
+        return Component.translatable(BASE_TRANSLATION_KEY + this.titleId);
     }
 
     public boolean hasDetails() {
         return this.detailsId != null;
     }
 
-    public Text getDetailsTranslation() {
-        return Text.translatable(this.getDetailsTranslationKey());
+    public Component getDetailsTranslation() {
+        return Component.translatable(this.getDetailsTranslationKey());
     }
 
     private String getDetailsTranslationKey() {

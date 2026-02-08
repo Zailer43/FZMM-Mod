@@ -10,10 +10,10 @@ import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.screen.ingame.BookScreen;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.inventory.BookViewScreen;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -48,7 +48,7 @@ public class ImagetextBookPageTab implements IImagetextTab, IMemento {
         this.bookPageButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "bookPageMode");
         this.bookPageButton.setContextMenuOptions(dropdownComponent -> {
             for (var option : BookOption.values()) {
-                dropdownComponent.button(Text.translatable(option.getTranslationKey()), dropdownButton -> {
+                dropdownComponent.button(Component.translatable(option.getTranslationKey()), dropdownButton -> {
                     this.updateBookPage(option);
                     dropdownButton.remove();
                 });
@@ -59,7 +59,7 @@ public class ImagetextBookPageTab implements IImagetextTab, IMemento {
 
     private void updateBookPage(BookOption bookMode) {
         this.bookMode = bookMode;
-        this.bookPageButton.setMessage(Text.translatable(this.bookMode.getTranslationKey()));
+        this.bookPageButton.setMessage(Component.translatable(this.bookMode.getTranslationKey()));
     }
 
     @Override
@@ -72,19 +72,19 @@ public class ImagetextBookPageTab implements IImagetextTab, IMemento {
             characters = ImagetextLine.DEFAULT_TEXT;
         }
 
-        int maxTextWidth = BookScreen.MAX_TEXT_WIDTH - 1;
+        int maxTextWidth = BookViewScreen.TEXT_WIDTH - 1;
         int width = 0;
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        Font textRenderer = Minecraft.getInstance().font;
 
         if (characters.length() == 1) {
-            width = maxTextWidth / textRenderer.getWidth(characters);
+            width = maxTextWidth / textRenderer.width(characters);
         } else {
             String message = "";
             int length = characters.length();
             do {
                 message += characters.charAt(width % length);
                 width++;
-            } while (textRenderer.getWidth(message) < maxTextWidth);
+            } while (textRenderer.width(message) < maxTextWidth);
         }
 
         return width;

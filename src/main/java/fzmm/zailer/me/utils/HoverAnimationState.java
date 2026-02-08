@@ -4,7 +4,7 @@ import net.minecraft.util.Util;
 
 public class HoverAnimationState {
     private double delta = 0d;
-    private long lastUpdateTime = Util.getMeasuringTimeMs();
+    private long lastUpdateTime = Util.getMillis();
     private final float transitionSeconds;
 
     public HoverAnimationState(float transitionSeconds) {
@@ -12,7 +12,7 @@ public class HoverAnimationState {
     }
 
     public double update(boolean isHovered) {
-        long currentTime = Util.getMeasuringTimeMs();
+        long currentTime = Util.getMillis();
         double deltaTime = (currentTime - this.lastUpdateTime) / 1000.0;
         this.lastUpdateTime = currentTime;
 

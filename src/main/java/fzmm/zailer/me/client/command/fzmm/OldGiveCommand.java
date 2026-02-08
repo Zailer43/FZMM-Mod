@@ -11,22 +11,22 @@ import fzmm.zailer.me.client.command.argument_type.VersionArgumentType;
 import fzmm.zailer.me.utils.ItemUtils;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.ChatHud;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.IdentifierArgumentType;
-import net.minecraft.datafixer.Schemas;
-import net.minecraft.datafixer.TypeReferences;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.arguments.IdentifierArgument;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.datafix.DataFixers;
+import net.minecraft.util.datafix.fixes.References;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -43,13 +43,13 @@ public class OldGiveCommand implements ISubCommand {
     }
 
     @Override
-    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandRegistryAccess registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        var itemNode = ClientCommandManager.argument("item", IdentifierArgumentType.identifier()).executes((ctx) -> {
-            ctx.getSource().sendError(Text.translatable("commands.fzmm.old_give.nbt_required").formatted(Formatting.RED));
+    public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
+        var itemNode = ClientCommandManager.argument("item", IdentifierArgument.id()).executes((ctx) -> {
+            ctx.getSource().sendError(Component.translatable("commands.fzmm.old_give.nbt_required").withStyle(ChatFormatting.RED));
             return 1;
         });
         var damageNode = ClientCommandManager.argument("damage", IntegerArgumentType.integer()).executes((ctx) -> {
-            ctx.getSource().sendError(Text.translatable("commands.fzmm.old_give.nbt_required").formatted(Formatting.RED));
+            ctx.getSource().sendError(Component.translatable("commands.fzmm.old_give.nbt_required").withStyle(ChatFormatting.RED));
             return 1;
         });
         var nbtNode = ClientCommandManager.argument("nbt", ComponentArgumentType.component()).executes(ctx -> {
@@ -60,7 +60,7 @@ public class OldGiveCommand implements ISubCommand {
             } catch (IllegalArgumentException ignored) {
                 damage = 0;// damage no specified
             }
-            NbtCompound nbt = ComponentArgumentType.getNbtCompound(ctx, "nbt");
+            CompoundTag nbt = ComponentArgumentType.getNbtCompound(ctx, "nbt");
 
             oldGiveItem(item, damage, nbt, VersionArgumentType.VERSIONS.get(0));
             return 1;
@@ -73,8 +73,8 @@ public class OldGiveCommand implements ISubCommand {
             } catch (IllegalArgumentException ignored) {
                 damage = 0;// damage no specified
             }
-            NbtCompound nbt = ComponentArgumentType.getNbtCompound(ctx, "nbt");
-            Pair<String, Integer> version = VersionArgumentType.getVersion(ctx, "item_version");
+            CompoundTag nbt = ComponentArgumentType.getNbtCompound(ctx, "nbt");
+            Tuple<String, Integer> version = VersionArgumentType.getVersion(ctx, "item_version");
 
             oldGiveItem(item, damage, nbt, version);
             return 1;
@@ -84,19 +84,19 @@ public class OldGiveCommand implements ISubCommand {
         return builder.build();
     }
 
-    private static void oldGiveItem(Identifier item, int damage, NbtCompound nbtCompound, Pair<String, Integer> oldVersion) {
+    private static void oldGiveItem(Identifier item, int damage, CompoundTag nbtCompound, Tuple<String, Integer> oldVersion) {
         CompletableFuture.runAsync(() -> {
-            MutableText errorMessage = Text.translatable("commands.fzmm.old_give.error", item.toString(), oldVersion.getLeft()).formatted(Formatting.RED);
-            ChatHud chatHud = MinecraftClient.getInstance().inGameHud.getChatHud();
+            MutableComponent errorMessage = Component.translatable("commands.fzmm.old_give.error", item.toString(), oldVersion.getA()).withStyle(ChatFormatting.RED);
+            ChatComponent chatHud = Minecraft.getInstance().gui.getChat();
 
             try {
-               Optional<ItemStack> stackOptional = updateStack(item, damage, nbtCompound, oldVersion.getRight());
+               Optional<ItemStack> stackOptional = updateStack(item, damage, nbtCompound, oldVersion.getB());
 
                if (stackOptional.isEmpty() || stackOptional.get().isEmpty()) {
                    chatHud.addMessage(errorMessage);
                } else {
                    ItemUtils.give(ItemUtils.process(stackOptional.get()));
-                   chatHud.addMessage(Text.translatable("commands.fzmm.old_give.success", item.toString(), oldVersion.getLeft())
+                   chatHud.addMessage(Component.translatable("commands.fzmm.old_give.success", item.toString(), oldVersion.getA())
                            .withColor(FzmmClient.CHAT_BASE_COLOR)
                    );
                }
@@ -107,9 +107,9 @@ public class OldGiveCommand implements ISubCommand {
         });
     }
 
-    public static Optional<ItemStack> updateStack(Identifier item, int damage, NbtCompound nbtCompound, int itemVersion) throws Exception {
+    public static Optional<ItemStack> updateStack(Identifier item, int damage, CompoundTag nbtCompound, int itemVersion) throws Exception {
         try {
-            NbtCompound itemNbt = writeNbt(item, damage, nbtCompound, itemVersion);
+            CompoundTag itemNbt = writeNbt(item, damage, nbtCompound, itemVersion);
             return updateStack(itemNbt, itemVersion)
                     .flatMap(nbtElement -> ItemUtils.decodeFromNbt(nbtElement).result());
         } catch (Exception e) {
@@ -119,19 +119,19 @@ public class OldGiveCommand implements ISubCommand {
     }
 
     @SuppressWarnings("RedundantThrows")
-    public static Optional<NbtElement> updateStack(NbtCompound nbtCompound, int itemVersion) throws Exception {
+    public static Optional<Tag> updateStack(CompoundTag nbtCompound, int itemVersion) throws Exception {
         // use data fixers to update nbt
-        return Optional.of(Schemas.getFixer().update(TypeReferences.ITEM_STACK,
+        return Optional.of(DataFixers.getDataFixer().update(References.ITEM_STACK,
                 new Dynamic<>(NbtOps.INSTANCE, nbtCompound),
                 itemVersion,
-                SharedConstants.getGameVersion().dataVersion().id()
+                SharedConstants.getCurrentVersion().dataVersion().version()
         ).getValue());
     }
 
-    public static NbtCompound writeNbt(Identifier item, int damage, NbtCompound nbtCompound, int itemVersion) {
+    public static CompoundTag writeNbt(Identifier item, int damage, CompoundTag nbtCompound, int itemVersion) {
         boolean isCompound = itemVersion > VersionArgumentType.LATEST_VERSION_WITH_NBT;
 
-        NbtCompound result = new NbtCompound();
+        CompoundTag result = new CompoundTag();
         result.putByte(isCompound ? "count" : "Count", (byte) 1);
         result.putString("id", item.toString());
         result.put(isCompound ? "components" : "tag", nbtCompound);

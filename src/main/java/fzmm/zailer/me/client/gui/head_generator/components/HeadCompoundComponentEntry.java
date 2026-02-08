@@ -9,23 +9,23 @@ import fzmm.zailer.me.client.gui.head_generator.HeadGeneratorScreen;
 import fzmm.zailer.me.client.gui.head_generator.category.IHeadCategory;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.component.LabelComponent;
+import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.HorizontalAlignment;
 import io.wispforest.owo.ui.core.Positioning;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.VerticalAlignment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.text.Text;
-import net.minecraft.util.AssetInfo;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.core.ClientAsset;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 import java.awt.image.BufferedImage;
 
 public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
-    private static final Text REMOVE_LAYER_BUTTON_TEXT = Text.translatable("fzmm.gui.button.remove");
+    private static final Component REMOVE_LAYER_BUTTON_TEXT = Component.translatable("fzmm.gui.button.remove");
     private static long COMPOUND_INDEX = 0;
 
     public HeadCompoundComponentEntry(AbstractHeadEntry entry, FlowLayout parentLayout, HeadGeneratorScreen parentScreen, BufferedImage initialPreview) {
@@ -36,12 +36,12 @@ public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
         moveButtons.positioning(Positioning.relative(50, 100));
         moveButtons.gap(15);
 
-        ButtonComponent moveUpButton = Components.button(Text.translatable("fzmm.gui.button.arrow.up"),
+        ButtonComponent moveUpButton = UIComponents.button(Component.translatable("fzmm.gui.button.arrow.up"),
                 buttonComponent -> parentScreen.upCompoundEntry(this));
         moveUpButton.verticalSizing(Sizing.fixed(14));
         moveUpButton.renderer(EStyles.DEFAULT_FLAT_BUTTON);
         
-        ButtonComponent moveDownButton = Components.button(Text.translatable("fzmm.gui.button.arrow.down"),
+        ButtonComponent moveDownButton = UIComponents.button(Component.translatable("fzmm.gui.button.arrow.down"),
                 buttonComponent -> parentScreen.downCompoundEntry(this));
         moveDownButton.verticalSizing(Sizing.fixed(14));
         moveDownButton.renderer(EStyles.DEFAULT_FLAT_BUTTON);
@@ -72,21 +72,21 @@ public class HeadCompoundComponentEntry extends AbstractHeadComponentEntry {
 
     @Override
     protected void addTopRightButtons(EFlowLayout panel, FlowLayout layout) {
-        TextRenderer textRenderer = MinecraftClient.getInstance().textRenderer;
+        Font textRenderer = Minecraft.getInstance().font;
 
-        int addLayerButtonWidth = textRenderer.getWidth(REMOVE_LAYER_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
-        ButtonComponent removeButton = Components.button(REMOVE_LAYER_BUTTON_TEXT, this::removeCompoundEntry);
+        int addLayerButtonWidth = textRenderer.width(REMOVE_LAYER_BUTTON_TEXT) + BaseFzmmScreen.BUTTON_TEXT_PADDING;
+        ButtonComponent removeButton = UIComponents.button(REMOVE_LAYER_BUTTON_TEXT, this::removeCompoundEntry);
         removeButton.horizontalSizing(Sizing.fixed(Math.max(20, addLayerButtonWidth)));
 
         layout.child(removeButton);
 
         LabelComponent categoryLabel = panel.childByIdOrThrow(LabelComponent.class, "category-label");
-        categoryLabel.text(Text.translatable(IHeadCategory.COMPOUND_CATEGORY.getTranslationKey() + ".label", categoryLabel.text(), IHeadCategory.COMPOUND_CATEGORY.getText()));
+        categoryLabel.text(Component.translatable(IHeadCategory.COMPOUND_CATEGORY.getTranslationKey() + ".label", categoryLabel.text(), IHeadCategory.COMPOUND_CATEGORY.getText()));
     }
 
     @Override
-    protected AssetInfo.TextureAsset getTexture() {
-        return new AssetInfo.TextureAssetInfo(Identifier.of(FzmmClient.MOD_ID, "head_generator/compound/" + COMPOUND_INDEX++));
+    protected ClientAsset.Texture getTexture() {
+        return new ClientAsset.ResourceTexture(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "head_generator/compound/" + COMPOUND_INDEX++));
     }
 
 }

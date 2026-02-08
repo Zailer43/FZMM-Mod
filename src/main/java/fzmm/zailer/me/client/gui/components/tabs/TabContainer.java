@@ -5,12 +5,11 @@ import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.component.ELabelComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.logic.history.IMemento;
-import io.wispforest.owo.ui.core.Component;
-import io.wispforest.owo.ui.core.ParentComponent;
+import io.wispforest.owo.ui.core.UIComponent;
+import io.wispforest.owo.ui.core.ParentUIComponent;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -24,7 +23,7 @@ import java.util.function.Consumer;
 
 //TODO: add simple tab: all tabs share the same layout, this can be useful in Banner Editor and History
 public class TabContainer extends EFlowLayout {
-    private final HashMap<String, Component> tabs = new HashMap<>();
+    private final HashMap<String, UIComponent> tabs = new HashMap<>();
     private final EFlowLayout tabsView; // components of tabs, simplify childById
     private final List<ITab> parsedTabs = new ArrayList<>();
     private EFlowLayout contentLayout;
@@ -40,7 +39,7 @@ public class TabContainer extends EFlowLayout {
     }
 
     @Override
-    public <T extends Component> T childById(@NotNull Class<T> expectedClass, @NotNull String id) {
+    public <T extends UIComponent> T childById(@NotNull Class<T> expectedClass, @NotNull String id) {
         T result = this.tabsView.childById(expectedClass, id);
         if (result != null) return result;
 
@@ -56,7 +55,7 @@ public class TabContainer extends EFlowLayout {
     }
 
     private void selectTab(String id) {
-        Component tabComponent = this.tabs.get(id);
+        UIComponent tabComponent = this.tabs.get(id);
         if (tabComponent == null) throw new NullPointerException("Tab '" + id + "' of '" + this.id() + "' has no component");
 
         String previousTab = this.selectedTab;
@@ -65,7 +64,7 @@ public class TabContainer extends EFlowLayout {
 
         if (this.labelComponent != null) {
             String translationKey = tab.getTranslationKey();
-            this.labelComponent.text(Text.translatable(translationKey)).tooltip(Text.translatable(translationKey + ".tooltip"));
+            this.labelComponent.text(net.minecraft.network.chat.Component.translatable(translationKey)).tooltip(net.minecraft.network.chat.Component.translatable(translationKey + ".tooltip"));
         }
 
         this.contentLayout.<EFlowLayout>configure(layout -> {
@@ -78,14 +77,14 @@ public class TabContainer extends EFlowLayout {
             }
             this.onSelect.accept(tab);
 
-            ParentComponent rootComponent = this.root();
+            ParentUIComponent rootComponent = this.root();
             if (rootComponent == null) return;
 
             this.updateButton(rootComponent, id, previousTab);
         });
     }
 
-    private void updateButton(ParentComponent rootComponent, String selectedTab, String previousTab) {
+    private void updateButton(ParentUIComponent rootComponent, String selectedTab, String previousTab) {
         EButtonComponent button = rootComponent.childById(EButtonComponent.class, selectedTab + "-button");
         if (button != null) {
             button.active(false);
@@ -198,7 +197,7 @@ public class TabContainer extends EFlowLayout {
 
         for (var tabComponent : tabComponentList) {
             if (tabComponent == null) throw new NullPointerException("Component of tab container '" + this.id() + "' is null");
-            Component component = model.parseComponent(Component.class, tabComponent);
+            UIComponent component = model.parseComponent(UIComponent.class, tabComponent);
             this.tabsView.child(component);
             this.tabs.put(component.id(), component);
         }

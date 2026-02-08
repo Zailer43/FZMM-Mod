@@ -4,7 +4,7 @@ import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import io.wispforest.owo.ui.component.ButtonComponent;
-import io.wispforest.owo.ui.core.Component;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.core.Sizing;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -17,12 +17,12 @@ public class SliderRow extends AbstractRow {
     }
 
     @Override
-    public Component[] getComponents(String id, String tooltipId) {
-        Component slider = new SliderWidget()
+    public UIComponent[] getComponents(String id, String tooltipId) {
+        UIComponent slider = new SliderWidget()
                 .horizontalSizing(Sizing.fixed(NORMAL_WIDTH))
                 .id(getSliderId(id));
 
-        return new Component[] {
+        return new UIComponent[] {
                 slider
         };
     }

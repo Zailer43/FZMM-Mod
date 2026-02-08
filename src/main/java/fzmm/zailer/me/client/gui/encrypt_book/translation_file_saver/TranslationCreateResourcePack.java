@@ -2,8 +2,8 @@ package fzmm.zailer.me.client.gui.encrypt_book.translation_file_saver;
 
 import fzmm.zailer.me.client.logic.enycrpt_book.TranslationEncryptProfile;
 import fzmm.zailer.me.client.logic.resource_pack.ResourcePackWriter;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
@@ -12,8 +12,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class TranslationCreateResourcePack implements ITranslationFileSaver {
     @Override
-    public Text getMessage() {
-        return Text.translatable("fzmm.gui.resourcePackBuilder.option.newResourcePack");
+    public Component getMessage() {
+        return Component.translatable("fzmm.gui.resourcePackBuilder.option.newResourcePack");
     }
 
     @Override
@@ -21,7 +21,7 @@ public class TranslationCreateResourcePack implements ITranslationFileSaver {
         return CompletableFuture.supplyAsync(() -> {
             String resourcePackPath = TinyFileDialogs.tinyfd_saveFileDialog(
                     "Save resource pack",
-                    MinecraftClient.getInstance().getResourcePackDir().resolve("resourcepack.zip").toString(),
+                    Minecraft.getInstance().getResourcePackDirectory().resolve("resourcepack.zip").toString(),
                     null,
                     null
             );
@@ -32,7 +32,7 @@ public class TranslationCreateResourcePack implements ITranslationFileSaver {
             }
 
             return cancelled;
-        }, Util.getMainWorkerExecutor());
+        }, Util.backgroundExecutor());
     }
 
     private CompletableFuture<Void> updateResourcePack(TranslationEncryptProfile profile, Path resourcePackPath) {

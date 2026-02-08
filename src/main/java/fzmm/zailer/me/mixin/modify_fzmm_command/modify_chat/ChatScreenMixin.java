@@ -5,8 +5,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.mixin_interfaces.IAllowParagraphs;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.ChatScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -18,11 +18,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ChatScreenMixin {
 
     @Shadow
-    protected TextFieldWidget chatField;
+    protected EditBox input;
     @Unique
     protected Integer fzmm$oldMaxLength = null;
 
-    @Inject(method = "onChatFieldUpdate", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "onEdited(Ljava/lang/String;)V", at = @At("HEAD"), cancellable = true)
     private void fzmm$onChatFieldUpdate(String chatText, CallbackInfo ci) {
         this.fzmm$tryModifyTextField(chatText);
         // is necessary to update the cursor here because this method is called by TextFieldWidget#onChanged,
@@ -34,10 +34,10 @@ public abstract class ChatScreenMixin {
     }
 
     @WrapOperation(
-            method = "setChatFromHistory",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/TextFieldWidget;setText(Ljava/lang/String;)V")
+            method = "moveInHistory(I)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/EditBox;setValue(Ljava/lang/String;)V")
     )
-    private void fzmm$setTextFromHistory(TextFieldWidget instance, String text, Operation<Void> original) {
+    private void fzmm$setTextFromHistory(EditBox instance, String text, Operation<Void> original) {
         this.fzmm$tryModifyTextField(text);
         original.call(instance, text);
     }
@@ -45,15 +45,15 @@ public abstract class ChatScreenMixin {
     @Unique
     private void fzmm$tryModifyTextField(String newText) {
         boolean isFzmmCommand = this.fzmm$isFzmmCommand(newText);
-        ((IAllowParagraphs) this.chatField).fzmm$setAllowParagraphs(isFzmmCommand);
+        ((IAllowParagraphs) this.input).fzmm$setAllowParagraphs(isFzmmCommand);
         this.fzmm$setMaxLength(isFzmmCommand);
     }
 
     @Unique
     private boolean fzmm$updateCursor() {
-        int textLength = this.chatField.getText().length();
-        if (this.chatField.getCursor() > textLength) {
-            this.chatField.setCursor(textLength, false);
+        int textLength = this.input.getValue().length();
+        if (this.input.getCursorPosition() > textLength) {
+            this.input.moveCursorTo(textLength, false);
             return true;
         }
         return false;
@@ -63,11 +63,11 @@ public abstract class ChatScreenMixin {
     private void fzmm$setMaxLength(boolean isFzmmCmd) {
         if (isFzmmCmd) {
             if (this.fzmm$oldMaxLength == null) {
-                this.fzmm$oldMaxLength = this.chatField.getMaxLength();
+                this.fzmm$oldMaxLength = this.input.getMaxLength();
             }
-            this.chatField.setMaxLength(Integer.MAX_VALUE);
+            this.input.setMaxLength(Integer.MAX_VALUE);
         } else if (this.fzmm$oldMaxLength != null) {
-            this.chatField.setMaxLength(this.fzmm$oldMaxLength);
+            this.input.setMaxLength(this.fzmm$oldMaxLength);
             this.fzmm$oldMaxLength = null;
         }
     }
@@ -77,11 +77,9 @@ public abstract class ChatScreenMixin {
         return text.startsWith("/" + FzmmClient.MOD_ID + " ");
     }
 
-    @ModifyReturnValue(method = "normalize", at = @At(value = "RETURN"))
+    @ModifyReturnValue(method = "normalizeChatMessage(Ljava/lang/String;)Ljava/lang/String;", at = @At(value = "RETURN"))
     private String fzmm$avoidNormalizeWithFzmmCommand(String text) {
-        if (this.fzmm$isFzmmCommand(text)) {
-            return this.chatField.getText().trim();
-        }
+        if (this.fzmm$isFzmmCommand(text)) return this.input.getValue().trim();
 
         return text;
     }

@@ -3,7 +3,7 @@ package fzmm.zailer.me.client.logic.resource_pack;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import fzmm.zailer.me.client.FzmmClient;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Util;
 
 import javax.imageio.ImageIO;
@@ -18,7 +18,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class ResourcePackWriter {
-    private String fileName = "resourcepack_" + Util.getFormattedCurrentTime();
+    private String fileName = "resourcepack_" + Util.getFilenameFormattedDateTime();
     private String description = "";
     private byte[] icon = null;
     private Path from = null;
@@ -46,7 +46,7 @@ public class ResourcePackWriter {
                 return this;
             }
 
-            if (!from.toRealPath().startsWith(MinecraftClient.getInstance().getResourcePackDir().toRealPath())) {
+            if (!from.toRealPath().startsWith(Minecraft.getInstance().getResourcePackDirectory().toRealPath())) {
                 FzmmClient.LOGGER.warn("[ResourcePackWriter] File '{}' is not in the resource pack directory", from);
                 return this;
             }
@@ -82,7 +82,7 @@ public class ResourcePackWriter {
                 }
             }
 
-        }, Util.getIoWorkerExecutor());
+        }, Util.ioPool());
     }
 
     private void write(File destination) throws IOException {
@@ -123,7 +123,7 @@ public class ResourcePackWriter {
     }
 
     private Path getDestination() {
-        return MinecraftClient.getInstance().getResourcePackDir();
+        return Minecraft.getInstance().getResourcePackDirectory();
     }
 
     private void addMetadata() {

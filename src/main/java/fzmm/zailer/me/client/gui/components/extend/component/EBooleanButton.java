@@ -6,9 +6,9 @@ import io.wispforest.owo.ui.core.Color;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
-import net.minecraft.client.input.AbstractInput;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import org.w3c.dom.Element;
 
 import java.util.List;
@@ -17,19 +17,19 @@ import java.util.Map;
 public class EBooleanButton extends EButtonComponent {
 
     protected boolean enabled = false;
-    protected final Text enabledText;
-    protected final Text disabledText;
+    protected final Component enabledText;
+    protected final Component disabledText;
 
-    public EBooleanButton(Text text, Color enabledColor) {
-        super(Text.empty(), button -> {});
+    public EBooleanButton(Component text, Color enabledColor) {
+        super(Component.empty(), button -> {});
         this.verticalSizing(Sizing.fixed(20));
         this.enabledText = text.copy().setStyle(Style.EMPTY.withColor(enabledColor.rgb()).withItalic(true));
         this.disabledText = text.copy().setStyle(Style.EMPTY);
         this.updateMessage();
     }
 
-    public EBooleanButton(Text enabledText, Text disabledText) {
-        super(Text.empty(), button -> {});
+    public EBooleanButton(Component enabledText, Component disabledText) {
+        super(Component.empty(), button -> {});
         this.verticalSizing(Sizing.fixed(20));
         this.enabledText = enabledText;
         this.disabledText = disabledText;
@@ -38,11 +38,11 @@ public class EBooleanButton extends EButtonComponent {
 
     @SuppressWarnings("NoTranslation")
     public EBooleanButton() {
-        this(Text.translatable("text.owo.config.boolean_toggle.enabled"), Text.translatable("text.owo.config.boolean_toggle.disabled"));
+        this(Component.translatable("text.owo.config.boolean_toggle.enabled"), Component.translatable("text.owo.config.boolean_toggle.disabled"));
     }
 
     @Override
-    public void onPress(AbstractInput input) {
+    public void onPress(InputWithModifiers input) {
         this.enabled = !this.enabled;
         this.updateMessage();
         super.onPress(input);
@@ -75,12 +75,12 @@ public class EBooleanButton extends EButtonComponent {
         Map<String, Element> children = UIParsing.childElements(element);
 
         if (children.containsKey("text")) {
-            Text text = UIParsing.parseText(children.get("text"));
+            Component text = UIParsing.parseText(children.get("text"));
             Color enabledColor = Color.parse(children.get("enabled-color"));
             return new EBooleanButton(text, enabledColor);
         }
-        Text enabledText = UIParsing.parseText(children.get("enabled-text"));
-        Text disabledText = UIParsing.parseText(children.get("disabled-text"));
+        Component enabledText = UIParsing.parseText(children.get("enabled-text"));
+        Component disabledText = UIParsing.parseText(children.get("disabled-text"));
         return new EBooleanButton(enabledText, disabledText);
     }
     @Override

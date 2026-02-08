@@ -12,8 +12,8 @@ import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.SnackBarBuilder;
 import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.image.BufferedImage;
@@ -30,7 +30,7 @@ public class ImageButtonComponent extends EButtonComponent {
     private Consumer<Optional<BufferedImage>> callback;
 
     public ImageButtonComponent() {
-        super(Text.empty(), button -> {
+        super(Component.empty(), button -> {
         });
         this.verticalSizing(Sizing.fixed(20));
         this.image = null;
@@ -61,13 +61,13 @@ public class ImageButtonComponent extends EButtonComponent {
     public void loadImageFromText(IImageLoaderFromText imageLoaderFromText, String value) {
         this.active = false;
         ISnackBarComponent loadingSnackBar = BaseSnackBarComponent.builder(SnackBarManager.IMAGE_ID)
-                .title(Text.translatable("fzmm.snack_bar.image.loading.title"))
+                .title(Component.translatable("fzmm.snack_bar.image.loading.title"))
                 .backgroundColor(EStyles.ALERT_LOADING_COLOR)
                 .keepOnLimit()
                 .build();
 
         CompletableFuture.supplyAsync(() -> {
-            MinecraftClient.getInstance().execute(() -> SnackBarManager.getInstance().add(loadingSnackBar));
+            Minecraft.getInstance().execute(() -> SnackBarManager.getInstance().add(loadingSnackBar));
 
             return imageLoaderFromText.loadImage(value);
         }).whenComplete((status, throwable) -> {
@@ -98,7 +98,7 @@ public class ImageButtonComponent extends EButtonComponent {
                 FzmmClient.LOGGER.info("[ImageButtonComponent] Image loaded successfully");
             }
 
-            MinecraftClient.getInstance().execute(() -> {
+            Minecraft.getInstance().execute(() -> {
                 this.active = true;
                 loadingSnackBar.close();
                 SnackBarManager.getInstance().add(snackBarStatus.startTimer().build());

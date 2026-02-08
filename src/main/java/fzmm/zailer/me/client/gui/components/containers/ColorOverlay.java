@@ -9,17 +9,19 @@ import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.ColorPickerComponent;
-import io.wispforest.owo.ui.component.Components;
-import io.wispforest.owo.ui.container.*;
+import io.wispforest.owo.ui.component.UIComponents;
+import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.container.OverlayContainer;
+import io.wispforest.owo.ui.container.ScrollContainer;
+import io.wispforest.owo.ui.container.StackLayout;
 import io.wispforest.owo.ui.core.*;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Pair;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -77,7 +79,7 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
         layout.horizontalAlignment(HorizontalAlignment.CENTER);
         layout.mouseDown().subscribe((input, doubled) -> true);
 
-        Component labelComponent = EComponents.label(Text.translatable("fzmm.gui.colorPicker.title.favorite"))
+        UIComponent labelComponent = EComponents.label(net.minecraft.network.chat.Component.translatable("fzmm.gui.colorPicker.title.favorite"))
                 .shadow(true)
                 .margins(Insets.top(3));
 
@@ -90,12 +92,12 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
 
         ScrollContainer<FlowLayout> favoriteColorsScroll = EContainers.verticalScroll(Sizing.content(), Sizing.fill(75), favoriteColorsComponent);
 
-        ButtonComponent removeColorButton = Components.button(Text.translatable("fzmm.gui.button.remove"),
+        ButtonComponent removeColorButton = UIComponents.button(net.minecraft.network.chat.Component.translatable("fzmm.gui.button.remove"),
                 this.removeFavoriteExecute(favoriteColorsComponent, config));
         removeColorButton.sizing(Sizing.fixed(50), Sizing.fixed(15))
                 .id("remove-favorite-button");
 
-        ButtonComponent addColorButton = Components.button(Text.translatable("fzmm.gui.button.add"),
+        ButtonComponent addColorButton = UIComponents.button(net.minecraft.network.chat.Component.translatable("fzmm.gui.button.add"),
                 this.addFavoriteExecute(picker, favoriteColorsComponent, config));
 
         addColorButton.sizing(Sizing.fixed(50), Sizing.fixed(15))
@@ -137,7 +139,7 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
                 return;
             }
 
-            List<Component> favoriteColorsComponentList = List.copyOf(favoriteColorsComponent.children());
+            List<UIComponent> favoriteColorsComponentList = List.copyOf(favoriteColorsComponent.children());
             for (var favoriteColor : favoriteColorsComponentList) {
                 if (favoriteColor instanceof FlowLayout colorLayout &&
                         colorLayout.children().get(0) instanceof BoxComponent boxComponent &&
@@ -167,8 +169,8 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
         return colorList;
     }
 
-    public Component newColorBox(ColorPickerComponent picker, Color color) {
-        Component boxComponent = Components.box(Sizing.fixed(COLOR_SIZE), Sizing.fixed(COLOR_SIZE))
+    public UIComponent newColorBox(ColorPickerComponent picker, Color color) {
+        UIComponent boxComponent = UIComponents.box(Sizing.fixed(COLOR_SIZE), Sizing.fixed(COLOR_SIZE))
                 .color(color)
                 .fill(true)
                 .margins(Insets.of(1))
@@ -216,7 +218,7 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
                 .horizontalAlignment(HorizontalAlignment.CENTER)
                 .mouseDown().subscribe((input, doubled) -> true);
 
-        Component labelComponent = EComponents.label(Text.translatable("fzmm.gui.colorPicker.title.picker"));
+        UIComponent labelComponent = EComponents.label(net.minecraft.network.chat.Component.translatable("fzmm.gui.colorPicker.title.picker"));
 
         ColorPickerComponent picker = (ColorPickerComponent) new ColorPickerComponent()
                 .selectedColor(color)
@@ -224,23 +226,23 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
                 .sizing(Sizing.fixed(160), Sizing.fixed(100))
                 .id("color-picker");
 
-        BoxComponent currentColor = (BoxComponent) Components.box(Sizing.fixed(80), Sizing.fixed(15))
+        BoxComponent currentColor = (BoxComponent) UIComponents.box(Sizing.fixed(80), Sizing.fixed(15))
                 .fill(true)
                 .color(color)
                 .id("current-color");
 
         FlowLayout colorsLayout = EContainers.horizontalFlow(Sizing.content(), Sizing.content()).child(
-                Components.box(Sizing.fixed(80), Sizing.fixed(15))
+                UIComponents.box(Sizing.fixed(80), Sizing.fixed(15))
                         .fill(true)
                         .color(color)
         ).child(currentColor);
 
         assert this.child.parent() != null;
-        ButtonComponent cancelButton = Components.button(Text.translatable("fzmm.gui.colorPicker.cancel"), buttonComponent -> this.child.parent().remove());
+        ButtonComponent cancelButton = UIComponents.button(net.minecraft.network.chat.Component.translatable("fzmm.gui.colorPicker.cancel"), buttonComponent -> this.child.parent().remove());
         cancelButton.sizing(Sizing.fixed(50), Sizing.fixed(15))
                 .id("cancel-button");
 
-        ButtonComponent confirmButton = Components.button(Text.translatable("fzmm.gui.colorPicker.confirm"), buttonComponent -> {
+        ButtonComponent confirmButton = UIComponents.button(net.minecraft.network.chat.Component.translatable("fzmm.gui.colorPicker.confirm"), buttonComponent -> {
             onConfirm.accept(picker);
             colorPreview.color(picker.selectedColor());
             this.child.parent().remove();
@@ -255,13 +257,13 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
             currentColor.color(selectedColor);
         });
 
-        List<Component> components = List.of(labelComponent, picker, colorsLayout, buttonsLayout);
+        List<UIComponent> components = List.of(labelComponent, picker, colorsLayout, buttonsLayout);
         layout.children(components);
 
         return layout;
     }
 
-    private FlowLayout getButtonsLayout(Component... components) {
+    private FlowLayout getButtonsLayout(UIComponent... components) {
         return (FlowLayout) EContainers.horizontalFlow(Sizing.fill(100), Sizing.content())
                 .children(Arrays.asList(components))
                 .gap(10)
@@ -289,22 +291,22 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
 
     private FlowLayout getDyeColorsLayout(ColorPickerComponent picker, int width) {
         DyeColor[] defaultDyeColorArray = FzmmUtils.getDyeColorsInOrder();
-        List<Pair<Color, Component>> dyeColorsComponents = new ArrayList<>();
+        List<Tuple<Color, UIComponent>> dyeColorsComponents = new ArrayList<>();
 
         for (DyeColor dyeColor : defaultDyeColorArray) {
             Item dyeItem = Items.AIR;
 
-            for (var item : Registries.ITEM.stream().toList()) {
-                if (item instanceof DyeItem dyeItem1 && dyeItem1.getColor() == dyeColor) {
+            for (var item : BuiltInRegistries.ITEM.stream().toList()) {
+                if (item instanceof DyeItem dyeItem1 && dyeItem1.getDyeColor() == dyeColor) {
                     dyeItem = item;
                     break;
                 }
             }
 
-            dyeColorsComponents.add(new Pair<>(Color.ofDye(dyeColor), Components.item(dyeItem.getDefaultStack())));
+            dyeColorsComponents.add(new Tuple<>(Color.ofDye(dyeColor), UIComponents.item(dyeItem.getDefaultInstance())));
         }
 
-        List<Component> dyeComponents = this.getColorsComponentsWithIcon(picker, dyeColorsComponents);
+        List<UIComponent> dyeComponents = this.getColorsComponentsWithIcon(picker, dyeColorsComponents);
 
         FlowLayout dyeLayout = EContainers.ltrTextFlow(Sizing.fixed(width), Sizing.content());
         dyeLayout.children(dyeComponents);
@@ -313,18 +315,18 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
     }
 
     private FlowLayout getFormattingLayout(ColorPickerComponent picker, int width) {
-        Formatting[] defaultFormattingArray = FzmmUtils.getFormattingColorsInOrder();
+        ChatFormatting[] defaultFormattingArray = FzmmUtils.getFormattingColorsInOrder();
 
-        List<Component> formattingComponents = new ArrayList<>();
+        List<UIComponent> formattingComponents = new ArrayList<>();
 
-        for (Formatting formatting : defaultFormattingArray) {
-            if (formatting.getColorValue() == null) {
+        for (ChatFormatting formatting : defaultFormattingArray) {
+            if (formatting.getColor() == null) {
                 continue;
             }
 
-            String colorCode = String.valueOf(formatting.getCode());
+            String colorCode = String.valueOf(formatting.getChar());
             FlowLayout colorLayout = (FlowLayout) this.newColorBox(picker, Color.ofFormatting(formatting));
-            colorLayout.tooltip(Text.literal("&" + colorCode));
+            colorLayout.tooltip(net.minecraft.network.chat.Component.literal("&" + colorCode));
             formattingComponents.add(colorLayout);
         }
 
@@ -334,14 +336,14 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
         return formattingLayout;
     }
 
-    private List<Component> getColorsComponentsWithIcon(ColorPickerComponent picker, List<Pair<Color, Component>> colors) {
-        List<Component> result = new ArrayList<>();
+    private List<UIComponent> getColorsComponentsWithIcon(ColorPickerComponent picker, List<Tuple<Color, UIComponent>> colors) {
+        List<UIComponent> result = new ArrayList<>();
 
         for (var entry : colors) {
-            StackLayout colorStack = Containers.stack(Sizing.content(), Sizing.content());
-            FlowLayout colorLayout = (FlowLayout) this.newColorBox(picker, entry.getLeft());
+            StackLayout colorStack = UIContainers.stack(Sizing.content(), Sizing.content());
+            FlowLayout colorLayout = (FlowLayout) this.newColorBox(picker, entry.getA());
 
-            Component colorIconComponent = entry.getRight();
+            UIComponent colorIconComponent = entry.getB();
 
             colorStack.child(colorLayout);
             colorStack.child(colorIconComponent);

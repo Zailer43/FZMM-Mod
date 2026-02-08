@@ -5,19 +5,19 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.history.HistoryClipboard;
-import io.wispforest.owo.ui.core.Component;
 import io.wispforest.owo.ui.core.CursorStyle;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.util.UISounds;
-import net.minecraft.block.entity.BannerPattern;
-import net.minecraft.block.entity.BannerPatterns;
-import net.minecraft.component.type.BannerPatternsComponent;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.DyeColor;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BannerPatternLayers;
+import net.minecraft.world.level.block.entity.BannerPatterns;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,21 +31,21 @@ public class AddPatternTab implements IBannerTab {
     }
 
     @Override
-    public List<Component>  update(HistoryClipboard clipboard, BannerBuilder currentBanner, DyeColor color) {
-        List<Component> bannerList = new ArrayList<>();
+    public List<UIComponent>  update(HistoryClipboard clipboard, BannerBuilder currentBanner, DyeColor color) {
+        List<UIComponent> bannerList = new ArrayList<>();
 
-        DynamicRegistryManager registryManager = FzmmUtils.getRegistryManager();
-        Optional<Registry<BannerPattern>> bannerRegistry = registryManager.getOptional(RegistryKeys.BANNER_PATTERN);
+        RegistryAccess registryManager = FzmmUtils.getRegistryManager();
+        Optional<Registry<BannerPattern>> bannerRegistry = registryManager.lookup(Registries.BANNER_PATTERN);
         if (bannerRegistry.isEmpty()) {
             FzmmClient.LOGGER.error("[AddPatternTab] No banner registry found");
             return bannerList;
         }
 
-        RegistryKey<BannerPattern> basePattern = BannerPatterns.BASE;
+        ResourceKey<BannerPattern> basePattern = BannerPatterns.BASE;
 
         for (var registry : bannerRegistry.stream().toList()) {
-            for (var pattern : registry.streamEntries().toList()) {
-                if (basePattern == pattern.registryKey()) {
+            for (var pattern : registry.listElements().toList()) {
+                if (basePattern == pattern.key()) {
                     continue;
                 }
 
@@ -53,9 +53,9 @@ public class AddPatternTab implements IBannerTab {
                         .addLayer(color, pattern)
                         .get();
 
-                Component itemComponent = EComponents.item(banner)
+                UIComponent itemComponent = EComponents.item(banner)
                         .sizing(Sizing.fixed(32), Sizing.fixed(32))
-                        .tooltip(BannerBuilder.tooltipOf(new BannerPatternsComponent.Layer(pattern, color)));
+                        .tooltip(BannerBuilder.tooltipOf(new BannerPatternLayers.Layer(pattern, color)));
 
                 itemComponent.mouseDown().subscribe((input, doubled) -> {
                     UISounds.playButtonSound();
