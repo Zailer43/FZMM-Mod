@@ -17,8 +17,7 @@ import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.*;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
@@ -177,9 +176,7 @@ public class ItemUtils {
 
         if (FzmmClient.CONFIG.general.removeViaVersionTags()) {
             stackCopy.update(DataComponents.CUSTOM_DATA, null, nbtComponent -> {
-                if (nbtComponent == null) {
-                    return null;
-                }
+                if (nbtComponent == null) return null;
 
                 CompoundTag customTag = nbtComponent.copyTag();
 
@@ -197,9 +194,7 @@ public class ItemUtils {
 
         if (FzmmClient.CONFIG.general.minimizeHeadTexturesTag()) {
             stackCopy.update(DataComponents.PROFILE, null, profileComponent -> {
-                if (profileComponent == null) {
-                    return null;
-                }
+                if (profileComponent == null) return null;
 
                 return HeadUtils.minimizeTextures(profileComponent.partialProfile());
             });

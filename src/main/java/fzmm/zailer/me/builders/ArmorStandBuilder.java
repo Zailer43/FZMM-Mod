@@ -5,6 +5,7 @@ import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TagsConstant;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.world.entity.EntityType;
