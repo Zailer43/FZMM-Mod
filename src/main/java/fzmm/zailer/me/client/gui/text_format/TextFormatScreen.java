@@ -77,10 +77,10 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
         for (var tab : tabs) {
             tab.componentsCallback(object -> this.updateMessagePreview());
         }
-        this.tabContainer.selectTab();
-
         this.setupBottomButtons(rootComponent);
         this.initialized = true;
+
+        this.tabContainer.selectTab();
     }
 
     @Override
