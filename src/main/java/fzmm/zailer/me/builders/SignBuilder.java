@@ -113,7 +113,9 @@ public class SignBuilder {
     }
 
     public ItemStack get() {
-        this.stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, TypedEntityData.create(BlockEntityType.SIGN, new NbtCompound()), entityData -> {
+        BlockEntityType<?> type = this.isHangingSign() ? BlockEntityType.HANGING_SIGN : BlockEntityType.SIGN;
+
+        this.stack.apply(DataComponentTypes.BLOCK_ENTITY_DATA, TypedEntityData.create(type, new NbtCompound()), entityData -> {
             NbtCompound result = entityData.copyNbtWithoutId();
 
             this.addSignMessage(this.frontTextList, this.frontCompound, result, TagsConstant.SIGN_FRONT_TEXT);
@@ -121,7 +123,7 @@ public class SignBuilder {
 
             result.putBoolean(TagsConstant.SIGN_IS_WAXED, this.isWaxed);
 
-            return TypedEntityData.create(BlockEntityType.SIGN, result);
+            return TypedEntityData.create(type, result);
         });
         return this.stack;
     }
