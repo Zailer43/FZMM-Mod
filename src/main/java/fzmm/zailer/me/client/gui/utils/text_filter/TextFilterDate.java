@@ -2,7 +2,6 @@ package fzmm.zailer.me.client.gui.utils.text_filter;
 
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.TextBoxComponent;
-import net.minecraft.network.chat.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -34,7 +33,7 @@ public class TextFilterDate<O> extends AbstractTextFilter<LocalDate, O> {
     public TextBoxComponent toInputComponent() {
         ConfigTextBox result = new ConfigTextBox();
         result.applyPredicate(s -> this.parseValue(s).isPresent());
-        result.setMessage(Component.literal(this.pattern));
+        result.setSuggestion(this.pattern);
         return result;
     }
 }
