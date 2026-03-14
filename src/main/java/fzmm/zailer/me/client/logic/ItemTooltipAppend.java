@@ -21,18 +21,23 @@ public class ItemTooltipAppend {
         ItemTooltipCallback.EVENT.register(ItemTooltipAppend::addNbtLength);
     }
 
-
     private static void addNbtLength(ItemStack stack, Item.TooltipContext context, TooltipFlag type, List<Component> lines) {
         if (!FzmmClient.CONFIG.general.showItemSize() || !type.isAdvanced()) return;
         long stackSize;
 
         int hash = stack.getComponents().hashCode();
-        if (compoundHash.containsKey(hash)) {
-            stackSize = compoundHash.get(hash);
-        } else {
-            stackSize = ItemUtils.getLengthInBytes(stack);
-            compoundHash.put(hash, stackSize);
+        try {
+            if (compoundHash.containsKey(hash)) {
+                stackSize = compoundHash.getOrDefault(hash, 0L);
+            } else {
+                stackSize = ItemUtils.getLengthInBytes(stack);
+                compoundHash.put(hash, stackSize);
+            }
+        } catch (NullPointerException e) {
+            return; //TODO: replace this workaround with a better implemented fix, it’s a very rare crash
         }
+
+        if (stackSize == 0) return;
 
         MutableComponent text;
         if (stackSize > 1023) {
@@ -40,8 +45,7 @@ public class ItemTooltipAppend {
         } else {
             text = Component.translatable("fzmm.item.tooltip.size.bytes", stackSize);
         }
-        text = text.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY));
 
-        lines.add(text);
+        lines.add(text.setStyle(Style.EMPTY.withColor(ChatFormatting.DARK_GRAY)));
     }
 }
