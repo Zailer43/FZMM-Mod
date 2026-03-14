@@ -66,10 +66,8 @@ public class HeadResourcesLoader implements ResourceManagerReloadListener {
     }
 
     public static Optional<AbstractHeadEntry> getByPath(String id) {
-        for (AbstractHeadEntry entry : LOADED_RESOURCES) {
-            if (entry.getPath().equals(id)) {
-                return Optional.of(entry);
-            }
+        for (var entry : LOADED_RESOURCES) {
+            if (entry.getPath().equals(id)) return Optional.of(entry);
         }
 
         return Optional.empty();
@@ -114,15 +112,10 @@ public class HeadResourcesLoader implements ResourceManagerReloadListener {
 
             for (var entry : LOADED_RESOURCES) {
                 try {
-                    if (entry instanceof HeadModelEntry modelEntry) {
-                        if (modelEntry.validate()) {
-                            builder.add(modelEntry);
-                        } else {
-                            FzmmClient.LOGGER.warn("[HeadResourcesLoader] '{}' is not valid", modelEntry.getPath());
-                        }
-                    } else {
-                        builder.add(entry);
-                    }
+                    this.tryValidateDuplicate(entry);
+                    this.tryValidateModel(entry);
+
+                    builder.add(entry);
                 } catch (Exception e) {
                     FzmmClient.LOGGER.error("[HeadResourcesLoader] Error validating '{}'", entry.getPath(), e);
                     addChatMessageError(e, entry.getPath());
@@ -130,10 +123,26 @@ public class HeadResourcesLoader implements ResourceManagerReloadListener {
             }
 
             previousValidResources = LOADED_RESOURCES.size();
-            LOADED_RESOURCES = ImmutableList.copyOf(builder);
+            LOADED_RESOURCES = ImmutableList.copyOf(builder.stream().distinct().toList());
         }
     }
 
+    private void tryValidateDuplicate(AbstractHeadEntry value) {
+        String key = value.getKey();
+        List<AbstractHeadEntry> duplicates = LOADED_RESOURCES.stream()
+                .filter(entry -> entry != value && entry.getKey().equals(key))
+                .toList();
+
+        if (!duplicates.isEmpty()) {
+            throw new IllegalArgumentException(String.format("[HeadResourcesLoader] Duplicate ID found: '%s'", key));
+        }
+    }
+
+    private void tryValidateModel(AbstractHeadEntry entry) {
+        if (entry instanceof HeadModelEntry modelEntry && !modelEntry.validate()) {
+            throw new IllegalArgumentException(String.format("[HeadResourcesLoader] Model '%s' is not valid", modelEntry.getPath()));
+        }
+    }
 
     private static Set<HeadTextureEntry> loadHeadsTextures(ResourceManager manager) {
         Set<HeadTextureEntry> entries = new HashSet<>();
@@ -194,9 +203,7 @@ public class HeadResourcesLoader implements ResourceManagerReloadListener {
         List<Identifier> result = new ArrayList<>();
 
         for (var entry : builder) {
-            if (!(entry instanceof HeadModelEntry modelEntry)) {
-                continue;
-            }
+            if (!(entry instanceof HeadModelEntry modelEntry)) continue;
 
             try {
                 addTexturePathsFromModelEntry(result, modelEntry);
@@ -217,14 +224,10 @@ public class HeadResourcesLoader implements ResourceManagerReloadListener {
     }
 
     private static void addTexturePathFromParameter(List<Identifier> result, IParameterEntry<BufferedImage> parameter) {
-        if (!(parameter instanceof ResettableModelParameter<?> resettableParam)) {
-            return;
-        }
+        if (!(parameter instanceof ResettableModelParameter<?> resettableParam)) return;
         String defaultValue = resettableParam.getDefaultValue();
 
-        if (defaultValue == null) {
-            return;
-        }
+        if (defaultValue == null) return;
         Identifier value = Identifier.tryParse(defaultValue);
 
         if (value != null) {
@@ -336,8 +339,7 @@ public class HeadResourcesLoader implements ResourceManagerReloadListener {
     public static <T> Optional<ParameterList<T>> getParameterList(JsonObject jsonObject, String key,
                                                                   Function<JsonObject, IParameterEntry<T>> elementParser) {
         ParameterList<T> result = new ParameterList<>();
-        if (!jsonObject.has(key))
-            return Optional.empty();
+        if (!jsonObject.has(key)) return Optional.empty();
 
         JsonArray texturesArray = jsonObject.get(key).getAsJsonArray();
 
