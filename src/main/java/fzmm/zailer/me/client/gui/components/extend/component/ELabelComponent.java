@@ -3,6 +3,8 @@ package fzmm.zailer.me.client.gui.components.extend.component;
 import fzmm.zailer.me.client.FzmmClient;
 import io.wispforest.owo.ui.component.LabelComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import org.jetbrains.annotations.Nullable;
 
 public class ELabelComponent extends LabelComponent {
 
@@ -34,4 +36,11 @@ public class ELabelComponent extends LabelComponent {
         return super.text(this.applyStyle(text));
     }
 
+    // owo-lib 26.1 workaround
+    @Override
+    protected @Nullable Style styleAt(int mouseX, int mouseY) {
+        Style result = super.styleAt(mouseX, mouseY);
+        if (result == null) return Style.EMPTY;
+        return result;
+    }
 }

@@ -3,10 +3,10 @@
     <components>
         <fzmm.flow-layout direction="vertical">
             <children>
-                <label id="title">
+                <fzmm.label id="title">
                     <positioning type="absolute">3,3</positioning>
                     <text translate="true">fzmm.gui.title.selectItem</text>
-                </label>
+                </fzmm.label>
 
                 <fzmm.flow-layout direction="horizontal">
                     <children>
