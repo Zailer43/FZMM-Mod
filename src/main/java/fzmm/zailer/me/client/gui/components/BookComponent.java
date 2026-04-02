@@ -7,7 +7,7 @@ import io.wispforest.owo.ui.core.Insets;
 import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.StringSplitter;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.MultilineTextField;
 import net.minecraft.client.gui.components.Whence;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
@@ -49,40 +49,38 @@ public class BookComponent extends TextAreaComponent {
     }
 
     @Override
-    protected void renderBackground(GuiGraphics context) {
+    protected void extractBackground(GuiGraphicsExtractor graphics) {
         Insets margins = this.margins().get();
-        context.blit(RenderPipelines.GUI_TEXTURED, BookViewScreen.BOOK_LOCATION, this.x() - margins.left(), this.y() - margins.top(), 0, 0, BookViewScreen.IMAGE_WIDTH, BookViewScreen.IMAGE_HEIGHT, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, BookViewScreen.BOOK_LOCATION, this.x() - margins.left(), this.y() - margins.top(), 0, 0, BookViewScreen.IMAGE_WIDTH, BookViewScreen.IMAGE_HEIGHT, 256, 256);
     }
 
     @Override
-    protected void renderDecorations(GuiGraphics context) {
+    protected void extractDecorations(GuiGraphicsExtractor graphics) {
         boolean displayCharCount = this.displayCharCount.get();
         this.displayCharCount(false); // remove display of display char count (TextAreaComponent#renderOverlay)
 
-        super.renderDecorations(context);
+        super.extractDecorations(graphics);
 
         this.displayCharCount(displayCharCount);
-        this.renderDisplayCharCount(context);
+        this.extractDisplayCharCount(graphics);
     }
 
     /**
      * copy of render of display char count in TextAreaComponent#renderOverlay with other position
      */
-    protected void renderDisplayCharCount(GuiGraphics context) {
-        if (!this.displayCharCount.get()) {
-            return;
-        }
+    protected void extractDisplayCharCount(GuiGraphicsExtractor graphics) {
+        if (!this.displayCharCount.get()) return;
 
         var text = this.editBox.hasCharacterLimit()
                 ? Component.translatable("gui.multiLineEditBox.character_limit", this.editBox.value().length(), this.editBox.characterLimit())
                 : Component.literal(String.valueOf(this.editBox.value().length()));
 
         var textRenderer = Minecraft.getInstance().font;
-        context.drawString(textRenderer, text, this.getX() + this.width - textRenderer.width(text) - 14, this.getY() - 12, 0xA0A0A0);
+        graphics.text(textRenderer, text, this.getX() + this.width - textRenderer.width(text) - 14, this.getY() - 12, 0xA0A0A0);
     }
 
     @Override
-    protected boolean scrollbarVisible() {
+    protected boolean scrollable() {
         return false;
     }
 
@@ -99,9 +97,7 @@ public class BookComponent extends TextAreaComponent {
     private void textChange(String text) {
         // remove overflow text because edit box does not allow to disable it
         int overflow = this.editBox.getLineCount() - this.maxLines();
-        if (overflow <= 0) {
-            return;
-        }
+        if (overflow <= 0) return;
         StringSplitter textHandler = Minecraft.getInstance().font.getSplitter();
         int cursor = this.editBox.cursor();
         String modifiedText = text;

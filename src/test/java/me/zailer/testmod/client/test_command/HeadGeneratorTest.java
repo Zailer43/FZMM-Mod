@@ -74,7 +74,7 @@ public class HeadGeneratorTest {
 
             String tooltip = String.join("\n", topEntries);
             Minecraft.getInstance().gui.getChat()
-                    .addMessage(Component.literal(message)
+                    .addClientSystemMessage(Component.literal(message)
                             .setStyle(Style.EMPTY.withHoverEvent(
                                             new HoverEvent.ShowText(Component.literal(tooltip))
                                     )
@@ -122,7 +122,7 @@ public class HeadGeneratorTest {
             }
 
             Minecraft.getInstance().gui.getChat()
-                    .addMessage(Component.literal("Correct: " + correctCount + "/" + totalCount
+                    .addClientSystemMessage(Component.literal("Correct: " + correctCount + "/" + totalCount
                             + " - Missing body: " + missingBodyCount + "/" + count
                     ));
         });

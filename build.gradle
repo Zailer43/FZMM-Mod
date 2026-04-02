@@ -1,5 +1,5 @@
 plugins {
-    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'maven-publish'
 }
 
@@ -11,19 +11,11 @@ base {
 }
 
 repositories {
-    // modmenu
-    maven {
-        name = "TerraformersMC"
-        url = "https://maven.terraformersmc.com/releases/"
-    }
-
-    // owo-lib
-    maven { url = 'https://maven.wispforest.io' }
-    maven { url 'https://jitpack.io' }
-
-    // others
-    maven { url = "https://api.modrinth.com/maven" }
-
+    maven { url = "https://maven.terraformersmc.com/releases/"; name = "TerraformersMC" } // modmenu
+    maven { url = "https://maven.wispforest.io"; name = "Wispforest" } // owo-lib
+    maven { url = "https://jitpack.io"; name = "JitPack" } // owo-lib
+    maven { url = "https://maven.nucleoid.xyz/"; name = "Nucleoid" } // placeholder-api
+    maven { url = "https://api.modrinth.com/maven"; name = "Modrinth" } // others
 }
 
 loom {
@@ -32,48 +24,47 @@ loom {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Dependencies
     // Fabric API
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
     def fabricDependencies = [
             'fabric-command-api-v2',
             'fabric-events-interaction-v0',
             'fabric-item-api-v1',
-            'fabric-item-group-api-v1',
-            'fabric-key-binding-api-v1',
+            'fabric-creative-tab-api-v1',
+            'fabric-key-mapping-api-v1',
             'fabric-resource-loader-v1',
             'fabric-object-builder-api-v1',
             'fabric-renderer-api-v1'
     ]
 
     fabricDependencies.forEach {
-        modImplementation(fabricApi.module(it, project.fabric_api_version))
+        implementation(fabricApi.module(it, project.fabric_api_version))
     }
 
     // owo lib
-    modImplementation annotationProcessor ("io.wispforest:owo-lib:${project.owo_version}")
+    implementation annotationProcessor ("io.wispforest:owo-lib:${project.owo_version}")
 
     // include this if you don't want force your users to install owo
     // sentinel will warn them and give the option to download it automatically
     include "io.wispforest:owo-sentinel:${project.owo_version}"
 
     // Mod Menu
-    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+    implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     // PlacerholderAPI
-    modImplementation(include("maven.modrinth:placeholder-api:${project.placeholder_api_version}"))
+    implementation(include("eu.pb4:placeholder-api:${project.placeholder_api_version}"))
 
     // Optional dependencies
     // Symbol chat
-    modImplementation "maven.modrinth:symbol-chat:${project.symbol_chat_version}"
-    modImplementation "maven.modrinth:reconfigure:${project.symbol_chat_reconfigure_version}"
+    implementation "maven.modrinth:symbol-chat:${project.symbol_chat_version}"
+    implementation "maven.modrinth:reconfigure:${project.symbol_chat_reconfigure_version}"
 
-    // Test dependencies
-    testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
+    // Test dependencies (disabled because it needs support for Java 25)
+//    testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
 }
 
 processResources {
@@ -85,14 +76,14 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 21
+    it.options.release = 25
 }
 
 java {
     withSourcesJar()
 
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {
@@ -104,7 +95,8 @@ jar {
 }
 
 test {
-    useJUnitPlatform()
+//    useJUnitPlatform() //disabled because it needs support for Java 25
+    failOnNoDiscoveredTests = false
 }
 
 publishing {

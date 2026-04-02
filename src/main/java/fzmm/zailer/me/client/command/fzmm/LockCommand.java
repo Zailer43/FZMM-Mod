@@ -4,7 +4,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.advancements.criterion.DataComponentMatchers;
 import net.minecraft.advancements.criterion.ItemPredicate;
@@ -32,7 +32,7 @@ public class LockCommand implements ISubCommand {
 
     @Override
     public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        return builder.then(ClientCommandManager.argument("key", ComponentArgument.textComponent(registryAccess)).executes(ctx -> {
+        return builder.then(ClientCommands.argument("key", ComponentArgument.textComponent(registryAccess)).executes(ctx -> {
 
             Component key = ctx.getArgument("key", Component.class);
             this.lockContainer(key);

@@ -391,7 +391,7 @@ public class HeadResourcesLoader implements ResourceManagerReloadListener {
                             .withHoverEvent(new HoverEvent.ShowText(Component.literal(e.getMessage())))
                     );
 
-            Minecraft.getInstance().gui.getChat().addMessage(message);
+            Minecraft.getInstance().gui.getChat().addClientSystemMessage(message);
         }
     }
 }

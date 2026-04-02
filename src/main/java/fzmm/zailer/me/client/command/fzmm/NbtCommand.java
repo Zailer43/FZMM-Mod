@@ -76,7 +76,7 @@ public class NbtCommand implements ISubCommand {
 
         MutableComponent nbtText = this.nbtToText(nbt, client, nbtString);
         MutableComponent message = this.nbtChatMessageOf(stack, nbtText, nbtString, nbtStringHover);
-        client.gui.getChat().addMessage(message.append("\n").append(lengthMessage));
+        client.gui.getChat().addClientSystemMessage(message.append("\n").append(lengthMessage));
     }
 
     private MutableComponent nbtToText(CompoundTag nbt, Minecraft client, String nbtString) {

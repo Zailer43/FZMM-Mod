@@ -7,11 +7,10 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.client.command.argument_type.StackArgumentType;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.item.ItemInput;
-import net.minecraft.world.item.ItemStack;
 
 public class GiveCommand implements ISubCommand {
     @Override
@@ -26,11 +25,11 @@ public class GiveCommand implements ISubCommand {
 
     @Override
     public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        return builder.then(ClientCommandManager.argument("item", StackArgumentType.item(registryAccess)).executes((ctx) -> {
+        return builder.then(ClientCommands.argument("item", StackArgumentType.item(registryAccess)).executes((ctx) -> {
 
             this.giveItem(StackArgumentType.getItem(ctx, "item"), 1);
             return 1;
-        }).then(ClientCommandManager.argument("amount", IntegerArgumentType.integer(1, 99)).executes((ctx) -> {
+        }).then(ClientCommands.argument("amount", IntegerArgumentType.integer(1, 99)).executes((ctx) -> {
 
             int amount = IntegerArgumentType.getInteger(ctx, "amount");
             ItemInput item = StackArgumentType.getItem(ctx, "item");
@@ -41,7 +40,6 @@ public class GiveCommand implements ISubCommand {
     }
 
     private void giveItem(ItemInput item, int amount) throws CommandSyntaxException {
-        ItemStack itemStack = item.createItemStack(amount, false);
-        ItemUtils.give(ItemUtils.process(itemStack));
+        ItemUtils.give(ItemUtils.process(item.createItemStack(amount)));
     }
 }

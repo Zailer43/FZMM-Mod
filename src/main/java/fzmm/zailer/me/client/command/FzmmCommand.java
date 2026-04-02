@@ -3,7 +3,7 @@ package fzmm.zailer.me.client.command;
 import com.mojang.brigadier.CommandDispatcher;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.command.fzmm.*;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandBuildContext;
@@ -18,7 +18,7 @@ public class FzmmCommand {
     private static final String BASE_COMMAND = "/" + BASE_COMMAND_ALIAS;
 
     public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
-        var commandBuilder = ClientCommandManager.literal(BASE_COMMAND_ALIAS);
+        var commandBuilder = ClientCommands.literal(BASE_COMMAND_ALIAS);
 
         List<ISubCommand> subCommands = List.of(
                 new AmountCommand(), //replace with item editor
@@ -59,7 +59,7 @@ public class FzmmCommand {
         Component translation = Component.translatable("commands.fzmm.help.format", infoTranslation, syntaxText)
                 .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
 
-        Minecraft.getInstance().gui.getChat().addMessage(translation);
+        Minecraft.getInstance().gui.getChat().addClientSystemMessage(translation);
         return 1;
     }
 }

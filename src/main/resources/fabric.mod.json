@@ -36,8 +36,8 @@
   "accessWidener": "fzmm.accesswidener",
   "depends": {
     "fabricloader": ">=0.17.0",
-    "fabric": ">=0.131.0",
-    "minecraft": "1.21.11",
+    "fabric-api": ">=0.145.0",
+    "minecraft": "~26.1",
     "owo": ">=0.13.0 <0.14.0"
   },
   "custom": {
@@ -45,7 +45,7 @@
       "links": {
         "modmenu.discord": "https://discord.gg/mwBRwXmE63",
         "modmenu.crowdin": "https://crowdin.com/project/fzmm-mod",
-        "modmenu.wiki": "https://github.com/Zailer43/FZMM-Mod/tree/1.21.7/dev/docs/en/wiki"
+        "modmenu.wiki": "https://github.com/Zailer43/FZMM-Mod/tree/dev/docs/en/wiki"
       }
     }
   }

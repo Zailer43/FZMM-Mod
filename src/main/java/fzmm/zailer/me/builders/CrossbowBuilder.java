@@ -29,7 +29,7 @@ public class CrossbowBuilder {
 
     public ItemStack get() {
         this.stack.update(DataComponents.CHARGED_PROJECTILES, null,
-                component -> ChargedProjectiles.of(new ArrayList<>(this.chargedProjectiles)));
+                component -> ChargedProjectiles.ofNonEmpty(new ArrayList<>(this.chargedProjectiles)));
         return stack.copy();
     }
 

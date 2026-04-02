@@ -5,7 +5,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -39,22 +39,22 @@ public class EquipCommand implements ISubCommand {
     public List<LiteralCommandNode<FabricClientCommandSource>> getSubCommands(CommandBuildContext registryAccess) {
         List<LiteralCommandNode<FabricClientCommandSource>> result = new ArrayList<>();
 
-        result.add(ClientCommandManager.literal("head").executes(ctx -> {
+        result.add(ClientCommands.literal("head").executes(ctx -> {
             this.swapItemWithHand(EquipmentSlot.HEAD);
             return 1;
         }).build());
 
-        result.add(ClientCommandManager.literal("chest").executes(ctx -> {
+        result.add(ClientCommands.literal("chest").executes(ctx -> {
             this.swapItemWithHand(EquipmentSlot.CHEST);
             return 1;
         }).build());
 
-        result.add(ClientCommandManager.literal("legs").executes(ctx -> {
+        result.add(ClientCommands.literal("legs").executes(ctx -> {
             this.swapItemWithHand(EquipmentSlot.LEGS);
             return 1;
         }).build());
 
-        result.add(ClientCommandManager.literal("feet").executes(ctx -> {
+        result.add(ClientCommands.literal("feet").executes(ctx -> {
             this.swapItemWithHand(EquipmentSlot.FEET);
             return 1;
         }).build());
@@ -70,7 +70,7 @@ public class EquipCommand implements ISubCommand {
 
         if (ItemUtils.isNotAllowedToGive()) {
             FzmmClient.LOGGER.warn("[FzmmCommand] Creative mode is necessary to swap items");
-            client.gui.getChat().addMessage(Component.translatable("fzmm.item.error.actionNotAllowed").setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
+            client.gui.getChat().addClientSystemMessage(Component.translatable("fzmm.item.error.actionNotAllowed").setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
             return;
         }
 

@@ -1,3 +1,4 @@
+/*
 package me.zailer.testmod.client.unit_test;
 
 import fzmm.zailer.me.utils.TextUtils;
@@ -63,3 +64,4 @@ public class TextUtilsTest {
         }
     }
 }
+*/

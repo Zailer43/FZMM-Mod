@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.gui.components.extend.component;
 
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.core.OwoUIGraphics;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -20,15 +20,15 @@ public class EButtonComponent extends ButtonComponent {
     }
 
     /**
-     * Copy of {@link ButtonComponent#renderContents(GuiGraphics, int, int, float)} but with {@link AbstractButton#renderScrollingStringOverContents}
+     * Copy of {@link ButtonComponent#extractContents(GuiGraphicsExtractor, int, int, float)} but with {@link AbstractButton#extractScrollingStringOverContents}
      */
     @Override
-    public void renderContents(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    public void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
         OwoUIGraphics graphics = (OwoUIGraphics) guiGraphics;
         this.renderer.draw(graphics, this, delta);
 
         // drawScrollableText
-        this.renderScrollingStringOverContents(graphics.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE), this.getMessage(), 2);
+        this.extractScrollingStringOverContents(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE), this.getMessage(), 2);
     }
 
     /**

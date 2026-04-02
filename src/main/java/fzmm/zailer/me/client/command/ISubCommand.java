@@ -2,7 +2,7 @@ package fzmm.zailer.me.client.command;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandBuildContext;
 
@@ -15,7 +15,7 @@ public interface ISubCommand {
     String syntax();
 
     default LiteralCommandNode<FabricClientCommandSource> build(CommandBuildContext registryAccess) {
-        LiteralArgumentBuilder<FabricClientCommandSource> baseCommandBuilder = ClientCommandManager.literal(this.alias())
+        LiteralArgumentBuilder<FabricClientCommandSource> baseCommandBuilder = ClientCommands.literal(this.alias())
                 .executes(ctx -> sendHelpMessage(getTranslationKey(), this.syntax()));
 
         LiteralCommandNode<FabricClientCommandSource> baseCommand = getBaseCommand(registryAccess, baseCommandBuilder);

@@ -11,7 +11,7 @@ import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.skin.CacheSkinGetter;
 import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
 import fzmm.zailer.me.utils.skin.VanillaSkinGetter;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.util.Util;
@@ -33,7 +33,7 @@ public class SkullCommand implements ISubCommand {
 
     @Override
     public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        var argument = ClientCommandManager.argument("skull owner", StringArgumentType.word())
+        var argument = ClientCommands.argument("skull owner", StringArgumentType.word())
                 .suggests(FzmmUtils.SUGGESTION_PLAYER)
                 .executes(ctx -> {
 
@@ -54,7 +54,7 @@ public class SkullCommand implements ISubCommand {
     private List<LiteralCommandNode<FabricClientCommandSource>> getArgSubCommands() {
         List<LiteralCommandNode<FabricClientCommandSource>> result = new ArrayList<>();
 
-        result.add(ClientCommandManager.literal("static")
+        result.add(ClientCommands.literal("static")
                 .executes(ctx -> {
 
                     String skullOwner = ctx.getArgument("skull owner", String.class);
@@ -64,7 +64,7 @@ public class SkullCommand implements ISubCommand {
                     return 1;
                 }).build());
 
-        result.add(ClientCommandManager.literal("dynamic")
+        result.add(ClientCommands.literal("dynamic")
                 .executes(ctx -> {
 
                     String skullOwner = ctx.getArgument("skull owner", String.class);
@@ -73,7 +73,7 @@ public class SkullCommand implements ISubCommand {
                     return 1;
                 }).build());
 
-        result.add(ClientCommandManager.literal("cache")
+        result.add(ClientCommands.literal("cache")
                 .executes(ctx -> {
 
                     String skullOwner = ctx.getArgument("skull owner", String.class);
@@ -83,7 +83,7 @@ public class SkullCommand implements ISubCommand {
                     return 1;
                 }).build());
 
-        result.add(ClientCommandManager.literal("mineskin")
+        result.add(ClientCommands.literal("mineskin")
                 .executes(ctx -> {
 
                     String skullOwner = ctx.getArgument("skull owner", String.class);

@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ResourceArgument;
@@ -36,14 +36,14 @@ public class FakeEnchantCommand implements ISubCommand {
 
     @Override
     public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        return builder.then(ClientCommandManager.argument("enchantment", ResourceArgument.resource(registryAccess, Registries.ENCHANTMENT)).executes(ctx -> {
+        return builder.then(ClientCommands.argument("enchantment", ResourceArgument.resource(registryAccess, Registries.ENCHANTMENT)).executes(ctx -> {
 
             @SuppressWarnings("unchecked")
             Holder.Reference<Enchantment> enchant = ctx.getArgument("enchantment", Holder.Reference.class);
 
             this.addFakeEnchant(enchant, 1);
             return 1;
-        }).then(ClientCommandManager.argument("level", IntegerArgumentType.integer()).executes(ctx -> {
+        }).then(ClientCommands.argument("level", IntegerArgumentType.integer()).executes(ctx -> {
 
             @SuppressWarnings("unchecked")
             Holder.Reference<Enchantment> enchant = ctx.getArgument("enchantment", Holder.Reference.class);

@@ -9,7 +9,7 @@ import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.client.command.argument_type.ComponentArgumentType;
 import fzmm.zailer.me.client.command.argument_type.VersionArgumentType;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
@@ -44,15 +44,15 @@ public class OldGiveCommand implements ISubCommand {
 
     @Override
     public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        var itemNode = ClientCommandManager.argument("item", IdentifierArgument.id()).executes((ctx) -> {
+        var itemNode = ClientCommands.argument("item", IdentifierArgument.id()).executes((ctx) -> {
             ctx.getSource().sendError(Component.translatable("commands.fzmm.old_give.nbt_required").withStyle(ChatFormatting.RED));
             return 1;
         });
-        var damageNode = ClientCommandManager.argument("damage", IntegerArgumentType.integer()).executes((ctx) -> {
+        var damageNode = ClientCommands.argument("damage", IntegerArgumentType.integer()).executes((ctx) -> {
             ctx.getSource().sendError(Component.translatable("commands.fzmm.old_give.nbt_required").withStyle(ChatFormatting.RED));
             return 1;
         });
-        var nbtNode = ClientCommandManager.argument("nbt", ComponentArgumentType.component()).executes(ctx -> {
+        var nbtNode = ClientCommands.argument("nbt", ComponentArgumentType.component()).executes(ctx -> {
             Identifier item = ctx.getArgument("item", Identifier.class);
             int damage;
             try {
@@ -65,7 +65,7 @@ public class OldGiveCommand implements ISubCommand {
             oldGiveItem(item, damage, nbt, VersionArgumentType.VERSIONS.get(0));
             return 1;
         });
-        var versionNode = ClientCommandManager.argument("item_version", VersionArgumentType.version()).executes(ctx -> {
+        var versionNode = ClientCommands.argument("item_version", VersionArgumentType.version()).executes(ctx -> {
             Identifier item = ctx.getArgument("item", Identifier.class);
             int damage;
             try {
@@ -93,15 +93,15 @@ public class OldGiveCommand implements ISubCommand {
                Optional<ItemStack> stackOptional = updateStack(item, damage, nbtCompound, oldVersion.getB());
 
                if (stackOptional.isEmpty() || stackOptional.get().isEmpty()) {
-                   chatHud.addMessage(errorMessage);
+                   chatHud.addClientSystemMessage(errorMessage);
                } else {
                    ItemUtils.give(ItemUtils.process(stackOptional.get()));
-                   chatHud.addMessage(Component.translatable("commands.fzmm.old_give.success", item.toString(), oldVersion.getA())
+                   chatHud.addClientSystemMessage(Component.translatable("commands.fzmm.old_give.success", item.toString(), oldVersion.getA())
                            .withColor(FzmmClient.CHAT_BASE_COLOR)
                    );
                }
            } catch (Exception e) {
-                chatHud.addMessage(errorMessage);
+                chatHud.addClientSystemMessage(errorMessage);
                 FzmmClient.LOGGER.warn("[OldGiveCommand] Failed to update stack with exception:", e);
            }
         });

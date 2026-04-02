@@ -5,8 +5,9 @@ import fzmm.zailer.me.compat.CompatMods;
 import io.wispforest.owo.ui.component.VanillaWidgetComponent;
 import io.wispforest.owo.ui.core.OwoUIGraphics;
 import io.wispforest.owo.ui.core.Sizing;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
+import net.replaceitem.symbolchat.SymbolChat;
 import net.replaceitem.symbolchat.gui.container.ScrollableGridContainer;
 import net.replaceitem.symbolchat.gui.widget.DropDownWidget;
 import net.replaceitem.symbolchat.resource.FontProcessor;
@@ -20,7 +21,7 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
     protected final ScrollableGridContainer scrollGrid;
     private final int expandedHeight;
 
-    public FontComponentAdapter(CustomDropDownWidget widget, int expandedHeight) {
+    private FontComponentAdapter(CustomDropDownWidget widget, int expandedHeight) {
         super(widget);
 
         this.widget = widget;
@@ -42,6 +43,14 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
 
         this.verticalSizing(Sizing.fixed(expandedHeight));
         this.expand();
+    }
+
+    public static FontComponentAdapter get() {
+        FontComponentAdapter.CustomDropDownWidget widget = new FontComponentAdapter.CustomDropDownWidget(0, 0, 180, 15,
+                SymbolChat.getFontManager().getFontProcessors(), SymbolChat.getFontManager().getCurrentScreenFontProcessor(), false);
+        int expandedHeight = 150 + widget.getHeight(); // 150 is hardcoded in DropDownWidget
+        widget.setHeight(expandedHeight);
+        return new FontComponentAdapter(widget, expandedHeight);
     }
 
     protected void expand() {
@@ -87,7 +96,7 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
         // fix scroll with smooth as it depends on the render
         // It is not being called because the custom implementation
         // of NonScrollableContainerWidget in Symbol Chat is not compatible with owo-lib by default
-        this.widget.renderWidget(graphics, mouseX, mouseY, delta);
+        this.widget.extractWidgetRenderState(graphics, mouseX, mouseY, delta);
     }
 
     public static class CustomDropDownWidget extends DropDownWidget<FontProcessor> {
@@ -96,9 +105,10 @@ public class FontComponentAdapter extends VanillaWidgetComponent {
             super(x, y, width, height, elementList, defaultSelection, upward);
         }
 
+        // modify visibility
         @Override
-        public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
-            super.renderWidget(context, mouseX, mouseY, delta);
+        protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+            super.extractWidgetRenderState(graphics, mouseX, mouseY, a);
         }
     }
 }

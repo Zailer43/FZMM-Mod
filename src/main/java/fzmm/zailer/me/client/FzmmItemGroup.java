@@ -5,8 +5,8 @@ import fzmm.zailer.me.builders.BlockStateItemBuilder;
 import fzmm.zailer.me.builders.CrossbowBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.utils.FzmmUtils;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
@@ -48,7 +48,7 @@ public class FzmmItemGroup {
     public static final Identifier LOOT_CHESTS_IDENTIFIER = Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "loot_chests");
 
     public static void register() {
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.OP_BLOCKS).register(entries -> {
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.OP_BLOCKS).register(entries -> {
             if (Minecraft.getInstance().player == null || Minecraft.getInstance().level == null) return;
             RegistryAccess registryManager = Minecraft.getInstance().player.registryAccess();
             ArrayList<ItemStack> newEntries = new ArrayList<>();
@@ -81,10 +81,10 @@ public class FzmmItemGroup {
             elytra.setDamageValue(elytra.getMaxDamage() - 1);
             newEntries.add(elytra);
 
-            entries.addAfter(Items.DEBUG_STICK, newEntries);
+            entries.insertAfter(Items.DEBUG_STICK, newEntries);
         });
         // TODO: this need be sorted/organized
-        CreativeModeTab usefulBlockStatesItemGroup = FabricItemGroup.builder()
+        CreativeModeTab usefulBlockStatesItemGroup = FabricCreativeModeTab.builder()
                 .title(Component.translatable(USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY))
                 .icon(() -> new ItemStack(Items.REDSTONE_LAMP))
                 .displayItems((displayContext, entries) -> {
@@ -155,7 +155,7 @@ public class FzmmItemGroup {
                     addItemTag(ItemTags.SLABS, item -> entries.accept(new BlockStateItemBuilder(item, "waterloggedBlock", item).add("type", "double").add("waterlogged", true).get()));
                 }).build();
 
-        CreativeModeTab lootChestsItemGroup = FabricItemGroup.builder()
+        CreativeModeTab lootChestsItemGroup = FabricCreativeModeTab.builder()
                 .title(Component.translatable("itemGroup.fzmm.loot_chests"))
                 .icon(() -> new ItemStack(Items.CHEST))
                 .displayItems((displayContext, entries) -> {

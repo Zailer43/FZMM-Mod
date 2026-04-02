@@ -21,7 +21,7 @@ public class EEntityComponent<T extends LivingEntity> extends EntityComponent<T>
      * Copy of {@link EntityComponent#draw(OwoUIGraphics, int, int, float, float)} with workaround to owo-lib in 1.21.6 - 1.21.8
      */
     @Override
-    public void draw(OwoUIGraphics context, int mouseX, int mouseY, float partialTicks, float delta) {
+    public void draw(OwoUIGraphics graphics, int mouseX, int mouseY, float partialTicks, float delta) {
         var matrix = new Matrix4f();
         float scale = this.scale * 0.95f;
         matrix.scale(75 * scale * this.width / 64f, -75 * scale * this.height / 64f, -75 * scale);
@@ -39,11 +39,11 @@ public class EEntityComponent<T extends LivingEntity> extends EntityComponent<T>
 
         // replace partialTicks to 0f to fix shaking
         ((EntityRenderer) this.manager.getRenderer(this.entity)).extractRenderState(this.entity, entityState, 0f);
-        context.guiRenderState.submitPicturesInPictureState(new EntityElementRenderState(
+        graphics.guiRenderState.addPicturesInPictureState(new EntityElementRenderState(
                 entityState,
                 matrix,
                 new ScreenRectangle(this.x, this.y, this.width, this.height),
-                context.scissorStack.peek()
+                graphics.scissorStack.peek()
         ));
     }
 }

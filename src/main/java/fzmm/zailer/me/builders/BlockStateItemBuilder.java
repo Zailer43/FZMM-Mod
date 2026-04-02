@@ -25,7 +25,7 @@ public class BlockStateItemBuilder {
 
     public BlockStateItemBuilder(Item item, String translationKey, Item translationItem) {
         this.item = item;
-        this.itemName = Component.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + ".item." + translationKey, translationItem.getName().getString()).getString();
+        this.itemName = Component.translatable(FzmmItemGroup.USEFUL_BLOCK_STATES_BASE_TRANSLATION_KEY + ".item." + translationKey, translationItem.getDefaultInstance().getDisplayName().getString()).getString();
     }
 
     public ItemStack get() {
