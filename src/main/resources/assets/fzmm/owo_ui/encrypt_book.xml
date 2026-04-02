@@ -208,10 +208,10 @@
                 <children>
                     <fzmm.flow-layout direction="vertical">
                         <children>
-                            <label>
+                            <fzmm.label>
                                 <text translate="true">fzmm.gui.encryptbook.option.{{translation-id}}</text>
                                 <tooltip-text translate="true">fzmm.gui.encryptbook.option.{{translation-id}}.tooltip</tooltip-text>
-                            </label>
+                            </fzmm.label>
 
 
                             <fzmm.suggest-text-option id="{{id}}">

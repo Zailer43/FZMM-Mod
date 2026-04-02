@@ -41,9 +41,9 @@
                                                         <children>
                                                             <fzmm.flow-layout direction="vertical">
                                                                 <children>
-                                                                    <label>
+                                                                    <fzmm.label>
                                                                         <text translate="true">fzmm.gui.imagetext.option.width</text>
-                                                                    </label>
+                                                                    </fzmm.label>
                                                                 </children>
                                                                 <sizing>
                                                                     <vertical method="fixed">16</vertical>
@@ -52,9 +52,9 @@
                                                             </fzmm.flow-layout>
                                                             <fzmm.flow-layout direction="vertical">
                                                                 <children>
-                                                                    <label>
+                                                                    <fzmm.label>
                                                                         <text translate="true">fzmm.gui.imagetext.option.height</text>
-                                                                    </label>
+                                                                    </fzmm.label>
                                                                 </children>
                                                                 <sizing>
                                                                     <vertical method="fixed">16</vertical>
@@ -480,14 +480,14 @@
         <small-option>
             <fzmm.flow-layout direction="horizontal" id="{{id}}-parent">
                 <children>
-                    <label>
+                    <fzmm.label>
                         <text translate="true">fzmm.gui.imagetext.option.{{translation-id}}</text>
                         <tooltip-text translate="true">fzmm.gui.imagetext.option.{{translation-id}}.tooltip</tooltip-text>
 
                         <sizing>
                             <horizontal method="fixed">125</horizontal>
                         </sizing>
-                    </label>
+                    </fzmm.label>
 
                     <template name="{{option}}-option-type">
                         <id>{{id}}</id>
