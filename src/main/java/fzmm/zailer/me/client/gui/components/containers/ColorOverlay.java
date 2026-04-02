@@ -13,10 +13,11 @@ import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.*;
 import io.wispforest.owo.ui.core.*;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
@@ -294,7 +295,8 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
             Item dyeItem = Items.AIR;
 
             for (var item : BuiltInRegistries.ITEM.stream().toList()) {
-                if (item instanceof DyeItem dyeItem1 && dyeItem1.getDyeColor() == dyeColor) {
+                DataComponentMap components = item.components();
+                if (components.getOrDefault(DataComponents.DYE, null) == dyeColor) {
                     dyeItem = item;
                     break;
                 }

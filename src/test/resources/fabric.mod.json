@@ -19,7 +19,7 @@
     "testmod.mixins.json"
   ],
   "depends": {
-    "fabric": "*",
+    "fabric-api": "*",
     "fzmm": "*"
   }
 }

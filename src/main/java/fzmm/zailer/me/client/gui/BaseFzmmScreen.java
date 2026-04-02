@@ -56,7 +56,6 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
 
     @Override
     protected void build(EFlowLayout rootComponent) {
-        assert this.minecraft != null;
         ButtonComponent backButton = rootComponent.childById(ButtonComponent.class, "back-button");
         if (backButton != null) {
             backButton.onPress(button -> this.onClose());

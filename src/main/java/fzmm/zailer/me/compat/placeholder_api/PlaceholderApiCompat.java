@@ -13,7 +13,7 @@ public class PlaceholderApiCompat {
 
 
         try {
-            return TagParser.DEFAULT.parseNode(inputText).toText();
+            return TagParser.DEFAULT.parseNode(inputText).toComponent();
         } catch (Exception e) {
             FzmmClient.LOGGER.error("[PlaceholderApiCompat] Failed to parse text", e);
             CompatMods.PLACEHOLDER_API_PRESENT = false;

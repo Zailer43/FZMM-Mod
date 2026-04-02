@@ -56,7 +56,9 @@ public class VersionArgumentType implements ArgumentType<Tuple<String, Integer>>
     private static List<Tuple<String, Integer>> initVersions() {
         List<Tuple<String, Integer>> result = new ArrayList<>();
 
-//        result.add(new Tuple<>("1.21.11", 4671));
+//        result.add(new Tuple<>("26.1", 4671));
+
+        result.add(new Tuple<>("1.21.11", 4786));
         result.add(new Tuple<>("1.21.10", 4556));
         result.add(new Tuple<>("1.21.9", 4554));
         result.add(new Tuple<>("1.21.8", 4440));

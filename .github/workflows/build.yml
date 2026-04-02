@@ -14,7 +14,7 @@ jobs:
         # thank you very much (I don't understand how to get the index
         # of a matrix in the artifacts, thank you for understanding)
         java: [
-          21,    # Current Java LTS & minimum supported by Minecraft
+          25,    # Current Java LTS & minimum supported by Minecraft
         ]
         # and run on both Linux, Windows and Mac
         os: [ubuntu-latest, windows-latest, macos-latest]

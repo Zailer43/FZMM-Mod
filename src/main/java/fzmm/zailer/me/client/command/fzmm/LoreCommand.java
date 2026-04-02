@@ -6,7 +6,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.arguments.ComponentArgument;
@@ -39,9 +39,9 @@ public class LoreCommand implements ISubCommand {
     public List<LiteralCommandNode<FabricClientCommandSource>> getSubCommands(CommandBuildContext registryAccess) {
         List<LiteralCommandNode<FabricClientCommandSource>> result = new ArrayList<>();
 
-        result.add(ClientCommandManager.literal("add")
+        result.add(ClientCommands.literal("add")
                 .executes(ctx -> sendHelpMessage("commands.fzmm.lore.add.help", " lore add <message>"))
-                .then(ClientCommandManager.argument("message", ComponentArgument.textComponent(registryAccess)).executes(ctx -> {
+                .then(ClientCommands.argument("message", ComponentArgument.textComponent(registryAccess)).executes(ctx -> {
 
                     Component message = ctx.getArgument("message", Component.class);
 
@@ -50,12 +50,12 @@ public class LoreCommand implements ISubCommand {
                 })).build()
         );
 
-        result.add(ClientCommandManager.literal("remove")
+        result.add(ClientCommands.literal("remove")
                 .executes(ctx -> {
 
                     this.removeLore();
                     return 1;
-                }).then(ClientCommandManager.argument("line", IntegerArgumentType.integer(0, ItemLore.MAX_LINES - 1)).executes(ctx -> {
+                }).then(ClientCommands.argument("line", IntegerArgumentType.integer(0, ItemLore.MAX_LINES - 1)).executes(ctx -> {
 
                     this.removeLore(ctx.getArgument("line", int.class));
                     return 1;

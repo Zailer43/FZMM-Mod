@@ -9,9 +9,8 @@ import io.wispforest.owo.ui.core.UIComponent;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.replaceitem.symbolchat.SymbolChat;
-import net.replaceitem.symbolchat.gui.SymbolSelectionPanel;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -20,13 +19,13 @@ import java.util.function.Consumer;
 
 public class SymbolChatCompat {
 
-    private static final net.minecraft.network.chat.Component SYMBOL_CHAT_NOT_AVAILABLE_TEXT_TOOLTIP = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.symbolChat.notAvailable.tooltip").setStyle(Style.EMPTY.withColor(0xF2200D));
+    private static final Component SYMBOL_CHAT_NOT_AVAILABLE_TEXT_TOOLTIP = Component.translatable("fzmm.gui.button.symbolChat.notAvailable.tooltip").setStyle(Style.EMPTY.withColor(0xF2200D));
 
-    private static final net.minecraft.network.chat.Component SYMBOL_BUTTON_TEXT = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.symbolChat.symbol");
-    private static final net.minecraft.network.chat.Component SYMBOL_BUTTON_TEXT_TOOLTIP = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.symbolChat.symbol.tooltip");
+    private static final Component SYMBOL_BUTTON_TEXT = Component.translatable("fzmm.gui.button.symbolChat.symbol");
+    private static final Component SYMBOL_BUTTON_TEXT_TOOLTIP = Component.translatable("fzmm.gui.button.symbolChat.symbol.tooltip");
 
-    private static final net.minecraft.network.chat.Component FONT_BUTTON_TEXT = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.symbolChat.font");
-    private static final net.minecraft.network.chat.Component FONT_BUTTON_TEXT_TOOLTIP = net.minecraft.network.chat.Component.translatable("fzmm.gui.button.symbolChat.font.tooltip");
+    private static final Component FONT_BUTTON_TEXT = Component.translatable("fzmm.gui.button.symbolChat.font");
+    private static final Component FONT_BUTTON_TEXT_TOOLTIP = Component.translatable("fzmm.gui.button.symbolChat.font.tooltip");
 
     private EditBox selectedComponent = null;
     private final SymbolChatComponentHandler<SymbolComponentAdapter> symbolHandler;
@@ -51,6 +50,7 @@ public class SymbolChatCompat {
         List<UIComponent> result = new ArrayList<>();
 
         if (FzmmClient.CONFIG.general.showSymbolButton()) {
+            // avoid direct lambda because it causes NoClassDefFoundError
             result.add(this.fontHandler.initButton(screen, selectedComponent, this::getFontComponent));
             result.add(this.symbolHandler.initButton(screen, selectedComponent, this::getSymbolComponent));
         }
@@ -58,20 +58,16 @@ public class SymbolChatCompat {
         return result;
     }
 
+    private FontComponentAdapter getFontComponent() {
+        return FontComponentAdapter.get();
+    }
+
     private SymbolComponentAdapter getSymbolComponent() {
-        return new SymbolComponentAdapter(new SymbolSelectionPanel(0, 0, SymbolChat.config.symbolPanelHeight.get(), s -> {
+        return SymbolComponentAdapter.of(s -> {
             if (this.selectedComponent != null) {
                 this.selectedComponent.insertText(s);
             }
-        }));
-    }
-
-    private FontComponentAdapter getFontComponent() {
-        FontComponentAdapter.CustomDropDownWidget widget = new FontComponentAdapter.CustomDropDownWidget(0, 0, 180, 15,
-                SymbolChat.fontManager.getFontProcessors(), SymbolChat.fontManager.getCurrentScreenFontProcessor(), false);
-        int expandedHeight = 150 + widget.getHeight(); // 150 is hardcoded in DropDownWidget
-        widget.setHeight(expandedHeight);
-        return new FontComponentAdapter(widget, expandedHeight);
+        });
     }
 
     public EditBox selectedComponent() {

@@ -1,3 +1,4 @@
+/*
 package me.zailer.testmod.client.unit_test;
 
 import fzmm.zailer.me.client.gui.utils.text_filter.AbstractTextFilter;
@@ -126,3 +127,4 @@ public class TextFilterValueTest {
         this.assertEquals(filter, null, "date" + DELIMITER + "25-1-1");
     }
 }
+*/

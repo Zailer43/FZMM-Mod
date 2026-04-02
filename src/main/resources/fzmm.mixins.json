@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "fzmm.zailer.me.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "client": [
     "component.book.MultiLineEditBoxMixin",
     "component.book.MultilineTextFieldAccessor",

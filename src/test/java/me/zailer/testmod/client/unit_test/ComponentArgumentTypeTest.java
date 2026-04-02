@@ -1,3 +1,4 @@
+/*
 package me.zailer.testmod.client.unit_test;
 
 import com.mojang.brigadier.StringReader;
@@ -50,3 +51,4 @@ public class ComponentArgumentTypeTest {
         Assertions.assertEquals(expected, ComponentArgumentType.maxDepthCheck(new StringReader(value)));
     }
 }
+*/

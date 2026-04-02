@@ -40,7 +40,7 @@ public class PlayerHeadSource implements IInteractiveImageLoader {
                 itemStack -> itemStack.getItem() == Items.PLAYER_HEAD,
                 this::setImage,
                 List.of(Items.PLAYER_HEAD.getDefaultInstance()),
-                Items.PLAYER_HEAD.getName(),
+                Items.PLAYER_HEAD.getDefaultInstance().getDisplayName(),
                 false
         );
         FzmmUtils.setScreen(new SelectItemScreen(this.previousScreen, requestedItem));

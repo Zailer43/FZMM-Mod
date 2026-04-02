@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.core.component.DataComponents;
@@ -29,11 +29,11 @@ public class RefillContainer implements ISubCommand {
 
     @Override
     public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        return builder.then(ClientCommandManager.argument("slots to fill", IntegerArgumentType.integer(1, 27)).executes(ctx -> {
+        return builder.then(ClientCommands.argument("slots to fill", IntegerArgumentType.integer(1, 27)).executes(ctx -> {
 
             this.fullContainer(ctx.getArgument("slots to fill", int.class), -1);
             return 1;
-        }).then(ClientCommandManager.argument("first slot", IntegerArgumentType.integer(0, 27)).executes(ctx -> {
+        }).then(ClientCommands.argument("first slot", IntegerArgumentType.integer(0, 27)).executes(ctx -> {
 
             int slotsToFill = ctx.getArgument("slots to fill", int.class);
             int firstSlot = ctx.getArgument("first slot", int.class);
@@ -51,7 +51,7 @@ public class RefillContainer implements ISubCommand {
         ItemStack itemStack = ItemUtils.from(InteractionHand.OFF_HAND);
 
         containerStack.update(DataComponents.CONTAINER, ItemContainerContents.EMPTY, component -> {
-            List<ItemStack> stacksCopy = new ArrayList<>(component.stream().toList());
+            List<ItemStack> stacksCopy = new ArrayList<>(component.allItemsCopyStream().toList());
 
             if (firstSlot == -1) {
                 this.fullContainerEmptySlots(stacksCopy, itemStack, slotsToFill);

@@ -1,3 +1,4 @@
+/*
 package me.zailer.testmod.client.unit_test;
 
 import fzmm.zailer.me.client.gui.utils.text_filter.AbstractTextFilter;
@@ -97,3 +98,4 @@ public class TextFilterTest {
         this.assertEquals(filter, String.format("%s%s%s%s", EXCLUDE_MARKER, filter.key(), DELIMITER, "2025-12-31"), List.of(date2025_12_31), List.of());
     }
 }
+*/

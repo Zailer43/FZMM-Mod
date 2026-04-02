@@ -1,8 +1,8 @@
 package me.zailer.testmod.client.test_command;
 
 
-import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
+import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.utils.SnackBarManager;
 import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.core.Sizing;
@@ -101,7 +101,7 @@ public class SnackBarTest {
                 .closeButton()
                 .button(snackBar -> UIComponents.button(Component.literal("random chat number"), buttonComponent -> {
                     int random = new Random(Util.getEpochMillis()).nextInt(100);
-                    Minecraft.getInstance().gui.getChat().addMessage(Component.literal(String.valueOf(random)));
+                    Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.literal(String.valueOf(random)));
                 })).button(snackBar -> UIComponents.button(Component.literal("random snackbar color"), buttonComponent -> {
                     int color = 0x60000000 + new Random(Util.getEpochMillis()).nextInt(0xFFFFFF);
                     snackBar.surface(Surface.flat(color));

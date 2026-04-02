@@ -49,7 +49,7 @@ public class ParityComponentTest {
             }
         }
 
-        chatHud.addMessage(Component.literal(label + ": " + (isEqual ? "equals" : "not equals")).withStyle(isEqual ? ChatFormatting.GRAY : ChatFormatting.RED));
+        chatHud.addClientSystemMessage(Component.literal(label + ": " + (isEqual ? "equals" : "not equals")).withStyle(isEqual ? ChatFormatting.GRAY : ChatFormatting.RED));
     }
 
     private static void assertBookText(String label, String message) {
