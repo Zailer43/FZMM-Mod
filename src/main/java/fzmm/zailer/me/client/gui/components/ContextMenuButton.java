@@ -31,7 +31,7 @@ public class ContextMenuButton extends EButtonComponent {
 
     @Override
     public void onPress(InputWithModifiers input) {
-        Screen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().gui.screen();
         if (!(screen instanceof BaseFzmmScreen baseScreen)) {
             return;
         }

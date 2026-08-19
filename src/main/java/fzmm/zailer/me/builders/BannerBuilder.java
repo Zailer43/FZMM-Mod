@@ -25,7 +25,7 @@ public class BannerBuilder implements IClipboardState {
 
     private BannerBuilder() {
         this.layers = new ArrayList<>();
-        this.item = Items.WHITE_BANNER;
+        this.item = Items.BANNER.white();
         this.isShield = false;
     }
 
@@ -49,7 +49,7 @@ public class BannerBuilder implements IClipboardState {
 
         return builder()
                 .addLayers(layers)
-                .item(item instanceof BannerItem ? item : Items.WHITE_BANNER)
+                .item(item instanceof BannerItem ? item : Items.BANNER.white())
                 .isShield(isShield);
     }
 
@@ -151,11 +151,10 @@ public class BannerBuilder implements IClipboardState {
 
     public static Item getBannerByDye(DyeColor color) {
         for (var block : BuiltInRegistries.BLOCK.stream().toList()) {
-            if (block instanceof AbstractBannerBlock bannerBlock && bannerBlock.getColor() == color)
-                return block.asItem();
+            if (block instanceof AbstractBannerBlock banner && banner.getColor() == color) return block.asItem();
         }
 
-        return Items.WHITE_BANNER;
+        return Items.BANNER.white();
     }
 
     public void baseBannerColor(DyeColor color) {

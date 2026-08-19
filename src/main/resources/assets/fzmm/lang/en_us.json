@@ -526,6 +526,8 @@
   "itemGroup.fzmm.useful_block_states.item.glowBerries": "Glow berries with berries",
   "itemGroup.fzmm.useful_block_states.item.glowLichenBlock": "Glow lichen block",
   "itemGroup.fzmm.useful_block_states.item.halfDoor": "%s (upper half)",
+  "itemGroup.fzmm.useful_block_states.item.potentSulfurErupting": "Potent sulfur erupting",
+  "itemGroup.fzmm.useful_block_states.item.potentSulfurContinuous": "Potent sulfur continuous",
   "itemGroup.fzmm.useful_block_states.item.hangingLantern": "%s (hanging)",
   "itemGroup.fzmm.useful_block_states.item.poweredShelf": "%s (powered)",
   "itemGroup.fzmm.useful_block_states.item.hangingMangrovePropagule": "Hanging mangrove propagule",

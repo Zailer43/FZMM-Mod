@@ -110,7 +110,7 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
     }
 
     public static String getBaseTranslationKey(Element element) {
-        Screen currentScreen = Minecraft.getInstance().screen;
+        Screen currentScreen = Minecraft.getInstance().gui.screen();
         return currentScreen instanceof BaseFzmmScreen baseFzmmScreen ? baseFzmmScreen.getBaseScreenTranslationKey() : element.getAttribute("baseScreenTranslationKey");
     }
 

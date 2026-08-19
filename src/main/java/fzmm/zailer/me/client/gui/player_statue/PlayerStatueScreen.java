@@ -19,18 +19,18 @@ import fzmm.zailer.me.utils.FzmmWikiConstants;
 import io.wispforest.owo.config.ui.component.ConfigTextBox;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.TextBoxComponent;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
 public class PlayerStatueScreen extends BaseFzmmScreen implements IMemento {
@@ -84,8 +84,8 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void faqExecute(Button buttonWidget) {
-        assert this.minecraft != null;
-        ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, FzmmWikiConstants.PLAYER_STATUE_WIKI_LINK, true);
+        assert this.minecraft.gui.screen() != null;
+        ConfirmLinkScreen.confirmLinkNow(this.minecraft.gui.screen(), FzmmWikiConstants.PLAYER_STATUE_WIKI_LINK, true);
     }
 
     private void execute(Button buttonWidget) {

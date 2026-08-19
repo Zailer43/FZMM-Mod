@@ -70,7 +70,7 @@ public class EquipCommand implements ISubCommand {
 
         if (ItemUtils.isNotAllowedToGive()) {
             FzmmClient.LOGGER.warn("[FzmmCommand] Creative mode is necessary to swap items");
-            client.gui.getChat().addClientSystemMessage(Component.translatable("fzmm.item.error.actionNotAllowed").setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
+            client.gui.hud.getChat().addClientSystemMessage(Component.translatable("fzmm.item.error.actionNotAllowed").setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR)));
             return;
         }
 

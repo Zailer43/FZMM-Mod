@@ -35,7 +35,7 @@ public class FzmmCommand {
                 new SkullCommand() //replace with item editor
         );
 
-        commandBuilder.executes(ctx -> {
+        commandBuilder.requires(FabricClientCommandSource::attended).executes(ctx -> {
             String subcommands = String.join("/", subCommands.stream().map(ISubCommand::alias).toList());
             return sendHelpMessage("commands.fzmm.help", BASE_COMMAND + " " + subcommands);
         });
@@ -59,7 +59,7 @@ public class FzmmCommand {
         Component translation = Component.translatable("commands.fzmm.help.format", infoTranslation, syntaxText)
                 .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
 
-        Minecraft.getInstance().gui.getChat().addClientSystemMessage(translation);
+        Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(translation);
         return 1;
     }
 }

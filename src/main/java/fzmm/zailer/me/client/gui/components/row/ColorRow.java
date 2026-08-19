@@ -97,7 +97,7 @@ public class ColorRow extends AbstractRow implements IListEntry<Color> {
         colorPreview.mouseDown().subscribe((input, doubled) -> {
             ColorOverlay colorOverlay = new ColorOverlay(valueGetter.get(), withAlpha, onPress, colorPreview);
 
-            if (Minecraft.getInstance().screen instanceof BaseFzmmScreen screen) {
+            if (Minecraft.getInstance().gui.screen() instanceof BaseFzmmScreen screen) {
                 screen.addOverlay(colorOverlay);
             }
 

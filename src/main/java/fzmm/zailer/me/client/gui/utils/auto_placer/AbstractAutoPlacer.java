@@ -11,6 +11,7 @@ import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.UIComponent;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,13 +33,12 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
 
     @Override
     protected void setup(EFlowLayout rootComponent) {
-        assert this.minecraft != null;
         assert this.minecraft.player != null;
 
         rootComponent.childByIdOrThrow(FlowLayout.class, "main-layout");
 
         ButtonComponent executeButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "execute");
-        executeButton.setMessage(net.minecraft.network.chat.Component.translatable(BaseFzmmScreen.getOptionBaseTranslationKey(this.baseScreenTranslationKey) + "execute"));
+        executeButton.setMessage(Component.translatable(BaseFzmmScreen.getOptionBaseTranslationKey(this.baseScreenTranslationKey) + "execute"));
 
         this.cancelButton = rootComponent.childByIdOrThrow(ButtonComponent.class, "cancel");
         this.cancelButton.onPress(buttonComponent -> this.onClose());
@@ -116,7 +116,7 @@ public abstract class AbstractAutoPlacer extends BaseFzmmScreen {
     protected void updateLoadingBar(int index, int maxIndex) {
         int percent = (int) (((index + 1) / (float) maxIndex) * 100);
         this.loadingBarLayout.horizontalSizing(Sizing.fill(percent));
-        this.loadingLabel.text(net.minecraft.network.chat.Component.literal(percent + "%"));
+        this.loadingLabel.text(Component.literal(percent + "%"));
     }
 
     protected abstract ItemStack getFinalStack();

@@ -53,13 +53,13 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
         int color = FzmmClient.CONFIG.colors.imagetextMessages().rgb();
 
         List<ItemStack> signContainers = ContainerBuilder.builder()
-                .containerItem(Items.GRAY_SHULKER_BOX)//TODO: replace hardcoded
+                .containerItem(Items.DYED_SHULKER_BOX.gray())//TODO: replace hardcoded
                 .maxItemByContainer(27)
                 .addAll(this.signItemsOf(logic))
                 .getAsList();
 
         ItemStack signMainContainer = ContainerBuilder.builder()
-                .containerItem(Items.LIGHT_GRAY_SHULKER_BOX)
+                .containerItem(Items.DYED_SHULKER_BOX.lightGray())
                 .maxItemByContainer(27)
                 .add(
                         DisplayBuilder.builder()

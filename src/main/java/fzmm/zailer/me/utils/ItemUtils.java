@@ -123,7 +123,7 @@ public class ItemUtils {
                         ))
                         .button(snackBar -> UIComponents.button(Component.translatable("fzmm.gui.title.configs.icon"),
                                 buttonComponent -> {
-                                    client.setScreen(ConfigScreen.create(FzmmClient.CONFIG, client.screen));
+                                    client.gui.setScreen(ConfigScreen.create(FzmmClient.CONFIG, client.gui.screen()));
                                     snackBar.close();
                                 }))
                         .build());
@@ -138,7 +138,7 @@ public class ItemUtils {
                     .backgroundColor(EStyles.ALERT_WARNING_COLOR)
                     .button(snackBar -> UIComponents.button(Component.translatable("fzmm.gui.title.configs.icon"),
                             buttonComponent -> {
-                                client.setScreen(ConfigScreen.create(FzmmClient.CONFIG, client.screen));
+                                client.gui.setScreen(ConfigScreen.create(FzmmClient.CONFIG, client.gui.screen()));
                                 snackBar.close();
                             })
                     ).button(snackBar -> UIComponents.button(Component.translatable("fzmm.giveItem.codecError.ignore"),
@@ -156,7 +156,7 @@ public class ItemUtils {
                     .backgroundColor(EStyles.ALERT_ERROR_COLOR)
                     .button(snackBar -> UIComponents.button(Component.translatable("fzmm.gui.title.history"),
                             buttonComponent -> {
-                                FzmmUtils.setScreen(new HistoryScreen(client.screen));
+                                FzmmUtils.setScreen(new HistoryScreen(client.gui.screen()));
                                 snackBar.close();
                             }))
                     .build()

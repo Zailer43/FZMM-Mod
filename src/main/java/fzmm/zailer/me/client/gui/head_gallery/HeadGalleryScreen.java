@@ -416,8 +416,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void minecraftHeadsExecute(ButtonComponent button) {
-        assert this.minecraft.screen != null;
-        ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, HeadGalleryResources.MINECRAFT_HEADS_URL, true);
+        assert this.minecraft.gui.screen() != null;
+        ConfirmLinkScreen.confirmLinkNow(this.minecraft.gui.screen(), HeadGalleryResources.MINECRAFT_HEADS_URL, true);
     }
 
     private net.minecraft.network.chat.Component getTagButtonText() {

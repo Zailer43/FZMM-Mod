@@ -7,14 +7,15 @@ import fzmm.zailer.me.compat.CompatMods;
 import fzmm.zailer.me.compat.placeholder_api.PlaceholderApiCompat;
 import io.wispforest.owo.ui.component.UIComponents;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.core.Insets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import io.wispforest.owo.ui.core.UIComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.world.item.Items;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class TextFormatPlaceholderApiTab implements ITextFormatTab {
     private static final String PLACEHOLDER_WIKI = "https://placeholders.pb4.eu/user/text-format";
@@ -36,8 +37,8 @@ public class TextFormatPlaceholderApiTab implements ITextFormatTab {
         this.infoLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "placeholder-info");
 
         UIComponent wikiInfo = UIComponents.button(net.minecraft.network.chat.Component.translatable("fzmm.gui.textFormat.button.placeholderApiWiki"), buttonComponent -> {
-            assert Minecraft.getInstance().screen != null;
-            ConfirmLinkScreen.confirmLinkNow(Minecraft.getInstance().screen, PLACEHOLDER_WIKI, true);
+            assert Minecraft.getInstance().gui.screen() != null;
+            ConfirmLinkScreen.confirmLinkNow(Minecraft.getInstance().gui.screen(), PLACEHOLDER_WIKI, true);
         });
         this.infoLayout.child(wikiInfo);
 

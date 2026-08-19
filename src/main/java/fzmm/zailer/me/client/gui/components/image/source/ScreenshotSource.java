@@ -56,9 +56,9 @@ public class ScreenshotSource implements IInteractiveImageLoader {
         this.consumer = consumer;
         Minecraft client = Minecraft.getInstance();
 
-        this.previousScreen = client.screen instanceof BaseFzmmScreen baseScreen ? baseScreen : null;
+        this.previousScreen = client.gui.screen() instanceof BaseFzmmScreen baseScreen ? baseScreen : null;
         SnackBarManager.getInstance().moveToHud(this.previousScreen);
-        client.setScreen(null);
+        client.gui.setScreen(null);
         Hud.add(HUD_CAPTURE_SCREENSHOT, this::getHud);
         instance = this;
     }
@@ -101,7 +101,7 @@ public class ScreenshotSource implements IInteractiveImageLoader {
     }
 
     public void takeScreenshot() {
-        RenderTarget framebuffer = Minecraft.getInstance().getMainRenderTarget();
+        RenderTarget framebuffer = Minecraft.getInstance().gameRenderer.mainRenderTarget();
         try {
             Screenshot.takeScreenshot(framebuffer, screenshot -> {
                 screenshot.getPixels();

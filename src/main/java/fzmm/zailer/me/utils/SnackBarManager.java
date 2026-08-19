@@ -8,10 +8,11 @@ import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.hud.Hud;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+
+import java.util.List;
 
 public class SnackBarManager {
     private static final Identifier SNACK_BAR_HUD = Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "snack_bar");
@@ -102,7 +103,7 @@ public class SnackBarManager {
     }
 
     private ISnackBarScreen getSnackScreen() {
-        return Minecraft.getInstance().screen instanceof ISnackBarScreen screen ? screen : this.hudLayout;
+        return Minecraft.getInstance().gui.screen() instanceof ISnackBarScreen screen ? screen : this.hudLayout;
     }
 
     public void moveToHud(ISnackBarScreen from) {

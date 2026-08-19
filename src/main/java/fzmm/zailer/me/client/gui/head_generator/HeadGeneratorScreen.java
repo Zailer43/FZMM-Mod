@@ -583,8 +583,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void wikiExecute() {
-        assert this.minecraft.screen != null;
-        ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, FzmmWikiConstants.HEAD_GENERATOR_WIKI_LINK, true);
+        assert this.minecraft.gui.screen() != null;
+        ConfirmLinkScreen.confirmLinkNow(this.minecraft.gui.screen(), FzmmWikiConstants.HEAD_GENERATOR_WIKI_LINK, true);
     }
 
     public SkinPreEditOption skinPreEdit() {

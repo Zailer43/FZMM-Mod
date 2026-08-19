@@ -48,7 +48,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
     protected void setup(EFlowLayout rootComponent) {
         //preview
         this.bannerPreview = rootComponent.childByIdOrThrow(ItemComponent.class, "banner-preview");
-        this.bannerBuilder = BannerBuilder.of(Items.WHITE_BANNER.getDefaultInstance());
+        this.bannerBuilder = BannerBuilder.of(Items.BANNER.white().getDefaultInstance());
 
         //left buttons
         rootComponent.childByIdOrThrow(ButtonComponent.class, "give-button").onPress(button -> ItemUtils.give(this.bannerBuilder.get()));
