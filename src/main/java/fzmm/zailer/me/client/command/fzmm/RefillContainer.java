@@ -67,7 +67,7 @@ public class RefillContainer implements ISubCommand {
 
     private void fullContainer(List<ItemStack> stackList, ItemStack stack, int slotsToFill, int firstSlot) {
         int finalSlot = firstSlot + slotsToFill;
-        if (slotsToFill > stackList.size()) {
+        if (finalSlot > stackList.size()) {
             for (int i = stackList.size(); i < finalSlot; i++) {
                 stackList.add(ItemStack.EMPTY);
             }
