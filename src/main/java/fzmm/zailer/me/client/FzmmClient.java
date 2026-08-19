@@ -81,7 +81,7 @@ public class FzmmClient implements ClientModInitializer {
             } else if (AutoPlacerHud.isHudActive) {
                 AutoPlacerHud.removeHud();
             } else {
-                FzmmUtils.setScreen(new MainScreen(client.screen));
+                FzmmUtils.setScreen(new MainScreen(client.gui.screen()));
             }
         });
     }

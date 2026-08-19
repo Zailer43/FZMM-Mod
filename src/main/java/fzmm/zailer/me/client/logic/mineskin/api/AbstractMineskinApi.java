@@ -126,7 +126,7 @@ public abstract class AbstractMineskinApi implements IApiRemote, IApiRateLimited
             snackBar.title(Component.translatable("fzmm.snack_bar.mineskin.error.invalidApiKey"))
                     .details(Component.translatable("fzmm.snack_bar.mineskin.error.invalidApiKey.description"))
                     .button(unused -> EComponents.button(Component.translatable("fzmm.gui.title.configs.icon")).onPress(button ->
-                            Minecraft.getInstance().setScreen(ConfigScreen.create(FzmmClient.CONFIG, Minecraft.getInstance().screen))
+                            Minecraft.getInstance().gui.setScreen(ConfigScreen.create(FzmmClient.CONFIG, Minecraft.getInstance().gui.screen()))
                     ));
         } else {
             String translationKey = "fzmm.gui.mineskin.snack_bar.error." + (statusType == 5 ? "external" : "internal");

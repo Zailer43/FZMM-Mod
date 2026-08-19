@@ -26,7 +26,7 @@ public class TestCommands {
 
         testCommand.then(ClientCommands.literal("head_generator:check_format")
                 .executes(ctx -> {
-                    Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.literal("Missing arguments"));
+                    Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(Component.literal("Missing arguments"));
                     return 0;
                 }).then(ClientCommands.argument("isSlim", BoolArgumentType.bool()).executes(ctx -> {
                     var isSlim = ctx.getArgument("isSlim", Boolean.class);
@@ -38,10 +38,10 @@ public class TestCommands {
 
         testCommand.then(ClientCommands.literal("head_generator:check_pixel")
                 .executes(ctx -> {
-                    Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.literal("Missing arguments"));
+                    Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(Component.literal("Missing arguments"));
                     return 0;
                 }).then(ClientCommands.argument("x", IntegerArgumentType.integer(0, 63)).executes(ctx -> {
-                    Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.literal("Missing arguments"));
+                    Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(Component.literal("Missing arguments"));
 
                     return 0;
                 }).then(ClientCommands.argument("y", IntegerArgumentType.integer(0, 63)).executes(ctx -> {
@@ -55,7 +55,7 @@ public class TestCommands {
 
         testCommand.then(ClientCommands.literal("head_generator:time")
                 .executes(context -> {
-                    Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.literal("Missing arguments"));
+                    Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(Component.literal("Missing arguments"));
                     return 0;
                 }).then(ClientCommands.argument("loops", IntegerArgumentType.integer(1)).executes(ctx -> {
 

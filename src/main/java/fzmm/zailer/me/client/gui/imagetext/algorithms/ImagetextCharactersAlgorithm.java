@@ -96,7 +96,7 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
         this.charactersTextField.enableFontProcess(true);
 
         FlowLayout parentLayout = rootComponent.childByIdOrThrow(FlowLayout.class, TextBoxRow.getTextBoxId(CHARACTERS_ID) + "-parent");
-        if (Minecraft.getInstance().screen instanceof BaseFzmmScreen baseScreen) {
+        if (Minecraft.getInstance().gui.screen() instanceof BaseFzmmScreen baseScreen) {
             parentLayout.removeChild(this.charactersTextField);
 
             List<UIComponent> buttons = baseScreen.getSymbolChatCompat().getButtons(baseScreen, this.charactersTextField);

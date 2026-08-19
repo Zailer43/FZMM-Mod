@@ -63,7 +63,7 @@ public interface ISnackBarScreen {
     default void setScreen(@Nullable Screen screen) {
         Minecraft client = Minecraft.getInstance();
 
-        if (screen == null && client.screen == null) {
+        if (screen == null && client.gui.screen() == null) {
             return;
         }
 
@@ -71,12 +71,12 @@ public interface ISnackBarScreen {
 
         if (!(screen instanceof ISnackBarScreen snackBarScreen)) {
             manager.moveToHud(this);
-        } else if (client.screen == null) {
+        } else if (client.gui.screen() == null) {
             manager.moveToScreen(snackBarScreen);
         } else {
             manager.move(this, snackBarScreen);
         }
 
-        client.setScreen(screen);
+        client.gui.setScreen(screen);
     }
 }

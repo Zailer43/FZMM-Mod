@@ -19,6 +19,7 @@ public class ItemFrameRendererMixin<T extends ItemFrame> {
     private void fzmm$disableItemFrameFrameRendering(T itemFrameEntity, ItemFrameRenderState state, float f, CallbackInfo ci) {
         if ((FzmmClient.CONFIG.general.forceInvisibleItemFrame() && !state.item.isEmpty())) {
             state.isInvisible = true;
+            state.frameModel.clear();
         }
     }
 

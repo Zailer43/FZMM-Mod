@@ -25,7 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Display;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 
 import java.io.IOException;
@@ -79,7 +79,7 @@ public class ImagetextTextDisplayTab implements IImagetextTab, IMemento {
         textDisplayNbt.put(TagsConstant.ENTITY_TAG_TAGS_ID, tagList);
 
         ItemStack spawnEgg = SpawnEggBuilder.builder()
-                .entityType(EntityType.TEXT_DISPLAY)
+                .entityType(EntityTypes.TEXT_DISPLAY)
                 .entityTag(textDisplayNbt)
                 .get();
 

@@ -57,7 +57,7 @@ public class BaseSnackBarComponent extends EFlowLayout implements ISnackBarCompo
     @Override
     public void draw(OwoUIGraphics graphics, int mouseX, int mouseY, float partialTicks, float delta) {
         Minecraft client = Minecraft.getInstance();
-        if (client.options.hideGui && !(client.screen instanceof ISnackBarScreen)) return;
+        if (client.gui.hud.isHidden() && !(client.gui.screen() instanceof ISnackBarScreen)) return;
         super.draw(graphics, mouseX, mouseY, partialTicks, delta);
         if (this.timerComponent != null) {
             this.updateTimer(Util.getMillis() - this.startTimeMillis);

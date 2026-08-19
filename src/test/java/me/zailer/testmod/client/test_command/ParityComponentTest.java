@@ -25,7 +25,7 @@ public class ParityComponentTest {
     }
 
     private static void assertText(String label, List<String> customWrappedText, List<String> vanillaWrappedText) {
-        var chatHud = Minecraft.getInstance().gui.getChat();
+        var chatHud = Minecraft.getInstance().gui.hud.getChat();
         var isEqual = true;
 
         if (customWrappedText.size() != vanillaWrappedText.size()) {
@@ -84,13 +84,13 @@ public class ParityComponentTest {
                 new WritableBookContent(new ArrayList<>())
         );
         // text renderer is initialised in setScreen
-        Minecraft.getInstance().setScreen(bookEditScreen);
+        Minecraft.getInstance().gui.setScreen(bookEditScreen);
 
         for (int i = 0; i < testStr.length(); i++) {
             bookEditScreen.keyPressed(new KeyEvent(testStr.charAt(i), 0, 0));
         }
 
-        Minecraft.getInstance().setScreen(null);
+        Minecraft.getInstance().gui.setScreen(null);
         return new ArrayList<>(bookEditScreen.pages);
     }
 
@@ -106,14 +106,14 @@ public class ParityComponentTest {
                 component.setFocused(true);
             }
         };
-        Minecraft.getInstance().setScreen(screen);
+        Minecraft.getInstance().gui.setScreen(screen);
 
         for (int i = 0; i < testStr.length(); i++) {
             component.setFocused(true);
             component.keyPressed(new KeyEvent(testStr.charAt(i), 0, 0));
         }
 
-        Minecraft.getInstance().setScreen(null);
+        Minecraft.getInstance().gui.setScreen(null);
         return component.getWrappedText();
     }
 }

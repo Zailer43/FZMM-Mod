@@ -59,7 +59,7 @@ public class MainScreen extends BaseFzmmScreen {
     @SuppressWarnings("ConstantConditions")
     protected void setup(EFlowLayout rootComponent) {
         rootComponent.childByIdOrThrow(ButtonComponent.class, "config-button")
-                .onPress(button -> this.minecraft.setScreen(ConfigScreen.create(FzmmClient.CONFIG, this)));
+                .onPress(button -> this.minecraft.gui.setScreen(ConfigScreen.create(FzmmClient.CONFIG, this)));
 
         this.hoveredLabel = rootComponent.childByIdOrThrow(ELabelComponent.class, "hovered");
         List<UIComponent> entryLayoutList = new ArrayList<>();

@@ -30,22 +30,22 @@ public abstract class AbstractCopyTextGeneric extends AbstractCopyTextAlgorithm 
     }
 
     public String getBold(Style style) {
-        return style.isBold() ? this.colorCharacter() + ChatFormatting.BOLD.getChar() : "";
+        return style.isBold() ? this.colorCharacter() + ChatFormatting.BOLD.code : "";
     }
 
     public String getItalic(Style style) {
-        return style.isItalic() ? this.colorCharacter() + ChatFormatting.ITALIC.getChar() : "";
+        return style.isItalic() ? this.colorCharacter() + ChatFormatting.ITALIC.code : "";
     }
 
     public String getUnderline(Style style) {
-        return style.isUnderlined() ? this.colorCharacter() + ChatFormatting.UNDERLINE.getChar() : "";
+        return style.isUnderlined() ? this.colorCharacter() + ChatFormatting.UNDERLINE.code : "";
     }
 
     public String getStrikethrough(Style style) {
-        return style.isStrikethrough() ? this.colorCharacter() + ChatFormatting.STRIKETHROUGH.getChar() : "";
+        return style.isStrikethrough() ? this.colorCharacter() + ChatFormatting.STRIKETHROUGH.code : "";
     }
 
     public String getObfuscated(Style style) {
-        return style.isObfuscated() ? this.colorCharacter() + ChatFormatting.OBFUSCATED.getChar() : "";
+        return style.isObfuscated() ? this.colorCharacter() + ChatFormatting.OBFUSCATED.code : "";
     }
 }

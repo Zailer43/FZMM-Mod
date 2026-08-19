@@ -145,14 +145,14 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
 
         layout.childByIdOrThrow(EButtonComponent.class, "license-types-button")
                 .onPress(buttonComponent -> {
-                    assert this.minecraft.screen != null;
-                    ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, MINECRAFT_HEADS_LICENSE_TYPES_LINK, true);
+                    assert this.minecraft.gui.screen() != null;
+                    ConfirmLinkScreen.confirmLinkNow(this.minecraft.gui.screen(), MINECRAFT_HEADS_LICENSE_TYPES_LINK, true);
                 });
 
         layout.childByIdOrThrow(EButtonComponent.class, "api-key-button")
                 .onPress(buttonComponent -> {
-                    assert this.minecraft.screen != null;
-                    ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, MINECRAFT_HEADS_API_KEY_LINK, true);
+                    assert this.minecraft.gui.screen() != null;
+                    ConfirmLinkScreen.confirmLinkNow(this.minecraft.gui.screen(), MINECRAFT_HEADS_API_KEY_LINK, true);
                 });
 
         TextBoxComponent apiKeyTextBox = layout.childByIdOrThrow(TextBoxComponent.class, "api-key");
@@ -274,8 +274,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void minecraftHeadsLinkExecute(ButtonComponent button) {
-        assert this.minecraft.screen != null;
-        ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, AbstractMchApi.URL, true);
+        assert this.minecraft.gui.screen() != null;
+        ConfirmLinkScreen.confirmLinkNow(this.minecraft.gui.screen(), AbstractMchApi.URL, true);
     }
 
     private void updatePreview(ItemStack stack) {

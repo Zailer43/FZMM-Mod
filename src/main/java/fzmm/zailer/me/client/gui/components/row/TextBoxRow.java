@@ -6,18 +6,18 @@ import fzmm.zailer.me.compat.symbol_chat.components.FontTextBoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.core.Sizing;
+import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.parsing.UIParsing;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.screens.Screen;
 
 public class TextBoxRow extends AbstractRow {
 
@@ -87,7 +87,7 @@ public class TextBoxRow extends AbstractRow {
             row.removeResetButton();
 
         TextBoxComponent textBox = row.childById(TextBoxComponent.class, getTextBoxId(id));
-        Screen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().gui.screen();
 
         if (symbolChatButtons && screen instanceof BaseFzmmScreen baseFzmmScreen && textBox != null)
             row.addSymbolChatButtons(baseFzmmScreen, textBox);

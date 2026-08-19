@@ -35,7 +35,7 @@ public class PlayerHeadSource implements IInteractiveImageLoader {
         this.consumer = consumer;
         Minecraft client = Minecraft.getInstance();
 
-        this.previousScreen = client.screen instanceof BaseFzmmScreen baseScreen ? baseScreen : null;
+        this.previousScreen = client.gui.screen() instanceof BaseFzmmScreen baseScreen ? baseScreen : null;
         RequestedItem requestedItem = new RequestedItem(
                 itemStack -> itemStack.getItem() == Items.PLAYER_HEAD,
                 this::setImage,

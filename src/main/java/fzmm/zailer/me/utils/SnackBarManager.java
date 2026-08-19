@@ -107,7 +107,7 @@ public class SnackBarManager {
     }
 
     private ISnackBarScreen getSnackScreen() {
-        return Minecraft.getInstance().screen instanceof ISnackBarScreen screen ? screen : this.hudLayout;
+        return Minecraft.getInstance().gui.screen() instanceof ISnackBarScreen screen ? screen : this.hudLayout;
     }
 
     public void moveToHud(ISnackBarScreen from) {

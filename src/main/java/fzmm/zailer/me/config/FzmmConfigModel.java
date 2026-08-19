@@ -112,7 +112,7 @@ public class FzmmConfigModel {
     public static class PlayerStatueNest {
         public boolean convertSkinWithAlexModelInSteveModel = true;
         @PredicateConstraint("predicateItem")
-        public String defaultContainer = Items.WHITE_SHULKER_BOX.toString();
+        public String defaultContainer = Items.DYED_SHULKER_BOX.white().toString();
 
         public static boolean predicateItem(String value) {
             return FzmmConfigModel.predicateItem(value);

@@ -171,10 +171,10 @@ public class FzmmUtils {
 
     public static <T extends Screen & ISnackBarScreen> void setScreen(T screen) {
         Minecraft client = Minecraft.getInstance();
-        if (client.screen instanceof ISnackBarScreen snackBarScreen) {
+        if (client.gui.screen() instanceof ISnackBarScreen snackBarScreen) {
             snackBarScreen.setScreen(screen);
         } else {
-            client.setScreen(screen);
+            client.gui.setScreen(screen);
             SnackBarManager.getInstance().moveToScreen(screen);
         }
     }

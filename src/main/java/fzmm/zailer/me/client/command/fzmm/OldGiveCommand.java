@@ -23,10 +23,10 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.item.ItemStack;
+import oshi.util.tuples.Pair;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -74,7 +74,7 @@ public class OldGiveCommand implements ISubCommand {
                 damage = 0;// damage no specified
             }
             CompoundTag nbt = ComponentArgumentType.getNbtCompound(ctx, "nbt");
-            Tuple<String, Integer> version = VersionArgumentType.getVersion(ctx, "item_version");
+            Pair<String, Integer> version = VersionArgumentType.getVersion(ctx, "item_version");
 
             oldGiveItem(item, damage, nbt, version);
             return 1;
@@ -84,10 +84,10 @@ public class OldGiveCommand implements ISubCommand {
         return builder.build();
     }
 
-    private static void oldGiveItem(Identifier item, int damage, CompoundTag nbtCompound, Tuple<String, Integer> oldVersion) {
+    private static void oldGiveItem(Identifier item, int damage, CompoundTag nbtCompound, Pair<String, Integer> oldVersion) {
         CompletableFuture.runAsync(() -> {
             MutableComponent errorMessage = Component.translatable("commands.fzmm.old_give.error", item.toString(), oldVersion.getA()).withStyle(ChatFormatting.RED);
-            ChatComponent chatHud = Minecraft.getInstance().gui.getChat();
+            ChatComponent chatHud = Minecraft.getInstance().gui.hud.getChat();
 
             try {
                Optional<ItemStack> stackOptional = updateStack(item, damage, nbtCompound, oldVersion.getB());

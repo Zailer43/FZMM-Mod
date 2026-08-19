@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.TypedEntityData;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +114,7 @@ public class SignBuilder {
     }
 
     public ItemStack get() {
-        BlockEntityType<?> type = this.isHangingSign() ? BlockEntityType.HANGING_SIGN : BlockEntityType.SIGN;
+        BlockEntityType<?> type = this.isHangingSign() ? BlockEntityTypes.HANGING_SIGN : BlockEntityTypes.SIGN;
 
         this.stack.update(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(type, new CompoundTag()), entityData -> {
             CompoundTag result = entityData.copyTagWithoutId();

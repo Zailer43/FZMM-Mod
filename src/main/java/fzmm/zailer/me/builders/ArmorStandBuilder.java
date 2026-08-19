@@ -8,7 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -22,7 +22,7 @@ public class ArmorStandBuilder {
 
     private ArmorStandBuilder() {
         this.entityTag = new CompoundTag();
-        this.entityTag.putString(TagsConstant.ENTITY_TAG_ID, BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.ARMOR_STAND).getPath());
+        this.entityTag.putString(TagsConstant.ENTITY_TAG_ID, BuiltInRegistries.ENTITY_TYPE.getKey(EntityTypes.ARMOR_STAND).getPath());
     }
 
     public static ArmorStandBuilder builder() {
@@ -38,7 +38,7 @@ public class ArmorStandBuilder {
 
         armorStand.update(DataComponents.CUSTOM_NAME, null, component -> itemName);
         armorStand.update(DataComponents.ENTITY_DATA, null, entityData ->
-                TypedEntityData.of(EntityType.ARMOR_STAND, this.entityTag)
+                TypedEntityData.of(EntityTypes.ARMOR_STAND, this.entityTag)
         );
         return armorStand;
     }

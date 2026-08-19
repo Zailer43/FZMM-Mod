@@ -20,7 +20,7 @@ public class ContainerBuilder {
 
     private ContainerBuilder() {
         this.itemList = new ArrayList<>();
-        this.containerItem = Items.WHITE_SHULKER_BOX;
+        this.containerItem = Items.DYED_SHULKER_BOX.white();
         this.maxItemByContainer = ShulkerBoxBlockEntity.CONTAINER_SIZE;
     }
 

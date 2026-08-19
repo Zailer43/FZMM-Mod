@@ -20,7 +20,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
 
@@ -260,12 +259,13 @@ public class MinecraftHeadsResources {
                 FzmmClient.CONFIG.minecraftHeads.useMchTranslations();
 
         // "Food & Drinks" -> "food-drinks"
-        String id = category.name().toLowerCase().replace(" & ", "-");
+        String id = category.name().toLowerCase().replace(" ", "").replace("&", "-");
+        String key = "fzmm.gui.headGallery.button.filterOption." + id;
 
-        if (useTranslation || !I18n.exists(id)) {
+        if (useTranslation || Component.translatable(key).getString().equals(key)) {
             return Component.literal(category.name());
         } else {
-            return Component.translatable("fzmm.gui.headGallery.button.filterOption." + id);
+            return Component.translatable(key);
         }
     }
 

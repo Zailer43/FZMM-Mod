@@ -5,6 +5,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -18,7 +19,7 @@ public class SpawnEggBuilder {
 
     private SpawnEggBuilder() {
         this.stack = Items.BAT_SPAWN_EGG.getDefaultInstance();
-        this.entityType = EntityType.BAT;
+        this.entityType = EntityTypes.BAT;
         this.entityTag = new CompoundTag();
     }
 

@@ -29,7 +29,7 @@ import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.component.WrittenBookContent;
 import org.jetbrains.annotations.Nullable;
@@ -115,7 +115,7 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
             EFlowLayout component = this.getModel().expandTemplate(EFlowLayout.class, "profile-option", Map.of()).configure(layout -> {
                 ELabelComponent label = layout.childByIdOrThrow(ELabelComponent.class, "label");
 
-                label.text(net.minecraft.network.chat.Component.translatable("fzmm.gui.encryptbook.label.profile",
+                label.text(Component.translatable("fzmm.gui.encryptbook.label.profile",
                         profile.translationKey(),
                         profile.length(),
                         profile.isAsymmetric(),
@@ -128,7 +128,7 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
 
                 //noinspection CodeBlock2Expr
                 removeButton.onPress(button -> {
-                    this.addOverlay(new ConfirmOverlay(net.minecraft.network.chat.Component.translatable("fzmm.gui.encryptbook.label.removeDecryptor"), aBoolean -> {
+                    this.addOverlay(new ConfirmOverlay(Component.translatable("fzmm.gui.encryptbook.label.removeDecryptor"), aBoolean -> {
                         if (aBoolean) {
                             FzmmClient.CONFIG.encryptbook.profiles().remove(profile.toModel());
                             FzmmClient.CONFIG.save();
@@ -187,19 +187,19 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
     }
 
     public void updateDecryptorStatus(@Nullable TranslationEncryptProfile profile) {
-        net.minecraft.network.chat.Component result;
+        Component result;
         boolean isValid = false;
 
         String translationValue = "fzmm.gui.encryptbook.label.profile.";
 
-        if (profile != null && I18n.exists(profile.translationKey())) {
-            String decryptString = net.minecraft.network.chat.Component.translatable(profile.translationKey()).getString();
+        if (profile != null && !Component.translatable(profile.translationKey()).getString().equals(profile.translationKey())) {
+            String decryptString = Component.translatable(profile.translationKey()).getString();
 
             isValid = decryptString.equals(profile.decryptorValue());
             String status = isValid ? "loaded" : "outdated";
-            result = net.minecraft.network.chat.Component.translatable(translationValue + status);
+            result = Component.translatable(translationValue + status);
         } else {
-            result = net.minecraft.network.chat.Component.translatable(translationValue + "notFound");
+            result = Component.translatable(translationValue + "notFound");
         }
 
         result = result.copy().setStyle(Style.EMPTY
@@ -229,8 +229,8 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
     }
 
     private void faqExecute(Button buttonWidget) {
-        assert this.minecraft.screen != null;
-        ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, FzmmWikiConstants.ENCRYPT_BOOK_WIKI_LINK, true);
+        assert this.minecraft.gui.screen() != null;
+        ConfirmLinkScreen.confirmLinkNow(this.minecraft.gui.screen(), FzmmWikiConstants.ENCRYPT_BOOK_WIKI_LINK, true);
     }
 
     public static List<TranslationEncryptProfile> getProfiles() {

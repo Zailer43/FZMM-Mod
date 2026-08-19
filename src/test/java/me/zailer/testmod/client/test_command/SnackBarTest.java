@@ -101,7 +101,7 @@ public class SnackBarTest {
                 .closeButton()
                 .button(snackBar -> UIComponents.button(Component.literal("random chat number"), buttonComponent -> {
                     int random = new Random(Util.getEpochMillis()).nextInt(100);
-                    Minecraft.getInstance().gui.getChat().addClientSystemMessage(Component.literal(String.valueOf(random)));
+                    Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(Component.literal(String.valueOf(random)));
                 })).button(snackBar -> UIComponents.button(Component.literal("random snackbar color"), buttonComponent -> {
                     int color = 0x60000000 + new Random(Util.getEpochMillis()).nextInt(0xFFFFFF);
                     snackBar.surface(Surface.flat(color));

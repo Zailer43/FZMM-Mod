@@ -12,12 +12,12 @@ import fzmm.zailer.me.client.logic.player_statue.StatuePart;
 import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.SnackBarManager;
-import org.joml.Vector3f;
-
-import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Vector3f;
+
+import java.util.ArrayList;
 
 public class PlayerStatueUpdateTab implements IPlayerStatueTab {
     @Override
@@ -56,7 +56,7 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
                 true
         );
 
-        FzmmUtils.setScreen(new SelectItemScreen(client.screen, requestedItem));
+        FzmmUtils.setScreen(new SelectItemScreen(client.gui.screen(), requestedItem));
     }
 
     @Override
