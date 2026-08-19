@@ -122,7 +122,7 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
-        if (this.filter.searchTextBox().getValue().isEmpty()) {
+        if (this.filter.searchTextBox().getValue().isEmpty() || !this.filter.searchTextBox().isFocused()) {
             if (input.isLeft()) {
                 UISounds.playButtonSound();
                 return this.content.addPage(-1);
