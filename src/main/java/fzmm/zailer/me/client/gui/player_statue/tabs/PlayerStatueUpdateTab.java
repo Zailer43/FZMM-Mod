@@ -56,7 +56,7 @@ public class PlayerStatueUpdateTab implements IPlayerStatueTab {
                 true
         );
 
-        FzmmUtils.setScreen(new SelectItemScreen(client.screen, requestedItem));
+        FzmmUtils.setScreen(new SelectItemScreen(client.gui.screen(), requestedItem));
     }
 
     @Override

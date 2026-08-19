@@ -59,7 +59,7 @@ public class SuggestionTextBox extends FontTextBoxComponent {
     }
 
     private void openContextMenu() {
-        Screen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().gui.screen();
         ParentUIComponent root = this.root();
         if (this.contextMenuIsOpen() || screen == null || !(root instanceof FlowLayout rootLayout)) {
             return;

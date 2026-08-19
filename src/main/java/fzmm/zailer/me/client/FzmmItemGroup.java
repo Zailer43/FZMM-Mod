@@ -7,7 +7,7 @@ import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.utils.FzmmUtils;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
-import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.predicates.ItemPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
@@ -20,16 +20,17 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.item.component.SeededContainerLoot;
 import net.minecraft.world.item.component.TypedEntityData;
 import net.minecraft.world.level.block.entity.BannerPattern;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootTable;
 
@@ -106,7 +107,7 @@ public class FzmmItemGroup {
                     entries.accept(new BlockStateItemBuilder(Items.IRON_DOOR, "openIronDoor").add("open", true).get());
                     addItemTag(ItemTags.WOODEN_SHELVES, item -> entries.accept(new BlockStateItemBuilder(item, "poweredShelf", item).add("powered", true).get()));
                     entries.accept(new BlockStateItemBuilder(Items.END_PORTAL_FRAME, "endPortalFrameWithEye").add("eye", true).get());
-                    addItemTag(ItemTags.LANTERNS, item -> {
+                    addItemTag(BlockItemTags.LANTERNS.item(), item -> {
                         entries.accept(new BlockStateItemBuilder(item, "hangingLantern", item).add("hanging", true).get());
                         entries.accept(new BlockStateItemBuilder(item, "lanternOnTheFloor", item).add("hanging", false).get());
                     });
@@ -145,14 +146,14 @@ public class FzmmItemGroup {
                     entries.accept(new BlockStateItemBuilder(Items.CHEST, "rightChest").add("type", "right").get());
                     entries.accept(new BlockStateItemBuilder(Items.TRAPPED_CHEST, "leftTrappedChest").add("type", "left").get());
                     entries.accept(new BlockStateItemBuilder(Items.TRAPPED_CHEST, "rightTrappedChest").add("type", "right").get());
-                    addItemTag(ItemTags.DOORS, item -> addHalfUpper(entries, item, "halfDoor"));
+                    addItemTag(BlockItemTags.DOORS.item(), item -> addHalfUpper(entries, item, "halfDoor"));
                     addTallFlowers(entries);
                     addItemTag(ItemTags.LEAVES, item -> entries.accept(new BlockStateItemBuilder(item, "nonPersistentLeaves", item).add("persistent", false).get()));
                     addItemTag(ItemTags.CANDLES, item -> entries.accept(new BlockStateItemBuilder(item, "litCandle", item).add("lit", true).get()));
                     addItemTag(ItemTags.BEDS, item -> entries.accept(new BlockStateItemBuilder(item, "bedHeadPart", item).add("part", "head").get()));
                     addItemTag(ItemTags.BEDS, item -> entries.accept(new BlockStateItemBuilder(item, "lockedBed", item).add("occupied", true).get()));
                     entries.accept(new BlockStateItemBuilder(Items.MANGROVE_ROOTS, "waterloggedMangroveRoots").add("waterlogged", true).get());
-                    addItemTag(ItemTags.SLABS, item -> entries.accept(new BlockStateItemBuilder(item, "waterloggedBlock", item).add("type", "double").add("waterlogged", true).get()));
+                    addItemTag(BlockItemTags.SLABS.item(), item -> entries.accept(new BlockStateItemBuilder(item, "waterloggedBlock", item).add("type", "double").add("waterlogged", true).get()));
                 }).build();
 
         CreativeModeTab lootChestsItemGroup = FabricCreativeModeTab.builder()
@@ -233,11 +234,11 @@ public class FzmmItemGroup {
 
         itemFrame.update(DataComponents.ENTITY_DATA, null, entityData -> {
             CompoundTag result = entityTag.copy();
-            return TypedEntityData.of(EntityType.ITEM_FRAME, result);
+            return TypedEntityData.of(EntityTypes.ITEM_FRAME, result);
         });
         glowItemFrame.update(DataComponents.ENTITY_DATA, null, entityData -> {
             CompoundTag result = entityTag.copy();
-            return TypedEntityData.of(EntityType.ITEM_FRAME, result);
+            return TypedEntityData.of(EntityTypes.ITEM_FRAME, result);
         });
 
         itemFrame.update(DataComponents.CUSTOM_NAME, null, component -> {
@@ -352,12 +353,12 @@ public class FzmmItemGroup {
             // container_loot component like other lootable blocks in 1.20.5
             // https://bugs.mojang.com/browse/MC-271530
             if (isBrushable) {
-                stack.update(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(BlockEntityType.BRUSHABLE_BLOCK, new CompoundTag()), entityData -> {
+                stack.update(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(BlockEntityTypes.BRUSHABLE_BLOCK, new CompoundTag()), entityData -> {
                     CompoundTag result = entityData.copyTagWithoutId();
 
                     result.putString("LootTable", identifierString);
 
-                    return TypedEntityData.of(BlockEntityType.BRUSHABLE_BLOCK, result);
+                    return TypedEntityData.of(BlockEntityTypes.BRUSHABLE_BLOCK, result);
                 });
             } else {
                 stack.update(DataComponents.CONTAINER_LOOT, null,

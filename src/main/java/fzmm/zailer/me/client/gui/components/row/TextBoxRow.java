@@ -87,7 +87,7 @@ public class TextBoxRow extends AbstractRow {
             row.removeResetButton();
 
         TextBoxComponent textBox = row.childById(TextBoxComponent.class, getTextBoxId(id));
-        Screen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().gui.screen();
 
         if (symbolChatButtons && screen instanceof BaseFzmmScreen baseFzmmScreen && textBox != null)
             row.addSymbolChatButtons(baseFzmmScreen, textBox);

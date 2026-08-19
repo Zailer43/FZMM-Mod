@@ -1,10 +1,12 @@
 package fzmm.zailer.me.client.gui.components.containers;
 
+import com.mojang.datafixers.util.Pair;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.config.FzmmConfig;
+import fzmm.zailer.me.mixin.accessor.ChatFormattingAccessor;
 import fzmm.zailer.me.utils.FzmmUtils;
 import io.wispforest.owo.ui.component.BoxComponent;
 import io.wispforest.owo.ui.component.ButtonComponent;
@@ -16,7 +18,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.util.Tuple;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -289,7 +291,7 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
 
     private FlowLayout getDyeColorsLayout(ColorPickerComponent picker, int width) {
         DyeColor[] defaultDyeColorArray = FzmmUtils.getDyeColorsInOrder();
-        List<Tuple<Color, UIComponent>> dyeColorsComponents = new ArrayList<>();
+        List<Pair<Color, UIComponent>> dyeColorsComponents = new ArrayList<>();
 
         for (DyeColor dyeColor : defaultDyeColorArray) {
             Item dyeItem = Items.AIR;
@@ -302,7 +304,7 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
                 }
             }
 
-            dyeColorsComponents.add(new Tuple<>(Color.ofDye(dyeColor), UIComponents.item(dyeItem.getDefaultInstance())));
+            dyeColorsComponents.add(new Pair<>(Color.ofDye(dyeColor), UIComponents.item(dyeItem.getDefaultInstance())));
         }
 
         List<UIComponent> dyeComponents = this.getColorsComponentsWithIcon(picker, dyeColorsComponents);
@@ -319,11 +321,11 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
         List<UIComponent> formattingComponents = new ArrayList<>();
 
         for (ChatFormatting formatting : defaultFormattingArray) {
-            if (formatting.getColor() == null) {
+            if (TextColor.fromLegacyFormat(formatting) == null) {
                 continue;
             }
 
-            String colorCode = String.valueOf(formatting.getChar());
+            String colorCode = String.valueOf(((ChatFormattingAccessor) (Object) formatting).getCode());
             FlowLayout colorLayout = (FlowLayout) this.newColorBox(picker, Color.ofFormatting(formatting));
             colorLayout.tooltip(net.minecraft.network.chat.Component.literal("&" + colorCode));
             formattingComponents.add(colorLayout);
@@ -335,14 +337,14 @@ public class ColorOverlay extends OverlayContainer<EFlowLayout> {
         return formattingLayout;
     }
 
-    private List<UIComponent> getColorsComponentsWithIcon(ColorPickerComponent picker, List<Tuple<Color, UIComponent>> colors) {
+    private List<UIComponent> getColorsComponentsWithIcon(ColorPickerComponent picker, List<Pair<Color, UIComponent>> colors) {
         List<UIComponent> result = new ArrayList<>();
 
         for (var entry : colors) {
             StackLayout colorStack = UIContainers.stack(Sizing.content(), Sizing.content());
-            FlowLayout colorLayout = (FlowLayout) this.newColorBox(picker, entry.getA());
+            FlowLayout colorLayout = (FlowLayout) this.newColorBox(picker, entry.getFirst());
 
-            UIComponent colorIconComponent = entry.getB();
+            UIComponent colorIconComponent = entry.getSecond();
 
             colorStack.child(colorLayout);
             colorStack.child(colorIconComponent);

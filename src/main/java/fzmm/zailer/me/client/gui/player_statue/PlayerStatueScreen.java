@@ -85,7 +85,7 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMemento {
 
     private void faqExecute(Button buttonWidget) {
         assert this.minecraft != null;
-        ConfirmLinkScreen.confirmLinkNow(this.minecraft.screen, FzmmWikiConstants.PLAYER_STATUE_WIKI_LINK, true);
+        ConfirmLinkScreen.confirmLinkNow(this.minecraft.gui.screen(), FzmmWikiConstants.PLAYER_STATUE_WIKI_LINK, true);
     }
 
     private void execute(Button buttonWidget) {

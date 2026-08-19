@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.command.fzmm;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Dynamic;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.command.ISubCommand;
@@ -23,7 +24,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.item.ItemStack;
@@ -62,7 +62,7 @@ public class OldGiveCommand implements ISubCommand {
             }
             CompoundTag nbt = ComponentArgumentType.getNbtCompound(ctx, "nbt");
 
-            oldGiveItem(item, damage, nbt, VersionArgumentType.VERSIONS.get(0));
+            oldGiveItem(item, damage, nbt, VersionArgumentType.VERSIONS.getFirst());
             return 1;
         });
         var versionNode = ClientCommands.argument("item_version", VersionArgumentType.version()).executes(ctx -> {
@@ -74,7 +74,7 @@ public class OldGiveCommand implements ISubCommand {
                 damage = 0;// damage no specified
             }
             CompoundTag nbt = ComponentArgumentType.getNbtCompound(ctx, "nbt");
-            Tuple<String, Integer> version = VersionArgumentType.getVersion(ctx, "item_version");
+            Pair<String, Integer> version = VersionArgumentType.getVersion(ctx, "item_version");
 
             oldGiveItem(item, damage, nbt, version);
             return 1;
@@ -84,19 +84,19 @@ public class OldGiveCommand implements ISubCommand {
         return builder.build();
     }
 
-    private static void oldGiveItem(Identifier item, int damage, CompoundTag nbtCompound, Tuple<String, Integer> oldVersion) {
+    private static void oldGiveItem(Identifier item, int damage, CompoundTag nbtCompound, Pair<String, Integer> oldVersion) {
         CompletableFuture.runAsync(() -> {
-            MutableComponent errorMessage = Component.translatable("commands.fzmm.old_give.error", item.toString(), oldVersion.getA()).withStyle(ChatFormatting.RED);
-            ChatComponent chatHud = Minecraft.getInstance().gui.getChat();
+            MutableComponent errorMessage = Component.translatable("commands.fzmm.old_give.error", item.toString(), oldVersion.getFirst()).withStyle(ChatFormatting.RED);
+            ChatComponent chatHud = Minecraft.getInstance().gui.hud.getChat();
 
             try {
-               Optional<ItemStack> stackOptional = updateStack(item, damage, nbtCompound, oldVersion.getB());
+               Optional<ItemStack> stackOptional = updateStack(item, damage, nbtCompound, oldVersion.getSecond());
 
                if (stackOptional.isEmpty() || stackOptional.get().isEmpty()) {
                    chatHud.addClientSystemMessage(errorMessage);
                } else {
                    ItemUtils.give(ItemUtils.process(stackOptional.get()));
-                   chatHud.addClientSystemMessage(Component.translatable("commands.fzmm.old_give.success", item.toString(), oldVersion.getA())
+                   chatHud.addClientSystemMessage(Component.translatable("commands.fzmm.old_give.success", item.toString(), oldVersion.getFirst())
                            .withColor(FzmmClient.CHAT_BASE_COLOR)
                    );
                }

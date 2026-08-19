@@ -36,8 +36,8 @@ public class TextFormatPlaceholderApiTab implements ITextFormatTab {
         this.infoLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "placeholder-info");
 
         UIComponent wikiInfo = UIComponents.button(net.minecraft.network.chat.Component.translatable("fzmm.gui.textFormat.button.placeholderApiWiki"), buttonComponent -> {
-            assert Minecraft.getInstance().screen != null;
-            ConfirmLinkScreen.confirmLinkNow(Minecraft.getInstance().screen, PLACEHOLDER_WIKI, true);
+            assert Minecraft.getInstance().gui.screen() != null;
+            ConfirmLinkScreen.confirmLinkNow(Minecraft.getInstance().gui.screen(), PLACEHOLDER_WIKI, true);
         });
         this.infoLayout.child(wikiInfo);
 

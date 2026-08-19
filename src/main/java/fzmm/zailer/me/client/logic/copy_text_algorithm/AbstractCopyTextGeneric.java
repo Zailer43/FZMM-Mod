@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.logic.copy_text_algorithm;
 
+import fzmm.zailer.me.mixin.accessor.ChatFormattingAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -30,22 +31,22 @@ public abstract class AbstractCopyTextGeneric extends AbstractCopyTextAlgorithm 
     }
 
     public String getBold(Style style) {
-        return style.isBold() ? this.colorCharacter() + ChatFormatting.BOLD.getChar() : "";
+        return style.isBold() ? this.colorCharacter() + ((ChatFormattingAccessor) (Object) ChatFormatting.BOLD).getCode() : "";
     }
 
     public String getItalic(Style style) {
-        return style.isItalic() ? this.colorCharacter() + ChatFormatting.ITALIC.getChar() : "";
+        return style.isItalic() ? this.colorCharacter() + ((ChatFormattingAccessor) (Object) ChatFormatting.ITALIC).getCode() : "";
     }
 
     public String getUnderline(Style style) {
-        return style.isUnderlined() ? this.colorCharacter() + ChatFormatting.UNDERLINE.getChar() : "";
+        return style.isUnderlined() ? this.colorCharacter() + ((ChatFormattingAccessor) (Object) ChatFormatting.UNDERLINE).getCode() : "";
     }
 
     public String getStrikethrough(Style style) {
-        return style.isStrikethrough() ? this.colorCharacter() + ChatFormatting.STRIKETHROUGH.getChar() : "";
+        return style.isStrikethrough() ? this.colorCharacter() + ((ChatFormattingAccessor) (Object) ChatFormatting.STRIKETHROUGH).getCode() : "";
     }
 
     public String getObfuscated(Style style) {
-        return style.isObfuscated() ? this.colorCharacter() + ChatFormatting.OBFUSCATED.getChar() : "";
+        return style.isObfuscated() ? this.colorCharacter() + ((ChatFormattingAccessor) (Object) ChatFormatting.OBFUSCATED).getCode() : "";
     }
 }

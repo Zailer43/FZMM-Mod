@@ -23,7 +23,7 @@ public class FontTextBoxComponent extends ConfigTextBox {
     public void insertText(String text) {
         if (!this.fontProcessEnabled) {
             super.insertText(text);
-        } else if (Minecraft.getInstance().screen instanceof BaseFzmmScreen screen) {
+        } else if (Minecraft.getInstance().gui.screen() instanceof BaseFzmmScreen screen) {
             screen.getSymbolChatCompat().processFont(this, text, super::insertText);
         }
     }

@@ -59,7 +59,7 @@ public class FzmmCommand {
         Component translation = Component.translatable("commands.fzmm.help.format", infoTranslation, syntaxText)
                 .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
 
-        Minecraft.getInstance().gui.getChat().addClientSystemMessage(translation);
+        Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(translation);
         return 1;
     }
 }

@@ -19,7 +19,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.TypedEntityData;
@@ -49,13 +49,13 @@ public class ImagetextHologramTab implements IImagetextTab {
         int color = FzmmClient.CONFIG.colors.imagetextHologram().rgb();
 
         List<ItemStack> hologramContainers = ContainerBuilder.builder()
-                .containerItem(Items.WHITE_SHULKER_BOX)//todo
+                .containerItem(Items.DYED_SHULKER_BOX.white())//todo
                 .maxItemByContainer(27)
                 .addAll(this.getHologramItems(logic, x, y, z))
                 .getAsList();
 
         ItemStack hologramMainContainer = ContainerBuilder.builder()
-                .containerItem(Items.WHITE_SHULKER_BOX)//TODO
+                .containerItem(Items.DYED_SHULKER_BOX.white())//TODO
                 .maxItemByContainer(27)
                 .addAll(hologramContainers)
                 .getAsList().get(0);
@@ -104,7 +104,7 @@ public class ImagetextHologramTab implements IImagetextTab {
     }
 
     public static boolean isHologramPart(ItemStack stack) {
-        CompoundTag entityNbt = stack.getOrDefault(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityType.ARMOR_STAND, new CompoundTag()))
+        CompoundTag entityNbt = stack.getOrDefault(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityTypes.ARMOR_STAND, new CompoundTag()))
                 .copyTagWithoutId();
 
         ListTag tags = entityNbt.getListOrEmpty(TagsConstant.ENTITY_TAG_TAGS_ID);

@@ -17,7 +17,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.TypedEntityData;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityTypes;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -112,7 +113,7 @@ public class SignBuilder {
     }
 
     public ItemStack get() {
-        this.stack.update(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(BlockEntityType.SIGN, new CompoundTag()), entityData -> {
+        this.stack.update(DataComponents.BLOCK_ENTITY_DATA, TypedEntityData.of(BlockEntityTypes.SIGN, new CompoundTag()), entityData -> {
             CompoundTag result = entityData.copyTagWithoutId();
 
             this.addSignMessage(this.frontTextList, this.frontCompound, result, TagsConstant.SIGN_FRONT_TEXT);
@@ -120,7 +121,7 @@ public class SignBuilder {
 
             result.putBoolean(TagsConstant.SIGN_IS_WAXED, this.isWaxed);
 
-            return TypedEntityData.of(BlockEntityType.SIGN, result);
+            return TypedEntityData.of(BlockEntityTypes.SIGN, result);
         });
         return this.stack;
     }
