@@ -111,7 +111,7 @@
 
                                 <!-- heads content -->
                                 <fzmm.scroll direction="vertical">
-                                    <fzmm.flow-layout direction="ltr-text-flow" id="content">
+                                    <fzmm.selectable-layout direction="ltr-text-flow" id="content">
                                         <children>
 
                                         </children>
@@ -121,7 +121,7 @@
                                         </sizing>
 
                                         <horizontal-alignment>left</horizontal-alignment>
-                                    </fzmm.flow-layout>
+                                    </fzmm.selectable-layout>
 
                                     <sizing>
                                         <vertical method="fill">100</vertical>

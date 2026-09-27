@@ -40,7 +40,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
     private TextAreaComponent messageTextArea;
@@ -75,13 +74,16 @@ public class EncryptBookScreen extends BaseFzmmScreen implements IMemento {
         this.paddingCharactersField = TextBoxRow.setup(rootComponent, "paddingCharacters", configPadding, 512);
         rootComponent.childByIdOrThrow(ButtonComponent.class, "add-profile-button").onPress(this::addProfileOverlay);
         if (this.paddingCharactersField instanceof SuggestionTextBox suggestionTextBox) {
-            suggestionTextBox.setSuggestionProvider((context, builder) -> {
+            suggestionTextBox.suggestionProvider((SuggestionTextBox.IProvider<String>) input -> {
+                var result = new ArrayList<String>();
+                if (!input.isBlank()) return result;
+
                 String defaultValue = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_,.";
-                builder.suggest(defaultValue);
+                result.add(defaultValue);
                 if (!defaultValue.equals(configPadding)) {
-                    builder.suggest(configPadding);
+                    result.add(configPadding);
                 }
-                return CompletableFuture.completedFuture(builder.build());
+                return result;
             });
         }
 

@@ -43,15 +43,15 @@ public class HeadUtils {
         return ResolvableProfile.createResolved(profile);
     }
 
-    public static Optional<String> unwrapUrl(ResolvableProfile profileComponent) {
+    public static Optional<String> skinValue(ResolvableProfile profileComponent) {
         List<Property> texturesProperties = profileComponent.partialProfile().properties().get("textures").stream().toList();
-
         if (texturesProperties.isEmpty()) return Optional.empty();
 
-        Optional<String> textureValueOptional = TextUtils.decodeBase64(texturesProperties.get(0).value());
-        if (textureValueOptional.isEmpty()) return Optional.empty();
+        return Optional.of(texturesProperties.get(0).value());
+    }
 
-        return unwrapUrl(textureValueOptional.get());
+    public static Optional<String> unwrapUrl(ResolvableProfile profileComponent) {
+        return skinValue(profileComponent).flatMap(HeadUtils::unwrapUrl);
     }
 
     public static Optional<String> unwrapUrl(String skinValue) {
@@ -96,5 +96,14 @@ public class HeadUtils {
         result.update(DataComponents.PROFILE, null, profileComponent -> ResolvableProfile.createUnresolved(name));
 
         return result;
+    }
+
+    public static boolean hasSkin(ItemStack stack) {
+        if (stack.getItem() != Items.PLAYER_HEAD) return false;
+
+        var profile = stack.get(DataComponents.PROFILE);
+        if (profile == null) return false;
+
+        return HeadUtils.skinValue(profile).isPresent();
     }
 }

@@ -3,6 +3,7 @@ package fzmm.zailer.me.client.gui.components.image.source;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.Window;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.FzmmHotkeys;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
@@ -90,7 +91,7 @@ public class ScreenshotSource implements IInteractiveImageLoader {
                 .alignment(HorizontalAlignment.CENTER, VerticalAlignment.CENTER)
                 .positioning(Positioning.absolute(0, 0));
 
-        Component keyTranslation = FzmmClient.OPEN_MAIN_GUI_KEYBINDING.getTranslatedKeyMessage();
+        Component keyTranslation = FzmmHotkeys.mainGuiKey().getTranslatedKeyMessage();
         LabelComponent labelComponent = EComponents.label(Component.translatable("fzmm.gui.option.image.screenshot.message", keyTranslation.getString()));
 
         labelLayout.child(labelComponent);

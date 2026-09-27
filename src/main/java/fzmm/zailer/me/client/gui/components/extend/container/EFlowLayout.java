@@ -9,6 +9,8 @@ import io.wispforest.owo.ui.core.Surface;
 import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.parsing.UIModel;
 import io.wispforest.owo.ui.parsing.UIParsing;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Element;
@@ -22,6 +24,7 @@ public class EFlowLayout extends FlowLayout {
     @Nullable
     private Surface hoveredSurface = null;
     private boolean isFocused = false;
+    private boolean canKeyboardFocus = false;
 
     public EFlowLayout(Sizing horizontalSizing, Sizing verticalSizing, Algorithm algorithm) {
         super(horizontalSizing, verticalSizing, algorithm);
@@ -78,6 +81,14 @@ public class EFlowLayout extends FlowLayout {
         return result;
     }
 
+    /**
+     * Consumes the clicks it receives, preventing them from reaching components behind it
+     */
+    public EFlowLayout setOpaque() {
+        this.mouseDown().subscribe((click, doubled) -> true);
+        return this;
+    }
+
     @Override
     public void parseProperties(UIModel model, Element element, Map<String, Element> children) {
         super.parseProperties(model, element, children);
@@ -105,6 +116,32 @@ public class EFlowLayout extends FlowLayout {
     public void onFocusLost() {
         super.onFocusLost();
         this.isFocused = false;
+    }
+
+    @Override
+    public boolean canFocus(FocusSource source) {
+        return (source == FocusSource.KEYBOARD_CYCLE && this.canKeyboardFocus) || super.canFocus(source);
+    }
+
+    public EFlowLayout canKeyboardFocus(boolean value) {
+        this.canKeyboardFocus = value;
+        return this;
+    }
+
+    @Override
+    public boolean onKeyPress(KeyEvent input) {
+        var focused = this.focusHandler == null ? null : this.focusHandler.focused();
+        if (focused != null && focused.onKeyPress(input)) return true;
+
+        return this.keyPressEvents.sink().onKeyPress(input) || super.onKeyPress(input);
+    }
+
+    @Override
+    public boolean onCharTyped(CharacterEvent input) {
+        var focused = this.focusHandler == null ? null : this.focusHandler.focused();
+        if (focused != null && focused.onCharTyped(input)) return true;
+
+        return this.charTypedEvents.sink().onCharTyped(input) || super.onCharTyped(input);
     }
 
     public static FlowLayout parse(Element element) {

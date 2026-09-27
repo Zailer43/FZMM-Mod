@@ -1,17 +1,12 @@
 package fzmm.zailer.me.utils;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.serialization.DynamicOps;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarScreen;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.multiplayer.PlayerInfo;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -21,30 +16,13 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.DyeColor;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 public class FzmmUtils {
-
-    public static final SuggestionProvider<FabricClientCommandSource> SUGGESTION_PLAYER = (context, builder) -> {
-        LocalPlayer clientPlayer = Minecraft.getInstance().player;
-        String playerInput = builder.getRemainingLowerCase();
-        if (clientPlayer != null) {
-            List<String> playerNamesList = clientPlayer.connection.getOnlinePlayers().stream()
-                    .map(PlayerInfo::getProfile)
-                    .map(GameProfile::name)
-                    .toList();
-
-            for (String playerName : playerNamesList) {
-                if (playerName.toLowerCase(Locale.ROOT).contains(playerInput))
-                    builder.suggest(playerName);
-            }
-        }
-
-        return CompletableFuture.completedFuture(builder.build());
-
-    };
 
     public static MutableComponent disableItalicConfig(MutableComponent message) {
         Style style = message.getStyle();

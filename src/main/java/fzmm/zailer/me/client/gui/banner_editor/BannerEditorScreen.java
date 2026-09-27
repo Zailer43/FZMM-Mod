@@ -41,14 +41,18 @@ public class BannerEditorScreen extends BaseFzmmScreen {
     private HistoryClipboard clipboard;
 
     public BannerEditorScreen(@Nullable Screen parent) {
+        this(parent, Items.BANNER.white().getDefaultInstance());
+    }
+
+    public BannerEditorScreen(@Nullable Screen parent, ItemStack stack) {
         super("banner_editor", "bannerEditor", parent);
+        this.bannerBuilder = BannerBuilder.of(stack);
     }
 
     @Override
     protected void setup(EFlowLayout rootComponent) {
         //preview
         this.bannerPreview = rootComponent.childByIdOrThrow(ItemComponent.class, "banner-preview");
-        this.bannerBuilder = BannerBuilder.of(Items.BANNER.white().getDefaultInstance());
 
         //left buttons
         rootComponent.childByIdOrThrow(ButtonComponent.class, "give-button").onPress(button -> ItemUtils.give(this.bannerBuilder.get()));
@@ -122,6 +126,7 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         this.isShieldButton = rootComponent.childByIdOrThrow(EBooleanButton.class, "is-shield");
         this.isShieldButton.enabled(false);
         this.isShieldButton.onPress(button -> this.isShieldButtonExecute(this.isShieldButton.enabled()));
+        this.updateShieldButton(this.bannerBuilder.get());
 
         this.clipboard.clearUndo();
         this.updatePreview(this.bannerBuilder);
@@ -136,19 +141,14 @@ public class BannerEditorScreen extends BaseFzmmScreen {
         defaultItems.add(Items.SHIELD.getDefaultInstance());
 
         RequestedItem requestedItem = new RequestedItem(
-                itemStack -> itemStack.getItem() instanceof ShieldItem || itemStack.getItem() instanceof BannerItem,
-                itemStack -> {
-                    if (itemStack.isEmpty()) {
-                        return;
-                    }
+                BannerEditorScreen::condition,
+                stack -> {
+                    if (stack.isEmpty()) return;
 
-                    boolean isShield = itemStack.getItem() instanceof ShieldItem;
-                    if (this.isShieldButton.enabled() != isShield) {
-                        this.isShieldButton.onPress();
-                    }
+                    this.updateShieldButton(stack);
 
                     this.clipboard.addUndo(this.bannerBuilder);
-                    this.bannerBuilder = BannerBuilder.of(itemStack);
+                    this.bannerBuilder = BannerBuilder.of(stack);
                     this.updatePreview(this.bannerBuilder);
                 },
                 defaultItems,
@@ -157,8 +157,18 @@ public class BannerEditorScreen extends BaseFzmmScreen {
                 true
         );
 
-        assert this.minecraft != null;
         this.setScreen(new SelectItemScreen(this, requestedItem));
+    }
+
+    public static boolean condition(ItemStack stack) {
+        return stack.getItem() instanceof ShieldItem || stack.getItem() instanceof BannerItem;
+    }
+
+    private void updateShieldButton(ItemStack stack) {
+        boolean isShield = stack.getItem() instanceof ShieldItem;
+        if (this.isShieldButton.enabled() != isShield) {
+            this.isShieldButton.onPress();
+        }
     }
 
     public void updatePreview(IClipboardState state) {

@@ -24,12 +24,7 @@ public class FzmmIcons {
     public static final Icon PINNED;
 
     // Head Generator
-    public static final Icon ROTATE_IN_X_POS;
-    public static final Icon ROTATE_IN_Y_POS;
-    public static final Icon ROTATE_IN_Z_POS;
-    public static final Icon ROTATE_IN_X_NEG;
-    public static final Icon ROTATE_IN_Y_NEG;
-    public static final Icon ROTATE_IN_Z_NEG;
+    public static final int ROTATE_U;
 
     public static final Icon MODEL_SLIM;
     public static final Icon MODEL_WIDE;
@@ -37,6 +32,10 @@ public class FzmmIcons {
     public static final Icon PRE_EDIT_NONE;
     public static final Icon PRE_EDIT_OVERLAP;
     public static final Icon PRE_EDIT_REMOVE;
+
+    public static Icon of(int[] uv) {
+        return of(uv[0], uv[1]);
+    }
 
     private static Icon of(int u, int v) {
         return Icon.of(TEXTURE, u, v, 256, 256);
@@ -75,12 +74,8 @@ public class FzmmIcons {
         v = -16;
 
         // fifth row are head generator icons x2
-        ROTATE_IN_X_POS = of(u, v += 16);
-        ROTATE_IN_Y_POS = of(u, v += 16);
-        ROTATE_IN_Z_POS = of(u, v += 16);
-        ROTATE_IN_X_NEG = of(u, v += 16);
-        ROTATE_IN_Y_NEG = of(u, v += 16);
-        ROTATE_IN_Z_NEG = of(u, v += 16);
+        ROTATE_U = u;
+        v += 16 * 6; // xPos, yPos, zPos, xNeg, yNeg, zNeg
 
         MODEL_SLIM = of(u, v += 16);
         MODEL_WIDE = of(u, v += 16);

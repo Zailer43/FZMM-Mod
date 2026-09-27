@@ -1,6 +1,7 @@
 accessWidener v1 official
 
 accessible class net/minecraft/client/gui/components/MultilineTextField$StringView
+accessible class net/minecraft/client/resources/SkinManager$TextureCache
 
 accessible method net/minecraft/client/gui/components/EditBox getMaxLength ()I
 accessible method net/minecraft/client/Screenshot getFile (Ljava/io/File;)Ljava/io/File;
@@ -12,6 +13,7 @@ accessible field net/minecraft/client/gui/screens/inventory/BookViewScreen TEXT_
 accessible field net/minecraft/client/gui/screens/inventory/BookViewScreen TEXT_HEIGHT I
 accessible field net/minecraft/client/gui/screens/inventory/BookViewScreen IMAGE_WIDTH I
 accessible field net/minecraft/client/gui/screens/inventory/BookViewScreen IMAGE_HEIGHT I
+accessible field net/minecraft/client/resources/SkinManager skinTextures Lnet/minecraft/client/resources/SkinManager$TextureCache;
 
 # Test
 accessible field net/minecraft/client/gui/screens/inventory/BookEditScreen pages Ljava/util/List;

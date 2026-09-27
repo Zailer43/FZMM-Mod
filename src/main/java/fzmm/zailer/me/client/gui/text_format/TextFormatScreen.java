@@ -21,17 +21,17 @@ import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.util.FocusHandler;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Style;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.ItemStack;
 
 public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
     public static final net.minecraft.network.chat.Component EMPTY_COLOR_TEXT = net.minecraft.network.chat.Component.translatable("fzmm.gui.textFormat.error.emptyColor").setStyle(Style.EMPTY.withColor(EStyles.TEXT_ERROR_COLOR.rgb()));
@@ -85,6 +85,7 @@ public class TextFormatScreen extends BaseFzmmScreen implements IMemento {
     @Override
     protected void initFocus(FocusHandler focusHandler) {
         focusHandler.focus(this.messageTextField, UIComponent.FocusSource.MOUSE_CLICK);
+        this.messageTextField.moveCursorToEnd(false);
     }
 
     private void onSelectTab(ITab tab) {

@@ -32,6 +32,7 @@ import io.wispforest.owo.ui.util.UISounds;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
@@ -122,6 +123,8 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
 
     @Override
     public boolean keyPressed(KeyEvent input) {
+        if (this.content.keyPressed(input)) return true;
+
         if (this.filter.searchTextBox().getValue().isEmpty() || !this.filter.searchTextBox().isFocused()) {
             if (input.isLeft()) {
                 UISounds.playButtonSound();
@@ -133,6 +136,11 @@ public class HeadGalleryScreen extends BaseFzmmScreen implements IMemento {
         }
 
         return super.keyPressed(input);
+    }
+
+    @Override
+    public boolean charTyped(CharacterEvent input) {
+        return this.content.charTyped(input) || super.charTyped(input);
     }
 
     private OverlayContainer<EFlowLayout> initOpenOverlay(boolean askForApiKey) {

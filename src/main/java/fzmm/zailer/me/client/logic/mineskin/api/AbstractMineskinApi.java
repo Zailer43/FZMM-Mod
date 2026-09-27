@@ -87,7 +87,7 @@ public abstract class AbstractMineskinApi implements IApiRemote, IApiRateLimited
         FzmmClient.LOGGER.warn("[AbstractMineskinApi] API Warning(s): {}", warnings.getString());
         return Optional.of(BaseSnackBarComponent.builder(SnackBarManager.MINESKIN_WARNINGS_ID)
                 .backgroundColor(EStyles.ALERT_WARNING_COLOR)
-                .title(Component.translatable("fzmm.gui.mineskin.snack_bar.warnings.title"))
+                .title(Component.translatable("fzmm.snack_bar.mineskin.warnings.title"))
                 .details(warnings)
                 .highTimer()
                 .startTimer()
@@ -129,7 +129,7 @@ public abstract class AbstractMineskinApi implements IApiRemote, IApiRateLimited
                             Minecraft.getInstance().gui.setScreen(ConfigScreen.create(FzmmClient.CONFIG, Minecraft.getInstance().gui.screen()))
                     ));
         } else {
-            String translationKey = "fzmm.gui.mineskin.snack_bar.error." + (statusType == 5 ? "external" : "internal");
+            String translationKey = "fzmm.snack_bar.mineskin.error." + (statusType == 5 ? "external" : "internal");
             snackBar.title(Component.translatable(translationKey))
                     .details(Component.translatable(translationKey + ".description"));
         }

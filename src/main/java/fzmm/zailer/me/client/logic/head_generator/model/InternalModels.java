@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.logic.head_generator.model;
 
+import com.google.common.collect.ImmutableList;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.head_generator.HeadResourcesLoader;
@@ -14,6 +15,7 @@ public class InternalModels {
     public static HeadModelEntry OLD_FORMAT_TO_NEW_FORMAT;
     public static HeadModelEntry SLIM_TO_WIDE;
     public static HeadModelEntry WIDE_TO_SLIM;
+    public static List<HeadModelEntry> ROTATE;
     public static HeadModelEntry ROTATE_IN_X_AXIS;
     public static HeadModelEntry ROTATE_IN_Y_AXIS;
     public static HeadModelEntry ROTATE_IN_Z_AXIS;
@@ -65,5 +67,6 @@ public class InternalModels {
         ROTATE_IN_X_AXIS = load("rotate_in_x_axis");
         ROTATE_IN_Y_AXIS = load("rotate_in_y_axis");
         ROTATE_IN_Z_AXIS = load("rotate_in_z_axis");
+        ROTATE = ImmutableList.of(ROTATE_IN_X_AXIS, ROTATE_IN_Y_AXIS, ROTATE_IN_Z_AXIS);
     }
 }

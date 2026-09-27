@@ -83,6 +83,7 @@ public class SelectItemScreen extends BaseFzmmScreen {
     @Override
     protected void initFocus(FocusHandler focusHandler) {
         focusHandler.focus(this.searchField, UIComponent.FocusSource.MOUSE_CLICK);
+        this.searchField.moveCursorToEnd(false);
     }
 
     private void setupSourceButtons(EFlowLayout rootComponent) {

@@ -7,12 +7,16 @@ import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxElement;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxEntry;
+import fzmm.zailer.me.client.gui.utils.context_menu.ICtxComponent;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
 import fzmm.zailer.me.utils.ItemUtils;
 import fzmm.zailer.me.utils.TextUtils;
+import io.wispforest.owo.itemgroup.Icon;
 import io.wispforest.owo.ui.component.SmallCheckboxComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -84,17 +88,17 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
     @Override
     public void setupComponents(EFlowLayout rootComponent) {
         this.signTypeButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "signType");
-        this.signTypeButton.setContextMenuOptions(dropdownComponent -> {
-            List<WoodType> optionList = WoodType.values()
-                    .sorted(Comparator.comparing(woodType1 -> this.getSignText(woodType1).getString()))
-                    .toList();
-            for (var option : optionList) {
-                dropdownComponent.button(this.getSignText(option), dropdownButton -> {
-                    this.updateSignType(option);
-                    dropdownButton.remove();
-                });
-            }
-        });
+        var entries = new ArrayList<CtxElement<Object>>();
+        var optionList = WoodType.values()
+                .sorted(Comparator.comparing(woodType1 -> this.getSignText(woodType1).getString()))
+                .toList();
+        for (var option : optionList) {
+            entries.add(
+                    CtxEntry.none("imagetext_sign_" + option.name(), o -> this.updateSignType(option))
+                            .component(ICtxComponent.simple(this.getSignText(option), Icon.of(signOf(option, false))))
+            );
+        }
+        this.signTypeButton.entries(entries);
         this.updateSignType(WoodType.OAK);
         this.isHangingSignButton = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "isHangingSign-checkbox");
         this.isHangingSignButton.checked(false);
@@ -123,7 +127,7 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
         int horizontalSigns = this.horizontalSignsOf(imagetext);
         int verticalSigns = this.verticalSignsOf(height);
         int maxTextWidth = this.getMaxTextWidth();
-        Item item = this.getItem();
+        Item item = signOf(this.woodType, this.isHangingSignButton.checked());
 
         FormattedCharSequence[][] imagetextWrapped = new FormattedCharSequence[imagetext.size()][horizontalSigns];
         for (int i = 0; i != imagetext.size(); i++) {
@@ -210,13 +214,11 @@ public class ImagetextSignTab implements IImagetextTab, IImagetextTooltip, IMeme
         return signBlockEntity.getMaxTextLineWidth();
     }
 
-    public Item getItem() {
-        boolean isHangingSign = this.isHangingSignButton.checked();
-
+    public static Item signOf(WoodType wood, boolean isHanging) {
         for (var block : BuiltInRegistries.BLOCK.stream().toList()) {
-            if (isHangingSign && block instanceof CeilingHangingSignBlock hangingSignBlock && hangingSignBlock.type() == this.woodType) {
+            if (isHanging && block instanceof CeilingHangingSignBlock hangingSignBlock && hangingSignBlock.type() == wood) {
                 return hangingSignBlock.asItem();
-            } else if (!isHangingSign && block instanceof StandingSignBlock signBlock && signBlock.type() == this.woodType) {
+            } else if (!isHanging && block instanceof StandingSignBlock signBlock && signBlock.type() == wood) {
                 return signBlock.asItem();
             }
         }

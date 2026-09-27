@@ -7,15 +7,11 @@ import fzmm.zailer.me.builders.ArmorStandBuilder;
 import fzmm.zailer.me.builders.ContainerBuilder;
 import fzmm.zailer.me.builders.DisplayBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.components.extend.EComponents;
-import fzmm.zailer.me.client.gui.components.extend.EStyles;
-import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.UpdatableSnackBarComponent;
 import fzmm.zailer.me.client.gui.options.HorizontalDirectionOption;
 import fzmm.zailer.me.client.gui.player_statue.tabs.PlayerStatueGenerateTab;
 import fzmm.zailer.me.client.logic.player_statue.statue_head_skin.*;
 import fzmm.zailer.me.utils.*;
-import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -40,7 +36,7 @@ public class PlayerStatue {
     private BufferedImage playerSkin;
     private final Vector3f pos;
     private final HorizontalDirectionOption direction;
-    private UpdatableSnackBarComponent snackBar;
+    private UpdatableSnackBarComponent progress;
     private int partsGenerated;
     private int totalToGenerate;
 
@@ -56,8 +52,9 @@ public class PlayerStatue {
         this.statueList.clear();
 
         int scale = this.getSkinScale();
-        if (FzmmClient.CONFIG.playerStatue.convertSkinWithAlexModelInSteveModel() && ImageUtils.isSlimSimpleCheck(this.playerSkin, scale))
+        if (FzmmClient.CONFIG.playerStatue.convertSkinWithAlexModelInSteveModel() && ImageUtils.isSlimSimpleCheck(this.playerSkin, scale)) {
             this.playerSkin = ImageUtils.convertInSteveModel(this.playerSkin, scale);
+        }
 
         this.addStatueParts();
 
@@ -68,9 +65,9 @@ public class PlayerStatue {
         Minecraft.getInstance().execute(() -> this.notifyStart(isCancelled));
         return this.generate(isCancelled)
                 .whenComplete((unused, throwable) -> Minecraft.getInstance().execute(() -> {
-                    this.snackBar.close();
+                    this.progress.close();
                     if (throwable != null) return;
-                    this.notifyComplete();
+                    FzmmClient.MINESKIN_API.showSuccess();
                 }));
     }
 
@@ -117,36 +114,10 @@ public class PlayerStatue {
     }
 
     private void notifyStart(AtomicBoolean isCancelled) {
-        this.snackBar = (UpdatableSnackBarComponent) UpdatableSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
-                .backgroundColor(EStyles.ALERT_LOADING_COLOR)
-                .keepOnLimit()
-                .title(Component.translatable("fzmm.snack_bar.playerStatue.loading.title"))
-                .details(Component.translatable("fzmm.snack_bar.playerStatue.loading.details",
-                        this.partsGenerated, 0, 0, 0, this.statueList.get(0).getName()))
-                .sizing(Sizing.fixed(220), Sizing.content())
-                .startTimer()
-                .button(snackBar ->
-                        EComponents.button(Component.translatable("fzmm.gui.button.cancel"))
-                                .onPress(button -> {
-                                    isCancelled.set(true);
-                                    PlayerStatueGenerateTab.active = false;
-                                    snackBar.close();
-                                })
-                ).build();
-
-        SnackBarManager.getInstance().add(this.snackBar);
-    }
-
-    private void notifyComplete() {
-        SnackBarManager.getInstance().add(BaseSnackBarComponent.builder(SnackBarManager.PLAYER_STATUE_ID)
-                .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
-                .keepOnLimit()
-                .title(Component.translatable("fzmm.snack_bar.playerStatue.successful.title"))
-                .sizing(Sizing.fixed(220), Sizing.content())
-                .mediumTimer()
-                .startTimer()
-                .build()
-        );
+        this.progress = FzmmClient.MINESKIN_API.showProcessing(this.totalToGenerate, button -> {
+            isCancelled.set(true);
+            PlayerStatueGenerateTab.active = false;
+        });
     }
 
     public CompletableFuture<Void> generate(AtomicBoolean isCancelled) {
@@ -154,17 +125,19 @@ public class PlayerStatue {
                 .map(statuePart -> statuePart.drawAndGet(this.playerSkin, this.getSkinScale()))
                 .toList();
 
-        return FzmmClient.MINESKIN_API.uploadSequentially(parts,
+        return FzmmClient.MINESKIN_API.uploadSequentially(isCancelled, parts,
                 (skin, response) -> {
                     this.partsGenerated++;
                     for (var part : this.statueList) {
                         if (part.isEquals(skin)) {
                             part.value(response.data().orElseThrow().skin().orElseThrow().toSkinValue());
-                            this.updateStatus(part, FzmmClient.MINESKIN_API.getWaitMillis());
+                            Minecraft.getInstance().execute(() ->
+                                    FzmmClient.MINESKIN_API.updateProcessing(this.progress, this.partsGenerated, this.totalToGenerate)
+                            );
                             return;
                         }
                     }
-                }, isCancelled
+                }
         );
     }
 
@@ -263,24 +236,6 @@ public class PlayerStatue {
                 .get();
 
         return container;
-    }
-
-    public void updateStatus(StatuePart part, long delayMillis) {
-        Minecraft.getInstance().execute(() -> {
-            float delay = delayMillis / 1000f;
-            this.snackBar.updateTitle(Component.translatable("fzmm.snack_bar.playerStatue.loading.title"));
-            this.snackBar.updateDetails(Component.translatable("fzmm.snack_bar.playerStatue.loading.details",
-                    part.getName(),
-                    this.partsGenerated,
-                    this.totalToGenerate,
-                    new DecimalFormat("#,#0.0").format(delay)
-            ));
-            this.snackBar.updateTimerBar(this.partsGenerated / (float) this.totalToGenerate);
-
-            if (!this.snackBar.hasParent()) {
-                SnackBarManager.getInstance().add(this.snackBar);
-            }
-        });
     }
 
     public static ItemStack updateStatue(ItemStack container, Vector3f pos, HorizontalDirectionOption direction, String name) {

@@ -1,358 +1,193 @@
 package fzmm.zailer.me.client.gui.components;
 
-import com.mojang.brigadier.suggestion.Suggestion;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import fzmm.zailer.me.client.FzmmClient;
-import fzmm.zailer.me.client.gui.components.extend.EComponents;
-import fzmm.zailer.me.client.gui.components.extend.EContainers;
-import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
+import fzmm.zailer.me.client.gui.BaseFzmmScreen;
+import fzmm.zailer.me.client.gui.utils.context_menu.*;
 import fzmm.zailer.me.compat.symbol_chat.components.FontTextBoxComponent;
-import io.wispforest.owo.ui.component.DropdownComponent;
-import io.wispforest.owo.ui.component.LabelComponent;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
-import io.wispforest.owo.ui.core.*;
-import net.minecraft.ChatFormatting;
+import io.wispforest.owo.ui.core.Sizing;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.input.MouseButtonInfo;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+import oshi.util.tuples.Pair;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-// TODO: Refactor this spaghetti
 public class SuggestionTextBox extends FontTextBoxComponent {
-    private static final int SUGGESTION_HEIGHT = 16;
-    private final SuggestionPosition suggestionPosition;
-    private SuggestionProvider<?> suggestionProvider;
-    private int maxSuggestionLines;
-    private int selectedSuggestionIndex = -1;
-    private boolean disableCallback = false;
+    public static final IProvider<?> EMPTY_SUGGESTIONS = (IProvider<Object>) input -> List.of();
+    private static final int SUGGESTION_HEIGHT = 18;
+    private final int maxSuggestionLines = 5;
     @Nullable
-    private Runnable suggestionSelectedCallback = null;
+    private SuggestionTextBox.IProvider<?> suggestionProvider = null;
     @Nullable
-    private DropdownComponent suggestionsContextMenu;
-    @Nullable
-    private ScrollContainer<FlowLayout> suggestionsContainer = null;
-    @Nullable
-    private FlowLayout suggestionsLayout = null;
+    private Runnable selectedCallback = null;
+    protected CtxMenuManager<String> contextMenu = new CtxMenuManager<>(new ArrayList<>(), o -> null);
+    private CompletableFuture<Boolean> suggestionFuture = CompletableFuture.completedFuture(false);
+    private String previousValue = "";
 
-    public SuggestionTextBox() {
-        this(Sizing.content(), SuggestionPosition.BOTTOM, 5);
-    }
-
-    public SuggestionTextBox(Sizing horizontalSizing, SuggestionPosition position, int maxSuggestionLines) {
+    public SuggestionTextBox(Sizing horizontalSizing) {
         super(horizontalSizing);
-        this.suggestionProvider = (nul, builder) -> CompletableFuture.completedFuture(builder.build());
-        this.suggestionPosition = position;
-
-        this.setMaxSuggestionLines(maxSuggestionLines);
         this.onChanged().subscribe(this::updateSuggestions);
     }
 
-    private void openContextMenu() {
-        Screen screen = Minecraft.getInstance().gui.screen();
-        ParentUIComponent root = this.root();
-        if (this.contextMenuIsOpen() || screen == null || !(root instanceof FlowLayout rootLayout)) {
-            return;
-        }
-
-        this.suggestionsContextMenu = DropdownComponent.openContextMenu(screen, rootLayout, FlowLayout::child, this.x(), this.y(), suggestionDropdown -> {
-            suggestionDropdown.clearChildren();
-
-            this.suggestionsLayout = new EFlowLayout(Sizing.fill(100), Sizing.content(), FlowLayout.Algorithm.VERTICAL) {
-                // when some components, like snack bars, are removed, the position of
-                // the context menu changes to Y 0 for some reason if suggestion is in an overlay
-                @Override
-                public void updateX(int x) {
-                    super.updateX(x);
-                    SuggestionTextBox.this.updateSuggestionsPos();
-                }
-
-                @Override
-                public void updateY(int y) {
-                    super.updateY(y);
-                    SuggestionTextBox.this.updateSuggestionsPos();
-                }
-            };
-            this.suggestionsContainer = EContainers.verticalScroll(Sizing.fixed(this.width()),
-                    Sizing.expand(100), this.suggestionsLayout);
-
-
-            suggestionDropdown.child(this.suggestionsContainer);
-        });
-
-        this.updateSuggestions(this.getValue());
+    private Sizing menuVerticalSizing(int lines) {
+        return Sizing.fixed(Math.min(this.menuHeightFrom(lines), this.menuHeightFrom(this.maxSuggestionLines)));
     }
 
-    private void closeContextMenu() {
-        if (this.suggestionsLayout != null) {
-            this.suggestionsLayout.clearChildren();
-        }
-
-        if (this.suggestionsContextMenu != null) {
-            this.suggestionsContextMenu.remove();
-        }
-
-        this.suggestionsLayout = null;
-        this.suggestionsContainer = null;
-        this.suggestionsContextMenu = null;
-    }
-
-    private boolean contextMenuIsOpen() {
-        return this.suggestionsContextMenu != null &&
-                this.suggestionsContextMenu.hasParent() &&
-                this.suggestionsContainer != null &&
-                this.suggestionsLayout != null;
-    }
-
-    private boolean updateSelectedSuggestionIndex(int addIndex) {
-        return this.updateSelectedSuggestionIndex(this.selectedSuggestionIndex, this.selectedSuggestionIndex + addIndex);
-    }
-
-    private boolean updateSelectedSuggestionIndex(int currentIndex, int newIndex) {
-        if (this.suggestionsLayout == null || this.suggestionsContainer == null) {
-            return false;
-        }
-
-        List<UIComponent> children = this.suggestionsLayout.children();
-        int childrenSize = children.size();
-
-        if (currentIndex >= 0 && childrenSize > currentIndex) {
-            children.get(currentIndex).onFocusLost();
-        }
-
-        // cycles when it moves out of bounds
-        if (newIndex < 0) {
-            newIndex = childrenSize - 1;
-        } else if (newIndex >= childrenSize) {
-            newIndex = 0;
-        }
-
-        if (childrenSize > newIndex) {
-            UIComponent selectedComponent = children.get(newIndex);
-            selectedComponent.onFocusGained(FocusSource.KEYBOARD_CYCLE);
-            this.suggestionsContainer.scrollTo(selectedComponent);
-        }
-
-        this.selectedSuggestionIndex = newIndex;
-        return true;
-    }
-
-    private void updateSuggestions(String newMessage) {
-        if (!this.contextMenuIsOpen()) {
-            this.openContextMenu();
-            return;
-        }
-        assert this.suggestionsLayout != null;
-        this.suggestionsLayout.clearChildren();
-
-        String newMessageToLowerCase = newMessage.toLowerCase();
-        List<Suggestion> suggestions = this.getSuggestions(newMessage);
-        int maxHorizontalSizing = this.suggestionsLayout.width() - 10;
-
-        for (int i = 0; i != suggestions.size(); i++) {
-            String suggestion = suggestions.get(i).getText();
-            int matchIndex = suggestion.toLowerCase().indexOf(newMessageToLowerCase);
-
-            if (matchIndex >= 0 && this.suggestionsLayout != null) {
-                net.minecraft.network.chat.Component suggestionMessage = this.getSuggestionMessage(suggestion, newMessageToLowerCase, matchIndex, maxHorizontalSizing);
-                this.suggestionsLayout.child(this.getSuggestionComponent(suggestion, suggestionMessage));
-            }
-        }
-
-        if (this.suggestionsContextMenu != null) {
-            this.suggestionsContextMenu.verticalSizing(Sizing.fixed(this.getMaxSuggestionsHeight(suggestions.size())));
-        }
-    }
-
-    private List<Suggestion> getSuggestions(String message) {
-        try {
-            return this.suggestionProvider.getSuggestions(null, new SuggestionsBuilder(message, 0)).get().getList();
-        } catch (Exception e) {
-            FzmmClient.LOGGER.error("[SuggestionTextBox] Failed to get suggestions", e);
-            assert this.suggestionsLayout != null;
-
-            this.suggestionsLayout.child(EComponents.label(net.minecraft.network.chat.Component.literal("Failed to get suggestions")));
-        }
-
-        return new ArrayList<>();
-    }
-
-    private net.minecraft.network.chat.Component getSuggestionMessage(String suggestion, String textBoxMessageToLowerCase, int matchIndex, int maxHorizontalSizing) {
-        Font textRenderer = Minecraft.getInstance().font;
-        int startNewColorIndex = matchIndex + textBoxMessageToLowerCase.length();
-
-        if (textRenderer.width(suggestion) > maxHorizontalSizing) {
-            int suggestionLength = suggestion.length();
-            String ellipsis = "...";
-            maxHorizontalSizing -= textRenderer.width(ellipsis);
-            suggestion = ellipsis + textRenderer.plainSubstrByWidth(suggestion, maxHorizontalSizing, true);
-            int difference = Math.abs(suggestionLength - suggestion.length());
-            matchIndex -= difference;
-            matchIndex = Math.max(0, matchIndex);
-            startNewColorIndex -= difference;
-            startNewColorIndex = Math.max(0, startNewColorIndex);
-        }
-
-        return net.minecraft.network.chat.Component.literal(suggestion.substring(0, matchIndex))
-                .setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY))
-                .append(
-                        net.minecraft.network.chat.Component.literal(suggestion.substring(matchIndex, startNewColorIndex))
-                                .setStyle(Style.EMPTY.withColor(ChatFormatting.YELLOW))
-                ).append(
-                        net.minecraft.network.chat.Component.literal(suggestion.substring(startNewColorIndex))
-                                .setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY))
-                );
-    }
-
-    private UIComponent getSuggestionComponent(String suggestion, net.minecraft.network.chat.Component suggestionText) {
-        LabelComponent labelComponent = EComponents.label(suggestionText);
-        EFlowLayout layout = EContainers.verticalFlow(Sizing.fill(100), Sizing.fixed(SUGGESTION_HEIGHT));
-
-        Surface selectedSurface = Surface.flat(0xE0000000).and(Surface.outline(0xA0FFFFFF));
-        Surface unselectedSurface = Surface.flat(0xA0000000);
-
-        layout.focusGained().subscribe(source -> layout.surface(Surface.BLANK));
-        layout.hoveredSurface(selectedSurface);
-        layout.focusLost().subscribe(() -> layout.surface(unselectedSurface));
-        layout.mouseDown().subscribe((input, doubled) -> selectSuggestion(suggestion));
-        layout.surface(unselectedSurface)
-                .verticalAlignment(VerticalAlignment.CENTER)
-                .cursorStyle(CursorStyle.HAND);
-
-        labelComponent.cursorStyle(CursorStyle.HAND)
-                .margins(Insets.horizontal(4));
-
-        return layout.child(labelComponent);
-    }
-
-    private boolean selectSuggestion(String suggestion) {
-        this.text(suggestion);
-        if (this.suggestionSelectedCallback != null && !this.disableCallback) {
-            this.suggestionSelectedCallback.run();
-        }
-
-        this.closeContextMenu();
-        return true;
-    }
-
-    private int getMaxSuggestionsHeight(int lines) {
-        return Math.min(this.getSuggestionsHeight(lines), this.getSuggestionsHeight(this.maxSuggestionLines));
-    }
-
-    private int getSuggestionsHeight(int lines) {
-        float totalLines = lines + (this.maxSuggestionLines > lines ? 0f : 0.5f);
-        return (int) (SUGGESTION_HEIGHT * totalLines);
-    }
-
-    protected void updateSuggestionsPos() {
-        if (this.suggestionsLayout == null || this.suggestionsContextMenu == null) {
-            return;
-        }
-
-        int offset = switch (this.suggestionPosition) {
-            case TOP -> -this.getMaxSuggestionsHeight(this.suggestionsLayout.children().size());
-            case BOTTOM -> this.height();
-        };
-        int x = this.x();
-        int y = this.y() + offset;
-
-        assert this.suggestionsContextMenu != null;
-        if (this.suggestionsContextMenu.x() != x) {
-            this.suggestionsContextMenu.updateX(x);
-        }
-        if (this.suggestionsContextMenu.y() != y) {
-            this.suggestionsContextMenu.updateY(y);
-        }
-    }
-
-    @Override
-    public void updateX(int x) {
-        super.updateX(x);
-        this.updateSuggestionsPos();
-    }
-
-    @Override
-    public void updateY(int y) {
-        super.updateY(y);
-        this.updateSuggestionsPos();
-    }
-
-    public void setMaxSuggestionLines(int maxSuggestionLines) {
-        this.maxSuggestionLines = maxSuggestionLines;
-        if (this.suggestionsContextMenu != null) {
-            this.suggestionsContextMenu.verticalSizing(Sizing.fixed(this.getMaxSuggestionsHeight(maxSuggestionLines)));
+    private int menuHeightFrom(int lines) {
+        if (this.maxSuggestionLines < lines) {
+            return SUGGESTION_HEIGHT * lines + ICtxComponent.LAYOUT_VERTICAL_PADDING;
+        } else {
+            return (int) (SUGGESTION_HEIGHT * (lines + 0.3f));
         }
     }
 
     /**
      * Note: <b>CommandContext is always null</b>
      */
-    public void setSuggestionProvider(SuggestionProvider<?> provider) {
+    public void suggestionProvider(IProvider<?> provider) {
         this.suggestionProvider = provider;
-        if (this.suggestionsLayout != null) {
-            this.suggestionsLayout.clearChildren();
-        }
     }
 
-    public void setSuggestionSelectedCallback(@Nullable Runnable suggestionSelectedCallback) {
-        this.suggestionSelectedCallback = suggestionSelectedCallback;
+    public void setSelectedCallback(@Nullable Runnable selectedCallback) {
+        this.selectedCallback = selectedCallback;
+    }
+
+    public void removeContextMenu() {
+        this.contextMenu.clearChildren();
+    }
+
+    public CompletableFuture<Boolean> updateContextMenu() {
+        if (this.suggestionProvider == null) return CompletableFuture.completedFuture(false);
+
+        var client = Minecraft.getInstance();
+        var screen = client.gui.screen();
+        this.suggestionFuture.cancel(true); // cancel previous updates
+        String value = this.getValue();
+
+        this.suggestionFuture = CompletableFuture.<Deque<Pair<String, ICtxComponent<String>>>>supplyAsync(() -> {
+            if (this.suggestionProvider == null) return new ArrayDeque<>();
+
+            return this.suggestionProvider.mappedFrom(value);
+        }).thenApply(suggestions -> {
+            if (!this.getValue().equals(value)) return false; // cancel previous updates
+            if (client.gui.screen() != screen) return false;
+
+            client.execute(this::removeContextMenu);
+
+            if (suggestions.isEmpty()) return false;
+            if (!(screen instanceof BaseFzmmScreen baseScreen)) return false;
+
+            client.execute(() -> this.openContextMenu(suggestions, baseScreen));
+            return true;
+        }).whenComplete((aBoolean, throwable) -> {
+            if (throwable == null) return;
+            FzmmClient.LOGGER.info("[SuggestionTextBox] Exception opening/updating context menu", throwable);
+        });
+
+        return this.suggestionFuture;
+    }
+
+    private void openContextMenu(Deque<Pair<String, ICtxComponent<String>>> suggestions, BaseFzmmScreen baseScreen) {
+        this.contextMenu = new CtxMenuManager<>(this.toEntries(suggestions), o -> null);
+        this.contextMenu.rootNode().nodeComponent(ICtxComponent.scrollNode(
+                Sizing.fixed(this.width()), this.menuVerticalSizing(suggestions.size()),
+                ICtxComponent.BACKGROUND_COLOR, 0xFFA3A3A3
+        ));
+        this.contextMenu.createLayout(baseScreen.root(), false).configureNode(layout -> {
+            if (!(layout instanceof ScrollContainer<?> scroll)) return;
+
+            this.contextMenu.rootNode().findLayout(layout).ifPresent(nodeLayout -> {
+                for (var element : nodeLayout.children()) {
+                    element.focusGained().subscribe(source -> {
+                        if (source != FocusSource.KEYBOARD_CYCLE) return;
+                        scroll.scrollTo(element);
+                    });
+                }
+            });
+        }).initAt(List.of(), CtxType.UI, this.x(), this.y() + this.height());
+    }
+
+    private void updateSuggestions(String s) {
+        if (!this.hasParent() || this.previousValue.equals(s)) return; // Hack: ContextMenu should not open when selected via focus
+
+        this.updateContextMenu();
+    }
+
+    @Override
+    public void setValue(String value) {
+        this.previousValue = value;
+        super.setValue(value);
+    }
+
+    private List<CtxElement<String>> toEntries(Deque<Pair<String, ICtxComponent<String>>> suggestions) {
+        var result = new ArrayList<CtxElement<String>>();
+
+        for (var entry : suggestions) {
+            String value = entry.getA();
+            result.add(CtxEntry.<String>none("suggestion_" + value, o -> this.onSelect(value))
+                    .component(entry.getB())
+            );
+        }
+
+        return result;
+    }
+
+    private void onSelect(String value) {
+        this.setValue(value);
+        if (this.selectedCallback != null) {
+            this.selectedCallback.run();
+        }
+        this.removeContextMenu();
     }
 
     @Override
     public boolean keyPressed(KeyEvent input) {
-        if (input.isCycleFocus()) {
-            if (!this.contextMenuIsOpen()) {
-                this.openContextMenu();
-                return true;
-            }
-            assert this.suggestionsLayout != null;
-            if (this.suggestionsLayout.children().isEmpty()) {
-                this.updateSuggestions(this.getValue());
-                return !this.suggestionsLayout.children().isEmpty();
+        if (input.isCycleFocus() || input.isDown()) {
+            if (this.contextMenu.isUnmounted()) {
+                return this.updateContextMenu().join();
             } else {
-                return this.updateSelectedSuggestionIndex(1);
-            }
-        }
-
-        if (input.isDown()) return this.updateSelectedSuggestionIndex(1);
-        if (input.isUp()) return this.updateSelectedSuggestionIndex(-1);
-
-        if (input.isConfirmation()) {
-            if (this.suggestionsLayout == null) return false;
-
-            List<UIComponent> children = this.suggestionsLayout.children();
-            if (this.selectedSuggestionIndex >= 0 && this.selectedSuggestionIndex < children.size()) {
-                this.disableCallback = true;
-                UIComponent selectedComponent = children.get(this.selectedSuggestionIndex);
-                // this should be a custom component because onKeyPress can't be called
-                // in a context menu since it doesn't have a focusHandler
-                selectedComponent.onMouseDown(new MouseButtonEvent(selectedComponent.x(), selectedComponent.y(), new MouseButtonInfo(GLFW.GLFW_MOUSE_BUTTON_1, 0)), false);
-                this.disableCallback = false;
+                this.contextMenu.focus();
                 return true;
             }
         }
 
         if (input.isEscape()) {
-            boolean contextMenuIsOpen = this.contextMenuIsOpen();
-            this.closeContextMenu();
+            boolean contextMenuIsOpen = !this.contextMenu.isUnmounted();
+            this.removeContextMenu();
             return contextMenuIsOpen;
         }
 
         return super.keyPressed(input);
     }
 
-    public enum SuggestionPosition {
-        TOP,
-        BOTTOM
+    @FunctionalInterface
+    public interface IProvider<T> {
+
+        List<T> from(String input);
+
+        default ICtxComponent<String> toComponent(T value, String input) {
+            return ICtxComponent.simple(Component.literal(this.toSuggestion(value)));
+        }
+
+        default String toSuggestion(T value) {
+            return value.toString();
+        }
+
+        default Deque<Pair<String, ICtxComponent<String>>> mappedFrom(String input) {
+            var suggestions = this.from(input);
+            var result = new ArrayDeque<Pair<String, ICtxComponent<String>>>(suggestions.size());
+
+            for (var entry : this.from(input)) {
+                result.add(new Pair<>(this.toSuggestion(entry), this.toComponent(entry, input)));
+            }
+
+            return result;
+        }
     }
 }

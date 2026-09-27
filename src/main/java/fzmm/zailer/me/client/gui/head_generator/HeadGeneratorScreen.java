@@ -4,6 +4,7 @@ import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.ContextMenuButton;
+import fzmm.zailer.me.client.gui.components.containers.SelectableLayout;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
@@ -12,9 +13,6 @@ import fzmm.zailer.me.client.gui.components.image.ImageMode;
 import fzmm.zailer.me.client.gui.components.row.TextBoxRow;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRows;
 import fzmm.zailer.me.client.gui.components.row.image.ImageRowsElements;
-import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
-import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
-import fzmm.zailer.me.client.gui.components.snack_bar.SnackBarBuilder;
 import fzmm.zailer.me.client.gui.head_generator.category.IHeadCategory;
 import fzmm.zailer.me.client.gui.head_generator.components.AbstractHeadComponentEntry;
 import fzmm.zailer.me.client.gui.head_generator.components.HeadComponentEntry;
@@ -22,6 +20,10 @@ import fzmm.zailer.me.client.gui.head_generator.components.HeadComponentOverlay;
 import fzmm.zailer.me.client.gui.head_generator.components.HeadCompoundComponentEntry;
 import fzmm.zailer.me.client.gui.head_generator.options.ISkinPreEdit;
 import fzmm.zailer.me.client.gui.head_generator.options.SkinPreEditOption;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxElement;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxEntry;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxMenuManager;
+import fzmm.zailer.me.client.gui.utils.context_menu.ICtxComponent;
 import fzmm.zailer.me.client.logic.api.ApiResponse;
 import fzmm.zailer.me.client.logic.head_generator.AbstractHeadEntry;
 import fzmm.zailer.me.client.logic.head_generator.HeadResourcesLoader;
@@ -41,6 +43,8 @@ import io.wispforest.owo.ui.util.FocusHandler;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -59,6 +63,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -75,7 +80,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     private TextBoxComponent searchField;
     private List<HeadComponentEntry> headComponentEntries;
     private List<HeadCompoundComponentEntry> compoundEntries;
-    private FlowLayout contentLayout;
+    private SelectableLayout contentLayout;
     private EFlowLayout compoundHeadsLayout;
     private ButtonComponent toggleFavoriteList;
     private boolean showFavorites;
@@ -106,7 +111,8 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
         // ProfileComponent.PACKET_CODEC max size is 16
         this.headNameField = TextBoxRow.setup(rootComponent, "headName", "", 16);
         this.skinElements.valueField().onChanged().subscribe(this::onChangeSkinField);
-        this.contentLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "content");
+        this.contentLayout = rootComponent.childByIdOrThrow(SelectableLayout.class, "content");
+        this.contentLayout.contextMenu(this.getContextMenu());
         this.compoundHeadsLayout = rootComponent.childByIdOrThrow(EFlowLayout.class, "compound-heads-layout");
 
         int animationDuration = 800;
@@ -146,11 +152,14 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
                 this::getCategoryText) + BUTTON_TEXT_PADDING;
 
         this.headCategoryButton.horizontalSizing(Sizing.fixed(maxCategoryHorizontalSizing));
-        this.headCategoryButton.setContextMenuOptions(contextMenu -> {
-            for (var category : IHeadCategory.NATURAL_CATEGORIES) {
-                contextMenu.button(net.minecraft.network.chat.Component.translatable(category.getTranslationKey()), dropdown -> this.updateCategory(category));
-            }
-        });
+        var categoryEntries = new ArrayList<CtxElement<Object>>();
+        for (var category : IHeadCategory.NATURAL_CATEGORIES) {
+            categoryEntries.add(
+                    CtxEntry.none("head_generator_" + category.getText().getString(), o -> this.updateCategory(category))
+                            .component(ICtxComponent.simple(Component.translatable(category.getTranslationKey())))
+            );
+        }
+        this.headCategoryButton.entries(categoryEntries);
 
         this.toggleFavoriteList = rootComponent.childByIdOrThrow(ButtonComponent.class, "toggle-favorite-list");
         this.toggleFavoriteList.onPress(buttonComponent -> this.toggleFavoriteListExecute());
@@ -167,8 +176,19 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
     }
 
     @Override
+    public boolean keyPressed(KeyEvent input) {
+        return this.contentLayout.onKeyPress(input) || super.keyPressed(input);
+    }
+
+    @Override
+    public boolean charTyped(CharacterEvent input) {
+        return this.contentLayout.onCharTyped(input) || super.charTyped(input);
+    }
+
+    @Override
     protected void initFocus(FocusHandler focusHandler) {
         focusHandler.focus(this.skinElements.valueField(), UIComponent.FocusSource.MOUSE_CLICK);
+        this.skinElements.valueField().moveCursorToEnd(false);
     }
 
     private void updateCategory(IHeadCategory category) {
@@ -197,7 +217,7 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
         return net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.label.category", net.minecraft.network.chat.Component.translatable(category.getTranslationKey()));
     }
 
-    private void skinCallback(BufferedImage skinBase) {
+    public void skinCallback(BufferedImage skinBase) {
         if (ImageUtils.isEquals(skinBase, this.baseSkin)) {
             return;
         }
@@ -447,26 +467,21 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
             this.setUndefinedDelay();
             String headName = this.getHeadName();
 
-            ISnackBarComponent snackBar = BaseSnackBarComponent.builder(SnackBarManager.HEAD_GENERATOR_ID)
-                    .title(net.minecraft.network.chat.Component.translatable("fzmm.gui.headGenerator.snack_bar.loading"))
-                    .backgroundColor(EStyles.ALERT_LOADING_COLOR)
-                    .keepOnLimit()
-                    .build();
-            this.addSnackBar(snackBar);
-
             FzmmClient.MINESKIN_API.upload(image).whenComplete((response, throwable) -> {
-                boolean generated = this.giveItem(response, throwable, headName);
+                boolean generated = giveItem(response, throwable, headName);
 
                 this.minecraft.execute(() -> {
-                    snackBar.close();
-                    this.completeSnackBar(response, generated, image);
+                    FzmmClient.MINESKIN_API.showComplete(response, generated, buttonComponent -> {
+                        this.giveHead(image);
+                        SnackBarManager.getInstance().remove(SnackBarManager.MINESKIN_ID);
+                    });
                     this.setDelay(TimeUnit.MILLISECONDS.toSeconds(FzmmClient.MINESKIN_API.getWaitMillis()));
                 });
             });
         });
     }
 
-    private boolean giveItem(@Nullable ApiResponse<MSQueue> response, Throwable throwable, String headName) {
+    public static boolean giveItem(@Nullable ApiResponse<MSQueue> response, Throwable throwable, String headName) {
         if (throwable != null || response == null) return false;
 
         Optional<MSQueue> queueOptional = response.data();
@@ -481,30 +496,6 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
         }
 
         return ItemUtils.give(builder.get()) && response.isSuccess();
-    }
-
-    private void completeSnackBar(@Nullable ApiResponse<MSQueue> response, boolean generated, BufferedImage originalImage) {
-        if (generated) {
-            this.addSnackBar(BaseSnackBarComponent.builder(SnackBarManager.HEAD_GENERATOR_ID)
-                    .title(Component.translatable("fzmm.gui.headGenerator.snack_bar.success"))
-                    .backgroundColor(EStyles.ALERT_SUCCESS_COLOR)
-                    .lowTimer()
-                    .startTimer()
-                    .build()
-            );
-        } else {
-            Optional<SnackBarBuilder> builder = FzmmClient.MINESKIN_API.statusCodeAlert(response);
-            if (builder.isEmpty()) return;
-            // replace snack bar but with the retry button
-            this.addSnackBar(builder.get()
-                    .button(snackBar -> EComponents.button(Component.translatable("fzmm.gui.mineskin.snack_bar.error.button.retry"))
-                            .onPress(button -> {
-                                this.giveHead(originalImage);
-                                snackBar.close();
-                            })
-                    ).build()
-            );
-        }
     }
 
     public void setUndefinedDelay() {
@@ -641,6 +632,38 @@ public class HeadGeneratorScreen extends BaseFzmmScreen implements IMemento {
         }
 
         this.previousSkinName = value;
+    }
+
+    private CtxMenuManager<List<BufferedImage>> getContextMenu() {
+        var give = CtxEntry.<List<BufferedImage>>any("head_generator_give", images -> {
+                    var isCancelled = new AtomicBoolean(false);
+                    var progress = FzmmClient.MINESKIN_API.showProcessing(images.size(),
+                            button -> isCancelled.set(true)
+                    );
+
+                    FzmmClient.MINESKIN_API.uploadSequentially(isCancelled, images, (skin, response) -> {
+                        if (isCancelled.get()) return;
+
+                        giveItem(response, null, "");
+                        FzmmClient.MINESKIN_API.updateProcessing(progress, images.indexOf(skin) + 1, images.size());
+                    }).whenComplete((unused, throwable) -> {
+                        if (isCancelled.get()) return;
+
+                        FzmmClient.MINESKIN_API.showSuccess();
+                    });
+
+                }).condition((images, type) -> images.size() <= 20) // arbitrary limit
+                .component(ICtxComponent.simple(Component.translatable("fzmm.gui.contextMenu.headGenerator.generate")));
+
+        var save = CtxEntry.<List<BufferedImage>>any("head_generator_save", images -> {
+            for (var image : images) {
+                HeadComponentOverlay.saveSkinExecute(image);
+            }
+        }).component(ICtxComponent.simple(Component.translatable("fzmm.gui.headGenerator.button.saveSkin")));
+
+        return new CtxMenuManager<>(List.of(give, save), components ->
+                components.stream().map(component -> ((HeadComponentEntry) component).getPreview()).toList()
+        );
     }
 
     @Override

@@ -2,6 +2,7 @@ package fzmm.zailer.me.client.gui;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.*;
+import fzmm.zailer.me.client.gui.components.containers.SelectableLayout;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.component.EBooleanButton;
 import fzmm.zailer.me.client.gui.components.extend.component.ETextureComponent;
@@ -31,6 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -148,16 +150,12 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
             }
         }
 
-        if (super.keyPressed(input)) return true;
-
-        return this.symbolChatCompat.keyPressed(input);
+        return super.keyPressed(input) || this.symbolChatCompat.keyPressed(input);
     }
 
     @Override
     public boolean charTyped(CharacterEvent input) {
-        if (super.charTyped(input)) return true;
-
-        return this.symbolChatCompat.charTyped(input);
+        return super.charTyped(input) || this.symbolChatCompat.charTyped(input);
     }
 
     @Override
@@ -183,22 +181,23 @@ public abstract class BaseFzmmScreen extends BaseUIModelScreen<EFlowLayout> impl
 
         // extended components
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "boolean-button"), EBooleanButton::parse);
-        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "button"), element -> EComponents.button(net.minecraft.network.chat.Component.empty()));
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "button"), element -> EComponents.button(Component.empty()));
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "item"), element -> EComponents.item(ItemStack.EMPTY));
-        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "label"), element -> EComponents.label(net.minecraft.network.chat.Component.empty()));
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "label"), element -> EComponents.label(Component.empty()));
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "texture"), ETextureComponent::parse);
 
         // extended containers
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "flow-layout"), EFlowLayout::parse);
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "scroll"), EScrollContainer::parse);
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "tab-container"), TabContainer::parse);
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "selectable-layout"), SelectableLayout::parse);
 
         // these are necessary in case you want to create the fields manually with XML
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "book"), element -> new BookComponent());
-        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "context-menu-button"), element -> new ContextMenuButton(net.minecraft.network.chat.Component.empty()));
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "context-menu-button"), element -> new ContextMenuButton(Component.empty()));
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "number-slider"), element -> new SliderWidget());
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "text-option"), element -> new ConfigTextBox());
-        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "suggest-text-option"), element -> new SuggestionTextBox());
+        UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "suggest-text-option"), element -> new SuggestionTextBox(Sizing.content()));
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "image-option"), element -> new ImageButtonComponent());
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "screenshot-zone"), element -> new ScreenshotZoneComponent());
         UIParsing.registerFactory(Identifier.fromNamespaceAndPath(FzmmClient.MOD_ID, "color-list"), ColorListContainer::parse);

@@ -41,7 +41,7 @@ public class ConverterUuidToArrayTab implements ITab {
             if (!uuidField.isValid())
                 return;
 
-            String stringOfUuidArray = this.stringOfUUIDtoArray(uuidField.getValue());
+            String stringOfUuidArray = toString(UUIDtoArray(UUID.fromString(uuidField.getValue())));
             SnackBarManager.copyToClipboard(stringOfUuidArray);
         });
     }
@@ -59,10 +59,7 @@ public class ConverterUuidToArrayTab implements ITab {
         return intArray;
     }
 
-
-    public String stringOfUUIDtoArray(String uuidString) {
-        int[] uuidArray = UUIDtoArray(UUID.fromString(uuidString));
-
-        return String.format("[I;%s,%s,%s,%s]", uuidArray[0], uuidArray[1], uuidArray[2], uuidArray[3]);
+    public static String toString(int[] uuid) {
+        return String.format("[I;%s,%s,%s,%s]", uuid[0], uuid[1], uuid[2], uuid[3]);
     }
 }

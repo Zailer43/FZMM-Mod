@@ -1,6 +1,7 @@
 package fzmm.zailer.me.client.gui.utils.auto_placer;
 
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.FzmmHotkeys;
 import fzmm.zailer.me.client.gui.BaseFzmmScreen;
 import fzmm.zailer.me.client.gui.components.extend.EComponents;
 import fzmm.zailer.me.client.gui.components.extend.EContainers;
@@ -60,7 +61,7 @@ public class AutoPlacerHud {
             requirementLayout.horizontalAlignment(HorizontalAlignment.CENTER);
 
             LabelComponent sneakLabel = EComponents.label(Component.translatable("fzmm.gui.autoPlacer.label.sneakInfo"));
-            LabelComponent cancelLabel = EComponents.label(Component.translatable("fzmm.gui.autoPlacer.label.cancel", FzmmClient.OPEN_MAIN_GUI_KEYBINDING.getTranslatedKeyMessage().getString()));
+            LabelComponent cancelLabel = EComponents.label(Component.translatable("fzmm.gui.autoPlacer.label.cancel", FzmmHotkeys.mainGuiKey().getTranslatedKeyMessage().getString()));
 
             FlowLayout bottomTextLayout = EContainers.verticalFlow(Sizing.fill(100), Sizing.content());
             bottomTextLayout.positioning(Positioning.relative(0, 100));

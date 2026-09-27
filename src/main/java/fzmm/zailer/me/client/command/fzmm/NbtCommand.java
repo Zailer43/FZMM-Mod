@@ -6,7 +6,6 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.utils.ItemUtils;
-import fzmm.zailer.me.utils.TagsConstant;
 import fzmm.zailer.me.utils.TextUtils;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.ChatFormatting;
@@ -47,19 +46,14 @@ public class NbtCommand implements ISubCommand {
         assert client.player != null;
         ItemStack stack = client.player.getInventory().getSelectedItem();
 
-        Optional<Tag> stackNbtOptional = ItemUtils.encodeToNbt(stack).result();
-        // is modified or has NBT
-        if (stack.getComponentsPatch().isEmpty() ||
-                stackNbtOptional.isEmpty() ||
-                !(stackNbtOptional.get() instanceof CompoundTag nbt) ||
-                !nbt.contains(TagsConstant.ENCODE_STACK_COMPONENTS)) {
-
+        Optional<CompoundTag> nbtOptional = ItemUtils.getNbtIfModifiedCompounds(stack);
+        if (nbtOptional.isEmpty()) {
             ctx.getSource().sendError(Component.translatable("commands.fzmm.item.withoutNbt"));
             return;
         }
 
         final int MAX_HOVER_LENGTH = 15000;
-        String nbtString = toFormatedComponent(nbt.getCompoundOrEmpty(TagsConstant.ENCODE_STACK_COMPONENTS), false).getString();
+        String nbtString = toFormatedComponent(nbtOptional.get(), false).getString();
         String nbtStringHover = nbtString;
         nbtString = TextUtils.removeUnpairedMultibyte(nbtString);
         int nbtLength = nbtString.length();
@@ -74,7 +68,7 @@ public class NbtCommand implements ISubCommand {
         MutableComponent lengthMessage = Component.translatable("commands.fzmm.nbt.length", length)
                 .setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_BASE_COLOR));
 
-        MutableComponent nbtText = this.nbtToText(nbt, client, nbtString);
+        MutableComponent nbtText = this.nbtToText(nbtOptional.get(), client, nbtString);
         MutableComponent message = this.nbtChatMessageOf(stack, nbtText, nbtString, nbtStringHover);
         client.gui.hud.getChat().addClientSystemMessage(message.append("\n").append(lengthMessage));
     }
@@ -90,7 +84,7 @@ public class NbtCommand implements ISubCommand {
             String message = String.format("[%s]", Component.translatable("commands.fzmm.nbt.tooLong").getString());
             return Component.literal(message).setStyle(Style.EMPTY.withColor(FzmmClient.CHAT_WHITE_COLOR));
         } else {
-            return toFormatedComponent(nbt.getCompoundOrEmpty(TagsConstant.ENCODE_STACK_COMPONENTS), true);
+            return toFormatedComponent(nbt, true);
         }
     }
 
@@ -112,22 +106,7 @@ public class NbtCommand implements ISubCommand {
         List<Component> componentsText = new ArrayList<>(nbt.keySet().size());
 
         for (var key : nbt.keySet()) {
-            MutableComponent text = Component.empty();
-            Tag tag = nbt.get(key);
-
-            if (tag == null) {
-                tag = new CompoundTag();
-            }
-
-            text.append(Component.literal(key).setStyle(Style.EMPTY.applyFormat(ChatFormatting.DARK_AQUA)));
-            text.append(Component.literal("="));
-            if (prettyPrint) {
-                text.append(NbtUtils.toPrettyComponent(tag));
-            } else {
-                text.append(tag.toString());
-            }
-
-            componentsText.add(text);
+            componentsText.add(toFormatedComponentEntry(nbt, key, prettyPrint));
         }
 
         for (int i = 0; i != componentsText.size(); i++) {
@@ -139,5 +118,24 @@ public class NbtCommand implements ISubCommand {
         }
 
         return result.append("]");
+    }
+
+    private static MutableComponent toFormatedComponentEntry(CompoundTag nbt, String key, boolean prettyPrint) {
+        MutableComponent text = Component.empty();
+        Tag tag = nbt.get(key);
+
+        if (tag == null) {
+            tag = new CompoundTag();
+        }
+
+        text.append(Component.literal(key).setStyle(Style.EMPTY.applyFormat(ChatFormatting.DARK_AQUA)));
+        text.append(Component.literal("="));
+        if (prettyPrint) {
+            text.append(NbtUtils.toPrettyComponent(tag));
+        } else {
+            text.append(tag.toString());
+        }
+
+        return text;
     }
 }

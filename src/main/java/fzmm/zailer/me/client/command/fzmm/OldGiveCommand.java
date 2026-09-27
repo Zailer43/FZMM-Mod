@@ -9,6 +9,7 @@ import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.client.command.argument_type.ComponentArgumentType;
 import fzmm.zailer.me.client.command.argument_type.VersionArgumentType;
 import fzmm.zailer.me.utils.ItemUtils;
+import fzmm.zailer.me.utils.TagsConstant;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.ChatFormatting;
@@ -134,7 +135,7 @@ public class OldGiveCommand implements ISubCommand {
         CompoundTag result = new CompoundTag();
         result.putByte(isCompound ? "count" : "Count", (byte) 1);
         result.putString("id", item.toString());
-        result.put(isCompound ? "components" : "tag", nbtCompound);
+        result.put(isCompound ? TagsConstant.ENCODE_STACK_COMPONENTS : "tag", nbtCompound);
         if (itemVersion <= VersionArgumentType.LATEST_VERSION_WITH_DAMAGE) {
             result.putInt("Damage", damage);
         }

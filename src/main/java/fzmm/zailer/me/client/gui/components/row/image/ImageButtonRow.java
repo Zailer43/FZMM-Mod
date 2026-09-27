@@ -6,7 +6,6 @@ import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.image.ImageButtonComponent;
 import fzmm.zailer.me.client.gui.components.image.source.IImageGetter;
 import fzmm.zailer.me.client.gui.components.image.source.IImageLoaderFromText;
-import fzmm.zailer.me.client.gui.components.image.source.IImageSuggestion;
 import fzmm.zailer.me.client.gui.components.row.AbstractRow;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.UIComponent;
@@ -15,8 +14,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
-
-import java.util.concurrent.CompletableFuture;
 
 public class ImageButtonRow extends AbstractRow {
 
@@ -40,7 +37,7 @@ public class ImageButtonRow extends AbstractRow {
                         Math.abs(textRenderer.width(loadImageButtonText) - textRenderer.width(resetButton.getMessage()))
         );
 
-        SuggestionTextBox textField = new SuggestionTextBox(textFieldSizing, SuggestionTextBox.SuggestionPosition.BOTTOM, 5);
+        SuggestionTextBox textField = new SuggestionTextBox(textFieldSizing);
         textField.id(getImageValueFieldId(id));
         textField.keyPress().subscribe((input) -> {
             if (input.isConfirmation()) {
@@ -83,11 +80,7 @@ public class ImageButtonRow extends AbstractRow {
             suggestionTextBox.applyPredicate(imageLoaderFromText::predicate);
         }
 
-        suggestionTextBox.setSuggestionProvider(imageGetter instanceof IImageSuggestion imageSuggestion ?
-                imageSuggestion.getSuggestionProvider() :
-                (context, builder) -> CompletableFuture.completedFuture(builder.build())
-        );
-
+        suggestionTextBox.suggestionProvider(imageGetter instanceof SuggestionTextBox.IProvider<?> provider ? provider : SuggestionTextBox.EMPTY_SUGGESTIONS);
         suggestionTextBox.setVisible(imageGetter.hasTextField());
     }
 }

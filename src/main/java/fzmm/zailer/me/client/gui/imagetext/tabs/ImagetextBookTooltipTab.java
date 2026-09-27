@@ -10,6 +10,9 @@ import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
 import fzmm.zailer.me.client.gui.components.snack_bar.ISnackBarComponent;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.BookOption;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxElement;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxEntry;
+import fzmm.zailer.me.client.gui.utils.context_menu.ICtxComponent;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
@@ -30,6 +33,7 @@ import net.minecraft.world.item.component.WrittenBookContent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 public class ImagetextBookTooltipTab implements IImagetextTab, IMemento {
     private ContextMenuButton bookTooltipButton;
@@ -81,14 +85,14 @@ public class ImagetextBookTooltipTab implements IImagetextTab, IMemento {
     public void setupComponents(EFlowLayout rootComponent) {
         assert Minecraft.getInstance().player != null;
         this.bookTooltipButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "bookTooltipMode");
-        this.bookTooltipButton.setContextMenuOptions(dropdownComponent -> {
-            for (var option : BookOption.values()) {
-                dropdownComponent.button(Component.translatable(option.getTranslationKey()), dropdownButton -> {
-                    this.updateBookTooltip(option);
-                    dropdownButton.remove();
-                });
-            }
-        });
+        var entries = new ArrayList<CtxElement<Object>>();
+        for (var option : BookOption.values()) {
+            entries.add(
+                    CtxEntry.none("imagetext_book_tooltip_" + option.name(), o -> this.updateBookTooltip(option))
+                            .component(ICtxComponent.simple(Component.translatable(option.getTranslationKey())))
+            );
+        }
+        this.bookTooltipButton.entries(entries);
         this.updateBookTooltip(BookOption.ADD_PAGE);
         this.bookTooltipAuthor = TextBoxRow.setup(rootComponent, "bookTooltipAuthor", Minecraft.getInstance().player.getName().getString(), 512);
         this.bookTooltipMessage = rootComponent.childByIdOrThrow(TextAreaComponent.class, "bookTooltipMessage-text-area");

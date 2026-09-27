@@ -56,7 +56,7 @@
                                 <positioning type="relative">0,0</positioning>
                             </fzmm.label>
 
-                            <fzmm.flow-layout direction="ltr-text-flow" id="content">
+                            <fzmm.selectable-layout direction="ltr-text-flow" id="content">
                                 <children>
 
                                 </children>
@@ -67,7 +67,7 @@
 
                                 <vertical-alignment>top</vertical-alignment>
                                 <horizontal-alignment>left</horizontal-alignment>
-                            </fzmm.flow-layout>
+                            </fzmm.selectable-layout>
                         </children>
 
                         <horizontal-alignment>center</horizontal-alignment>

@@ -7,9 +7,9 @@ import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.command.ISubCommand;
 import fzmm.zailer.me.client.logic.mineskin.model.MSQueue;
-import fzmm.zailer.me.utils.FzmmUtils;
 import fzmm.zailer.me.utils.HeadUtils;
 import fzmm.zailer.me.utils.ItemUtils;
+import fzmm.zailer.me.utils.SuggestionUtils;
 import fzmm.zailer.me.utils.skin.CacheSkinGetter;
 import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
 import fzmm.zailer.me.utils.skin.VanillaSkinGetter;
@@ -39,7 +39,7 @@ public class SkullCommand implements ISubCommand {
     @Override
     public LiteralCommandNode<FabricClientCommandSource> getBaseCommand(CommandBuildContext registryAccess, LiteralArgumentBuilder<FabricClientCommandSource> builder) {
         var argument = ClientCommands.argument("skull owner", StringArgumentType.word())
-                .suggests(FzmmUtils.SUGGESTION_PLAYER)
+                .suggests(SuggestionUtils.PLAYER)
                 .executes(ctx -> {
 
                     String skullOwner = ctx.getArgument("skull owner", String.class);
@@ -112,7 +112,8 @@ public class SkullCommand implements ISubCommand {
                 return;
             }
 
-            ItemUtils.give(msSkinOptional.get().skin().get().builder().headName(playerName).get());
+            boolean generated = ItemUtils.give(msSkinOptional.get().skin().get().builder().headName(playerName).get());
+            FzmmClient.MINESKIN_API.showComplete(response, generated, buttonComponent -> this.upload(playerName));
         });
     }
 

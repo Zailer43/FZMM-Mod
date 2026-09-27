@@ -15,6 +15,7 @@ import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.core.OwoUIGraphics;
 import io.wispforest.owo.ui.core.Sizing;
 import io.wispforest.owo.ui.core.UIComponent;
+import net.minecraft.network.chat.Component;
 import org.w3c.dom.Element;
 
 import java.util.HashMap;
@@ -68,7 +69,7 @@ public class ImageRows extends EFlowLayout {
         HashMap<ImageMode, EButtonComponent> imageModeButtons = new HashMap<>();
         
         for (var modeOption : ImageMode.values()) {
-            EButtonComponent modeButton = EComponents.button(net.minecraft.network.chat.Component.translatable(modeOption.getTranslationKey()));
+            EButtonComponent modeButton = EComponents.button(Component.translatable(modeOption.getTranslationKey()));
             modeButton.onPress(button -> {
                 selectedMode.set(modeOption);
 
@@ -85,7 +86,7 @@ public class ImageRows extends EFlowLayout {
                 ImageButtonRow.setupSuggestionTextBox(suggestionTextBox, imageGetter);
             });
             FlowLayout modeButtonLayout = EContainers.verticalFlow(Sizing.content(), Sizing.content());
-            modeButtonLayout.tooltip(net.minecraft.network.chat.Component.translatable(modeOption.getTranslationKey() + ".tooltip"));
+            modeButtonLayout.tooltip(Component.translatable(modeOption.getTranslationKey() + ".tooltip"));
             modeButton.horizontalSizing(Sizing.fixed(20));
             modeButtonLayout.child(modeButton);
             imageModeButtons.put(modeOption, modeButton);
@@ -93,7 +94,7 @@ public class ImageRows extends EFlowLayout {
         }
 
         imageModeButtons.get(defaultValue).onPress();
-        suggestionTextBox.setSuggestionSelectedCallback(imageWidget::onPress);
+        suggestionTextBox.setSelectedCallback(imageWidget::onPress);
 
         return new ImageRowsElements(imageWidget, suggestionTextBox, selectedMode, imageModeButtons);
     }

@@ -1,5 +1,6 @@
 package fzmm.zailer.me.client.gui.components.extend;
 
+import fzmm.zailer.me.client.gui.components.containers.SelectableLayout;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.components.extend.container.EScrollContainer;
 import fzmm.zailer.me.client.gui.components.tabs.TabContainer;
@@ -50,5 +51,17 @@ public class EContainers {
 
     public static TabContainer tabLtrTextFlow(Sizing horizontalSizing, Sizing verticalSizing) {
         return new TabContainer(horizontalSizing, verticalSizing, FlowLayout.Algorithm.LTR_TEXT);
+    }
+
+    public static SelectableLayout selectableHorizontal(Sizing horizontalSizing, Sizing verticalSizing) {
+        return new SelectableLayout(horizontalSizing, verticalSizing, FlowLayout.Algorithm.HORIZONTAL);
+    }
+
+    public static SelectableLayout selectableVertical(Sizing horizontalSizing, Sizing verticalSizing) {
+        return new SelectableLayout(horizontalSizing, verticalSizing, FlowLayout.Algorithm.VERTICAL);
+    }
+
+    public static SelectableLayout selectableLtrTextFlow(Sizing horizontalSizing, Sizing verticalSizing) {
+        return new SelectableLayout(horizontalSizing, verticalSizing, FlowLayout.Algorithm.LTR_TEXT);
     }
 }

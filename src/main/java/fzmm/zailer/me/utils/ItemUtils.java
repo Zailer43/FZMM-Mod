@@ -3,6 +3,7 @@ package fzmm.zailer.me.utils;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.command.fzmm.NbtCommand;
 import fzmm.zailer.me.client.gui.HistoryScreen;
 import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.snack_bar.BaseSnackBarComponent;
@@ -23,11 +24,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.component.TypedEntityData;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -282,9 +288,7 @@ public class ItemUtils {
 
     public static boolean isNotAllowedToGive() {
         Minecraft client = Minecraft.getInstance();
-        if (client.gameMode == null) {
-            return true;
-        }
+        if (client.gameMode == null) return true;
 
         return !(client.gameMode.getPlayerMode().isCreative()
                 || FzmmClient.CONFIG.general.giveClientSide());
@@ -296,5 +300,51 @@ public class ItemUtils {
 
     public static DataResult<ItemStack> decodeFromNbt(Tag nbt) {
         return ItemStack.CODEC.decode(FzmmUtils.getRegistryOps(NbtOps.INSTANCE), nbt).map(Pair::getFirst);
+    }
+
+    public static Optional<CompoundTag> toNbt(ItemStack stack) {
+        var nbtOptional = encodeToNbt(stack).result();
+        if (nbtOptional.isEmpty() || !(nbtOptional.get() instanceof CompoundTag nbt)) return Optional.empty();
+
+        return Optional.of(nbt);
+    }
+
+    public static Optional<CompoundTag> getNbtIfModifiedCompounds(ItemStack stack) {
+        var nbt = toNbt(stack).orElse(new CompoundTag());
+        if (stack.getComponentsPatch().isEmpty() || nbt.isEmpty()) return Optional.empty();
+
+        return nbt.getCompound(TagsConstant.ENCODE_STACK_COMPONENTS);
+    }
+
+    public static Optional<String> toIdWithComponents(ItemStack stack) {
+        String id = stack.getItem().toString();
+
+        return ItemUtils.getNbtIfModifiedCompounds(stack)
+                .map(nbt -> id + NbtCommand.toFormatedComponent(nbt, false).getString())
+                .or(() -> Optional.of(id));
+    }
+
+    public static ItemStack wrapInContainer(ItemStack stack, Item container) {
+        var result = container.getDefaultInstance();
+        result.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(List.of(stack)));
+        return result;
+    }
+
+    public static ItemStack wrapInItemFrame(ItemStack stack, Item itemFrame) {
+        var nbtOptional = ItemUtils.toNbt(stack.copyWithCount(1));
+        var result = itemFrame.getDefaultInstance();
+        if (nbtOptional.isEmpty()) return result;
+
+        CompoundTag entityTag = new CompoundTag();
+        entityTag.put(TagsConstant.ITEM_FRAME_ITEM_ID, nbtOptional.get());
+        result.set(DataComponents.ENTITY_DATA, TypedEntityData.of(EntityTypes.ITEM_FRAME, entityTag));
+
+        return result;
+    }
+
+    public static ItemStack wrapInBundle(ItemStack stack, Item bundle) {
+        var result = bundle.getDefaultInstance();
+        result.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(List.of(ItemStackTemplate.fromStack(stack))));
+        return result;
     }
 }

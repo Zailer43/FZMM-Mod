@@ -23,4 +23,6 @@ public class TagsConstant {
     public static final String TEXT_DISPLAY_ALIGNMENT = "alignment";
 
     public static final String ENCODE_STACK_COMPONENTS = "components";
+
+    public static final String ITEM_FRAME_ITEM_ID = "Item";
 }

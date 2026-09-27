@@ -3,7 +3,6 @@ package fzmm.zailer.me.utils;
 import com.mojang.blaze3d.platform.NativeImage;
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.logic.api.IApiRemote;
-import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -27,17 +26,6 @@ public class ImageUtils {
         bufferedImage.getRaster().setDataElements(0, 0, width, height, nativeImage.getPixels());
 
         return bufferedImage;
-    }
-
-
-    public static Optional<BufferedImage> getPlayerSkin(String name, SkinGetterDecorator skinGetterDecorator) {
-        Optional<BufferedImage> skin = skinGetterDecorator.getSkin(name);
-
-        if (skin.isEmpty()) {
-            FzmmClient.LOGGER.warn("[ImageUtils] skin of '{}' was not found", name);
-        }
-
-        return skin;
     }
 
     public static Optional<BufferedImage> getImageFromUrl(String url) throws IOException {

@@ -59,6 +59,7 @@ public class FzmmConfigModel {
         public boolean giveItemSizeLimit = true;
         public boolean minimizeHeadTexturesTag = true;
         public boolean removeViaVersionTags = true;
+        public boolean openContextMenuWithAltRightClick = true;
     }
 
     public static class GuiStyleNest {

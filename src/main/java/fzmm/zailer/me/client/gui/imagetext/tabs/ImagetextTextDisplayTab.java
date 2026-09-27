@@ -8,6 +8,9 @@ import fzmm.zailer.me.client.gui.components.row.ColorRow;
 import fzmm.zailer.me.client.gui.components.row.SliderRow;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.utils.InvisibleEntityWarning;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxElement;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxEntry;
+import fzmm.zailer.me.client.gui.utils.context_menu.ICtxComponent;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
@@ -31,6 +34,7 @@ import net.minecraft.world.item.ItemStack;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 
 @SuppressWarnings("UnstableApiUsage")
@@ -98,24 +102,24 @@ public class ImagetextTextDisplayTab implements IImagetextTab, IMemento {
         this.textSeeThrough = rootComponent.childByIdOrThrow(SmallCheckboxComponent.class, "textDisplayTextSeeThrough-checkbox");
         this.textSeeThrough.checked(false);
         this.textAlignmentButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "textDisplayTextAlignment");
-        this.textAlignmentButton.setContextMenuOptions(dropdownComponent -> {
-            for (var option : Display.TextDisplay.Align.values()) {
-                dropdownComponent.button(this.getTextAlignmentMessage(option), dropdownButton -> {
-                    this.updateTextAlignment(option);
-                    dropdownButton.remove();
-                });
-            }
-        });
+        var alignmentEntries = new ArrayList<CtxElement<Object>>();
+        for (var option : Display.TextDisplay.Align.values()) {
+            alignmentEntries.add(
+                    CtxEntry.none("imagetext_text_display_alignement_" + option.name(), o -> this.updateTextAlignment(option))
+                            .component(ICtxComponent.simple(this.getTextAlignmentMessage(option)))
+            );
+        }
+        this.textAlignmentButton.entries(alignmentEntries);
         this.updateTextAlignment(Display.TextDisplay.Align.LEFT);
         this.billboardButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "textDisplayBillboard");
-        this.billboardButton.setContextMenuOptions(dropdownComponent -> {
-            for (var option : Display.BillboardConstraints.values()) {
-                dropdownComponent.button(this.getBillboardMessage(option), dropdownButton -> {
-                    this.updateBillboard(option);
-                    dropdownButton.remove();
-                });
-            }
-        });
+        var billboardEntries = new ArrayList<CtxElement<Object>>();
+        for (var option : Display.BillboardConstraints.values()) {
+            billboardEntries.add(
+                    CtxEntry.none("imagetext_text_display_billboard_" + option.name(), o -> this.updateBillboard(option))
+                            .component(ICtxComponent.simple(this.getBillboardMessage(option)))
+            );
+        }
+        this.billboardButton.entries(billboardEntries);
         this.updateBillboard(Display.BillboardConstraints.FIXED);
         this.rotation = SliderRow.setup(rootComponent, "textDisplayRotation", Mth.wrapDegrees(Minecraft.getInstance().player.getYRot()), -180, 180, Float.class, 1, 30, null);
     }

@@ -16,8 +16,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
     private static final String CHARACTERS_ID = "characters";
@@ -83,16 +83,9 @@ public class ImagetextCharactersAlgorithm implements IImagetextAlgorithm {
     public void setupComponents(EFlowLayout rootComponent) {
         this.charactersTextField = (SuggestionTextBox) TextBoxRow.setup(rootComponent, CHARACTERS_ID, ImagetextLine.DEFAULT_TEXT, FzmmClient.CONFIG.imagetext.maxResolution());
         this.charactersTextField.moveCursorToStart(false);
-        this.charactersTextField.setSuggestionProvider((nul, builder) -> {
-            if (builder.getInput().isBlank()) {
-                List<String> suggestions = List.of(ImagetextLine.DEFAULT_TEXT, "▎", "▋", "☐", "🌑");
-                for (var suggestion : suggestions) {
-                    builder.suggest(suggestion);
-                }
-            }
-
-            return CompletableFuture.completedFuture(builder.build());
-        });
+        this.charactersTextField.suggestionProvider(input ->
+                input.isBlank() ? List.of(ImagetextLine.DEFAULT_TEXT, "▎", "▋", "☐", "🌑") : new ArrayList<>()
+        );
         this.charactersTextField.enableFontProcess(true);
 
         FlowLayout parentLayout = rootComponent.childByIdOrThrow(FlowLayout.class, TextBoxRow.getTextBoxId(CHARACTERS_ID) + "-parent");

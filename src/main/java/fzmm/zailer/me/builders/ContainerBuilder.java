@@ -92,4 +92,8 @@ public class ContainerBuilder {
         }
         return this;
     }
+
+    public int size() {
+        return this.itemList.size();
+    }
 }

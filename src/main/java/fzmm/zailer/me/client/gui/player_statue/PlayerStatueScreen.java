@@ -13,6 +13,9 @@ import fzmm.zailer.me.client.gui.player_statue.tabs.IPlayerStatueTab;
 import fzmm.zailer.me.client.gui.player_statue.tabs.PlayerStatueGenerateTab;
 import fzmm.zailer.me.client.gui.player_statue.tabs.PlayerStatueUpdateTab;
 import fzmm.zailer.me.client.gui.utils.InvisibleEntityWarning;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxElement;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxEntry;
+import fzmm.zailer.me.client.gui.utils.context_menu.ICtxComponent;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.player_statue.StatuePart;
 import fzmm.zailer.me.utils.FzmmWikiConstants;
@@ -30,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -58,16 +62,18 @@ public class PlayerStatueScreen extends BaseFzmmScreen implements IMemento {
                 InvisibleEntityWarning.addOverlay(true, true, Component.translatable("fzmm.snack_bar.entityDifficultToRemove.entity.playerStatue"), StatuePart.PLAYER_STATUE_TAG)
         );
         //general
-        ContextMenuButton directionButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "horizontal-direction-context-menu-option");
-        directionButton.setContextMenuOptions(dropdownComponent -> {
-            for (var option : HorizontalDirectionOption.values()) {
-                dropdownComponent.button(Component.translatable(option.getTranslationKey()), dropdownButton -> {
-                    this.direction = option;
-                    directionButton.setMessage(Component.translatable(option.getTranslationKey()));
-                    dropdownButton.remove();
-                });
-            }
-        });
+        var directionButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "horizontal-direction-context-menu-option");
+        var directionEntries = new ArrayList<CtxElement<Object>>();
+        for (var option : HorizontalDirectionOption.values()) {
+            var translation = Component.translatable(option.getTranslationKey());
+            directionEntries.add(CtxEntry.none("player_statue_" + option.name(), o -> {
+                        this.direction = option;
+                        directionButton.setMessage(translation);
+                    }).component(ICtxComponent.simple(translation))
+            );
+        }
+        directionButton.entries(directionEntries);
+
         this.direction = HorizontalDirectionOption.getPlayerHorizontalDirection();
         directionButton.setMessage(Component.translatable(this.direction.getTranslationKey()));
         this.posX = NumberRow.setup(rootComponent, "posX", player.getBlockX(), Float.class);

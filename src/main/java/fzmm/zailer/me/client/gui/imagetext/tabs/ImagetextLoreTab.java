@@ -7,6 +7,9 @@ import fzmm.zailer.me.client.gui.components.extend.EStyles;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.LoreOption;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxElement;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxEntry;
+import fzmm.zailer.me.client.gui.utils.context_menu.ICtxComponent;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
@@ -22,6 +25,7 @@ import net.minecraft.world.item.component.ItemLore;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip, IMemento {
@@ -52,14 +56,14 @@ public class ImagetextLoreTab implements IImagetextTab, IImagetextTooltip, IMeme
     @Override
     public void setupComponents(EFlowLayout rootComponent) {
         this.loreModeButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "loreMode");
-        this.loreModeButton.setContextMenuOptions(dropdownComponent -> {
-            for (var option : LoreOption.values()) {
-                dropdownComponent.button(Component.translatable(option.getTranslationKey()), dropdownButton -> {
-                    this.updateLoreMode(option);
-                    dropdownButton.remove();
-                });
-            }
-        });
+        var entries = new ArrayList<CtxElement<Object>>();
+        for (var option : LoreOption.values()) {
+            entries.add(
+                    CtxEntry.none("imagetext_lore_" + option.name(), o -> this.updateLoreMode(option))
+                            .component(ICtxComponent.simple(Component.translatable(option.getTranslationKey())))
+            );
+        }
+        this.loreModeButton.entries(entries);
         this.updateLoreMode(LoreOption.ADD);
     }
 

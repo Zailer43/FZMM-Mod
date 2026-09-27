@@ -1,21 +1,27 @@
 package fzmm.zailer.me.client.gui.components.image.source;
 
-import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.authlib.GameProfile;
+import fzmm.zailer.me.builders.HeadBuilder;
 import fzmm.zailer.me.client.FzmmClient;
+import fzmm.zailer.me.client.gui.components.SuggestionTextBox;
 import fzmm.zailer.me.client.gui.components.image.ImageStatus;
-import fzmm.zailer.me.utils.FzmmUtils;
-import fzmm.zailer.me.utils.ImageUtils;
+import fzmm.zailer.me.client.gui.utils.context_menu.ICtxComponent;
+import fzmm.zailer.me.utils.SuggestionUtils;
 import fzmm.zailer.me.utils.skin.CacheSkinGetter;
 import fzmm.zailer.me.utils.skin.SkinGetterDecorator;
 import fzmm.zailer.me.utils.skin.VanillaSkinGetter;
+import io.wispforest.owo.itemgroup.Icon;
 import net.minecraft.client.Minecraft;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-public class ImagePlayerNameSource implements IImageLoaderFromText, IImageSuggestion {
+public class ImagePlayerNameSource implements IImageLoaderFromText, SuggestionTextBox.IProvider<GameProfile> {
     private static final String REGEX = "^[a-zA-Z0-9_]{2,16}$";
     private BufferedImage image;
+    private final SkinGetterDecorator skinGetter = new CacheSkinGetter(new VanillaSkinGetter());
 
     public ImagePlayerNameSource() {
         this.image = null;
@@ -29,18 +35,14 @@ public class ImagePlayerNameSource implements IImageLoaderFromText, IImageSugges
         this.image = null;
 
         try {
-            SkinGetterDecorator skinGetter = new VanillaSkinGetter();
+            if (!this.predicate(value)) return ImageStatus.INVALID_USERNAME;
 
-            if (this.predicateOnlinePlayer(value)) {
-                skinGetter = new CacheSkinGetter(skinGetter);
-            } else if (!this.isValidName(value)) {
-                return ImageStatus.INVALID_USERNAME;
-            }
-
-            Optional<BufferedImage> optionalImage = ImageUtils.getPlayerSkin(value, skinGetter);
-            optionalImage.ifPresent(image -> this.image = image);
-            if (optionalImage.isEmpty()) {
+            var skinOptional = this.skinGetter.getSkin(value);
+            if (skinOptional.isEmpty()) {
+                FzmmClient.LOGGER.warn("[ImageUtils] skin of '{}' was not found", value);
                 return this.predicateOnlinePlayer(value) ? ImageStatus.PLAYER_HAS_NO_SKIN : ImageStatus.PLAYER_NOT_FOUND;
+            } else {
+                this.image = skinOptional.get();
             }
 
             return ImageStatus.IMAGE_LOADED;
@@ -76,7 +78,23 @@ public class ImagePlayerNameSource implements IImageLoaderFromText, IImageSugges
     }
 
     @Override
-    public SuggestionProvider<?> getSuggestionProvider() {
-        return FzmmUtils.SUGGESTION_PLAYER;
+    public List<GameProfile> from(String input) {
+//        if (this.predicate(input)) {
+//            this.skinGetter.getProfile(input).ifPresent(result::add);
+//        }
+        return new ArrayList<>(SuggestionUtils.filterPlayers(input));
+    }
+
+    @Override
+    public ICtxComponent<String> toComponent(GameProfile value, String input) {
+        return ICtxComponent.simple(
+                SuggestionUtils.createComponent(this.toSuggestion(value), input, ICtxComponent.ACCENT_COLOR),
+                Icon.of(() -> HeadBuilder.of(value))
+        );
+    }
+
+    @Override
+    public String toSuggestion(GameProfile value) {
+        return value.name();
     }
 }

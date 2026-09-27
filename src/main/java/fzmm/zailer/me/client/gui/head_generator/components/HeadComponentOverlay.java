@@ -121,7 +121,7 @@ public class HeadComponentOverlay extends EFlowLayout {
         this.parentScreen.giveHead(headComponentEntry.getPreview());
     }
 
-    public ISnackBarComponent saveSkinExecute(@Nullable BufferedImage skin) {
+    public static ISnackBarComponent saveSkinExecute(@Nullable BufferedImage skin) {
         File skinFolder = HeadGeneratorScreen.SKIN_SAVE_FOLDER_PATH.toFile();
         if (skinFolder.mkdirs()) {
             FzmmClient.LOGGER.info("[HeadComponentOverlay] Skin save folder created");
@@ -251,13 +251,7 @@ public class HeadComponentOverlay extends EFlowLayout {
                                            int amount, Icon icon, @Nullable Consumer<EButtonComponent> callback) {
         EButtonComponent result = EComponents.button(Component.empty());
         result.onPress(button -> {
-            BufferedImage preview = headComponentEntry.getPreview();
-            for (int i = 0; i < amount; i++) {
-                BufferedImage updatedSkin = modelEntry.getHeadSkin(preview, this.parentScreen.hasUnusedPixels());
-                preview.flush();
-                preview = updatedSkin;
-            }
-            headComponentEntry.updatePreview(preview);
+            headComponentEntry.updatePreview(apply(headComponentEntry.getPreview(), modelEntry, amount, this.parentScreen.hasUnusedPixels()));
 
             if (callback != null) {
                 callback.accept((EButtonComponent) button);
@@ -269,6 +263,17 @@ public class HeadComponentOverlay extends EFlowLayout {
             ButtonComponent.Renderer.VANILLA.draw(context, button, delta);
             icon.render(context, button.x() + 2, button.y() + 2, 0, 0, delta);
         });
+
+        return result;
+    }
+
+    public static BufferedImage apply(BufferedImage skin, AbstractHeadEntry entry, int repeatAmount, boolean hasUnusedPixels) {
+        BufferedImage result = skin;
+        for (int i = 0; i < repeatAmount; i++) {
+            BufferedImage updatedSkin = entry.getHeadSkin(result, hasUnusedPixels);
+            result.flush();
+            result = updatedSkin;
+        }
 
         return result;
     }
@@ -286,24 +291,19 @@ public class HeadComponentOverlay extends EFlowLayout {
 
     private FlowLayout getRotateOptions(AbstractHeadComponentEntry headComponentEntry) {
         FlowLayout rotateLayout = this.getOptionLayout("rotate");
-        FlowLayout rotateFirstRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
-        rotateFirstRow.gap(4);
-        FlowLayout rotateSecondRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
-        rotateSecondRow.gap(4);
+        FlowLayout firstRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
+        firstRow.gap(4);
+        FlowLayout secondRow = EContainers.horizontalFlow(Sizing.content(), Sizing.content());
+        secondRow.gap(4);
 
-        rotateFirstRow.children(List.of(
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_X_AXIS, 1, FzmmIcons.ROTATE_IN_X_POS, null),
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Y_AXIS, 1, FzmmIcons.ROTATE_IN_Y_POS, null),
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Z_AXIS, 1, FzmmIcons.ROTATE_IN_Z_POS, null)
-        ));
+        for (int i = 0; i != 6; i++) {
+            boolean positive = i < InternalModels.ROTATE.size();
+            HeadModelEntry modelEntry = InternalModels.ROTATE.get(i % InternalModels.ROTATE.size());
+            Icon icon = FzmmIcons.of(new int[]{FzmmIcons.ROTATE_U, i * 16});
+            (positive ? firstRow : secondRow).child(this.getModelButton(headComponentEntry,  modelEntry, positive ? 1 : 3, icon, null));
+        }
 
-        rotateSecondRow.children(List.of(
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_X_AXIS, 3, FzmmIcons.ROTATE_IN_X_NEG, null),
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Y_AXIS, 3, FzmmIcons.ROTATE_IN_Y_NEG, null),
-                this.getModelButton(headComponentEntry, InternalModels.ROTATE_IN_Z_AXIS, 3, FzmmIcons.ROTATE_IN_Z_NEG, null)
-        ));
-
-        rotateLayout.children(List.of(rotateFirstRow, rotateSecondRow));
+        rotateLayout.children(List.of(firstRow, secondRow));
 
         return rotateLayout;
     }

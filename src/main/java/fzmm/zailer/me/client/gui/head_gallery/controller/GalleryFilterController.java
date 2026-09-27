@@ -10,6 +10,9 @@ import fzmm.zailer.me.client.gui.head_gallery.filter.AbstractFilter;
 import fzmm.zailer.me.client.gui.head_gallery.filter.CategoryFilter;
 import fzmm.zailer.me.client.gui.head_gallery.filter.OtherCollectionFilter;
 import fzmm.zailer.me.client.gui.head_gallery.filter.SelfCollectionFilter;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxElement;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxEntry;
+import fzmm.zailer.me.client.gui.utils.context_menu.ICtxComponent;
 import fzmm.zailer.me.client.gui.utils.text_filter.AbstractTextFilter;
 import fzmm.zailer.me.client.gui.utils.text_filter.TextFilterDate;
 import fzmm.zailer.me.client.gui.utils.text_filter.TextFilterInteger;
@@ -23,7 +26,6 @@ import io.wispforest.owo.ui.component.TextBoxComponent;
 import io.wispforest.owo.ui.core.UIComponent;
 import io.wispforest.owo.ui.util.FocusHandler;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.network.chat.Component;
 import org.apache.commons.lang3.Strings;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,20 +135,17 @@ public class GalleryFilterController implements IMemento {
 
         this.tags(new HashSet<>(), new HashSet<>());
 
+        var filterEntries = new ArrayList<CtxElement<Object>>();
         for (var filter : this.filters) {
             filter.hasPermission(MCH_RESOURCES.licenseDetected().hasPermission(filter.permissionRequired()));
+            filterEntries.add(
+                    CtxEntry.none("gallery_filter_" + filter.getClass().getSimpleName(), o -> this.selectFilter(filter))
+                            .component(ICtxComponent.simple(filter.buttonText()))
+            );
         }
 
         this.filterButton.active(true);
-        this.filterButton.setContextMenuOptions(dropdown -> {
-            for (var filter : this.filters) {
-                Component message = filter.buttonText();
-                dropdown.button(message, dropdownComponent -> {
-                    this.selectFilter(filter);
-                    dropdownComponent.remove();
-                });
-            }
-        });
+        this.filterButton.entries(filterEntries);
         this.filters.get(0).initLayout(this.filterLayout, this.filterValue == null ? MchCategory.ALL : this.filterValue);
     }
 
@@ -162,6 +161,7 @@ public class GalleryFilterController implements IMemento {
 
     public void initFocus(FocusHandler focusHandler) {
         focusHandler.focus(this.searchField, UIComponent.FocusSource.MOUSE_CLICK);
+        this.searchField.moveCursorToEnd(false);
     }
 
     public void onChange(boolean resetPage) {

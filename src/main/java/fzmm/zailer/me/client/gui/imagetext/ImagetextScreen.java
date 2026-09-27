@@ -19,6 +19,9 @@ import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.ImagetextBrailleAlgorithm;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.ImagetextCharactersAlgorithm;
 import fzmm.zailer.me.client.gui.imagetext.tabs.*;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxElement;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxEntry;
+import fzmm.zailer.me.client.gui.utils.context_menu.ICtxComponent;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLogic;
@@ -128,17 +131,19 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
             algorithmButton.setMessage(this.getAlgorithmText());
             this.scheduleUpdatePreview();
         });
-        algorithmButton.setContextMenuOptions(contextMenu -> {
-            for (var algorithm : algorithmTabs) {
-                contextMenu.button(algorithm.getButtonText(), dropdown -> {
-                    algorithmButton.removeContextMenu();
-                    algorithm.clearCache();
-                    this.algorithmTabContainer.selectTab(algorithm);
-                    this.scheduleUpdatePreview();
-                    this.onResolutionChanged(this.widthSlider, this.heightSlider, true);
-                });
-            }
-        });
+        var algorithmButtonEntries = new ArrayList<CtxElement<Object>>();
+        for (var algorithm : algorithmTabs) {
+            algorithmButtonEntries.add(
+                    CtxEntry.none("imagetext_algorithm_" + algorithm.getId(), o -> {
+                        algorithm.clearCache();
+                        this.algorithmTabContainer.selectTab(algorithm);
+                        this.scheduleUpdatePreview();
+                        this.onResolutionChanged(this.widthSlider, this.heightSlider, true);
+
+                    }).component(ICtxComponent.simple(algorithm.getButtonText()))
+            );
+        }
+        algorithmButton.entries(algorithmButtonEntries);
         for (var algorithm : algorithmTabs) {
             algorithm.setupComponents(rootComponent);
         }
@@ -154,14 +159,14 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
             modeButton.setMessage(this.getModeText());
             this.scheduleUpdatePreview();
         });
-        modeButton.setContextMenuOptions(contextMenu -> {
-            for (var mode : modeTabs) {
-                contextMenu.button(mode.getButtonText(), dropdown -> {
-                    modeButton.removeContextMenu();
-                    this.modeTabContainer.selectTab(mode);
-                });
-            }
-        });
+        var modeButtonEntries = new ArrayList<CtxElement<Object>>();
+        for (var mode : modeTabs) {
+            modeButtonEntries.add(
+                    CtxEntry.none("imagetext_mode_" + mode.getId(), o -> this.modeTabContainer.selectTab(mode))
+                            .component(ICtxComponent.simple(mode.getButtonText()))
+            );
+        }
+        modeButton.entries(modeButtonEntries);
         for (var tab : modeTabs) {
             tab.setupComponents(rootComponent);
         }
@@ -230,6 +235,7 @@ public class ImagetextScreen extends BaseFzmmScreen implements IMemento {
     @Override
     protected void initFocus(FocusHandler focusHandler) {
         focusHandler.focus(this.imageElements.valueField(), UIComponent.FocusSource.MOUSE_CLICK);
+        this.imageElements.valueField().moveCursorToEnd(false);
     }
 
     @Override

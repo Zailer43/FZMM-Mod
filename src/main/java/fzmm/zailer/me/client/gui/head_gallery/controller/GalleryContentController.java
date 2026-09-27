@@ -2,17 +2,21 @@ package fzmm.zailer.me.client.gui.head_gallery.controller;
 
 import fzmm.zailer.me.client.FzmmClient;
 import fzmm.zailer.me.client.gui.components.SliderWidget;
+import fzmm.zailer.me.client.gui.components.containers.SelectableLayout;
 import fzmm.zailer.me.client.gui.components.extend.component.EButtonComponent;
 import fzmm.zailer.me.client.gui.components.extend.component.EItemComponent;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.head_gallery.components.GalleryItemDisplayOverlay;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxMenuActions;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxMenuManager;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.minecraft_heads.model.MchHead;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
-import io.wispforest.owo.ui.container.FlowLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
@@ -26,7 +30,7 @@ import java.util.function.Consumer;
 
 public class GalleryContentController extends AbstractGalleryContent implements IMemento {
     private final Consumer<ItemStack> previewCallback;
-    protected FlowLayout contentLayout;
+    protected SelectableLayout contentLayout;
     protected ScrollContainer<?> contentScroll;
     protected SliderWidget scaleSlider;
     private LabelComponent currentPageLabel;
@@ -39,7 +43,8 @@ public class GalleryContentController extends AbstractGalleryContent implements 
 
     @SuppressWarnings("UnstableApiUsage")
     public void configureComponent(EFlowLayout rootComponent) {
-        this.contentLayout = rootComponent.childByIdOrThrow(FlowLayout.class, "content");
+        this.contentLayout = rootComponent.childByIdOrThrow(SelectableLayout.class, "content");
+        this.contentLayout.contextMenu(new CtxMenuManager<>(CtxMenuActions.itemActions(), CtxMenuManager::parseItems));
         this.contentScroll = rootComponent.childByIdOrThrow(ScrollContainer.class, "content-scroll");
 
         // item scale
@@ -101,17 +106,25 @@ public class GalleryContentController extends AbstractGalleryContent implements 
         }
 
         Minecraft.getInstance().execute(() -> this.contentScroll.configure(component -> {
-                this.contentLayout.clearChildren();
-                this.contentLayout.children(pageHeads);
-            })
+                    this.contentLayout.clearChildren();
+                    this.contentLayout.children(pageHeads);
+                })
         );
+    }
+
+    public boolean keyPressed(KeyEvent input) {
+        return this.contentLayout.onKeyPress(input);
+    }
+
+    public boolean charTyped(CharacterEvent input) {
+        return this.contentLayout.onCharTyped(input);
     }
 
     public List<EItemComponent> getPageItems(int startIndex, int endIndex) {
         List<EItemComponent> pageItems = new ArrayList<>(endIndex - startIndex);
 
         for (int i = startIndex; i != endIndex; i++) {
-            pageItems.add(this.toComponent(this.entries.get(i)));//TODO: wrap with SelectableLayout (select like folders in file explorer and with right click)
+            pageItems.add(this.toComponent(this.entries.get(i)));
         }
 
         return pageItems;

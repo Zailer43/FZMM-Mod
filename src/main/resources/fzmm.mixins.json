@@ -6,6 +6,7 @@
   "client": [
     "component.book.MultiLineEditBoxMixin",
     "component.book.MultilineTextFieldAccessor",
+    "component.context_menu.AbstractContainerScreenAccessor",
     "entity.force_invisible_item_frame.ItemFrameRendererMixin",
     "item_group.fix_translations_update.ItemDisplayParametersMixin",
     "item_group.operator_utilities_no_op.CreativeInventoryScreenMixin",

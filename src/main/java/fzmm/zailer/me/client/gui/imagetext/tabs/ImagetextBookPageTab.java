@@ -5,6 +5,9 @@ import fzmm.zailer.me.client.gui.components.ContextMenuButton;
 import fzmm.zailer.me.client.gui.components.extend.container.EFlowLayout;
 import fzmm.zailer.me.client.gui.imagetext.algorithms.IImagetextAlgorithm;
 import fzmm.zailer.me.client.gui.options.BookOption;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxElement;
+import fzmm.zailer.me.client.gui.utils.context_menu.CtxEntry;
+import fzmm.zailer.me.client.gui.utils.context_menu.ICtxComponent;
 import fzmm.zailer.me.client.logic.history.IMemento;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextData;
 import fzmm.zailer.me.client.logic.imagetext.ImagetextLine;
@@ -19,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 public class ImagetextBookPageTab implements IImagetextTab, IMemento {
     private ContextMenuButton bookPageButton;
@@ -46,14 +50,14 @@ public class ImagetextBookPageTab implements IImagetextTab, IMemento {
     @Override
     public void setupComponents(EFlowLayout rootComponent) {
         this.bookPageButton = rootComponent.childByIdOrThrow(ContextMenuButton.class, "bookPageMode");
-        this.bookPageButton.setContextMenuOptions(dropdownComponent -> {
-            for (var option : BookOption.values()) {
-                dropdownComponent.button(Component.translatable(option.getTranslationKey()), dropdownButton -> {
-                    this.updateBookPage(option);
-                    dropdownButton.remove();
-                });
-            }
-        });
+        var entries = new ArrayList<CtxElement<Object>>();
+        for (var option : BookOption.values()) {
+            entries.add(
+                    CtxEntry.none("imagetext_book_page_" + option.name(), o -> this.updateBookPage(option))
+                            .component(ICtxComponent.simple(Component.translatable(option.getTranslationKey())))
+            );
+        }
+        this.bookPageButton.entries(entries);
         this.updateBookPage(BookOption.ADD_PAGE);
     }
 

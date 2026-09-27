@@ -24,14 +24,12 @@ public class SnackBarManager {
     public static final String HEAD_GALLERY_ID = "head_gallery";
     public static final String HEAD_GALLERY_NEW_HEADS_ID = "head_gallery_new_heads";
     public static final String HEAD_GALLERY_WARNING_ID = "head_gallery_warning";
-    public static final String HEAD_GENERATOR_ID = "head_generator";
     public static final String HEAD_GENERATOR_SAVE_ID = "head_generator_save";
     public static final String MINESKIN_ID = "mineskin";
     public static final String MINESKIN_WARNINGS_ID = "mineskin_warnings";
     public static final String IMAGE_ID = "load_image";
     public static final String IMAGETEXT_ID = "imagetext";
     public static final String INVISIBLE_ENTITY_ID = "invisible_entity";
-    public static final String PLAYER_STATUE_ID = "player_statue";
 
     private static final SnackBarManager instance;
     private final ISnackBarScreen hudLayout;

@@ -4,7 +4,7 @@
   "package": "me.zailer.testmod.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
-
+    "disable_narrator.disable_narrator.GameNarratorMixin"
   ],
   "injectors": {
     "defaultRequire": 1
