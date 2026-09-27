@@ -35,10 +35,11 @@ public class MineskinApi {
     }
 
     public CompletableFuture<ApiResponse<MSQueue>> upload(BufferedImage skin) {
-        return this.uploadSequential(skin);
+        return this.uploadSequential(skin, false);
     }
 
-    private CompletableFuture<ApiResponse<MSQueue>> uploadSequential(BufferedImage skin) {
+    private CompletableFuture<ApiResponse<MSQueue>> uploadSequential(BufferedImage skin, boolean isCancelled) {
+        if (isCancelled) return CompletableFuture.failedFuture(new CancellationException());
         CompletableFuture<ApiResponse<MSQueue>> result = this.submit(skin);
 
         // queue can take a while to process, so it can need to be fetched multiple times
@@ -79,7 +80,7 @@ public class MineskinApi {
 
         return CompletableFuture.runAsync(() -> {
             for (var skin : skins) {
-                this.uploadSequential(skin).thenApply(response -> {
+                this.uploadSequential(skin, isCancelled.get()).thenApply(response -> {
                     if (isCancelled.get()) return CompletableFuture.failedFuture(new CancellationException());
                     callback.accept(skin, response);
                     return null;
